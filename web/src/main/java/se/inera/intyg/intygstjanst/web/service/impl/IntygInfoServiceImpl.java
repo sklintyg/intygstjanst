@@ -18,14 +18,17 @@
  */
 package se.inera.intyg.intygstjanst.web.service.impl;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-
+import se.inera.intyg.common.db.support.DbModuleEntryPoint;
+import se.inera.intyg.common.doi.support.DoiModuleEntryPoint;
 import se.inera.intyg.common.support.common.enumerations.RelationKod;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.model.CertificateState;
@@ -43,7 +46,6 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateRepository;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Relation;
-import se.inera.intyg.intygstjanst.web.integration.CitizenController;
 import se.inera.intyg.intygstjanst.web.service.CertificateService;
 import se.inera.intyg.intygstjanst.web.service.IntygInfoService;
 import se.inera.intyg.intygstjanst.web.service.RecipientService;
@@ -54,6 +56,9 @@ import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
 public class IntygInfoServiceImpl implements IntygInfoService {
 
     private static final Logger LOG = LoggerFactory.getLogger(IntygInfoServiceImpl.class);
+
+    public static final Set<String> EXCLUDED_CITIZEN_CERTIFICATES =
+        new HashSet<>(Arrays.asList(DbModuleEntryPoint.MODULE_ID, DoiModuleEntryPoint.MODULE_ID));
 
     private final CertificateService certificateService;
     private final RecipientService recipientService;
@@ -158,7 +163,7 @@ public class IntygInfoServiceImpl implements IntygInfoService {
                     event.addData("intygsmottagare", state.getTarget());
                     break;
                 case RECEIVED:
-                    if (!CitizenController.EXCLUDED_CITIZEN_CERTIFICATES.contains(certificate.getType())) {
+                    if (!EXCLUDED_CITIZEN_CERTIFICATES.contains(certificate.getType())) {
                         event = new IntygInfoEvent(Source.INTYGSTJANSTEN, state.getTimestamp(), IntygInfoEventType.IS005);
                     }
                     break;

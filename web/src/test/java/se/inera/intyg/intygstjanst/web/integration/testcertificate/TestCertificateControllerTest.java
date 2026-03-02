@@ -19,12 +19,10 @@
 package se.inera.intyg.intygstjanst.web.integration.testcertificate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 
-import jakarta.ws.rs.core.Response;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -50,15 +48,13 @@ class TestCertificateControllerTest {
         testCertificateEraseRequest.setFrom(null);
         testCertificateEraseRequest.setTo(LocalDateTime.now());
 
-        final var testCertificateEraseResult = TestCertificateEraseResult.create(0, 0);
+        final var expected = TestCertificateEraseResult.create(0, 0);
 
-        doReturn(testCertificateEraseResult).when(testCertificateService).eraseTestCertificates(any(), any());
+        doReturn(expected).when(testCertificateService).eraseTestCertificates(any(), any());
 
-        final Response actualResponse = testCertificateController.eraseTestCertificates(testCertificateEraseRequest);
+        final var actual = testCertificateController.eraseTestCertificates(testCertificateEraseRequest);
 
-        assertNotNull(actualResponse);
-        assertEquals(200, actualResponse.getStatus());
-        assertTrue(actualResponse.hasEntity());
+        assertEquals(expected, actual);
     }
 
     @Test
@@ -67,10 +63,11 @@ class TestCertificateControllerTest {
         testCertificateEraseRequest.setFrom(null);
         testCertificateEraseRequest.setTo(null);
 
-        final var actualResponse = testCertificateController.eraseTestCertificates(testCertificateEraseRequest);
+        final var ex = assertThrows(IllegalArgumentException.class,
+            () -> testCertificateController.eraseTestCertificates(testCertificateEraseRequest)
+        );
 
-        assertNotNull(actualResponse);
-        assertEquals(400, actualResponse.getStatus());
+        assertEquals("Missing date to", ex.getMessage());
     }
 
     @Test
@@ -79,9 +76,10 @@ class TestCertificateControllerTest {
         testCertificateEraseRequest.setFrom(LocalDateTime.now());
         testCertificateEraseRequest.setTo(testCertificateEraseRequest.getFrom().minusDays(1));
 
-        final var actualResponse = testCertificateController.eraseTestCertificates(testCertificateEraseRequest);
+        final var ex = assertThrows(IllegalArgumentException.class,
+            () -> testCertificateController.eraseTestCertificates(testCertificateEraseRequest)
+        );
 
-        assertNotNull(actualResponse);
-        assertEquals(400, actualResponse.getStatus());
+        assertEquals("From date is after to date", ex.getMessage());
     }
 }

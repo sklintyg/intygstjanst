@@ -19,13 +19,10 @@
 package se.inera.intyg.intygstjanst.web.integration.message;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doReturn;
 
-import jakarta.ws.rs.core.Response;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -47,38 +44,17 @@ class MessageControllerTest {
     void testFindMessagesByCertificateIdSuccessful() {
         final var certificateId = "certificateId";
 
-        final var messagesFromITs = new ArrayList<MessageFromIT>();
-        messagesFromITs.add(MessageFromIT.create(certificateId, "messageId1", "messageContent1", "subject1",
-            "logicalAddress1", LocalDateTime.now()));
-        messagesFromITs.add(MessageFromIT.create(certificateId, "messageId2", "messageContent2", "subject2",
-            "logicalAddress2", LocalDateTime.now()));
+        final var messagesFromITs = List.of(
+            MessageFromIT.create(certificateId, "messageId1", "messageContent1", "subject1",
+                "logicalAddress1", LocalDateTime.now()),
+            MessageFromIT.create(certificateId, "messageId2", "messageContent2", "subject2",
+                "logicalAddress2", LocalDateTime.now())
+        );
 
         doReturn(messagesFromITs).when(messageService).findMessagesByCertificateId(certificateId);
 
-        final Response actualResponse = messageController.findMessagesByCertificateId(certificateId);
+        final var actualResponse = messageController.findMessagesByCertificateId(certificateId);
 
-        assertNotNull(actualResponse);
-        assertEquals(200, actualResponse.getStatus());
-        assertTrue(actualResponse.hasEntity());
-    }
-
-    @Test
-    void testFindMessagesByCertificateIdFailedEmptyId() {
-        final var certificateId = "";
-
-        final Response actualResponse = messageController.findMessagesByCertificateId(certificateId);
-
-        assertNotNull(actualResponse);
-        assertEquals(400, actualResponse.getStatus());
-    }
-
-    @Test
-    void testFindMessagesByCertificateIdFailedNullId() {
-        final String certificateId = null;
-
-        final Response actualResponse = messageController.findMessagesByCertificateId(certificateId);
-
-        assertNotNull(actualResponse);
-        assertEquals(400, actualResponse.getStatus());
+        assertEquals(messagesFromITs, actualResponse);
     }
 }

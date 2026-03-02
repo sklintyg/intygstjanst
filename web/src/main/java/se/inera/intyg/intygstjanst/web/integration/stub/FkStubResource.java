@@ -22,21 +22,24 @@ import static se.inera.intyg.common.support.stub.MedicalCertificatesStore.MAKULE
 import static se.inera.intyg.common.support.stub.MedicalCertificatesStore.MEDDELANDE;
 import static se.inera.intyg.common.support.stub.MedicalCertificatesStore.PERSONNUMMER;
 
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.core.MediaType;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
+import org.springframework.http.MediaType;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import se.inera.intyg.common.support.stub.MedicalCertificatesStore;
 
-@Path("/fk")
+@RestController
+@RequestMapping("/fk")
 @Transactional
+@Profile({"dev", "testability-api"})
 public class FkStubResource {
 
     private static final String[] KEYS = {PERSONNUMMER, MAKULERAD, MEDDELANDE};
@@ -44,16 +47,12 @@ public class FkStubResource {
     @Autowired
     private MedicalCertificatesStore fkMedicalCertificatesStore;
 
-    @GET
-    @Path("/count")
-    @Produces(MediaType.TEXT_PLAIN)
+    @GetMapping(path = "/count", produces = MediaType.TEXT_PLAIN_VALUE)
     public int count() {
         return fkMedicalCertificatesStore.getCount();
     }
 
-    @GET
-    @Path("/certificates")
-    @Produces(MediaType.TEXT_HTML)
+    @GetMapping(path = "/certificates", produces = MediaType.TEXT_HTML_VALUE)
     public String certificates() {
         StringBuilder sb = new StringBuilder();
         sb.append("<!DOCTYPE html><html><head>");
@@ -80,16 +79,12 @@ public class FkStubResource {
         return sb.toString();
     }
 
-    @GET
-    @Path("/certificates")
-    @Produces(MediaType.APPLICATION_JSON)
+    @GetMapping(path = "/certificates", produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Map<String, String>> certificatesJson() {
         return new HashMap<>(fkMedicalCertificatesStore.getAll());
     }
 
-    @POST
-    @Path("/clear")
-    @Produces(MediaType.TEXT_HTML)
+    @PostMapping(path = "/clear", produces = MediaType.TEXT_HTML_VALUE)
     public String clear() {
         fkMedicalCertificatesStore.clear();
         StringBuilder sb = new StringBuilder();
@@ -99,9 +94,7 @@ public class FkStubResource {
         return sb.toString();
     }
 
-    @POST
-    @Path("/clear")
-    @Produces(MediaType.APPLICATION_JSON)
+    @PostMapping(path = "/clear", produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, String> clearJson() {
         fkMedicalCertificatesStore.clear();
         Collections.singletonMap("result", "ok");

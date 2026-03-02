@@ -19,36 +19,26 @@
 
 package se.inera.intyg.intygstjanst.web.integration.reko;
 
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.core.MediaType;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import se.inera.intyg.infra.sjukfall.dto.RekoStatusDTO;
 import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
 import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.web.service.CreateRekoStatusService;
 import se.inera.intyg.intygstjanst.web.service.GetRekoStatusService;
 
-@Path("/reko")
+@RestController
+@RequestMapping("/reko")
+@RequiredArgsConstructor
 public class RekoController {
-
-    private static final String UTF_8_CHARSET = ";charset=utf-8";
 
     private final CreateRekoStatusService createRekoStatusService;
     private final GetRekoStatusService getRekoStatusService;
 
-    public RekoController(CreateRekoStatusService createRekoStatusService, GetRekoStatusService getRekoStatusService) {
-        this.createRekoStatusService = createRekoStatusService;
-        this.getRekoStatusService = getRekoStatusService;
-    }
-
-
-    @POST
-    @Path("/")
-    @Produces(MediaType.APPLICATION_JSON + UTF_8_CHARSET)
-    @Consumes(MediaType.APPLICATION_JSON)
+    @PostMapping()
     @PerformanceLogging(eventAction = "create-reko-status", eventType = MdcLogConstants.EVENT_TYPE_CREATION)
     public RekoStatusDTO createRekoStatus(@RequestBody CreateRekoStatusRequestDTO request) {
         return createRekoStatusService.create(
@@ -63,11 +53,7 @@ public class RekoController {
         );
     }
 
-
-    @POST
-    @Path("/patient")
-    @Produces(MediaType.APPLICATION_JSON + UTF_8_CHARSET)
-    @Consumes(MediaType.APPLICATION_JSON)
+    @PostMapping("/patient")
     @PerformanceLogging(eventAction = "retrieve-reko-status", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
     public RekoStatusDTO getRekoStatus(@RequestBody GetRekoStatusRequestDTO request) {
         return getRekoStatusService.get(

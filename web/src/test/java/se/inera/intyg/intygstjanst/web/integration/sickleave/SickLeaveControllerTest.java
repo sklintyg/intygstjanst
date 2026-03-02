@@ -90,7 +90,6 @@ class SickLeaveControllerTest {
     private static final int NUMBER_OF_SICK_LEAVES = 10;
     private static final String TEXT_SEARCH = "textSearch";
 
-
     @Nested
     class GetActiveSickLeavesForCareUnitTest {
 
@@ -140,7 +139,6 @@ class SickLeaveControllerTest {
 
         @Test
         void shouldReturnResponse() {
-            final var sickLeaveRequestDTO = new SickLeaveRequestDTO();
             final var sjukfallEnhet = new SjukfallEnhet();
             final var expectedResponse = new SickLeaveResponseDTO(List.of(sjukfallEnhet));
 
@@ -148,8 +146,8 @@ class SickLeaveControllerTest {
                 .when(getSickLeavesService)
                 .get(any(GetSickLeaveServiceRequest.class));
 
-            final var result = sickLeaveController.getActiveSickLeavesForCareUnit(sickLeaveRequestDTO);
-            assertEquals(expectedResponse, result.getEntity());
+            final var actualResponse = sickLeaveController.getActiveSickLeavesForCareUnit(sickLeaveRequestDTO);
+            assertEquals(expectedResponse, actualResponse);
         }
     }
 
@@ -205,8 +203,8 @@ class SickLeaveControllerTest {
                 OCCUPATION_TYPE_DTO_LIST
             );
 
-            final var result = sickLeaveController.populateFilters(populateFiltersRequestDTO);
-            assertEquals(expectedResponse, result.getEntity());
+            final var actualResponse = sickLeaveController.populateFilters(populateFiltersRequestDTO);
+            assertEquals(expectedResponse, actualResponse);
         }
     }
 }

@@ -18,14 +18,11 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.certificate;
 
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.core.MediaType;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import se.inera.intyg.infra.certificate.dto.CertificateListRequest;
 import se.inera.intyg.infra.certificate.dto.CertificateListResponse;
 import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
@@ -35,16 +32,12 @@ import se.inera.intyg.intygstjanst.web.service.CertificateListService;
 /**
  * Internal REST endpoint to retrieve list of certificates.
  */
-@Controller
-@Path("/certificatelist")
+@RestController
+@RequestMapping("/certificatelist")
+@RequiredArgsConstructor
 public class CertificateListController {
 
-    final CertificateListService certificateListService;
-
-    @Autowired
-    public CertificateListController(CertificateListService certificateListService) {
-        this.certificateListService = certificateListService;
-    }
+    private final CertificateListService certificateListService;
 
     /**
      * Internal REST endpoint to retrieve list of signed certificates for a doctor on the logged in unit.
@@ -52,11 +45,7 @@ public class CertificateListController {
      * @param parameters Parameters of filter query including filters that user has chosen or default filters.
      * @return Response including a list of all signed certificates and the total amount of certificates.
      */
-
-    @POST
-    @Path("/certificates/doctor")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
+    @PostMapping("/certificates/doctor")
     @PerformanceLogging(eventAction = "list-certificates", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
     public CertificateListResponse listCertificatesForDoctor(@RequestBody CertificateListRequest parameters) {
         return certificateListService.listCertificatesForDoctor(parameters);

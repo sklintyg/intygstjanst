@@ -26,7 +26,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -37,16 +36,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
-import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
-import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateMetaData;
-import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateRepository;
-import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
 import se.inera.intyg.intygstjanst.web.csintegration.aggregator.EraseCertificatesAggregator;
 import se.inera.intyg.intygstjanst.web.csintegration.aggregator.ExportCertificateAggregator;
 import se.inera.intyg.intygstjanst.web.service.dto.CertificateExportPageDTO;
@@ -58,8 +47,6 @@ class CertificateExportServiceImplTest {
     private ExportCertificateAggregator exportCertificateAggregator;
     @Mock
     private EraseCertificatesAggregator eraseCertificatesAggregator;
-    @Mock
-    private CertificateRepository certificateRepository;
     @Mock
     private PathMatchingResourcePatternResolver resourceResolver;
 
@@ -76,8 +63,6 @@ class CertificateExportServiceImplTest {
     private static final String RESOURCES_LOCATION = "classpath:CertificateExportServiceImplTest/*";
     private static final String CARE_PROVIDER_ID = "CARE_PROVIDER_ID";
 
-    private static final Pageable EXPORT_PAGEABLE = PageRequest.of(PAGE, EXPORT_SIZE, Sort.by(Direction.ASC, "signedDate", "id"));
-
     @Nested
     class GetCertificateTexts {
 
@@ -87,29 +72,29 @@ class CertificateExportServiceImplTest {
         }
 
         @Test
-        public void shouldSelectActiveCertificateTextsOnly() {
+        void shouldSelectActiveCertificateTextsOnly() {
             final var certificateTexts = certificateExportService.getCertificateTexts();
 
             assertEquals(1, certificateTexts.size());
         }
 
         @Test
-        public void shouldSetProperAttributes() {
+        void shouldSetProperAttributes() {
             final var certificateTexts = certificateExportService.getCertificateTexts();
 
             assertAll(
-                () -> assertEquals(CERTIFICATE_TYPE, certificateTexts.get(0).getType()),
-                () -> assertEquals(CERTIFICATE_VERSION, certificateTexts.get(0).getVersion())
+                () -> assertEquals(CERTIFICATE_TYPE, certificateTexts.getFirst().getType()),
+                () -> assertEquals(CERTIFICATE_VERSION, certificateTexts.getFirst().getVersion())
             );
         }
 
         @Test
-        public void shouldIncludeEntireXmlFile() {
+        void shouldIncludeEntireXmlFile() {
             final var certificateTexts = certificateExportService.getCertificateTexts();
 
             assertAll(
-                () -> assertTrue(certificateTexts.get(0).getXml().startsWith(CERTIFICATE_START_TAG)),
-                () -> assertTrue(certificateTexts.get(0).getXml().endsWith(CERTIFICATE_END_TAG))
+                () -> assertTrue(certificateTexts.getFirst().getXml().startsWith(CERTIFICATE_START_TAG)),
+                () -> assertTrue(certificateTexts.getFirst().getXml().endsWith(CERTIFICATE_END_TAG))
             );
         }
     }
@@ -137,32 +122,7 @@ class CertificateExportServiceImplTest {
         }
     }
 
-
     private Resource[] getTestResources() throws IOException {
-        final var resourceResolver = new PathMatchingResourcePatternResolver();
-        return resourceResolver.getResources(RESOURCES_LOCATION);
-    }
-
-    private Page<Certificate> getCertificatePage() {
-        final var certificates = new ArrayList<Certificate>();
-        certificates.add(getCertificate("1", false));
-        certificates.add(getCertificate("2", true));
-        certificates.add(getCertificate("3", false));
-        return new PageImpl<>(certificates, EXPORT_PAGEABLE, 3);
-    }
-
-    private Certificate getCertificate(String id, boolean isRevoked) {
-        final var certificateMetaData = new CertificateMetaData();
-        certificateMetaData.setRevoked(isRevoked);
-
-        final var originalCertificate = new OriginalCertificate();
-        originalCertificate.setDocument(CERTIFICATE_START_TAG);
-
-        final var certificate = new Certificate(id);
-        certificate.setCertificateMetaData(certificateMetaData);
-        certificate.setOriginalCertificate(originalCertificate);
-        certificate.setCareGiverId(CARE_PROVIDER_ID);
-        certificate.setSignedDate(LocalDateTime.now());
-        return certificate;
+        return new PathMatchingResourcePatternResolver().getResources(RESOURCES_LOCATION);
     }
 }

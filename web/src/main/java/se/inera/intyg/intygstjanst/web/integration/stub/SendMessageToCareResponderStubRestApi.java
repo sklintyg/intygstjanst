@@ -21,14 +21,6 @@ package se.inera.intyg.intygstjanst.web.integration.stub;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.QueryParam;
-import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -37,9 +29,17 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-@Component
+@RestController
+@RequestMapping("/send-message-to-care")
 public class SendMessageToCareResponderStubRestApi {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SendMessageToCareResponderStubRestApi.class);
@@ -47,39 +47,31 @@ public class SendMessageToCareResponderStubRestApi {
     @Autowired
     private SendMessageToCareStorage storage;
 
-    @GET
-    @Path("/ping")
-    @Produces(MediaType.APPLICATION_XML)
-    public Response getPing() {
+    @GetMapping(value = "/ping", produces = MediaType.APPLICATION_XML_VALUE)
+    public ResponseEntity<String> getPing() {
         String xmlResponse = buildXMLResponse(true, 0, null);
         LOGGER.debug("Pinged Intygstjänsten, got: " + xmlResponse);
-        return Response.ok(xmlResponse).build();
+        return ResponseEntity.ok(xmlResponse);
     }
 
-    @GET
-    @Path("/count")
-    @Produces(MediaType.APPLICATION_XML)
-    public Response getCount() {
+    @GetMapping(value = "/count", produces = MediaType.APPLICATION_XML_VALUE)
+    public ResponseEntity<String> getCount() {
         LOGGER.debug("Got count: " + storage.getCount());
         Map<String, String> result = new HashMap<>();
         result.put("Message count: ", String.valueOf(storage.getCount()));
         String xmlResponse = buildXMLResponse(true, 0, result);
-        return Response.ok(xmlResponse).build();
+        return ResponseEntity.ok(xmlResponse);
     }
 
-    @POST
-    @Path("/clear")
-    @Produces(MediaType.APPLICATION_XML)
-    public Response clearJson() {
+    @PostMapping(value = "/clear", produces = MediaType.APPLICATION_XML_VALUE)
+    public ResponseEntity<String> clearJson() {
         storage.clear();
         String xmlResponse = buildXMLResponse(true, 0, Collections.singletonMap("result", "ok"));
-        return Response.ok(xmlResponse).build();
+        return ResponseEntity.ok(xmlResponse);
     }
 
-    @GET
-    @Path("/{id}")
-    @Produces(MediaType.APPLICATION_XML)
-    public Response getMessagesForCertificateId(@PathParam("id") String id) {
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_XML_VALUE)
+    public ResponseEntity<String> getMessagesForCertificateId(@PathVariable("id") String id) {
         List<String> xmlMessages = storage.getMessagesForCertificateId(id);
         Map<String, String> results = new HashMap<>();
         StringBuilder stringBuilder = new StringBuilder();
@@ -89,26 +81,22 @@ public class SendMessageToCareResponderStubRestApi {
         results.put("message", stringBuilder.toString());
         String xmlResponse = buildXMLResponse(true, 0, results);
         LOGGER.debug("Found messages for id: " + xmlResponse);
-        return Response.ok(xmlResponse).build();
+        return ResponseEntity.ok(xmlResponse);
     }
 
-    @GET
-    @Path("/byLogicalAddress")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getMessagesForLogicalAddress(@QueryParam("address") String address) {
+    @GetMapping(value = "/byLogicalAddress", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> getMessagesForLogicalAddress(@RequestParam("address") String address) {
         Map<String, Set<SendMessageToCareStorage.MessageKey>> messageIds = ImmutableMap.of("messages",
             storage.getMessagesIdsForLogicalAddress(address));
         try {
-            return Response.ok(new ObjectMapper().writeValueAsString(messageIds)).build();
+            return ResponseEntity.ok(new ObjectMapper().writeValueAsString(messageIds));
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
     }
 
-    @GET
-    @Path("/messages-all")
-    @Produces(MediaType.APPLICATION_XML)
-    public Response getAllMessages() {
+    @GetMapping(value = "/messages-all", produces = MediaType.APPLICATION_XML_VALUE)
+    public ResponseEntity<String> getAllMessages() {
         Map<SendMessageToCareStorage.MessageKey, String> xmlMessages = storage.getAllMessages();
         Map<String, String> results = new HashMap<>();
         StringBuilder stringBuilder = new StringBuilder();
@@ -118,7 +106,7 @@ public class SendMessageToCareResponderStubRestApi {
         results.put("messages", stringBuilder.toString());
         String xmlResponse = buildXMLResponse(true, 0, results);
         LOGGER.debug("Found all messages: " + xmlResponse);
-        return Response.ok(xmlResponse).build();
+        return ResponseEntity.ok(xmlResponse);
     }
 
     private String buildXMLResponse(boolean ok, long time, Map<String, String> additionalValues) {

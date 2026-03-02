@@ -18,16 +18,13 @@
  */
 package se.inera.intyg.intygstjanst.web.integration.certificate;
 
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.core.MediaType;
 import java.util.Collections;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import se.inera.intyg.infra.certificate.dto.DiagnosedCertificate;
 import se.inera.intyg.infra.certificate.dto.SickLeaveCertificate;
 import se.inera.intyg.infra.certificate.dto.TypedCertificateRequest;
@@ -39,22 +36,14 @@ import se.inera.intyg.schemas.contract.Personnummer;
 /**
  * Internal REST endpoint to retrieve certificates
  */
-@Controller
-@Path("/typedcertificate")
+@RestController
+@RequestMapping("/typedcertificate")
+@RequiredArgsConstructor
 public class TypedCertificateController {
 
-    final TypedCertificateService typedCertificateService;
+    private final TypedCertificateService typedCertificateService;
 
-    @Autowired
-    public TypedCertificateController(TypedCertificateService typedCertificateService) {
-        this.typedCertificateService = typedCertificateService;
-    }
-
-
-    @POST
-    @Path("/diagnosed/unit")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
+    @PostMapping("/diagnosed/unit")
     @PerformanceLogging(eventAction = "list-certificates", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
     public List<DiagnosedCertificate> listDiagnosedCertificatesForCareUnit(@RequestBody TypedCertificateRequest parameters) {
         var units = parameters.getUnitIds();
@@ -71,10 +60,7 @@ public class TypedCertificateController {
     }
 
 
-    @POST
-    @Path("/doctors")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
+    @PostMapping("/doctors")
     @PerformanceLogging(eventAction = "list-doctors", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
     public List<String> listDoctorsForCareUnit(@RequestBody TypedCertificateRequest parameters) {
         var units = parameters.getUnitIds();
@@ -90,10 +76,7 @@ public class TypedCertificateController {
     }
 
 
-    @POST
-    @Path("/diagnosed/person")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
+    @PostMapping("/diagnosed/person")
     @PerformanceLogging(eventAction = "list-certificates", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
     public List<DiagnosedCertificate> listDiagnosedCertificatesForCitizen(@RequestBody TypedCertificateRequest parameters) {
         var optionalPersonnummer = Personnummer.createPersonnummer(parameters.getPersonId());
@@ -110,10 +93,7 @@ public class TypedCertificateController {
     }
 
 
-    @POST
-    @Path("/sickleave/person")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
+    @PostMapping("/sickleave/person")
     @PerformanceLogging(eventAction = "list-certificates", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
     public List<SickLeaveCertificate> listSickLeaveCertificatesForCitizen(@RequestBody TypedCertificateRequest parameters) {
         var optionalPersonnummer = Personnummer.createPersonnummer(parameters.getPersonId());

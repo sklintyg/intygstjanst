@@ -22,15 +22,12 @@ package se.inera.intyg.intygstjanst.web.integration.sickleave;
 import static se.inera.intyg.intygstjanst.web.integration.sickleave.SickLeaveLogMessageFactory.GET_SICK_LEAVE_ACTIVE;
 import static se.inera.intyg.intygstjanst.web.integration.sickleave.SickLeaveLogMessageFactory.GET_SICK_LEAVE_FILTER;
 
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
 import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.web.service.GetSickLeaveFilterService;
@@ -42,26 +39,18 @@ import se.inera.intyg.intygstjanst.web.service.dto.PopulateFiltersResponseDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveRequestDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveResponseDTO;
 
-@Path("/sickleave")
+@RestController
+@RequestMapping("/sickleave")
+@RequiredArgsConstructor
+@Slf4j
 public class SickLeaveController {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SickLeaveController.class);
-    private static final String UTF_8_CHARSET = ";charset=utf-8";
     private final GetSickLeavesService getSickLeavesService;
     private final GetSickLeaveFilterService getSickLeaveFilterService;
 
-    public SickLeaveController(GetSickLeavesService getSickLeavesService, GetSickLeaveFilterService getSickLeaveFilterService) {
-        this.getSickLeavesService = getSickLeavesService;
-        this.getSickLeaveFilterService = getSickLeaveFilterService;
-    }
-
-
-    @POST
-    @Path("/active")
-    @Produces(MediaType.APPLICATION_JSON + UTF_8_CHARSET)
-    @Consumes(MediaType.APPLICATION_JSON)
+    @PostMapping("/active")
     @PerformanceLogging(eventAction = "list-sick-leaves", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
-    public Response getActiveSickLeavesForCareUnit(@RequestBody SickLeaveRequestDTO sickLeaveRequestDTO) {
+    public SickLeaveResponseDTO getActiveSickLeavesForCareUnit(@RequestBody SickLeaveRequestDTO sickLeaveRequestDTO) {
         final var sickLeaveLogMessageFactory = new SickLeaveLogMessageFactory(System.currentTimeMillis());
         final var sjukfallEnhetList = getSickLeavesService.get(
             GetSickLeaveServiceRequest.builder()
@@ -82,18 +71,17 @@ public class SickLeaveController {
                 .textSearch(sickLeaveRequestDTO.getTextSearch())
                 .build()
         );
-        LOG.info(sickLeaveLogMessageFactory.message(GET_SICK_LEAVE_ACTIVE, sjukfallEnhetList.size()));
 
-        return Response.ok(new SickLeaveResponseDTO(sjukfallEnhetList)).build();
+        if (log.isInfoEnabled()) {
+            log.info(sickLeaveLogMessageFactory.message(GET_SICK_LEAVE_ACTIVE, sjukfallEnhetList.size()));
+        }
+
+        return new SickLeaveResponseDTO(sjukfallEnhetList);
     }
 
-
-    @POST
-    @Path("/filters")
-    @Produces(MediaType.APPLICATION_JSON + UTF_8_CHARSET)
-    @Consumes(MediaType.APPLICATION_JSON)
+    @PostMapping("/filters")
     @PerformanceLogging(eventAction = "list-sick-leaves-filter", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
-    public Response populateFilters(@RequestBody PopulateFiltersRequestDTO populateFiltersRequestDTO) {
+    public PopulateFiltersResponseDTO populateFilters(@RequestBody PopulateFiltersRequestDTO populateFiltersRequestDTO) {
         final var sickLeaveLogMessageFactory = new SickLeaveLogMessageFactory(System.currentTimeMillis());
         final var getSickLeaveFilterServiceResponse = getSickLeaveFilterService.get(
             GetSickLeaveFilterServiceRequest.builder()
@@ -104,17 +92,18 @@ public class SickLeaveController {
                 .protectedPersonFilterId(populateFiltersRequestDTO.getProtectedPersonFilterId())
                 .build()
         );
-        LOG.info(sickLeaveLogMessageFactory.message(GET_SICK_LEAVE_FILTER));
 
-        return Response.ok(
-            new PopulateFiltersResponseDTO(
-                getSickLeaveFilterServiceResponse.getActiveDoctors(),
-                getSickLeaveFilterServiceResponse.getDiagnosisChapters(),
-                getSickLeaveFilterServiceResponse.getNbrOfSickLeaves(),
-                getSickLeaveFilterServiceResponse.isHasOngoingSickLeaves(),
-                getSickLeaveFilterServiceResponse.getRekoStatusTypes(),
-                getSickLeaveFilterServiceResponse.getOccupationTypes()
-            )
-        ).build();
+        if (log.isInfoEnabled()) {
+            log.info(sickLeaveLogMessageFactory.message(GET_SICK_LEAVE_FILTER));
+        }
+
+        return new PopulateFiltersResponseDTO(
+            getSickLeaveFilterServiceResponse.getActiveDoctors(),
+            getSickLeaveFilterServiceResponse.getDiagnosisChapters(),
+            getSickLeaveFilterServiceResponse.getNbrOfSickLeaves(),
+            getSickLeaveFilterServiceResponse.isHasOngoingSickLeaves(),
+            getSickLeaveFilterServiceResponse.getRekoStatusTypes(),
+            getSickLeaveFilterServiceResponse.getOccupationTypes()
+        );
     }
 }

@@ -152,7 +152,7 @@ class CitizenCertificateControllerTest {
 
                 assertEquals(expectedContent, response.getContent());
                 assertEquals(expectedContent.size(), response.getContent().size());
-                assertEquals(expectedContent.get(0), response.getContent().get(0));
+                assertEquals(expectedContent.getFirst(), response.getContent().getFirst());
             }
         }
     }
@@ -198,7 +198,7 @@ class CitizenCertificateControllerTest {
 
             verify(sendCertificateService).send(captor.capture());
             assertEquals(
-                Personnummer.createPersonnummer(request.getPatientId()).get(),
+                Personnummer.createPersonnummer(request.getPatientId()).orElseThrow(),
                 captor.getValue().getPatientId()
             );
         }
