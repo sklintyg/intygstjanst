@@ -17,7 +17,7 @@
 | **9.8**  | Convert CXF WS endpoints → `CxfEndpointConfig.java`                       | ✅ DONE |           | ✅        | Created `CxfEndpointConfig.java`; removed all `<jaxws:endpoint>` from XML                                   |
 | **9.9**  | Convert CXF conduit (TLS) → Java config                                   | ✅ DONE |           | ✅        | Created `CxfTlsConfig.java`; removed conduit block from XML; added `cxf-rt-transports-http` to compile deps |
 | **9.10** | Convert stub WS endpoints → `CxfStubConfig.java`                          | ✅ DONE |           | ✅        |                                                                                                             |
-| **9.11** | Remove `application-context-ws.xml` and `application-context-ws-stub.xml` | ⬜ TODO |           |          |                                                                                                             |
+| **9.11** | Remove `application-context-ws.xml` and `application-context-ws-stub.xml` | ✅ DONE |           | ✅        | File was already empty; removed import from application-context.xml and deleted the file                    |
 | **9.12** | Remove `application-context.xml` + update `web.xml`                       | ⬜ TODO |           |          |                                                                                                             |
 | **9.13** | Convert `test-application-context.xml` → Java `@Configuration`            | ⬜ TODO |           |          |                                                                                                             |
 

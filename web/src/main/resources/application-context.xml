@@ -25,7 +25,6 @@
     http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
     http://cxf.apache.org/transports/http/configuration http://cxf.apache.org/schemas/configuration/http-conf.xsd">
 
-    <import resource="application-context-ws.xml"/>
 
     <context:annotation-config/>
     <context:component-scan base-package=
