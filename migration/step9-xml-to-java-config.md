@@ -19,7 +19,7 @@
 | **9.10** | Convert stub WS endpoints → `CxfStubConfig.java`                          | ✅ DONE |           | ✅        |                                                                                                                                                                       |
 | **9.11** | Remove `application-context-ws.xml` and `application-context-ws-stub.xml` | ✅ DONE |           | ✅        | File was already empty; removed import from application-context.xml and deleted the file                                                                              |
 | **9.12** | Remove `application-context.xml` + update `web.xml`                       | ✅ DONE |           | ✅        | Added missing packages to `ApplicationConfig.java` `@ComponentScan`; switched `web.xml` to `AnnotationConfigWebApplicationContext`; deleted `application-context.xml` |
-| **9.13** | Convert `test-application-context.xml` → Java `@Configuration`            | ⬜ TODO |           |          |                                                                                                                                                                       |
+| **9.13** | Convert `test-application-context.xml` → Java `@Configuration`            | ✅ DONE |           | ✅        | File was unused (no test referenced it); simply deleted                                                                                                               |
 
 **Deployment batches:**
 
