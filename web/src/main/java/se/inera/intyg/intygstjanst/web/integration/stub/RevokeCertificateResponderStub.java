@@ -22,7 +22,6 @@ import jakarta.xml.ws.WebServiceProvider;
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import se.inera.intyg.common.support.integration.converter.util.ResultTypeUtil;
 import se.inera.intyg.common.support.stub.MedicalCertificatesStore;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateResponderInterface;
@@ -35,8 +34,7 @@ public class RevokeCertificateResponderStub implements RevokeCertificateResponde
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RevokeCertificateResponderStub.class);
 
-    @Autowired
-    private MedicalCertificatesStore store;
+    private final MedicalCertificatesStore store = new MedicalCertificatesStore();
 
     @Override
     public RevokeCertificateResponseType revokeCertificate(String logicalAddress, RevokeCertificateType request) {

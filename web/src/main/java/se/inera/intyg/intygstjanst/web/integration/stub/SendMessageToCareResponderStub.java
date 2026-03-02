@@ -25,6 +25,7 @@ import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import se.inera.intyg.intygstjanst.web.integration.converter.ArendeConverter;
@@ -35,6 +36,7 @@ import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ResultType;
 
 @Component
+@Profile("it-fk-stub")
 @Transactional
 @SchemaValidation
 public class SendMessageToCareResponderStub implements SendMessageToCareResponderInterface {
