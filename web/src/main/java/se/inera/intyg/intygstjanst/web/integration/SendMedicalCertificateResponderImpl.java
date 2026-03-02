@@ -25,6 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.w3.wsaddressing10.AttributedURIType;
 import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.LakarutlatandeEnkelType;
 import se.inera.ifv.insuranceprocess.healthreporting.sendmedicalcertificate.rivtabp20.v1.SendMedicalCertificateResponderInterface;
@@ -51,6 +52,7 @@ import se.inera.intyg.intygstjanst.web.service.StatisticsService;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
 import se.inera.intyg.schemas.contract.Personnummer;
 
+@Service
 public class SendMedicalCertificateResponderImpl implements SendMedicalCertificateResponderInterface {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SendMedicalCertificateResponderImpl.class);

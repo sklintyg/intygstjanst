@@ -110,7 +110,6 @@ class RegisterCertificateResponderImplTest {
         lenient().when(textsService.isVersionSupported(INTYGSTYP.toLowerCase(), INTYGSVERSION)).thenReturn(true);
         lenient().when(moduleRegistry.getModuleIdFromExternalId(INTYGSTYP)).thenReturn(INTYGSTYP.toLowerCase());
         lenient().when(moduleApi.validateXml(anyString())).thenReturn(new ValidateXmlResponse(ValidationStatus.VALID, new ArrayList<>()));
-        responder.initializeJaxbContext();
     }
 
     @Test

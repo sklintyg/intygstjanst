@@ -25,6 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import se.inera.clinicalprocess.healthcond.certificate.v1.ErrorIdType;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v11.GetRecipientsForCertificateResponderInterface;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v11.GetRecipientsForCertificateResponseType;
@@ -40,6 +41,7 @@ import se.inera.intyg.intygstjanst.web.service.bean.CertificateType;
 import se.inera.intyg.intygstjanst.web.service.bean.CertificateTypeInfo;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
 
+@Service
 public class GetRecipientsForCertificateResponderImpl implements GetRecipientsForCertificateResponderInterface {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GetRecipientsForCertificateResponderImpl.class);

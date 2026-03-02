@@ -20,6 +20,7 @@ package se.inera.intyg.intygstjanst.web.integration;
 
 import org.apache.cxf.annotations.SchemaValidation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.getcertificatetypeinfo.v1.GetCertificateTypeInfoResponderInterface;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.getcertificatetypeinfo.v1.GetCertificateTypeInfoResponseType;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.getcertificatetypeinfo.v1.GetCertificateTypeInfoType;
@@ -32,6 +33,7 @@ import se.inera.intyg.intygstjanst.web.service.bean.CertificateTypeInfo;
 /**
  * Created by eriklupander on 2017-05-11.
  */
+@Service
 @SchemaValidation
 public class GetCertificateTypeInfoResponderImpl implements GetCertificateTypeInfoResponderInterface {
 

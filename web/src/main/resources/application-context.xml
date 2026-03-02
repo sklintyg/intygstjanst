@@ -27,7 +27,6 @@
 
     <import resource="application-context-ws.xml"/>
 
-
     <context:annotation-config/>
     <context:component-scan base-package=
         "se.inera.intyg.intygstjanst.config,

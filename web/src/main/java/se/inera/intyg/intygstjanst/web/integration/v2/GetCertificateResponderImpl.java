@@ -25,6 +25,7 @@ import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import se.inera.intyg.common.fkparent.model.converter.CertificateStateHolderConverter;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.model.common.internal.Utlatande;
@@ -44,6 +45,7 @@ import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.Regi
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.Part;
 import se.riv.clinicalprocess.healthcond.certificate.v3.Intyg;
 
+@Service
 @SchemaValidation
 public class GetCertificateResponderImpl implements GetCertificateResponderInterface {
 

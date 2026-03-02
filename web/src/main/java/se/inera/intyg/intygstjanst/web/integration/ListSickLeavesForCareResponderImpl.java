@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.annotations.SchemaValidation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import se.inera.intyg.infra.sjukfall.dto.IntygData;
 import se.inera.intyg.infra.sjukfall.dto.IntygParametrar;
 import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
@@ -46,6 +47,7 @@ import se.riv.clinicalprocess.healthcond.certificate.types.v3.HsaId;
 /**
  * Created by eriklupander on 2017-02-15.
  */
+@Service
 @SchemaValidation
 public class ListSickLeavesForCareResponderImpl implements ListSickLeavesForCareResponderInterface {
 

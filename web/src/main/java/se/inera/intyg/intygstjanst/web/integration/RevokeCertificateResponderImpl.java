@@ -23,6 +23,7 @@ import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import se.inera.intyg.common.support.integration.converter.util.ResultTypeUtil;
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
@@ -46,6 +47,7 @@ import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.Revoke
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateType;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ErrorIdType;
 
+@Service
 @Transactional
 @SchemaValidation
 public class RevokeCertificateResponderImpl implements RevokeCertificateResponderInterface {

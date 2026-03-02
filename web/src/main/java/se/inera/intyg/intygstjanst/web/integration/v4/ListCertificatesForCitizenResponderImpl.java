@@ -26,6 +26,7 @@ import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import se.inera.intyg.common.fkparent.model.converter.CertificateStateHolderConverter;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistryImpl;
 import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
@@ -49,6 +50,7 @@ import se.riv.clinicalprocess.healthcond.certificate.listCertificatesForCitizen.
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.TypAvIntyg;
 import se.riv.clinicalprocess.healthcond.certificate.v3.Intyg;
 
+@Service
 @SchemaValidation(type = SchemaValidation.SchemaValidationType.IN)
 public class ListCertificatesForCitizenResponderImpl implements ListCertificatesForCitizenResponderInterface {
 
