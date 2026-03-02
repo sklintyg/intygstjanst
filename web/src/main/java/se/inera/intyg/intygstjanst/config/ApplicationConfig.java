@@ -60,7 +60,6 @@ import se.inera.intyg.infra.sjukfall.services.SjukfallEngineServiceImpl;
 @PropertySource("classpath:application.properties")
 @PropertySource(ignoreResourceNotFound = true, value = "file:${dev.config.file}")
 @ImportResource({
-    "classpath:META-INF/cxf/cxf.xml",
     "classpath:common-config.xml",
     "classpath*:module-config.xml",
     "classpath*:it-module-cxf-servlet.xml"
