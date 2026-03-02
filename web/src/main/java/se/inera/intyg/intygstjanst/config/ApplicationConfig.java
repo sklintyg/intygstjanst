@@ -66,6 +66,12 @@ import se.inera.intyg.infra.sjukfall.services.SjukfallEngineServiceImpl;
     "classpath*:it-module-cxf-servlet.xml"
 })
 @ComponentScan(basePackages = {
+    "se.inera.intyg.intygstjanst.config",
+    "se.inera.intyg.intygstjanst.logging",
+    "se.inera.intyg.intygstjanst.persistence",
+    "se.inera.intyg.intygstjanst.web",
+    "se.inera.intyg.infra.integration.intygproxyservice",
+    "se.inera.intyg.infra.pu.integration.intygproxyservice",
     "se.inera.intyg.common.support.modules.support.api",
     "se.inera.intyg.common.services",
     "se.inera.intyg.common.support.services",
