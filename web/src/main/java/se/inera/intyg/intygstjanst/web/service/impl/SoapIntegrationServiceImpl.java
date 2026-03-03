@@ -55,6 +55,7 @@ public class SoapIntegrationServiceImpl implements SoapIntegrationService {
     private RevokeCertificateResponderInterface revokeCertificateResponder;
 
     @Autowired
+    @Qualifier("revokeMedicalCertificateClient")
     private RevokeMedicalCertificateResponderInterface revokeMedicalCertificateResponder;
 
     @Autowired

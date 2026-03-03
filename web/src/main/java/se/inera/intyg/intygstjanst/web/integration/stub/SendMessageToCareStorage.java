@@ -24,9 +24,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
+@Profile("it-fk-stub")
 public class SendMessageToCareStorage {
 
     private Map<MessageKey, String> messages = new ConcurrentHashMap<>();

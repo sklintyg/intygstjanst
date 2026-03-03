@@ -22,6 +22,7 @@ import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.w3.wsaddressing10.AttributedURIType;
 import se.inera.ifv.insuranceprocess.healthreporting.setcertificatestatus.rivtabp20.v1.SetCertificateStatusResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.setcertificatestatusresponder.v1.SetCertificateStatusRequestType;
@@ -41,6 +42,7 @@ import se.inera.intyg.schemas.contract.Personnummer;
 /**
  * @author andreaskaltenbach
  */
+@Service("setCertificateStatusResponderV1")
 @SchemaValidation
 public class SetCertificateStatusResponderImpl implements SetCertificateStatusResponderInterface {
 

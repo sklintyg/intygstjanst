@@ -20,7 +20,6 @@ package se.inera.intyg.intygstjanst.web.integration;
 
 import static se.inera.intyg.intygstjanst.logging.LogMarkers.VALIDATION;
 
-import jakarta.annotation.PostConstruct;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.JAXBException;
@@ -31,6 +30,7 @@ import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.w3._2000._09.xmldsig_.SignatureType;
 import org.w3._2002._06.xmldsig_filter2.XPathType;
 import se.inera.intyg.common.services.texts.IntygTextsService;
@@ -59,12 +59,13 @@ import se.riv.clinicalprocess.healthcond.certificate.types.v3.PQType;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.PartialDateType;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ErrorIdType;
 
+@Service("registerCertificateResponderImpl")
 @SchemaValidation
 public class RegisterCertificateResponderImpl implements RegisterCertificateResponderInterface {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RegisterCertificateResponderImpl.class);
 
-    private ObjectFactory objectFactory;
+    private ObjectFactory objectFactory = new ObjectFactory();
     private JAXBContext jaxbContext;
     @Autowired
     private CertificateHolderConverter certificateHolderConverter;
@@ -81,16 +82,22 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
     @Autowired
     private PUService puService;
 
-    @PostConstruct
-    public void initializeJaxbContext() throws JAXBException {
-        // We need to register DatePeriodType with the JAXBContext explicitly for some reason.
-        jaxbContext = JAXBContext.newInstance(RegisterCertificateType.class, DatePeriodType.class, SignatureType.class,
-            XPathType.class, PartialDateType.class, PQType.class);
-        objectFactory = new ObjectFactory();
+    public RegisterCertificateResponderImpl() {
+        try {
+            jaxbContext = JAXBContext.newInstance(
+                RegisterCertificateType.class,
+                DatePeriodType.class,
+                SignatureType.class,
+                XPathType.class,
+                PartialDateType.class,
+                PQType.class
+            );
+        } catch (JAXBException e) {
+            throw new RuntimeException("Failed to initialize JAXBContext", e);
+        }
     }
 
     @Override
-
     @PerformanceLogging(eventAction = "register-certificate", eventType = MdcLogConstants.EVENT_TYPE_CREATION)
     public RegisterCertificateResponseType registerCertificate(String logicalAddress, RegisterCertificateType registerCertificate) {
         try {

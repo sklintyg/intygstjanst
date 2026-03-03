@@ -21,6 +21,7 @@ package se.inera.intyg.intygstjanst.web.integration.vardensintyg;
 import com.google.common.base.Strings;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import se.inera.clinicalprocess.healthcond.certificate.receiver.types.v1.CertificateReceiverType;
 import se.inera.clinicalprocess.healthcond.certificate.receiver.types.v1.CertificateReceiverTypeType;
 import se.inera.clinicalprocess.healthcond.certificate.types.v3.TypAvIntyg;
@@ -32,6 +33,7 @@ import se.inera.intyg.intygstjanst.web.service.bean.CertificateRecipientType;
 import se.inera.intyg.intygstjanst.web.service.bean.CertificateType;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
 
+@Service
 public class ListPossibleReceiversResponderImpl implements ListPossibleReceiversResponderInterface {
 
     @Autowired

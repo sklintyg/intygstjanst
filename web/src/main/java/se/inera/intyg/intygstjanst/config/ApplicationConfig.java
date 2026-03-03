@@ -32,7 +32,9 @@ import org.slf4j.bridge.SLF4JBridgeHandler;
 import org.slf4j.event.Level;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
@@ -44,17 +46,36 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.TransactionManagementConfigurer;
+import se.inera.intyg.common.support.modules.registry.IntygModuleRegistryImpl;
+import se.inera.intyg.common.support.modules.support.ApplicationOrigin;
 import se.inera.intyg.infra.security.filter.InternalApiFilter;
 import se.inera.intyg.infra.sjukfall.services.SjukfallEngineService;
 import se.inera.intyg.infra.sjukfall.services.SjukfallEngineServiceImpl;
 
 @Configuration
+@EnableCaching
 @EnableTransactionManagement
 @EnableAspectJAutoProxy
 @DependsOn("transactionManager")
 @PropertySource("classpath:application.properties")
 @PropertySource(ignoreResourceNotFound = true, value = "file:${dev.config.file}")
-@ImportResource({"classpath:META-INF/cxf/cxf.xml"})
+@ImportResource({
+    "classpath:common-config.xml",
+    "classpath*:module-config.xml",
+    "classpath*:it-module-cxf-servlet.xml"
+})
+@ComponentScan(basePackages = {
+    "se.inera.intyg.intygstjanst.config",
+    "se.inera.intyg.intygstjanst.logging",
+    "se.inera.intyg.intygstjanst.persistence",
+    "se.inera.intyg.intygstjanst.web",
+    "se.inera.intyg.infra.integration.intygproxyservice",
+    "se.inera.intyg.infra.pu.integration.intygproxyservice",
+    "se.inera.intyg.common.support.modules.support.api",
+    "se.inera.intyg.common.services",
+    "se.inera.intyg.common.support.services",
+    "se.inera.intyg.common.util.integration.json"
+})
 public class ApplicationConfig implements TransactionManagementConfigurer {
 
     @Autowired
@@ -126,5 +147,13 @@ public class ApplicationConfig implements TransactionManagementConfigurer {
     @Bean
     public InternalApiFilter internalApiFilter() {
         return new InternalApiFilter();
+    }
+
+    @Bean
+    @DependsOn("dbUpdate")
+    public IntygModuleRegistryImpl moduleRegistry() {
+        final var registry = new IntygModuleRegistryImpl();
+        registry.setOrigin(ApplicationOrigin.INTYGSTJANST);
+        return registry;
     }
 }

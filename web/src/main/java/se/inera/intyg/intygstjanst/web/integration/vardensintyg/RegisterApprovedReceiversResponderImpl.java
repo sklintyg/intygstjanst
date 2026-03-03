@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import se.inera.clinicalprocess.healthcond.certificate.receiver.types.v1.ApprovalStatusType;
 import se.inera.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
 import se.inera.clinicalprocess.healthcond.certificate.v3.ResultType;
@@ -40,6 +41,7 @@ import se.inera.intyg.intygstjanst.web.service.bean.CertificateRecipientType;
 import se.inera.intyg.intygstjanst.web.service.bean.CertificateType;
 import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
 
+@Service
 public class RegisterApprovedReceiversResponderImpl implements RegisterApprovedReceiversResponderInterface {
 
     private static final Logger LOG = LoggerFactory.getLogger(RegisterApprovedReceiversResponderImpl.class);

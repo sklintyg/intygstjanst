@@ -26,6 +26,7 @@ import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import se.inera.intyg.common.support.integration.converter.util.ResultTypeUtil;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
@@ -42,6 +43,7 @@ import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.S
 import se.riv.clinicalprocess.healthcond.certificate.v3.ErrorIdType;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
 
+@Service
 @SchemaValidation
 public class SendMessageToRecipientResponderImpl implements SendMessageToRecipientResponderInterface {
 

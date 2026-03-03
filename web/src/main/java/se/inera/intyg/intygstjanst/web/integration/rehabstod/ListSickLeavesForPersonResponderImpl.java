@@ -22,6 +22,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listsickleavesforperson.v1.ListSickLeavesForPersonResponderInterface;
 import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listsickleavesforperson.v1.ListSickLeavesForPersonResponseType;
 import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listsickleavesforperson.v1.ListSickLeavesForPersonType;
@@ -37,6 +38,7 @@ import se.riv.clinicalprocess.healthcond.rehabilitation.v1.IntygsLista;
 /**
  * @author Magnus Ekstrand on 2018-10-23.
  */
+@Service
 public class ListSickLeavesForPersonResponderImpl implements ListSickLeavesForPersonResponderInterface {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ListSickLeavesForPersonResponderImpl.class);

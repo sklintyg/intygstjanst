@@ -23,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.cxf.annotations.SchemaValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 import se.inera.intyg.common.support.integration.converter.util.ResultTypeUtil;
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
@@ -42,6 +43,7 @@ import se.riv.clinicalprocess.healthcond.certificate.sendCertificateToRecipient.
 import se.riv.clinicalprocess.healthcond.certificate.sendCertificateToRecipient.v2.SendCertificateToRecipientType;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ErrorIdType;
 
+@Service
 @SchemaValidation
 @RequiredArgsConstructor
 public class SendCertificateToRecipientResponderImpl implements SendCertificateToRecipientResponderInterface {
@@ -52,7 +54,6 @@ public class SendCertificateToRecipientResponderImpl implements SendCertificateT
     private final HashUtility hashUtility;
 
     @Override
-
     @PerformanceLogging(eventAction = "send-certificate", eventType = MdcLogConstants.EVENT_TYPE_CHANGE)
     public SendCertificateToRecipientResponseType sendCertificateToRecipient(
         final String logicalAddress, final SendCertificateToRecipientType request) {

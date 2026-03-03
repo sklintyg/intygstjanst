@@ -20,6 +20,7 @@ package se.inera.intyg.intygstjanst.web.integration;
 
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.w3.wsaddressing10.AttributedURIType;
 import se.inera.ifv.insuranceprocess.healthreporting.listcertificates.rivtabp20.v1.ListCertificatesResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.listcertificatesresponder.v1.ListCertificatesRequestType;
@@ -36,6 +37,7 @@ import se.inera.intyg.schemas.contract.Personnummer;
 /**
  * @author andreaskaltenbach
  */
+@Service
 public class ListCertificatesResponderImpl implements ListCertificatesResponderInterface {
 
     @Autowired

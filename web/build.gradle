@@ -84,6 +84,7 @@ dependencies {
     implementation "org.apache.activemq:activemq-spring"
     implementation "org.apache.cxf:cxf-rt-features-logging"
     implementation "org.apache.cxf:cxf-rt-frontend-jaxws"
+    implementation "org.apache.cxf:cxf-rt-transports-http"
     implementation "org.aspectj:aspectjweaver"
     implementation "org.slf4j:jul-to-slf4j"
     implementation "org.springframework:spring-jms"
