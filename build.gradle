@@ -6,11 +6,12 @@ plugins {
 }
 
 ext {
-    commonVersion = System.properties['commonVersion'] ?: '4.2.0-SNAPSHOT'
+    commonVersion = System.properties['commonVersion'] ?: '4.3.0-SNAPSHOT'
     refDataVersion = '2.0.22'
 
     intygHealthcondRehabilitationSchemasVersion = "1.2.0.1"
     intygClinicalprocessSchemasVersion = "1.1.0.1"
+    intygTransportstyrelsenSchemasVersion = "1.1.0.1"
     rivtaClinicalprocessSchemasVersion = "4.0.5.4"
     rivtaInsuranceprocessSchemasVersion = "3.1.0.5.3"
     schemasContractVersion = "2.2.0.1"
