@@ -38,7 +38,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -54,8 +53,6 @@ import se.inera.intyg.infra.sjukfall.services.SjukfallEngineServiceImpl;
 @EnableCaching
 @EnableTransactionManagement
 @EnableAspectJAutoProxy
-@PropertySource("classpath:application.properties")
-@PropertySource(ignoreResourceNotFound = true, value = "file:${dev.config.file}")
 public class ApplicationConfig implements TransactionManagementConfigurer {
 
     @Autowired

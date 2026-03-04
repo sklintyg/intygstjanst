@@ -14,7 +14,7 @@
 | **10.5**  | Register filters via `FilterRegistrationBean`                   | ✅ DONE |           | ✅        |       |
 | **10.6**  | Adapt `WebMvcConfig` — remove `@EnableWebMvc`                   | ✅ DONE |           | ✅        |       |
 | **10.7**  | Move/adapt `application.properties` for Spring Boot conventions | ✅ DONE |           | ✅        |       |
-| **10.8**  | Remove `web.xml`, `version.jsp`, `webapp/` directory            | ⬜ TODO |           |          |       |
+| **10.8**  | Remove `web.xml`, `version.jsp`, `webapp/` directory            | ✅ DONE |           | ✅        |       |
 | **10.9**  | Switch from `war`/Gretty plugin to Spring Boot `jar`            | ⬜ TODO |           |          |       |
 | **10.10** | Final verification — `./gradlew bootRun` + `./gradlew test`     | ⬜ TODO |           |          |       |
 
