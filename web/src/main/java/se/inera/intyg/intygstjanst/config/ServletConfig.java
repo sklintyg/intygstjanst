@@ -24,6 +24,7 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.web.servlet.DispatcherServlet;
 import se.inera.intyg.infra.security.filter.InternalApiFilter;
 import se.inera.intyg.intygstjanst.logging.MdcServletFilter;
@@ -69,6 +70,20 @@ public class ServletConfig {
         final var registration = new ServletRegistrationBean<>(new CXFServlet(), "/*");
         registration.setName("cxf");
         registration.setLoadOnStartup(1);
+        return registration;
+    }
+
+    /**
+     * Port-8080 allowlist filter — MUST run first so it can block before any business logic.
+     * The management server is a separate TomcatWebServer and never calls this chain.
+     */
+    @Bean
+    public FilterRegistrationBean<PublicApiAllowlistFilter> publicApiAllowlistFilterRegistration(
+        PublicApiAllowlistFilter filter) {
+        final var registration = new FilterRegistrationBean<>(filter);
+        registration.addUrlPatterns("/*");
+        registration.setOrder(Ordered.HIGHEST_PRECEDENCE);
+        registration.setName("publicApiAllowlistFilter");
         return registration;
     }
 

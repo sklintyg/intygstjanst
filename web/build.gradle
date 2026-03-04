@@ -49,6 +49,7 @@ dependencies {
     runtimeOnly project(':integration-intyg-proxy-service')
 
     implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation 'org.apache.tomcat.embed:tomcat-embed-core'
     
     implementation "se.inera.intyg.clinicalprocess.healthcond.certificate:intyg-clinicalprocess-healthcond-certificate-schemas:${intygClinicalprocessSchemasVersion}"
     implementation "se.inera.intyg.clinicalprocess.healthcond.rehabilitation:intyg-clinicalprocess-healthcond-rehabilitation-schemas:${intygHealthcondRehabilitationSchemasVersion}"
