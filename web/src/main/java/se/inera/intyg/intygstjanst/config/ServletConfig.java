@@ -84,29 +84,12 @@ public class ServletConfig {
         return registration;
     }
 
-    /**
-     * Port-8080 allowlist filter — MUST run first so it can block before any business logic.
-     * The management server is a separate TomcatWebServer and never calls this chain.
-     */
-    @Bean
-    public FilterRegistrationBean<PublicApiAllowlistFilter> publicApiAllowlistFilterRegistration(
-        PublicApiAllowlistFilter filter) {
-        final var registration = new FilterRegistrationBean<>(filter);
-        registration.addUrlPatterns("/*");
-        registration.setOrder(Ordered.HIGHEST_PRECEDENCE);
-        registration.setName("publicApiAllowlistFilter");
-        return registration;
-    }
-
-    /**
-     * Registers {@link InternalApiFilter} at {@code /internalapi/*}, matching {@code web.xml}.
-     * The filter allows requests only when they arrive on the internal API port.
-     */
     @Bean
     public FilterRegistrationBean<InternalApiFilter> internalApiFilterRegistration(InternalApiFilter internalApiFilter) {
         final var registration = new FilterRegistrationBean<>(internalApiFilter);
         registration.addUrlPatterns("/internalapi/*");
-        registration.setOrder(1);
+        registration.setOrder(Ordered.HIGHEST_PRECEDENCE + 1);
+        registration.setName("internalApiFilter");
         return registration;
     }
 

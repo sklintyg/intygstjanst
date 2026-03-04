@@ -51,13 +51,11 @@ public class HsaServiceImpl implements HsaService {
     private static final Logger LOG = LoggerFactory.getLogger(HsaServiceImpl.class);
 
     @Override
-
     public List<String> getHsaIdForUnderenheter(String careUnitHsaId) {
         return hsaOrganizationsService.getHsaIdForAktivaUnderenheter(careUnitHsaId);
     }
 
     @Override
-
     public String getHsaIdForVardgivare(String careUnitHsaId) {
         return hsaOrganizationsService.getVardgivareOfVardenhet(careUnitHsaId);
     }
