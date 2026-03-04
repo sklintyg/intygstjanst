@@ -12,7 +12,7 @@
 | **10.3**  | Adapt `ApplicationConfig` for Spring Boot coexistence           | ✅ DONE |           | ✅        |       |
 | **10.4**  | Register CXF servlet via `ServletRegistrationBean`              | ✅ DONE |           | ✅        |       |
 | **10.5**  | Register filters via `FilterRegistrationBean`                   | ✅ DONE |           | ✅        |       |
-| **10.6**  | Adapt `WebMvcConfig` — remove `@EnableWebMvc`                   | ⬜ TODO |           |          |       |
+| **10.6**  | Adapt `WebMvcConfig` — remove `@EnableWebMvc`                   | ✅ DONE |           | ✅        |       |
 | **10.7**  | Move/adapt `application.properties` for Spring Boot conventions | ⬜ TODO |           |          |       |
 | **10.8**  | Remove `web.xml`, `version.jsp`, `webapp/` directory            | ⬜ TODO |           |          |       |
 | **10.9**  | Switch from `war`/Gretty plugin to Spring Boot `jar`            | ⬜ TODO |           |          |       |
@@ -354,7 +354,7 @@ at `/*` which catches everything else (= SOAP). This is **exactly** what `web.xm
    **URL verification (all unchanged):**
 
    | Type         | Current URL                                                              | After Spring Boot                                                         |
-                           |--------------|--------------------------------------------------------------------------|---------------------------------------------------------------------------|
+                              |--------------|--------------------------------------------------------------------------|---------------------------------------------------------------------------|
    | SOAP         | `http://localhost:8080/inera-certificate/get-certificate-se/v2.0`        | `http://localhost:8080/inera-certificate/get-certificate-se/v2.0` ✅       |
    | SOAP stub    | `http://localhost:8080/inera-certificate/stubs/.../SendMessageToCare/...` | `http://localhost:8080/inera-certificate/stubs/.../SendMessageToCare/...` ✅ |
    | REST (int)   | `http://localhost:8180/inera-certificate/internalapi/v1/certificatetexts` | `http://localhost:8180/inera-certificate/internalapi/v1/certificatetexts` ✅ |
