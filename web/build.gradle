@@ -58,8 +58,6 @@ dependencies {
     implementation "commons-io:commons-io"
     implementation "io.prometheus:simpleclient_servlet"
     implementation "jakarta.transaction:jakarta.transaction-api"
-    implementation "net.javacrumbs.shedlock:shedlock-spring"
-    implementation "net.javacrumbs.shedlock:shedlock-provider-redis-spring"
     implementation "org.antlr:ST4"
     implementation "org.apache.activemq:activemq-spring"
     implementation "org.apache.cxf:cxf-rt-features-logging"

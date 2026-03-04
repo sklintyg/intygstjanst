@@ -95,7 +95,7 @@ public class BasicCacheConfiguration {
         return new RedisCacheOptionsSetter();
     }
 
-    @Bean(name = "rediscache")
+    @Bean
     RedisTemplate<Object, Object> redisTemplate() {
         RedisTemplate<Object, Object> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(jedisConnectionFactory());

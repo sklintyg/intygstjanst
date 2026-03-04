@@ -20,6 +20,7 @@ package se.inera.intyg.intygstjanst.config;
 
 import org.apache.cxf.transport.servlet.CXFServlet;
 import org.springframework.boot.autoconfigure.web.servlet.DispatcherServletAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.DispatcherServletPath;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -44,6 +45,16 @@ import se.inera.intyg.intygstjanst.logging.MdcServletFilter;
  */
 @Configuration
 public class ServletConfig {
+
+    /**
+     * Provides the {@link DispatcherServletPath} bean required by {@code ErrorMvcAutoConfiguration}.
+     * Since we register DispatcherServlet with explicit sub-paths (not at "/"), we must supply
+     * this bean manually.
+     */
+    @Bean
+    public DispatcherServletPath dispatcherServletPath() {
+        return () -> "/";
+    }
 
     /**
      * Overrides Spring Boot's default DispatcherServlet registration (which maps to {@code /}).
