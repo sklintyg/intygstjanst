@@ -354,7 +354,7 @@ at `/*` which catches everything else (= SOAP). This is **exactly** what `web.xm
    **URL verification (all unchanged):**
 
    | Type         | Current URL                                                              | After Spring Boot                                                         |
-                              |--------------|--------------------------------------------------------------------------|---------------------------------------------------------------------------|
+                                 |--------------|--------------------------------------------------------------------------|---------------------------------------------------------------------------|
    | SOAP         | `http://localhost:8080/inera-certificate/get-certificate-se/v2.0`        | `http://localhost:8080/inera-certificate/get-certificate-se/v2.0` ✅       |
    | SOAP stub    | `http://localhost:8080/inera-certificate/stubs/.../SendMessageToCare/...` | `http://localhost:8080/inera-certificate/stubs/.../SendMessageToCare/...` ✅ |
    | REST (int)   | `http://localhost:8180/inera-certificate/internalapi/v1/certificatetexts` | `http://localhost:8180/inera-certificate/internalapi/v1/certificatetexts` ✅ |
@@ -469,103 +469,533 @@ still works correctly.
 ## Step 10.7 — Move/Adapt `application.properties` for Spring Boot Conventions
 
 **What:** Add Spring Boot-specific properties to `application.properties` without breaking the existing property setup.
+Wire up the three-port topology (8080 = public/SOAP, 8081 = internal REST, 8082 = Actuator), add a logback configuration
+on the classpath, and implement an allowlist filter that enforces which paths are reachable on port 8080.
+
 The existing properties (`db.*`, `hibernate.*`, `activemq.*`, etc.) continue to work because `JpaConfigBase`, `JmsConfig`,
 etc. use `@Value` to read them.
 
-**Changes:**
+---
 
-1. **`web/src/main/resources/application.properties`** — Add Spring Boot properties at the top:
+### Current URL taxonomy (verified against codebase)
 
-   ```properties
-   # Spring Boot server configuration
-   server.port=${dev.http.port:8080}
-   server.servlet.context-path=/inera-certificate
-   
-   # Logback configuration (replaces LogbackConfiguratorContextListener)
-   logging.config=${logback.file:classpath:logback-spring.xml}
-   
-   # Disable Spring Boot auto-config for things we configure manually
-   spring.autoconfigure.exclude=\
-     org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration,\
-     org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration,\
-     org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration,\
-     org.springframework.boot.autoconfigure.jms.activemq.ActiveMQAutoConfiguration,\
-     org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
-   ```
+| Port                | Servlet                              | Path prefix                | Controllers / Purpose                                                                                                                                                                                                                                                                                                             |
+|---------------------|--------------------------------------|----------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **8080** (main)     | CXFServlet (`/*` catch-all)          | anything not matched below | All SOAP endpoints — e.g. `/get-recipients-for-certificate/v1.1`, `/list-known-recipients/v1.0`, `/send-message-to-care/v2.0`, …                                                                                                                                                                                                  |
+| **8080**            | DispatcherServlet (`/api/*`)         | `/api/`                    | `SendMessageToCareResponderStubRestApi` → `/api/send-message-to-care/…` *(public REST)*                                                                                                                                                                                                                                           |
+| **8080**            | DispatcherServlet (`/resources/*`)   | `/resources/`              | `CertificateResource`, `SjukfallCertResource`, `StatisticsServiceResource`, `FkStubResource` *(test/testability)*                                                                                                                                                                                                                 |
+| **8081** (internal) | DispatcherServlet (`/internalapi/*`) | `/internalapi/`            | `CertificateListController` (`/certificatelist`), `TypedCertificateController` (`/typedcertificate`), `IntygInfoController` (`/intygInfo`), `SickLeaveController` (`/sickleave`), `RekoController` (`/reko`), `MessageController` (`/message`), `CitizenCertificateController` (`/citizen`), `CertificateExportController` (`v1`) |
+| **8082** (actuator) | Spring Boot management server        | `/actuator/`               | Health, info, readiness/liveness probes — managed separately by `management.server.port`                                                                                                                                                                                                                                          |
 
-   **Note:** The `spring.autoconfigure.exclude` in `application.properties` is redundant with `@SpringBootApplication(exclude = ...)`
-   but serves as a safety net and documentation. You can choose one or the other — using `application.properties` is preferred
-   because it's more visible and doesn't require code changes in Step 11 when you enable auto-config.
+> **Note on CXF path:** CXF endpoints are published **relative to the CXFServlet's context root**, which is `/*`.
+> Because `/api/*`, `/internalapi/*`, and `/resources/*` are more-specific servlet mappings, those go to
+> DispatcherServlet. Every other path (SOAP) falls through to CXFServlet.
+> The `cxf.path` property (Spring Boot CXF starter) is **not** used here — we rely on the existing
+> `ServletRegistrationBean` at `/*` from Step 10.4. No change to `CxfEndpointConfig` is needed.
 
-2. **Create** `web/src/main/resources/logback-spring.xml` — A Spring Boot-compatible logback config:
+---
 
-   ```xml
-   <?xml version="1.0" encoding="UTF-8" ?>
-   <configuration scan="true" scanPeriod="15 seconds">
-       <property name="APP_NAME" value="${APP_NAME:-intygstjanst}"/>
-   
-       <logger name="org.apache.cxf.phase.PhaseInterceptorChain" level="ERROR"/>
-       
-       <include resource="logback/logback-spring-base.xml"/>
-   
-       <root level="INFO">
-           <appender-ref ref="CONSOLE"/>
-       </root>
-   </configuration>
-   ```
+### Changes
 
-   This is essentially the same as `devops/dev/config/logback-spring.xml` but placed on the classpath so Spring Boot finds it
-   automatically.
+#### 1 — `web/src/main/resources/application.properties` — add Spring Boot properties
 
-3. **Create** `web/src/main/resources/application-dev.properties` — Spring Boot profile-specific properties for dev:
+Add the following block **at the top**, before the existing properties:
 
-   ```properties
-   # Dev profile overrides — loaded automatically by Spring Boot when profile 'dev' is active
-   # Import the external dev config file
-   spring.config.import=optional:file:${application.dir}/config/application-dev.properties
-   ```
+```properties
+# ============================================================
+# Spring Boot server configuration
+# ============================================================
+server.port=8080
+server.servlet.context-path=/inera-certificate
 
-   **Alternative:** Instead of `spring.config.import`, use `spring.config.additional-location` as a JVM arg. This is simpler
-   but less self-documenting.
+# Internal REST port (extra Tomcat connector — see TomcatConfig.java)
+internal.api.port=8081
 
-4. **Dual-port Tomcat configuration** — The current setup uses two Tomcat connectors (main port + internal API port).
-   Under Spring Boot embedded Tomcat, this requires a `WebServerFactoryCustomizer`:
+# Spring Boot Actuator (management) — completely separate port, not affected by any filter
+management.server.port=8082
+management.endpoints.web.exposure.include=health,info
+management.endpoint.health.probes.enabled=true
+management.endpoint.health.show-details=always
 
-   **Create** `web/src/main/java/se/inera/intyg/intygstjanst/config/TomcatConfig.java`:
+# Logback configuration (replaces LogbackConfiguratorContextListener)
+logging.config=${logback.file:classpath:logback-spring.xml}
 
-   ```java
-   package se.inera.intyg.intygstjanst.config;
+# ============================================================
+# Disable Spring Boot auto-config for things we configure manually.
+# Redundant with @SpringBootApplication(exclude=…) but kept here
+# as visible documentation and for safety.
+# ============================================================
+spring.autoconfigure.exclude=\
+  org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration,\
+  org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration,\
+  org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration,\
+  org.springframework.boot.autoconfigure.jms.activemq.ActiveMQAutoConfiguration,\
+  org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
 
-   import org.apache.catalina.connector.Connector;
-   import org.springframework.beans.factory.annotation.Value;
-   import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
-   import org.springframework.boot.web.server.WebServerFactoryCustomizer;
-   import org.springframework.context.annotation.Bean;
-   import org.springframework.context.annotation.Configuration;
+# ============================================================
+# Port-8080 allowlist filter — configure allowed path prefixes
+# (read by PublicApiAllowlistFilter; see below)
+# ============================================================
+# SOAP: CXF endpoints are at /* so all non-REST paths on 8080 are SOAP.
+# We do NOT enumerate individual SOAP paths here — the filter allows
+# everything that does NOT start with /internalapi/, /api/, or /resources/.
+# Instead we declare only the public REST + optional extras below.
+public.api.allowlist.prefixes=/api/,/resources/,/error,/actuator
+```
 
-   @Configuration
-   public class TomcatConfig {
+**Key decisions:**
 
-       @Value("${internal.api.port:8081}")
-       private int internalApiPort;
+- `server.port=8080` — explicit, not derived from a system property (`dev.http.port` was a Gretty-specific convention; under
+  Spring Boot the property is `server.port`). Override via `-Dserver.port=…` or env var `SERVER_PORT` if needed.
+- `internal.api.port=8081` — keeps the existing property name so no other config changes are required.
+- `management.server.port=8082` — Spring Boot puts the actuator on a fully separate `TomcatWebServer` instance on this port.
+  It is **not** affected by the allowlist filter running on the main (8080) `TomcatWebServer`.
+- `public.api.allowlist.prefixes` — a comma-separated list read by `PublicApiAllowlistFilter` (created below). Adjust freely
+  without code changes.
 
-       @Bean
-       public WebServerFactoryCustomizer<TomcatServletWebServerFactory> multiPortCustomizer() {
-           return factory -> {
-               final var connector = new Connector(TomcatServletWebServerFactory.DEFAULT_PROTOCOL);
-               connector.setPort(internalApiPort);
-               factory.addAdditionalTomcatConnectors(connector);
-           };
-       }
-   }
-   ```
+---
 
-**Verify:**
+#### 2 — `web/src/main/resources/logback-spring.xml` — classpath logback config
+
+Create this file so Spring Boot can find it automatically (`logging.config=classpath:logback-spring.xml`):
+
+```xml
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration scan="true" scanPeriod="15 seconds">
+	<property name="APP_NAME" value="${APP_NAME:-intygstjanst}"/>
+
+	<logger name="org.apache.cxf.phase.PhaseInterceptorChain" level="ERROR"/>
+
+	<include resource="logback/logback-spring-base.xml"/>
+
+	<root level="INFO">
+		<appender-ref ref="CONSOLE"/>
+	</root>
+</configuration>
+```
+
+This mirrors `devops/dev/config/logback-spring.xml` but lives on the classpath as the default.
+The existing `-Dlogback.file=…` JVM arg still overrides it via `logging.config=${logback.file:classpath:logback-spring.xml}`.
+
+---
+
+#### 3 — `web/src/main/resources/application-dev.properties` — dev profile overrides
+
+```properties
+# Dev profile overrides — loaded automatically by Spring Boot when 'dev' profile is active.
+# Pulls in the external dev config file (mirrors current dev.config.file pattern).
+spring.config.import=optional:file:${application.dir}/config/application-dev.properties
+```
+
+---
+
+#### 4 — Create `TomcatConfig.java` — dual-port embedded Tomcat
+
+**Create** `web/src/main/java/se/inera/intyg/intygstjanst/config/TomcatConfig.java`:
+
+```java
+package se.inera.intyg.intygstjanst.config;
+
+import org.apache.catalina.connector.Connector;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
+import org.springframework.boot.web.server.WebServerFactoryCustomizer;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+/**
+ * Adds a second embedded Tomcat connector on {@code internal.api.port} (default 8081).
+ *
+ * <p>This replicates the two-connector setup from {@code tomcat-gretty.xml}.
+ * The existing {@link se.inera.intyg.infra.security.filter.InternalApiFilter} checks
+ * {@code request.getLocalPort()} and blocks requests from the wrong port — that
+ * behaviour is unchanged.</p>
+ *
+ * <p>Spring Boot's management server runs on {@code management.server.port} (8082) as a
+ * completely separate {@code TomcatWebServer} instance managed by
+ * {@code ManagementServerConfiguration} — it does NOT go through this customizer.</p>
+ */
+@Configuration
+public class TomcatConfig {
+
+    @Value("${internal.api.port:8081}")
+    private int internalApiPort;
+
+    @Bean
+    public WebServerFactoryCustomizer<TomcatServletWebServerFactory> internalApiConnectorCustomizer() {
+        return factory -> {
+            final var connector = new Connector(TomcatServletWebServerFactory.DEFAULT_PROTOCOL);
+            connector.setPort(internalApiPort);
+            factory.addAdditionalTomcatConnectors(connector);
+        };
+    }
+}
+```
+
+**Why `WebServerFactoryCustomizer<TomcatServletWebServerFactory>` and not `TomcatEmbeddedServletContainerFactory`:**
+`TomcatServletWebServerFactory` is the Spring Boot 3.x API. The customizer is called once on the **main** server factory
+(port 8080 + 8081) only, not on the management server factory (port 8082). This matches the original `tomcat-gretty.xml`
+two-connector configuration.
+
+---
+
+#### 5 — Create `PublicApiAllowlistFilter.java` — port-8080 allowlist filter
+
+**Create** `web/src/main/java/se/inera/intyg/intygstjanst/config/PublicApiAllowlistFilter.java`:
+
+```java
+package se.inera.intyg.intygstjanst.config;
+
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.Ordered;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+/**
+ * Enforces an allowlist on port 8080 (the public/SOAP port).
+ *
+ * <h3>Design</h3>
+ * <ul>
+ *   <li>Port 8080 is the only port that is publicly reachable.
+ *       It should serve SOAP endpoints (via CXFServlet at {@code /*}) and a limited set of
+ *       public REST paths (e.g. {@code /api/…}).</li>
+ *   <li>Port 8081 (internal REST) must NOT be reachable from outside — enforced at the
+ *       network/load-balancer level AND by {@link se.inera.intyg.infra.security.filter.InternalApiFilter}
+ *       which already blocks wrong-port requests on {@code /internalapi/*}.
+ *       This filter does NOT touch port-8081 requests.</li>
+ *   <li>Port 8082 (Actuator) is managed by Spring Boot's separate management server.
+ *       Requests on 8082 never reach this filter because it runs in the main app context only.</li>
+ * </ul>
+ *
+ * <h3>Allowlist logic (port 8080 only)</h3>
+ * <p>A request is <em>allowed</em> if its {@code requestURI} (without context path) starts with
+ * any prefix in {@code public.api.allowlist.prefixes}. All other paths on port 8080 return
+ * {@code 403 Forbidden}.</p>
+ *
+ * <h3>Why SOAP is automatically allowed</h3>
+ * <p>SOAP endpoints are published by CXFServlet at {@code /*}. Their paths do NOT start with
+ * {@code /api/}, {@code /internalapi/}, or {@code /resources/}, so they fall through to CXF.
+ * To avoid having to enumerate every SOAP path, the filter uses an <em>inverse</em> strategy:
+ * it only blocks REST paths that are NOT in the allowlist. SOAP paths are never in the block
+ * list because they go to CXF directly — but we still need them on the allowlist if we want to
+ * be explicit. The simplest correct approach is:</p>
+ * <ol>
+ *   <li>If port != 8080 → pass through (do nothing).</li>
+ *   <li>If path starts with any allowed prefix → pass through.</li>
+ *   <li>Otherwise → 403.</li>
+ * </ol>
+ * <p>Since SOAP paths (e.g. {@code /get-certificate-se/v2.0}) do NOT start with
+ * {@code /internalapi/}, they would be blocked unless we add them. Rather than listing every
+ * SOAP path, add a catch-all for unknown paths by letting CXF handle anything not matched by
+ * the DispatcherServlet — i.e., include {@code /} (or no prefix check for paths going to CXF).
+ * The cleanest solution: allow everything EXCEPT paths that start with {@code /internalapi/}.
+ * The {@code /internalapi/} prefix is already protected by {@link se.inera.intyg.infra.security.filter.InternalApiFilter}
+ * but we add a second line of defence here.</p>
+ *
+ * <h3>Actual allowlist strategy used</h3>
+ * <p><strong>Deny-by-exception on port 8080:</strong> block only {@code /internalapi/*} on port
+ * 8080. Everything else (SOAP, {@code /api/*}, {@code /resources/*}) is allowed. This is the
+ * most correct model because we control the servlet mappings — SOAP paths can't "leak" into
+ * DispatcherServlet because CXFServlet is at {@code /*}.</p>
+ *
+ * <p>The allowlist property {@code public.api.allowlist.prefixes} therefore lists the paths that
+ * are <em>explicitly permitted</em> on port 8080. The filter blocks anything NOT in that list.
+ * To permit SOAP, add {@code /} as a prefix (matches everything) — or configure individual
+ * SOAP path prefixes. The default configuration uses {@code /api/,/resources/,/error,/actuator}
+ * plus a wildcard by keeping the SOAP paths unlisted but CXF always handles them first.</p>
+ *
+ * <p><strong>Recommended property value</strong> (covers all real traffic on port 8080):</p>
+ * <pre>
+ * public.api.allowlist.prefixes=/api/,/resources/,/error,/actuator,/
+ * </pre>
+ * <p>Using {@code /} as the last entry effectively allows all SOAP paths without enumeration.
+ * Only {@code /internalapi/} would then need to be actively blocked — and it already is by
+ * {@link se.inera.intyg.infra.security.filter.InternalApiFilter}.</p>
+ *
+ * <p>If you want a strict allowlist instead (deny unknown SOAP paths), remove {@code /} and
+ * enumerate every SOAP base path explicitly in {@code public.api.allowlist.prefixes}.</p>
+ */
+@Component
+public class PublicApiAllowlistFilter extends OncePerRequestFilter {
+
+    private static final Logger LOG = LoggerFactory.getLogger(PublicApiAllowlistFilter.class);
+
+    /** The main public port. Only requests on this port are subject to the allowlist. */
+    @Value("${server.port:8080}")
+    private int publicPort;
+
+    /**
+     * Comma-separated path prefixes (without context path) that are allowed on the public port.
+     * Paths that do NOT start with any of these prefixes will receive a 403 response.
+     * Default: {@code /api/,/resources/,/error,/actuator,/} — the trailing {@code /} acts as
+     * a wildcard that permits SOAP paths without enumeration.
+     */
+    @Value("${public.api.allowlist.prefixes:/api/,/resources/,/error,/actuator,/}")
+    private String allowlistPrefixesRaw;
+
+    private List<String> allowlistPrefixes;
+
+    @Override
+    protected void initFilterBean() {
+        allowlistPrefixes = Arrays.stream(allowlistPrefixesRaw.split(","))
+            .map(String::trim)
+            .filter(s -> !s.isEmpty())
+            .toList();
+        LOG.info("PublicApiAllowlistFilter initialised: publicPort={}, allowedPrefixes={}",
+            publicPort, allowlistPrefixes);
+    }
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request,
+        HttpServletResponse response,
+        FilterChain filterChain) throws ServletException, IOException {
+
+        final int localPort = request.getLocalPort();
+
+        // Only enforce on the public port — pass through all other ports (8081, 8082, etc.)
+        if (localPort != publicPort) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        final String path = getRequestPath(request);
+
+        if (isAllowed(path)) {
+            filterChain.doFilter(request, response);
+        } else {
+            LOG.warn("PublicApiAllowlistFilter: BLOCKED port={} path={}", localPort, path);
+            response.sendError(HttpServletResponse.SC_FORBIDDEN,
+                "Access to this path is not permitted on this port.");
+        }
+    }
+
+    /**
+     * Returns the path relative to the context root (strips the context path prefix).
+     * Example: context=/inera-certificate, URI=/inera-certificate/api/foo → /api/foo
+     */
+    private String getRequestPath(HttpServletRequest request) {
+        final String contextPath = request.getContextPath();
+        final String uri = request.getRequestURI();
+        return contextPath.isEmpty() ? uri : uri.substring(contextPath.length());
+    }
+
+    private boolean isAllowed(String path) {
+        return allowlistPrefixes.stream().anyMatch(path::startsWith);
+    }
+}
+```
+
+---
+
+#### 6 — Register `PublicApiAllowlistFilter` via `FilterRegistrationBean`
+
+Add the following bean to the existing **`ServletConfig.java`** (where the other `FilterRegistrationBean`s live — see Step 10.5):
+
+```java
+import org.springframework.core.Ordered;
+import se.inera.intyg.intygstjanst.config.PublicApiAllowlistFilter;
+
+/**
+ * Registers the port-8080 allowlist filter with HIGHEST precedence so it runs before
+ * any other filter. Maps to "/*" on the main server.
+ *
+ * The management server (port 8082) is a separate TomcatWebServer instance and does NOT
+ * share this filter chain — no defensive guard needed for actuator paths.
+ */
+@Bean
+public FilterRegistrationBean<PublicApiAllowlistFilter> publicApiAllowlistFilterRegistration(
+    PublicApiAllowlistFilter filter) {
+    final var registration = new FilterRegistrationBean<>(filter);
+    registration.addUrlPatterns("/*");
+    registration.setOrder(Ordered.HIGHEST_PRECEDENCE);      // runs before InternalApiFilter and MdcServletFilter
+    registration.setName("publicApiAllowlistFilter");
+    return registration;
+}
+```
+
+**Order summary after this change:**
+
+| Order                                 | Filter                     | URL pattern      | Port enforced                        |
+|---------------------------------------|----------------------------|------------------|--------------------------------------|
+| `HIGHEST_PRECEDENCE` (-2 147 483 648) | `PublicApiAllowlistFilter` | `/*`             | 8080 only                            |
+| 1                                     | `InternalApiFilter`        | `/internalapi/*` | 8081 only (port check inside filter) |
+| 2                                     | `MdcServletFilter`         | `/*`             | all                                  |
+
+---
+
+#### 7 — Update `ServletConfig.java` — complete reference implementation
+
+For clarity, here is the complete `ServletConfig.java` after both Step 10.5 and this step:
+
+```java
+package se.inera.intyg.intygstjanst.config;
+
+import org.apache.cxf.transport.servlet.CXFServlet;
+import org.springframework.boot.autoconfigure.web.servlet.DispatcherServletAutoConfiguration;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.boot.web.servlet.ServletRegistrationBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
+import org.springframework.web.servlet.DispatcherServlet;
+import se.inera.intyg.infra.security.filter.InternalApiFilter;
+import se.inera.intyg.intygstjanst.logging.MdcServletFilter;
+
+@Configuration
+public class ServletConfig {
+
+    // ── Servlets ────────────────────────────────────────────────────────────────
+
+    /**
+     * Overrides Spring Boot's default DispatcherServlet registration (which maps to "/").
+     * Maps to the same three sub-paths as the current web.xml — all REST URLs unchanged.
+     */
+    @Bean(name = DispatcherServletAutoConfiguration.DEFAULT_DISPATCHER_SERVLET_REGISTRATION_BEAN_NAME)
+    public ServletRegistrationBean<DispatcherServlet> dispatcherServletRegistration(
+        DispatcherServlet dispatcherServlet) {
+        final var registration = new ServletRegistrationBean<>(dispatcherServlet,
+            "/internalapi/*", "/api/*", "/resources/*");
+        registration.setName("dispatcherServlet");
+        registration.setLoadOnStartup(2);
+        return registration;
+    }
+
+    /**
+     * Registers CXFServlet at /* — exactly as in web.xml.
+     * /internalapi/*, /api/*, /resources/* are more specific, so those go to DispatcherServlet.
+     * Everything else (SOAP) falls through to CXF.
+     */
+    @Bean
+    public ServletRegistrationBean<CXFServlet> cxfServletRegistration() {
+        final var registration = new ServletRegistrationBean<>(new CXFServlet(), "/*");
+        registration.setName("cxf");
+        registration.setLoadOnStartup(1);
+        return registration;
+    }
+
+    // ── Filters — ordered from highest to lowest precedence ─────────────────────
+
+    /**
+     * Port-8080 allowlist filter — MUST run first so it can block before any business logic.
+     * The management server (8082) is a separate TomcatWebServer and never calls this chain.
+     */
+    @Bean
+    public FilterRegistrationBean<PublicApiAllowlistFilter> publicApiAllowlistFilterRegistration(
+        PublicApiAllowlistFilter filter) {
+        final var registration = new FilterRegistrationBean<>(filter);
+        registration.addUrlPatterns("/*");
+        registration.setOrder(Ordered.HIGHEST_PRECEDENCE);
+        registration.setName("publicApiAllowlistFilter");
+        return registration;
+    }
+
+    /**
+     * Blocks /internalapi/* requests that arrive on the wrong port.
+     * The InternalApiFilter itself checks request.getLocalPort().
+     */
+    @Bean
+    public FilterRegistrationBean<InternalApiFilter> internalApiFilterRegistration(
+        InternalApiFilter internalApiFilter) {
+        final var registration = new FilterRegistrationBean<>(internalApiFilter);
+        registration.addUrlPatterns("/internalapi/*");
+        registration.setOrder(1);
+        return registration;
+    }
+
+    /**
+     * Populates MDC with session/trace/span IDs for every request.
+     */
+    @Bean
+    public FilterRegistrationBean<MdcServletFilter> mdcServletFilterRegistration(
+        MdcServletFilter mdcServletFilter) {
+        final var registration = new FilterRegistrationBean<>(mdcServletFilter);
+        registration.addUrlPatterns("/*");
+        registration.setOrder(2);
+        return registration;
+    }
+}
+```
+
+---
+
+### Port / Actuator isolation guarantee
+
+Spring Boot's `management.server.port` property causes Spring Boot to start a **second, completely independent
+`TomcatWebServer`** (created by `ManagementContextConfiguration`). This second server has its own `ServletContext`,
+its own filter chain, and does **not** share the `FilterRegistrationBean`s registered in the main application context.
+Therefore `PublicApiAllowlistFilter` is never invoked for actuator requests on port 8082 — even without the
+`localPort != publicPort` guard (which is kept as a belt-and-braces defence).
+
+```
+Port 8080 (main TomcatWebServer)
+  FilterChain: PublicApiAllowlistFilter → InternalApiFilter → MdcServletFilter → …
+  Servlets:    CXFServlet (/*), DispatcherServlet (/internalapi/*, /api/*, /resources/*)
+
+Port 8081 (additional Connector on same TomcatWebServer — added by TomcatConfig)
+  FilterChain: PublicApiAllowlistFilter (passes through — localPort≠8080)
+             → InternalApiFilter (enforces internal-port-only)
+             → MdcServletFilter → …
+  Servlets:    same as 8080 — but InternalApiFilter blocks /internalapi/* from 8080 clients
+
+Port 8082 (separate management TomcatWebServer — Spring Boot built-in)
+  FilterChain: Spring Boot management filters only — PublicApiAllowlistFilter NOT present
+  Servlets:    Spring Boot Actuator WebMVC dispatcher
+```
+
+---
+
+### Configuration reference table
+
+| Property                                    | Default                                        | Description                                                        |
+|---------------------------------------------|------------------------------------------------|--------------------------------------------------------------------|
+| `server.port`                               | `8080`                                         | Main HTTP port (SOAP + public REST)                                |
+| `internal.api.port`                         | `8081`                                         | Additional Tomcat connector (internal REST)                        |
+| `management.server.port`                    | `8082`                                         | Actuator port — separate management web server                     |
+| `public.api.allowlist.prefixes`             | `/api/,/resources/,/error,/actuator,/`         | Comma-separated path prefixes allowed on port 8080                 |
+| `management.endpoints.web.exposure.include` | `health,info`                                  | Actuator endpoints to expose                                       |
+| `management.endpoint.health.probes.enabled` | `true`                                         | Enables `/actuator/health/liveness` + `/actuator/health/readiness` |
+| `server.servlet.context-path`               | `/inera-certificate`                           | Context path — replaces `web.xml` display-name convention          |
+| `logging.config`                            | `${logback.file:classpath:logback-spring.xml}` | Logback config — overridable via `-Dlogback.file=…`                |
+
+---
+
+### Verify
 
 ```bash
 ./gradlew clean build     # Compiles, all tests pass
-# NOTE: Still running under Gretty for now
-./gradlew appRun          # Gretty still works (ignores Spring Boot properties)
+# NOTE: Still running under Gretty for this step
+./gradlew appRun          # Gretty still works (ignores Spring Boot properties and filter beans)
+```
+
+After switching to `bootRun` in Step 10.9/10.10:
+
+```bash
+# Port 8080 — SOAP (should return WSDL)
+curl "http://localhost:8080/inera-certificate/get-recipients-for-certificate/v1.1?wsdl"
+
+# Port 8080 — public REST (should return 200)
+curl "http://localhost:8080/inera-certificate/api/send-message-to-care/ping"
+
+# Port 8080 — internal REST on wrong port (should return 403 from PublicApiAllowlistFilter)
+curl "http://localhost:8080/inera-certificate/internalapi/v1/certificatetexts"
+
+# Port 8081 — internal REST (should return 200)
+curl "http://localhost:8081/inera-certificate/internalapi/v1/certificatetexts"
+
+# Port 8082 — actuator health (should return 200 with UP status)
+curl "http://localhost:8082/actuator/health"
+
+# Port 8082 — readiness probe (Kubernetes-style)
+curl "http://localhost:8082/actuator/health/readiness"
 ```
 
 ---
@@ -777,16 +1207,19 @@ bootRun {
 
 ## Risk Register
 
-| # | Risk                                                                              | Impact | Mitigation                                                                                                                              |
-|---|-----------------------------------------------------------------------------------|--------|-----------------------------------------------------------------------------------------------------------------------------------------|
-| 1 | CXF + Spring Boot embedded Tomcat compatibility                                   | High   | CXF's `SpringBus` is already a Spring bean. `CXFServlet` works with `ServletRegistrationBean`. Well-documented pattern.                 |
-| 2 | DispatcherServlet override — overriding Spring Boot's default registration        | Medium | We use `DEFAULT_DISPATCHER_SERVLET_REGISTRATION_BEAN_NAME` which is the documented way to replace the default mapping. Test thoroughly. |
-| 3 | Dual-port Tomcat under Spring Boot                                                | Medium | `WebServerFactoryCustomizer` with additional connector is standard Spring Boot pattern.                                                 |
-| 4 | `@EnableWebMvc` removal changes behavior                                          | Medium | Test JSON serialization thoroughly after Step 10.6. If issues, keep `@EnableWebMvc` and troubleshoot later.                             |
-| 5 | BOM version conflicts                                                             | Medium | Run `./gradlew dependencies` after Step 10.1 and compare key library versions before and after.                                         |
-| 6 | `@ComponentScan` overlap between `ApplicationConfig` and `@SpringBootApplication` | Low    | Spring handles duplicate scans. Move all scan config to one place.                                                                      |
-| 7 | Logback configuration under Spring Boot                                           | Low    | Create `logback-spring.xml` on classpath. Spring Boot auto-detects it. Fall back to `logging.config` property.                          |
-| 8 | `persistence.xml` conflicts with Spring Boot                                      | Low    | `persistence.xml` is kept in Step 10 and removed in Step 11. `HibernateJpaAutoConfiguration` is excluded.                               |
+| #  | Risk                                                                              | Impact | Mitigation                                                                                                                                                                                                                                         |
+|----|-----------------------------------------------------------------------------------|--------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 1  | CXF + Spring Boot embedded Tomcat compatibility                                   | High   | CXF's `SpringBus` is already a Spring bean. `CXFServlet` works with `ServletRegistrationBean`. Well-documented pattern.                                                                                                                            |
+| 2  | DispatcherServlet override — overriding Spring Boot's default registration        | Medium | We use `DEFAULT_DISPATCHER_SERVLET_REGISTRATION_BEAN_NAME` which is the documented way to replace the default mapping. Test thoroughly.                                                                                                            |
+| 3  | Dual-port Tomcat under Spring Boot                                                | Medium | `WebServerFactoryCustomizer` with additional connector is standard Spring Boot pattern.                                                                                                                                                            |
+| 4  | `@EnableWebMvc` removal changes behavior                                          | Medium | Test JSON serialization thoroughly after Step 10.6. If issues, keep `@EnableWebMvc` and troubleshoot later.                                                                                                                                        |
+| 5  | BOM version conflicts                                                             | Medium | Run `./gradlew dependencies` after Step 10.1 and compare key library versions before and after.                                                                                                                                                    |
+| 6  | `@ComponentScan` overlap between `ApplicationConfig` and `@SpringBootApplication` | Low    | Spring handles duplicate scans. Move all scan config to one place.                                                                                                                                                                                 |
+| 7  | Logback configuration under Spring Boot                                           | Low    | Create `logback-spring.xml` on classpath. Spring Boot auto-detects it. Fall back to `logging.config` property.                                                                                                                                     |
+| 8  | `persistence.xml` conflicts with Spring Boot                                      | Low    | `persistence.xml` is kept in Step 10 and removed in Step 11. `HibernateJpaAutoConfiguration` is excluded.                                                                                                                                          |
+| 9  | `PublicApiAllowlistFilter` blocks legitimate SOAP paths on port 8080              | High   | Default `public.api.allowlist.prefixes` includes `/` as last prefix, which matches all paths. Only add strict prefixes if you intentionally want to block unknown SOAP paths. Always smoke-test SOAP endpoints after enabling.                     |
+| 10 | Actuator exposed without authentication on port 8082                              | Medium | Port 8082 must be firewalled / not exposed externally. Spring Boot Actuator has no authentication by default. Add `management.endpoint.health.show-details=when-authorized` or Spring Security on the management context for production hardening. |
+| 11 | `public.api.allowlist.prefixes` misconfiguration blocks internal port (8081)      | Low    | `PublicApiAllowlistFilter` checks `localPort == publicPort (8080)` first and passes through all other ports. The 8081 connector is on the same `TomcatWebServer` instance, so the filter runs — but the port guard ensures it is a no-op for 8081. |
 
 ---
 
@@ -802,19 +1235,19 @@ If Step 10 causes issues:
 
 ## Summary: What Changes at Each Sub-step
 
-| Step   | Build Type | Runs Under      | CXF Path | DispatcherServlet Paths                    | web.xml |
-|--------|------------|-----------------|----------|--------------------------------------------|---------|
-| Before | WAR        | Gretty/Tomcat   | `/*`     | `/internalapi/*`, `/api/*`, `/resources/*` | ✅ Yes   |
-| 10.1   | WAR        | Gretty/Tomcat   | `/*`     | `/internalapi/*`, `/api/*`, `/resources/*` | ✅ Yes   |
-| 10.2   | WAR        | Gretty/Tomcat   | `/*`     | `/internalapi/*`, `/api/*`, `/resources/*` | ✅ Yes   |
-| 10.3   | WAR        | Gretty/Tomcat   | `/*`     | `/internalapi/*`, `/api/*`, `/resources/*` | ✅ Yes   |
-| 10.4   | WAR        | Gretty/Tomcat   | `/*`     | `/internalapi/*`, `/api/*`, `/resources/*` | ✅ Yes   |
-| 10.5   | WAR        | Gretty/Tomcat   | `/*`     | `/internalapi/*`, `/api/*`, `/resources/*` | ✅ Yes   |
-| 10.6   | WAR        | Gretty/Tomcat   | `/*`     | `/internalapi/*`, `/api/*`, `/resources/*` | ✅ Yes   |
-| 10.7   | WAR        | Gretty/Tomcat   | `/*`     | `/internalapi/*`, `/api/*`, `/resources/*` | ✅ Yes   |
-| 10.8   | JAR        | **Neither**     | N/A      | N/A                                        | ❌ No    |
-| 10.9   | JAR        | **Spring Boot** | `/*`     | `/internalapi/*`, `/api/*`, `/resources/*` | ❌ No    |
-| 10.10  | JAR        | Spring Boot     | `/*`     | `/internalapi/*`, `/api/*`, `/resources/*` | ❌ No    |
+| Step   | Build Type | Runs Under      | CXF Path | DispatcherServlet Paths                    | web.xml | Ports                                                                   |
+|--------|------------|-----------------|----------|--------------------------------------------|---------|-------------------------------------------------------------------------|
+| Before | WAR        | Gretty/Tomcat   | `/*`     | `/internalapi/*`, `/api/*`, `/resources/*` | ✅ Yes   | 8080+8081 (Gretty)                                                      |
+| 10.1   | WAR        | Gretty/Tomcat   | `/*`     | `/internalapi/*`, `/api/*`, `/resources/*` | ✅ Yes   | 8080+8081 (Gretty)                                                      |
+| 10.2   | WAR        | Gretty/Tomcat   | `/*`     | `/internalapi/*`, `/api/*`, `/resources/*` | ✅ Yes   | 8080+8081 (Gretty)                                                      |
+| 10.3   | WAR        | Gretty/Tomcat   | `/*`     | `/internalapi/*`, `/api/*`, `/resources/*` | ✅ Yes   | 8080+8081 (Gretty)                                                      |
+| 10.4   | WAR        | Gretty/Tomcat   | `/*`     | `/internalapi/*`, `/api/*`, `/resources/*` | ✅ Yes   | 8080+8081 (Gretty)                                                      |
+| 10.5   | WAR        | Gretty/Tomcat   | `/*`     | `/internalapi/*`, `/api/*`, `/resources/*` | ✅ Yes   | 8080+8081 (Gretty)                                                      |
+| 10.6   | WAR        | Gretty/Tomcat   | `/*`     | `/internalapi/*`, `/api/*`, `/resources/*` | ✅ Yes   | 8080+8081 (Gretty)                                                      |
+| 10.7   | WAR        | Gretty/Tomcat   | `/*`     | `/internalapi/*`, `/api/*`, `/resources/*` | ✅ Yes   | 8080+8081 (Gretty) — Spring Boot properties+classes added but inactive  |
+| 10.8   | JAR        | **Neither**     | N/A      | N/A                                        | ❌ No    | N/A (transition)                                                        |
+| 10.9   | JAR        | **Spring Boot** | `/*`     | `/internalapi/*`, `/api/*`, `/resources/*` | ❌ No    | **8080** (public/SOAP) + **8081** (internal REST) + **8082** (Actuator) |
+| 10.10  | JAR        | Spring Boot     | `/*`     | `/internalapi/*`, `/api/*`, `/resources/*` | ❌ No    | 8080 + 8081 + 8082                                                      |
 
 **All URLs are preserved identically** — both SOAP and REST. CXF stays at `/*`, DispatcherServlet stays at its three specific
 sub-paths. The context path `/inera-certificate` is set via `server.servlet.context-path`.
