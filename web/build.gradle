@@ -1,6 +1,12 @@
-apply plugin: 'org.cyclonedx.bom'
-apply plugin: 'org.gretty'
-apply plugin: 'war'
+plugins {
+    alias(libs.plugins.org.cyclonedx.bom)
+    alias(libs.plugins.org.springframework.boot)
+    id "org.gretty" version "4.1.10" apply true
+}
+
+tasks.named('bootJar') {
+    archiveFileName.set('app.jar')
+}
 
 gretty {
     def instance = System.properties['instance'] ?: '0'
@@ -42,6 +48,8 @@ dependencies {
 
     runtimeOnly project(':integration-intyg-proxy-service')
 
+    implementation "org.springframework.boot:spring-boot-starter-web"
+    
     implementation "se.inera.intyg.clinicalprocess.healthcond.certificate:intyg-clinicalprocess-healthcond-certificate-schemas:${intygClinicalprocessSchemasVersion}"
     implementation "se.inera.intyg.clinicalprocess.healthcond.rehabilitation:intyg-clinicalprocess-healthcond-rehabilitation-schemas:${intygHealthcondRehabilitationSchemasVersion}"
     implementation "se.inera.intyg.schemas:schemas-contract:${schemasContractVersion}"
