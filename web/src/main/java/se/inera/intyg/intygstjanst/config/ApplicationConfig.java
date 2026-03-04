@@ -35,12 +35,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -56,22 +54,8 @@ import se.inera.intyg.infra.sjukfall.services.SjukfallEngineServiceImpl;
 @EnableCaching
 @EnableTransactionManagement
 @EnableAspectJAutoProxy
-@DependsOn("transactionManager")
 @PropertySource("classpath:application.properties")
 @PropertySource(ignoreResourceNotFound = true, value = "file:${dev.config.file}")
-@ComponentScan(basePackages = {
-    "se.inera.intyg.intygstjanst.config",
-    "se.inera.intyg.intygstjanst.logging",
-    "se.inera.intyg.intygstjanst.persistence",
-    "se.inera.intyg.intygstjanst.web",
-    "se.inera.intyg.infra.integration.intygproxyservice",
-    "se.inera.intyg.infra.pu.integration.intygproxyservice",
-    "se.inera.intyg.common.support.modules.support.api",
-    "se.inera.intyg.common.services",
-    "se.inera.intyg.common",
-    "se.inera.intyg.common.support.services",
-    "se.inera.intyg.common.util.integration.json"
-})
 public class ApplicationConfig implements TransactionManagementConfigurer {
 
     @Autowired
@@ -88,10 +72,6 @@ public class ApplicationConfig implements TransactionManagementConfigurer {
         return new SpringBus();
     }
 
-    @Bean
-    public static PropertySourcesPlaceholderConfigurer propertyConfigInDev() {
-        return new PropertySourcesPlaceholderConfigurer();
-    }
 
     @PostConstruct
     public Bus init() {

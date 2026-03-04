@@ -9,6 +9,16 @@ import org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfigurati
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 
 @SpringBootApplication(
+    scanBasePackages = {
+        "se.inera.intyg.intygstjanst",
+        "se.inera.intyg.infra.integration.intygproxyservice",
+        "se.inera.intyg.infra.pu.integration.intygproxyservice",
+        "se.inera.intyg.common.support.modules.support.api",
+        "se.inera.intyg.common.services",
+        "se.inera.intyg.common",
+        "se.inera.intyg.common.support.services",
+        "se.inera.intyg.common.util.integration.json"
+    },
     exclude = {
         DataSourceAutoConfiguration.class,
         HibernateJpaAutoConfiguration.class,
