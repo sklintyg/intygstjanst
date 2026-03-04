@@ -45,6 +45,7 @@ dependencies {
     implementation "se.inera.intyg.clinicalprocess.healthcond.certificate:intyg-clinicalprocess-healthcond-certificate-schemas:${intygClinicalprocessSchemasVersion}"
     implementation "se.inera.intyg.clinicalprocess.healthcond.rehabilitation:intyg-clinicalprocess-healthcond-rehabilitation-schemas:${intygHealthcondRehabilitationSchemasVersion}"
     implementation "se.inera.intyg.schemas:schemas-contract:${schemasContractVersion}"
+    implementation "se.inera.intyg.transportstyrelsen:intyg-transportstyrelsen-schemas:${intygTransportstyrelsenSchemasVersion}"
     implementation "se.riv.clinicalprocess.healthcond.certificate:clinicalprocess-healthcond-certificate-schemas:${rivtaClinicalprocessSchemasVersion}"
     implementation "se.riv.insuranceprocess.healthreporting:insuranceprocess-healthreporting-schemas:${rivtaInsuranceprocessSchemasVersion}"
 
@@ -64,6 +65,7 @@ dependencies {
     implementation "se.inera.intyg.common:luae_fs:${commonVersion}"
     implementation "se.inera.intyg.common:luae_na:${commonVersion}"
     implementation "se.inera.intyg.common:luse:${commonVersion}"
+    implementation "se.inera.intyg.common:ts-parent:${commonVersion}"
     implementation "se.inera.intyg.common:ts-bas:${commonVersion}"
     implementation "se.inera.intyg.common:ts-diabetes:${commonVersion}"
     implementation "se.inera.intyg.common:tstrk1009:${commonVersion}"

@@ -26,6 +26,7 @@ import jakarta.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.Collections;
 import org.apache.cxf.Bus;
+import org.apache.cxf.bus.spring.SpringBus;
 import org.apache.cxf.ext.logging.LoggingFeature;
 import org.apache.cxf.ext.logging.slf4j.Slf4jVerboseEventSender;
 import org.slf4j.bridge.SLF4JBridgeHandler;
@@ -38,7 +39,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -59,11 +59,6 @@ import se.inera.intyg.infra.sjukfall.services.SjukfallEngineServiceImpl;
 @DependsOn("transactionManager")
 @PropertySource("classpath:application.properties")
 @PropertySource(ignoreResourceNotFound = true, value = "file:${dev.config.file}")
-@ImportResource({
-    "classpath:common-config.xml",
-    "classpath*:module-config.xml",
-    "classpath*:it-module-cxf-servlet.xml"
-})
 @ComponentScan(basePackages = {
     "se.inera.intyg.intygstjanst.config",
     "se.inera.intyg.intygstjanst.logging",
@@ -73,6 +68,7 @@ import se.inera.intyg.infra.sjukfall.services.SjukfallEngineServiceImpl;
     "se.inera.intyg.infra.pu.integration.intygproxyservice",
     "se.inera.intyg.common.support.modules.support.api",
     "se.inera.intyg.common.services",
+    "se.inera.intyg.common",
     "se.inera.intyg.common.support.services",
     "se.inera.intyg.common.util.integration.json"
 })
@@ -86,6 +82,11 @@ public class ApplicationConfig implements TransactionManagementConfigurer {
 
     @Value("${logging.soap.enable:false}")
     private boolean loggingSoapEnable;
+
+    @Bean(name = Bus.DEFAULT_BUS_ID)
+    public SpringBus springBus() {
+        return new SpringBus();
+    }
 
     @Bean
     public static PropertySourcesPlaceholderConfigurer propertyConfigInDev() {
