@@ -1,44 +1,13 @@
 plugins {
     alias(libs.plugins.org.cyclonedx.bom)
     alias(libs.plugins.org.springframework.boot)
-    id "org.gretty" version "4.1.10" apply true
 }
 
 tasks.named('bootJar') {
     archiveFileName.set('app.jar')
 }
 
-gretty {
-    def instance = System.properties['instance'] ?: '0'
-    def useHttpPort = 8080 + (instance as Integer)
-    def useInternalHttpPort = 8180 + (instance as Integer)
-    def applicationDir = "${rootProject.projectDir}/devops/dev"
-
-    servletContainer = 'tomcat10'
-    contextPath = '/inera-certificate'
-
-    integrationTestTask = null
-    scanInterval = 0
-    debugPort = 8880 + (instance as Integer)
-    portPropertiesFileName = "gretty_ports_${instance}.properties"
-    debugSuspend = false
-    serverConfigFile = "tomcat-gretty.xml"
-
-    jvmArgs = [
-            "-Dcatalina.base=${buildDir}/catalina.base",
-            "-Dspring.profiles.active=dev,bootstrap,testability-api,caching-enabled,it-fk-stub",
-            "-Dlogback.file=${applicationDir}/config/logback-spring.xml",
-            "-Djava.awt.headless=true",
-            "-Dfile.encoding=UTF-8",
-            "-Dapplication.dir=${applicationDir}",
-            "-Drecipient.config.file=${applicationDir}/config/recipients-dev.json",
-            "-Ddev.config.file=${applicationDir}/config/application-dev.properties",
-            "-Xmx512M",
-            "-Ddev.http.port=${useHttpPort}",
-            "-Ddev.http.port.internal=${useInternalHttpPort}",
-            "-Dxml.catalog.cacheEnabled=false"
-    ]
-}
+def applicationDir = "${rootProject.projectDir}/devops/dev"
 
 dependencies {
     implementation project(':intygstjanst-infra')
@@ -50,7 +19,7 @@ dependencies {
 
     implementation "org.springframework.boot:spring-boot-starter-web"
     implementation 'org.apache.tomcat.embed:tomcat-embed-core'
-    
+
     implementation "se.inera.intyg.clinicalprocess.healthcond.certificate:intyg-clinicalprocess-healthcond-certificate-schemas:${intygClinicalprocessSchemasVersion}"
     implementation "se.inera.intyg.clinicalprocess.healthcond.rehabilitation:intyg-clinicalprocess-healthcond-rehabilitation-schemas:${intygHealthcondRehabilitationSchemasVersion}"
     implementation "se.inera.intyg.schemas:schemas-contract:${schemasContractVersion}"
@@ -119,6 +88,28 @@ dependencies {
     testCompileOnly "jakarta.persistence:jakarta.persistence-api"
     testCompileOnly 'org.projectlombok:lombok'
 
-    testRuntimeOnly "jakarta.servlet:jakarta.servlet-api"
     testRuntimeOnly "se.riv.clinicalprocess.healthcond.certificate:clinicalprocess-healthcond-certificate-schemas:${rivtaClinicalprocessSchemasVersion}"
+}
+
+bootRun {
+    systemProperty("application.dir", "${rootProject.projectDir}/devops/dev")
+    systemProperty("spring.profiles.active", "dev,bootstrap,testability-api,caching-enabled,it-fk-stub")
+    systemProperty("spring.config.additional-location", "file:${applicationDir}/config/")
+}
+
+tasks.register("appRunDebug") {
+    println("######## Running in Debug mode ########")
+    doFirst {
+        bootRun.configure {
+            jvmArgs = [
+                    "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8880"
+            ]
+        }
+    }
+    finalizedBy("bootRun")
+}
+
+tasks.register("appRun") {
+    println("######## Running in normal mode ########")
+    finalizedBy("bootRun")
 }
