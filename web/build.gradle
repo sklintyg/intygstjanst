@@ -52,7 +52,6 @@ dependencies {
     implementation "se.inera.intyg.refdata:refdata:${refDataVersion}"
 
     implementation "ch.qos.logback:logback-classic"
-    implementation "co.elastic.logging:logback-ecs-encoder"
     implementation "codes.rafael.jaxb2_commons:jaxb2-basics"
     implementation "com.google.guava:guava"
     implementation "commons-io:commons-io"
