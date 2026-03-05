@@ -22,7 +22,6 @@ import com.google.common.base.Strings;
 import com.google.common.io.Resources;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.transaction.Transactional;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
@@ -31,12 +30,11 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -44,6 +42,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 import se.inera.clinicalprocess.healthcond.certificate.receiver.types.v1.ApprovalStatusType;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.registerapprovedreceivers.v1.ReceiverApprovalStatus;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.registerapprovedreceivers.v1.RegisterApprovedReceiversType;
@@ -75,15 +74,8 @@ public class CertificateResource {
     @PersistenceContext
     private EntityManager entityManager;
 
-    private TransactionTemplate transactionTemplate;
-
     @Autowired
     private IntygModuleRegistry moduleRegistry;
-
-    @Autowired
-    public void setTxManager(@Qualifier("transactionManager") PlatformTransactionManager txManager) {
-        this.transactionTemplate = new TransactionTemplate(txManager);
-    }
 
     @GetMapping("/{id}")
     public Certificate getCertificate(@PathVariable("id") String id) {
@@ -91,180 +83,154 @@ public class CertificateResource {
     }
 
     @DeleteMapping("/citizen/{id}")
+    @Transactional
     public ResponseEntity<?> deleteCertificatesForCitizen(@PathVariable("id") String id) {
-        return transactionTemplate.execute(status -> {
-            try {
-                LOGGER.info("Deleting certificates for citizen {}", id);
-                @SuppressWarnings("unchecked")
-                List<String> certificates = entityManager
-                    .createQuery("SELECT c.id FROM Certificate c WHERE c.civicRegistrationNumber=:personId")
-                    .setParameter("personId", id).getResultList();
-                for (String certificate : certificates) {
-                    deleteCertificate(certificate);
-                }
-                return ResponseEntity.ok().build();
-            } catch (Exception e) {
-                status.setRollbackOnly();
-                LOGGER.warn("delete certificates for citizen {} failed", id, e);
-                return ResponseEntity.internalServerError().build();
+        try {
+            LOGGER.info("Deleting certificates for citizen {}", id);
+            @SuppressWarnings("unchecked")
+            List<String> certificates = entityManager
+                .createQuery("SELECT c.id FROM Certificate c WHERE c.civicRegistrationNumber=:personId")
+                .setParameter("personId", id).getResultList();
+            for (String certificate : certificates) {
+                removeCertificateById(certificate);
             }
-        });
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            LOGGER.warn("delete certificates for citizen {} failed", id, e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "delete certificates for citizen failed", e);
+        }
     }
 
     @DeleteMapping("/unit/{id}")
+    @Transactional
     public ResponseEntity<?> deleteCertificatesForUnit(@PathVariable("id") String id) {
-        return transactionTemplate.execute(status -> {
-            try {
-                LOGGER.info("Deleting certificates for unit {}", id);
-                @SuppressWarnings("unchecked")
-                List<String> certificates = entityManager.createQuery("SELECT c.id FROM Certificate c WHERE c.careUnitId=:careUnitHsaId")
-                    .setParameter("careUnitHsaId", id).getResultList();
-                for (String certificate : certificates) {
-                    deleteCertificate(certificate);
-                }
-                return ResponseEntity.ok().build();
-            } catch (Exception e) {
-                status.setRollbackOnly();
-                LOGGER.warn("delete certificates for unit {} failed", id, e);
-                return ResponseEntity.internalServerError().build();
+        try {
+            LOGGER.info("Deleting certificates for unit {}", id);
+            @SuppressWarnings("unchecked")
+            List<String> certificates = entityManager.createQuery("SELECT c.id FROM Certificate c WHERE c.careUnitId=:careUnitHsaId")
+                .setParameter("careUnitHsaId", id).getResultList();
+            for (String certificate : certificates) {
+                removeCertificateById(certificate);
             }
-        });
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            LOGGER.warn("delete certificates for unit {} failed", id, e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "delete certificates for unit failed", e);
+        }
     }
 
     @DeleteMapping("/{id}")
+    @Transactional
     public ResponseEntity<?> deleteCertificate(@PathVariable("id") final String id) {
-        return transactionTemplate.execute(status -> {
-            try {
-                LOGGER.info("Deleting certificate {}", id);
-                Certificate certificate = entityManager.find(Certificate.class, id);
-                if (certificate != null) {
-                    entityManager.remove(certificate.getOriginalCertificate());
-                    entityManager.remove(certificate);
-                }
-
-                // Also delete any SjukfallCertificate
-                SjukfallCertificate sjukfallCertificate = entityManager.find(SjukfallCertificate.class, id);
-                if (sjukfallCertificate != null) {
-                    entityManager.remove(sjukfallCertificate);
-                }
-                return ResponseEntity.ok().build();
-            } catch (Exception e) {
-                status.setRollbackOnly();
-                LOGGER.warn("delete certificate with id {} failed", id, e);
-                return ResponseEntity.internalServerError().build();
-            }
-        });
+        try {
+            LOGGER.info("Deleting certificate {}", id);
+            removeCertificateById(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            LOGGER.warn("delete certificate with id {} failed", id, e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "delete certificate failed", e);
+        }
     }
 
     @DeleteMapping()
+    @Transactional
     public ResponseEntity<?> deleteAllCertificates() {
-        return transactionTemplate.execute(status -> {
-            try {
-                @SuppressWarnings("unchecked")
-                List<Certificate> certificates = entityManager.createQuery("SELECT c FROM Certificate c").getResultList();
-                for (Certificate certificate : certificates) {
-                    if (certificate.getOriginalCertificate() != null) {
-                        entityManager.remove(certificate.getOriginalCertificate());
-                    }
-                    entityManager.remove(certificate);
+        try {
+            @SuppressWarnings("unchecked")
+            List<Certificate> certificates = entityManager.createQuery("SELECT c FROM Certificate c").getResultList();
+            for (Certificate certificate : certificates) {
+                if (certificate.getOriginalCertificate() != null) {
+                    entityManager.remove(certificate.getOriginalCertificate());
                 }
-
-                // Also delete any SjukfallCertificates
-                List<SjukfallCertificate> sjukfallCertificates = entityManager
-                    .createQuery("SELECT c FROM SjukfallCertificate c", SjukfallCertificate.class).getResultList();
-                for (SjukfallCertificate sjukfallCert : sjukfallCertificates) {
-                    entityManager.remove(sjukfallCert);
-                }
-
-                return ResponseEntity.ok().build();
-            } catch (Exception e) {
-                status.setRollbackOnly();
-                LOGGER.warn("delete all certificates failed", e);
-                return ResponseEntity.internalServerError().build();
+                entityManager.remove(certificate);
             }
-        });
+
+            List<SjukfallCertificate> sjukfallCertificates = entityManager
+                .createQuery("SELECT c FROM SjukfallCertificate c", SjukfallCertificate.class).getResultList();
+            for (SjukfallCertificate sjukfallCert : sjukfallCertificates) {
+                entityManager.remove(sjukfallCert);
+            }
+
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            LOGGER.warn("delete all certificates failed", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "delete all certificates failed", e);
+        }
     }
 
     @PostMapping()
+    @Transactional
     public ResponseEntity<?> insertCertificate(@RequestBody final CertificateHolder certificateHolder) {
-        return transactionTemplate.execute(status -> {
-            Certificate certificate = ConverterUtil.toCertificate(certificateHolder);
-            try {
-                LOGGER.info("insert certificate {} ({})", certificate.getId(), certificate.getType());
-                OriginalCertificate originalCertificate = new OriginalCertificate(LocalDateTime.now(), getXmlBody(certificateHolder),
-                    certificate);
-                ModuleApi moduleApi = moduleRegistry.getModuleApi(certificate.getType(), certificate.getTypeVersion());
-                final Utlatande utlatande = moduleApi.getUtlatandeFromXml(originalCertificate.getDocument());
-                certificate.setAdditionalInfo(moduleApi.getAdditionalInfo(moduleApi.getIntygFromUtlatande(utlatande)));
-                CertificateMetaData metaData = new CertificateMetaData(certificate, utlatande.getGrundData().getSkapadAv().getPersonId(),
-                    utlatande.getGrundData().getSkapadAv().getFullstandigtNamn(), certificate.isRevoked(),
-                    ConverterUtil.getDiagnoses(certificateHolder.getAdditionalMetaData()));
-                certificate.setCertificateMetaData(metaData);
-                entityManager.persist(certificate);
-                entityManager.persist(metaData);
-                entityManager.persist(originalCertificate);
-                return ResponseEntity.ok().build();
-            } catch (Exception e) {
-                status.setRollbackOnly();
-                LOGGER.warn("insert certificate {} ({}) failed", certificate.getId(), certificate.getType(), e);
-                return ResponseEntity.internalServerError().build();
-            }
-        });
+        Certificate certificate = ConverterUtil.toCertificate(certificateHolder);
+        try {
+            LOGGER.info("insert certificate {} ({})", certificate.getId(), certificate.getType());
+            OriginalCertificate originalCertificate = new OriginalCertificate(LocalDateTime.now(), getXmlBody(certificateHolder),
+                certificate);
+            ModuleApi moduleApi = moduleRegistry.getModuleApi(certificate.getType(), certificate.getTypeVersion());
+            final Utlatande utlatande = moduleApi.getUtlatandeFromXml(originalCertificate.getDocument());
+            certificate.setAdditionalInfo(moduleApi.getAdditionalInfo(moduleApi.getIntygFromUtlatande(utlatande)));
+            CertificateMetaData metaData = new CertificateMetaData(certificate, utlatande.getGrundData().getSkapadAv().getPersonId(),
+                utlatande.getGrundData().getSkapadAv().getFullstandigtNamn(), certificate.isRevoked(),
+                ConverterUtil.getDiagnoses(certificateHolder.getAdditionalMetaData()));
+            certificate.setCertificateMetaData(metaData);
+            entityManager.persist(certificate);
+            entityManager.persist(metaData);
+            entityManager.persist(originalCertificate);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            LOGGER.warn("insert certificate {} ({}) failed", certificate.getId(), certificate.getType(), e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "insert certificate failed", e);
+        }
     }
 
     @DeleteMapping("/{id}/approvedreceivers")
+    @Transactional
     public ResponseEntity<?> deleteApprovedReceivers(@PathVariable("id") final String id) {
-        return transactionTemplate.execute(status -> {
-            try {
-                LOGGER.info("removing approved receivers for certificates {}", id);
+        try {
+            LOGGER.info("removing approved receivers for certificates {}", id);
 
-                @SuppressWarnings("unchecked")
-                List<ApprovedReceiver> approvedReceivers =
-                    entityManager
-                        .createQuery("SELECT ar FROM ApprovedReceiver ar WHERE ar.certificateId=:certificateId")
-                        .setParameter("certificateId", id)
-                        .getResultList();
+            @SuppressWarnings("unchecked")
+            List<ApprovedReceiver> approvedReceivers =
+                entityManager
+                    .createQuery("SELECT ar FROM ApprovedReceiver ar WHERE ar.certificateId=:certificateId")
+                    .setParameter("certificateId", id)
+                    .getResultList();
 
-                for (ApprovedReceiver ar : approvedReceivers) {
-                    entityManager.remove(ar);
-                }
-
-                return ResponseEntity.ok().build();
-
-            } catch (Exception e) {
-                status.setRollbackOnly();
-                LOGGER.warn("removal of approved receivers for certificate {} failed", id, e);
-                return ResponseEntity.internalServerError().build();
+            for (ApprovedReceiver ar : approvedReceivers) {
+                entityManager.remove(ar);
             }
-        });
+
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            LOGGER.warn("removal of approved receivers for certificate {} failed", id, e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "delete approved receivers failed", e);
+        }
     }
 
     @PostMapping("/{id}/approvedreceivers")
+    @Transactional
     public ResponseEntity<?> registerApprovedReceivers(@PathVariable("id") final String id,
         @RequestBody final RegisterApprovedReceiversType registerApprovedReceiversType) {
 
-        return transactionTemplate.execute(status -> {
-            String receiverId = null;
+        String receiverId = null;
+        try {
+            for (ReceiverApprovalStatus ras : registerApprovedReceiversType.getApprovedReceivers()) {
+                receiverId = ras.getReceiverId();
+                boolean approvalStatus = parseApprovalStatus(ras.getApprovalStatus().value());
 
-            try {
-                for (ReceiverApprovalStatus ras : registerApprovedReceiversType.getApprovedReceivers()) {
-                    receiverId = ras.getReceiverId();
-                    boolean approvalStatus = parseApprovalStatus(ras.getApprovalStatus().value());
+                ApprovedReceiver approvedReceiver = new ApprovedReceiver();
+                approvedReceiver.setCertificateId(id);
+                approvedReceiver.setReceiverId(receiverId);
+                approvedReceiver.setApproved(approvalStatus);
 
-                    ApprovedReceiver approvedReceiver = new ApprovedReceiver();
-                    approvedReceiver.setCertificateId(id);
-                    approvedReceiver.setReceiverId(receiverId);
-                    approvedReceiver.setApproved(approvalStatus);
-
-                    LOGGER.info("register approved receiver {} for certificate {}", id, receiverId);
-                    entityManager.persist(approvedReceiver);
-                }
-                return ResponseEntity.ok().build();
-            } catch (Exception e) {
-                LOGGER.warn("register approved receiver {} failed for certificate {}", id, receiverId, e);
-                return ResponseEntity.internalServerError().build();
+                LOGGER.info("register approved receiver {} for certificate {}", id, receiverId);
+                entityManager.persist(approvedReceiver);
             }
-        });
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            LOGGER.warn("register approved receiver {} failed for certificate {}", id, receiverId, e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "register approved receivers failed", e);
+        }
     }
 
     @DeleteMapping("/deleteCertificates")
@@ -309,6 +275,18 @@ public class CertificateResource {
     public int getRelationCountForCareProvider(@PathVariable("careProviderId") final String careProviderId) {
         final var certificateIds = getCertificateIdsForCareProvider(careProviderId);
         return getRelations(certificateIds).size();
+    }
+
+    private void removeCertificateById(String id) {
+        Certificate certificate = entityManager.find(Certificate.class, id);
+        if (certificate != null) {
+            entityManager.remove(certificate.getOriginalCertificate());
+            entityManager.remove(certificate);
+        }
+        SjukfallCertificate sjukfallCertificate = entityManager.find(SjukfallCertificate.class, id);
+        if (sjukfallCertificate != null) {
+            entityManager.remove(sjukfallCertificate);
+        }
     }
 
     private boolean parseApprovalStatus(String approvalStatus) {
@@ -363,7 +341,6 @@ public class CertificateResource {
         if (certificateIds.isEmpty()) {
             return List.of();
         }
-
         return entityManager
             .createQuery(query, clazz)
             .setParameter("certificateIds", certificateIds)

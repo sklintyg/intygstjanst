@@ -18,6 +18,7 @@ dependencies {
     runtimeOnly project(':integration-intyg-proxy-service')
 
     implementation "org.springframework.boot:spring-boot-starter-actuator"
+    implementation "org.springframework.boot:spring-boot-starter-data-jpa"
     implementation "org.springframework.boot:spring-boot-starter-web"
     implementation 'org.apache.tomcat.embed:tomcat-embed-core'
 
@@ -67,7 +68,6 @@ dependencies {
     implementation "org.slf4j:jul-to-slf4j"
     implementation "org.springframework:spring-jms"
     implementation "org.springframework:spring-webmvc"
-    implementation "org.springframework.data:spring-data-jpa"
 
     annotationProcessor 'org.projectlombok:lombok'
 

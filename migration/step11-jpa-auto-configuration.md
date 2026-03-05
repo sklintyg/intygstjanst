@@ -14,11 +14,11 @@
 | **11.5**  | Add `@EntityScan` and `@EnableJpaRepositories` on main app class          | ✅ DONE |           | ✅        |       |
 | **11.6**  | Remove `JpaConfigBase`, `JpaConfig`, and `JpaConstants` (keep constants)  | ✅ DONE |           | ✅        |       |
 | **11.7**  | Remove `persistence.xml`                                                   | ✅ DONE |           | ✅        |       |
-| **11.8**  | Clean up `@PersistenceContext(unitName=...)` annotations                   | ⬜ TODO |           |          |       |
-| **11.9**  | Refactor `TransactionTemplate` → `@Transactional` in test/dev classes     | ⬜ TODO |           |          |       |
-| **11.10** | Remove redundant explicit dependencies from `persistence/build.gradle`    | ⬜ TODO |           |          |       |
-| **11.11** | Update persistence test infrastructure (`TestConfig`, `TestSupport`, `test.properties`) | ⬜ TODO |           |          |       |
-| **11.12** | Update `ApplicationConfig` — remove `@DependsOn("dbUpdate")`             | ⬜ TODO |           |          |       |
+| **11.8**  | Clean up `@PersistenceContext(unitName=...)` annotations                   | ✅ DONE |           | ✅        | Done atomically with 11.6 |
+| **11.9**  | Refactor `TransactionTemplate` → `@Transactional` in test/dev classes     | ✅ DONE |           | ✅        |       |
+| **11.10** | Remove redundant explicit dependencies from `persistence/build.gradle`    | ✅ DONE |           | ✅        | Also added starter to web/build.gradle |
+| **11.11** | Update persistence test infrastructure (`TestConfig`, `TestSupport`, `test.properties`) | ✅ DONE |           | ✅        | Done atomically with 11.6 |
+| **11.12** | Update `ApplicationConfig` — remove `@DependsOn("dbUpdate")`             | ✅ DONE |           | ✅        | Done atomically with 11.6 |
 | **11.13** | Final verification — `./gradlew bootRun` + `./gradlew test`               | ⬜ TODO |           |          |       |
 
 **Deployment batches:**
