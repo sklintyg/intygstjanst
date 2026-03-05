@@ -25,7 +25,6 @@ import java.sql.Time;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
-import se.inera.intyg.intygstjanst.persistence.config.JpaConstants;
 import se.inera.intyg.intygstjanst.persistence.model.dao.HealthCheckDao;
 
 /**
@@ -38,7 +37,7 @@ public class HealthCheckDaoImpl implements HealthCheckDao {
 
     private static final String CURR_TIME_SQL = "SELECT CURRENT_TIME()";
 
-    @PersistenceContext(unitName = JpaConstants.PERSISTANCE_UNIT_NAME)
+    @PersistenceContext
     private EntityManager entityManager;
 
     @Override

@@ -24,7 +24,6 @@ import org.apache.cxf.bus.spring.SpringBus;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistryImpl;
@@ -47,7 +46,7 @@ public class ApplicationConfig {
     public PathMatchingResourcePatternResolver pathMatchingResourcePatternResolver() {
         return new PathMatchingResourcePatternResolver();
     }
-    
+
     @Bean
     public SjukfallEngineService sjukfallEngineService() {
         return new SjukfallEngineServiceImpl();
@@ -59,7 +58,6 @@ public class ApplicationConfig {
     }
 
     @Bean
-    @DependsOn("dbUpdate")
     public IntygModuleRegistryImpl moduleRegistry() {
         final var registry = new IntygModuleRegistryImpl();
         registry.setOrigin(ApplicationOrigin.INTYGSTJANST);

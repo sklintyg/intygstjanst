@@ -10,10 +10,10 @@
 | **11.1**  | Add `spring-boot-starter-data-jpa` dependency                             | ✅ DONE |           | ✅        |       |
 | **11.2**  | Map `db.*` / `hibernate.*` properties to Spring Boot conventions           | ✅ DONE |           | ✅        |       |
 | **11.3**  | Map Liquibase properties to Spring Boot conventions                        | ✅ DONE |           | ✅        |       |
-| **11.4**  | Remove auto-config exclusions for JPA/DataSource/Liquibase                | ⬜ TODO |           |          |       |
-| **11.5**  | Add `@EntityScan` and `@EnableJpaRepositories` on main app class          | ⬜ TODO |           |          |       |
-| **11.6**  | Remove `JpaConfigBase`, `JpaConfig`, and `JpaConstants` (keep constants)  | ⬜ TODO |           |          |       |
-| **11.7**  | Remove `persistence.xml`                                                   | ⬜ TODO |           |          |       |
+| **11.4**  | Remove auto-config exclusions for JPA/DataSource/Liquibase                | ✅ DONE |           | ✅        |       |
+| **11.5**  | Add `@EntityScan` and `@EnableJpaRepositories` on main app class          | ✅ DONE |           | ✅        |       |
+| **11.6**  | Remove `JpaConfigBase`, `JpaConfig`, and `JpaConstants` (keep constants)  | ✅ DONE |           | ✅        |       |
+| **11.7**  | Remove `persistence.xml`                                                   | ✅ DONE |           | ✅        |       |
 | **11.8**  | Clean up `@PersistenceContext(unitName=...)` annotations                   | ⬜ TODO |           |          |       |
 | **11.9**  | Refactor `TransactionTemplate` → `@Transactional` in test/dev classes     | ⬜ TODO |           |          |       |
 | **11.10** | Remove redundant explicit dependencies from `persistence/build.gradle`    | ⬜ TODO |           |          |       |
