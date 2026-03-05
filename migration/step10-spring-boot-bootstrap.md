@@ -16,7 +16,7 @@
 | **10.7**  | Move/adapt `application.properties` for Spring Boot conventions | ✅ DONE |           | ✅        |       |
 | **10.8**  | Remove `web.xml`, `version.jsp`, `webapp/` directory            | ✅ DONE |           | ✅        |       |
 | **10.9**  | Switch from `war`/Gretty plugin to Spring Boot `jar`            | ✅ DONE |           | ✅        |       |
-| **10.10** | Final verification — `./gradlew bootRun` + `./gradlew test`     | ⬜ TODO |           |          |       |
+| **10.10** | Final verification — `./gradlew bootRun` + `./gradlew test`     | ✅ DONE |           | ✅        |       |
 
 **Deployment batches:**
 
@@ -354,7 +354,7 @@ at `/*` which catches everything else (= SOAP). This is **exactly** what `web.xm
    **URL verification (all unchanged):**
 
    | Type         | Current URL                                                              | After Spring Boot                                                         |
-                                 |--------------|--------------------------------------------------------------------------|---------------------------------------------------------------------------|
+                                    |--------------|--------------------------------------------------------------------------|---------------------------------------------------------------------------|
    | SOAP         | `http://localhost:8080/inera-certificate/get-certificate-se/v2.0`        | `http://localhost:8080/inera-certificate/get-certificate-se/v2.0` ✅       |
    | SOAP stub    | `http://localhost:8080/inera-certificate/stubs/.../SendMessageToCare/...` | `http://localhost:8080/inera-certificate/stubs/.../SendMessageToCare/...` ✅ |
    | REST (int)   | `http://localhost:8180/inera-certificate/internalapi/v1/certificatetexts` | `http://localhost:8180/inera-certificate/internalapi/v1/certificatetexts` ✅ |
