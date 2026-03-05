@@ -7,9 +7,9 @@
 
 | Step      | Description                                                                | Status  | Commit/PR | Verified | Notes |
 |-----------|----------------------------------------------------------------------------|---------|-----------|----------|-------|
-| **11.1**  | Add `spring-boot-starter-data-jpa` dependency                             | ⬜ TODO |           |          |       |
-| **11.2**  | Map `db.*` / `hibernate.*` properties to Spring Boot conventions           | ⬜ TODO |           |          |       |
-| **11.3**  | Map Liquibase properties to Spring Boot conventions                        | ⬜ TODO |           |          |       |
+| **11.1**  | Add `spring-boot-starter-data-jpa` dependency                             | ✅ DONE |           | ✅        |       |
+| **11.2**  | Map `db.*` / `hibernate.*` properties to Spring Boot conventions           | ✅ DONE |           | ✅        |       |
+| **11.3**  | Map Liquibase properties to Spring Boot conventions                        | ✅ DONE |           | ✅        |       |
 | **11.4**  | Remove auto-config exclusions for JPA/DataSource/Liquibase                | ⬜ TODO |           |          |       |
 | **11.5**  | Add `@EntityScan` and `@EnableJpaRepositories` on main app class          | ⬜ TODO |           |          |       |
 | **11.6**  | Remove `JpaConfigBase`, `JpaConfig`, and `JpaConstants` (keep constants)  | ⬜ TODO |           |          |       |
