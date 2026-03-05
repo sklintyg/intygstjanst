@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import se.inera.intyg.infra.testcertificate.dto.TestCertificateEraseRequest;
+import se.inera.intyg.intygstjanst.web.interceptor.ApiBasePath;
 import se.inera.intyg.infra.testcertificate.dto.TestCertificateEraseResult;
 import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
 import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
@@ -33,6 +34,7 @@ import se.inera.intyg.intygstjanst.web.service.TestCertificateService;
  * Internal REST endpoint for managing test certificates.
  */
 @RestController
+@ApiBasePath("/internalapi")
 @RequestMapping("/testCertificate")
 @RequiredArgsConstructor
 public class TestCertificateController {

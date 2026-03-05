@@ -60,11 +60,13 @@ import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Relation;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.web.integration.converter.ConverterUtil;
+import se.inera.intyg.intygstjanst.web.interceptor.ApiBasePath;
 
 /**
  * @author andreaskaltenbach
  */
 @RestController
+@ApiBasePath("/resources")
 @RequestMapping("/certificate")
 @Profile({"dev", "testability-api"})
 public class CertificateResource {

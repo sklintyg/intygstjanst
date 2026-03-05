@@ -28,9 +28,11 @@ import se.inera.intyg.infra.sjukfall.dto.RekoStatusDTO;
 import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
 import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.web.service.CreateRekoStatusService;
+import se.inera.intyg.intygstjanst.web.interceptor.ApiBasePath;
 import se.inera.intyg.intygstjanst.web.service.GetRekoStatusService;
 
 @RestController
+@ApiBasePath("/internalapi")
 @RequestMapping("/reko")
 @RequiredArgsConstructor
 public class RekoController {

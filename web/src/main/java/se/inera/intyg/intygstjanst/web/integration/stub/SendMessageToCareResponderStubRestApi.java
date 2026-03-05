@@ -38,8 +38,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import se.inera.intyg.intygstjanst.web.interceptor.ApiBasePath;
 
 @RestController
+@ApiBasePath("/api")
 @Profile("it-fk-stub")
 @RequestMapping("/send-message-to-care")
 public class SendMessageToCareResponderStubRestApi {

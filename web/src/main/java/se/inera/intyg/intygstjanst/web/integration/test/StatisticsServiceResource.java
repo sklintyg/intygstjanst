@@ -29,8 +29,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import se.inera.intyg.intygstjanst.web.interceptor.ApiBasePath;
 
 @RestController
+@ApiBasePath("/resources")
 @RequestMapping("/statisticsresource")
 @Profile({"dev", "testability-api"})
 public class StatisticsServiceResource {

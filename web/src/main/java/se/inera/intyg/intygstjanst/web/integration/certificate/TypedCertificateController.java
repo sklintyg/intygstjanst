@@ -30,6 +30,7 @@ import se.inera.intyg.infra.certificate.dto.SickLeaveCertificate;
 import se.inera.intyg.infra.certificate.dto.TypedCertificateRequest;
 import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
 import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
+import se.inera.intyg.intygstjanst.web.interceptor.ApiBasePath;
 import se.inera.intyg.intygstjanst.web.service.TypedCertificateService;
 import se.inera.intyg.schemas.contract.Personnummer;
 
@@ -37,6 +38,7 @@ import se.inera.intyg.schemas.contract.Personnummer;
  * Internal REST endpoint to retrieve certificates
  */
 @RestController
+@ApiBasePath("/internalapi")
 @RequestMapping("/typedcertificate")
 @RequiredArgsConstructor
 public class TypedCertificateController {

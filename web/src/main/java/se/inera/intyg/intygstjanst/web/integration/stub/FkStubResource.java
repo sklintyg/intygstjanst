@@ -35,8 +35,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import se.inera.intyg.common.support.stub.MedicalCertificatesStore;
+import se.inera.intyg.intygstjanst.web.interceptor.ApiBasePath;
 
 @RestController
+@ApiBasePath("/resources")
 @RequestMapping("/fk")
 @Transactional
 @Profile({"dev", "testability-api"})
