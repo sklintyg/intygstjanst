@@ -23,9 +23,11 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+@Slf4j
 public class InternalApiFilter extends OncePerRequestFilter {
 
     private static final int FORBIDDEN = 403;
@@ -37,10 +39,19 @@ public class InternalApiFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
         throws ServletException, IOException {
 
-        if (request.getLocalPort() == internalApiPort) {
+        final var localPort = request.getLocalPort();
+        if (localPort == internalApiPort) {
             filterChain.doFilter(request, response);
         } else {
+            final String path = getRequestPath(request);
+            log.warn("Request was BLOCKED on port={} path={}", localPort, path);
             response.sendError(FORBIDDEN);
         }
+    }
+
+    private String getRequestPath(HttpServletRequest request) {
+        final String contextPath = request.getContextPath();
+        final String uri = request.getRequestURI();
+        return contextPath.isEmpty() ? uri : uri.substring(contextPath.length());
     }
 }

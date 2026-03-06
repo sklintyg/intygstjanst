@@ -38,7 +38,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import se.inera.intyg.common.support.common.enumerations.RelationKod;
 import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
-import se.inera.intyg.intygstjanst.persistence.config.JpaConstants;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
 
@@ -71,7 +70,7 @@ public class SjukfallCertificateDaoImpl implements SjukfallCertificateDao {
         + " AND sc2.deleted = FALSE "                           // an intyg hasn't been revoked.
         + "WHERE sc.CIVIC_REGISTRATION_NUMBER IN (:pnrList)";
 
-    @PersistenceContext(unitName = JpaConstants.PERSISTANCE_UNIT_NAME)
+    @PersistenceContext
     private EntityManager entityManager;
 
     @Override

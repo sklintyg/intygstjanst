@@ -19,33 +19,17 @@
 package se.inera.intyg.intygstjanst.config;
 
 
-import static java.util.logging.LogManager.getLogManager;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.Collections;
+import jakarta.persistence.EntityManagerFactory;
 import org.apache.cxf.Bus;
 import org.apache.cxf.bus.spring.SpringBus;
-import org.apache.cxf.ext.logging.LoggingFeature;
-import org.apache.cxf.ext.logging.slf4j.Slf4jVerboseEventSender;
-import org.slf4j.bridge.SLF4JBridgeHandler;
-import org.slf4j.event.Level;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
-import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.transaction.annotation.TransactionManagementConfigurer;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistryImpl;
 import se.inera.intyg.common.support.modules.support.ApplicationOrigin;
 import se.inera.intyg.infra.security.filter.InternalApiFilter;
@@ -54,90 +38,23 @@ import se.inera.intyg.infra.sjukfall.services.SjukfallEngineServiceImpl;
 
 @Configuration
 @EnableCaching
-@EnableTransactionManagement
 @EnableAspectJAutoProxy
-@DependsOn("transactionManager")
-@PropertySource("classpath:application.properties")
-@PropertySource(ignoreResourceNotFound = true, value = "file:${dev.config.file}")
-@ComponentScan(basePackages = {
-    "se.inera.intyg.intygstjanst.config",
-    "se.inera.intyg.intygstjanst.logging",
-    "se.inera.intyg.intygstjanst.persistence",
-    "se.inera.intyg.intygstjanst.web",
-    "se.inera.intyg.infra.integration.intygproxyservice",
-    "se.inera.intyg.infra.pu.integration.intygproxyservice",
-    "se.inera.intyg.common.support.modules.support.api",
-    "se.inera.intyg.common.services",
-    "se.inera.intyg.common",
-    "se.inera.intyg.common.support.services",
-    "se.inera.intyg.common.util.integration.json"
-})
-public class ApplicationConfig implements TransactionManagementConfigurer {
-
-    @Autowired
-    private Bus bus;
-
-    @Autowired
-    private PlatformTransactionManager transactionManager;
-
-    @Value("${logging.soap.enable:false}")
-    private boolean loggingSoapEnable;
+public class ApplicationConfig {
 
     @Bean(name = Bus.DEFAULT_BUS_ID)
     public SpringBus springBus() {
         return new SpringBus();
     }
 
+    @Primary
     @Bean
-    public static PropertySourcesPlaceholderConfigurer propertyConfigInDev() {
-        return new PropertySourcesPlaceholderConfigurer();
-    }
-
-    @PostConstruct
-    public Bus init() {
-        bus.setFeatures(new ArrayList<>(Collections.singletonList(loggingFeature())));
-        bus.setProperty("org.apache.cxf.logging.enable", Boolean.toString(loggingSoapEnable));
-        configureApacheCxfToUseLogback();
-        return bus;
-    }
-
-    private static void configureApacheCxfToUseLogback() {
-        getLogManager().reset();
-        SLF4JBridgeHandler.install();
-    }
-
-    @Bean
-    public ResourceBundleMessageSource messageSource() {
-        ResourceBundleMessageSource source = new ResourceBundleMessageSource();
-        source.setBasename("version");
-        source.setUseCodeAsDefaultMessage(true);
-        return source;
-    }
-
-    @Bean
-    public LoggingFeature loggingFeature() {
-        LoggingFeature loggingFeature = new LoggingFeature();
-        loggingFeature.setPrettyLogging(true);
-        loggingFeature.setSender(slf4jVerboseEventSender());
-        return loggingFeature;
-    }
-
-    @Bean
-    public Slf4jVerboseEventSender slf4jVerboseEventSender() {
-        final var slf4jVerboseEventSender = new Slf4jVerboseEventSender();
-        slf4jVerboseEventSender.setLoggingLevel(Level.INFO);
-        return slf4jVerboseEventSender;
+    public PlatformTransactionManager transactionManager(EntityManagerFactory emf) {
+        return new JpaTransactionManager(emf);
     }
 
     @Bean
     public PathMatchingResourcePatternResolver pathMatchingResourcePatternResolver() {
         return new PathMatchingResourcePatternResolver();
-    }
-
-    @Nonnull
-    @Override
-    public PlatformTransactionManager annotationDrivenTransactionManager() {
-        return transactionManager;
     }
 
     @Bean
@@ -151,7 +68,6 @@ public class ApplicationConfig implements TransactionManagementConfigurer {
     }
 
     @Bean
-    @DependsOn("dbUpdate")
     public IntygModuleRegistryImpl moduleRegistry() {
         final var registry = new IntygModuleRegistryImpl();
         registry.setOrigin(ApplicationOrigin.INTYGSTJANST);

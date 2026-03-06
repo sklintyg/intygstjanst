@@ -42,7 +42,6 @@ import org.springframework.transaction.annotation.Transactional;
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.common.support.peristence.dao.util.DaoUtil;
 import se.inera.intyg.intygstjanst.logging.HashUtility;
-import se.inera.intyg.intygstjanst.persistence.config.JpaConstants;
 import se.inera.intyg.intygstjanst.persistence.exception.PersistenceException;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
@@ -64,7 +63,7 @@ public class CertificateDaoImpl implements CertificateDao {
     private static final Logger LOG = LoggerFactory.getLogger(CertificateDaoImpl.class);
     private static final int MONTHS = -3;
 
-    @PersistenceContext(unitName = JpaConstants.PERSISTANCE_UNIT_NAME)
+    @PersistenceContext
     private EntityManager entityManager;
 
     @Override

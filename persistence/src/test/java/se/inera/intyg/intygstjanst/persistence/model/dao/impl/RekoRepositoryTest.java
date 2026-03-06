@@ -27,7 +27,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import se.inera.intyg.intygstjanst.persistence.config.JpaConstants;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Reko;
 import se.inera.intyg.intygstjanst.persistence.model.dao.RekoRepository;
 
@@ -41,7 +40,7 @@ class RekoRepositoryTest extends TestSupport {
     private static final String CARE_PROVIDER_ID = "careProviderId";
     private static final String CARE_UNIT_ID_1 = "careUnitId1";
     private static final String CARE_UNIT_ID_2 = "careUnitId2";
-    @PersistenceContext(unitName = JpaConstants.PERSISTANCE_UNIT_NAME)
+    @PersistenceContext
     private EntityManager entityManager;
 
     @Autowired

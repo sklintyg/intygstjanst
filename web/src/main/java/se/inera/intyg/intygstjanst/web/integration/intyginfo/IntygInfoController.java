@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import se.inera.intyg.infra.intyginfo.dto.ItIntygInfo;
+import se.inera.intyg.intygstjanst.web.interceptor.ApiBasePath;
 import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
 import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.web.service.IntygInfoService;
@@ -33,6 +34,7 @@ import se.inera.intyg.intygstjanst.web.service.IntygInfoService;
  * Internal REST endpoint for intyg oriented data.
  */
 @RestController
+@ApiBasePath("/internalapi")
 @RequestMapping("/intygInfo")
 @RequiredArgsConstructor
 public class IntygInfoController {

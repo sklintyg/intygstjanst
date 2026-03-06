@@ -16,19 +16,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package se.inera.intyg.intygstjanst.persistence.config;
+package se.inera.intyg.intygstjanst.web.interceptor;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * @author Magnus Ekstrand on 2018-06-15.
+ * Declares which servlet base path(s) a REST controller is accessible on.
+ * Enforced by {@link ApiBasePathEnforcingInterceptor}.
+ *
+ * <p>Example: {@code @ApiBasePath("/internalapi")} restricts the controller to
+ * requests arriving via the {@code /internalapi/*} servlet mapping.</p>
  */
-public final class JpaConstants {
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface ApiBasePath {
 
-    public static final String PERSISTANCE_UNIT_NAME = "IneraCertificate";
-    public static final String BASE_PACKAGE_TO_SCAN = "se.inera.intyg.intygstjanst.persistence.model";
-    public static final String REPOSITORY_PACKAGE_TO_SCAN = BASE_PACKAGE_TO_SCAN + ".dao";
-
-    private JpaConstants() {
-        // Checkstyle states: Utility classes should not have a public or default constructor
-    }
-
+    String[] value();
 }

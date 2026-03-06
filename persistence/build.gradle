@@ -1,20 +1,12 @@
-// JPA expects classes and configuration files to be in the same directory.
-sourceSets.main.output.resourcesDir = sourceSets.main.output.getClassesDirs().getSingleFile()
-// B/c of the above, we create duplicates within the JAR. This configuration excludes the duplicates.
-jar.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-
 dependencies {
     implementation project(':intygstjanst-logging')
 
     implementation "com.fasterxml.jackson.core:jackson-annotations"
     implementation "com.google.guava:guava"
-    implementation "com.zaxxer:HikariCP"
+    implementation "org.springframework.boot:spring-boot-starter-data-jpa"
     implementation "jakarta.persistence:jakarta.persistence-api"
     implementation "jakarta.xml.ws:jakarta.xml.ws-api"
-    implementation "org.hibernate.orm:hibernate-core"
-    implementation "org.hibernate.orm:hibernate-hikaricp"
     implementation "org.liquibase:liquibase-core"
-    implementation "org.springframework.data:spring-data-jpa"
     implementation "se.inera.intyg.common:common-support:${commonVersion}"
     implementation "se.inera.intyg.schemas:schemas-contract:${schemasContractVersion}"
 

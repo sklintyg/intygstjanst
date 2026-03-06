@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import se.inera.intyg.intygstjanst.persistence.config.JpaConstants;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
 import se.inera.intyg.intygstjanst.persistence.model.dao.ArendeRepository;
 
@@ -38,7 +37,7 @@ class ArendeRepositoryTest extends TestSupport {
     private static String ENHET_3_ID = "ENHET_3_ID";
     private static String ENHET_4_ID = "ENHET_4_ID";
 
-    @PersistenceContext(unitName = JpaConstants.PERSISTANCE_UNIT_NAME)
+    @PersistenceContext
     private EntityManager entityManager;
 
     @Autowired

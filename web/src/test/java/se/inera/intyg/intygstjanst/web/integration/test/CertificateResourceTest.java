@@ -19,6 +19,7 @@
 package se.inera.intyg.intygstjanst.web.integration.test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -29,15 +30,13 @@ import static org.mockito.Mockito.when;
 import jakarta.persistence.EntityManager;
 import java.time.LocalDateTime;
 import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
+import org.springframework.web.server.ResponseStatusException;
 import se.inera.intyg.common.support.model.common.internal.GrundData;
 import se.inera.intyg.common.support.model.common.internal.HoSPersonal;
 import se.inera.intyg.common.support.model.common.internal.Utlatande;
@@ -55,12 +54,6 @@ class CertificateResourceTest {
     private EntityManager entityManager = mock(EntityManager.class);
 
     @Mock
-    private PlatformTransactionManager txManager = mock(PlatformTransactionManager.class);
-
-    @Mock
-    private TransactionStatus txStatus = mock(TransactionStatus.class);
-
-    @Mock
     private IntygModuleRegistry moduleRegistry = mock(IntygModuleRegistry.class);
 
     @Mock
@@ -72,11 +65,6 @@ class CertificateResourceTest {
     @InjectMocks
     private CertificateResource certificateResource = new CertificateResource();
 
-    @BeforeEach
-    void injectTxManager() {
-        certificateResource.setTxManager(txManager);
-    }
-
     @Test
     void testGetCertificate() {
         certificateResource.getCertificate("1");
@@ -87,34 +75,27 @@ class CertificateResourceTest {
     @Test
     void testDeleteCertificate() {
         Certificate certificate = new Certificate("1");
-        when(txManager.getTransaction(any())).thenReturn(txStatus);
         when(entityManager.find(Certificate.class, "1")).thenReturn(certificate);
 
         certificateResource.deleteCertificate("1");
 
         verify(entityManager).find(Certificate.class, "1");
         verify(entityManager).remove(certificate);
-        verify(txManager).commit(txStatus);
     }
 
     @Test
     void testDeleteCertificateHandlesException() {
         Certificate certificate = new Certificate("1");
-        when(txManager.getTransaction(any())).thenReturn(txStatus);
         when(entityManager.find(Certificate.class, "1")).thenReturn(certificate);
-
         doThrow(new RuntimeException("")).when(entityManager).remove(certificate);
 
-        certificateResource.deleteCertificate("1");
-
-        verify(txStatus).setRollbackOnly();
+        assertThrows(ResponseStatusException.class, () -> certificateResource.deleteCertificate("1"));
     }
 
     @Test
     void testInsertCertificate() throws Exception {
         Certificate certificate = new Certificate("1");
         certificate.setOriginalCertificate(new OriginalCertificate(LocalDateTime.now(), "xml", certificate));
-        when(txManager.getTransaction(any())).thenReturn(txStatus);
         when(moduleRegistry.getModuleApi(any(), any())).thenReturn(moduleApi);
         when(moduleApi.getAdditionalInfo(any())).thenReturn("additional info");
         when(moduleApi.getUtlatandeFromXml(any())).thenReturn(utlatande);
@@ -136,16 +117,13 @@ class CertificateResourceTest {
         assertEquals(certificate.getId(), metadataArgument.getCertificateId());
         OriginalCertificate originalCertificateArgument = (OriginalCertificate) persistedObjects.get(2);
         assertEquals(certificate.getId(), originalCertificateArgument.getCertificate().getId());
-        verify(txManager).commit(txStatus);
     }
 
     @Test
     void testInsertCertificateHandlesException() {
         Certificate certificate = new Certificate("1");
-        when(txManager.getTransaction(any())).thenReturn(txStatus);
 
-        certificateResource.insertCertificate(ConverterUtil.toCertificateHolder(certificate));
-
-        verify(txStatus).setRollbackOnly();
+        assertThrows(ResponseStatusException.class,
+            () -> certificateResource.insertCertificate(ConverterUtil.toCertificateHolder(certificate)));
     }
 }

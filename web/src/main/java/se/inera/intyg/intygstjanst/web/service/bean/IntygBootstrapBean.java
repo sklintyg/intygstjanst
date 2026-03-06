@@ -20,8 +20,6 @@ package se.inera.intyg.intygstjanst.web.service.bean;
 
 import com.google.common.io.Resources;
 import jakarta.annotation.PostConstruct;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -32,16 +30,11 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
 import se.inera.intyg.common.fk7263.support.Fk7263EntryPoint;
 import se.inera.intyg.common.lisjp.support.LisjpEntryPoint;
 import se.inera.intyg.common.support.model.CertificateState;
@@ -50,12 +43,10 @@ import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
 import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.common.support.modules.support.api.exception.ModuleException;
 import se.inera.intyg.common.util.integration.json.CustomObjectMapper;
-import se.inera.intyg.intygstjanst.persistence.config.JpaConstants;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateMetaData;
 import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
 import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
-import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.web.service.converter.CertificateToSjukfallCertificateConverter;
 
 @Component
@@ -66,11 +57,6 @@ public class IntygBootstrapBean {
     private static final Logger LOG = LoggerFactory.getLogger(IntygBootstrapBean.class);
     private static final String DEFAULT_TYPE_VERSION_FALLBACK = "1.0";
 
-    @PersistenceContext(unitName = JpaConstants.PERSISTANCE_UNIT_NAME)
-    private EntityManager entityManager;
-
-    private TransactionTemplate transactionTemplate;
-
     @Autowired
     private IntygModuleRegistry moduleRegistry;
 
@@ -78,9 +64,7 @@ public class IntygBootstrapBean {
     private CertificateToSjukfallCertificateConverter certificateToSjukfallCertificateConverter;
 
     @Autowired
-    public void setTxManager(@Qualifier("transactionManager") PlatformTransactionManager txManager) {
-        this.transactionTemplate = new TransactionTemplate(txManager);
-    }
+    private IntygBootstrapPersister persister;
 
     @PostConstruct
     public void initData() {
@@ -122,55 +106,36 @@ public class IntygBootstrapBean {
     private void bootstrapCertificate(String xmlString, ModuleApi moduleApi, String defaultRecipient) throws ModuleException {
         final Utlatande utlatande = moduleApi.getUtlatandeFromXml(xmlString);
         final String additonalInfo = moduleApi.getAdditionalInfo(moduleApi.getIntygFromUtlatande(utlatande));
-        transactionTemplate.execute((TransactionStatus status) -> {
-            Certificate certificate = new Certificate(utlatande.getId());
 
-            if (entityManager.find(Certificate.class, certificate.getId()) == null) {
-                certificate.setAdditionalInfo(additonalInfo);
-                certificate.setCareGiverId(utlatande.getGrundData().getSkapadAv().getVardenhet().getVardgivare().getVardgivarid());
-                certificate.setCareUnitId(utlatande.getGrundData().getSkapadAv().getVardenhet().getEnhetsid());
-                certificate.setCareUnitName(utlatande.getGrundData().getSkapadAv().getVardenhet().getEnhetsnamn());
-                certificate.setCivicRegistrationNumber(utlatande.getGrundData().getPatient().getPersonId());
-                certificate.setDeletedByCareGiver(false);
-                OriginalCertificate originalCertificate;
-                originalCertificate = new OriginalCertificate(utlatande.getGrundData().getSigneringsdatum(),
-                    xmlString, certificate);
-                certificate.setOriginalCertificate(originalCertificate);
-                certificate.setSignedDate(utlatande.getGrundData().getSigneringsdatum());
-                certificate.setSigningDoctorName(utlatande.getGrundData().getSkapadAv().getFullstandigtNamn());
-                certificate.setStates(Arrays.asList(
-                    new CertificateStateHistoryEntry("HSVARD", CertificateState.RECEIVED,
-                        utlatande.getGrundData().getSigneringsdatum().plusMinutes(1)),
-                    new CertificateStateHistoryEntry(defaultRecipient, CertificateState.SENT,
-                        utlatande.getGrundData().getSigneringsdatum().plusMinutes(2))));
-                certificate.setType(utlatande.getTyp());
-                certificate.setTypeVersion(utlatande.getTextVersion() != null ? utlatande.getTextVersion() : DEFAULT_TYPE_VERSION_FALLBACK);
-                certificate.setValidFromDate(null);
-                certificate.setValidToDate(null);
-                certificate.setWireTapped(false);
+        Certificate certificate = new Certificate(utlatande.getId());
+        certificate.setAdditionalInfo(additonalInfo);
+        certificate.setCareGiverId(utlatande.getGrundData().getSkapadAv().getVardenhet().getVardgivare().getVardgivarid());
+        certificate.setCareUnitId(utlatande.getGrundData().getSkapadAv().getVardenhet().getEnhetsid());
+        certificate.setCareUnitName(utlatande.getGrundData().getSkapadAv().getVardenhet().getEnhetsnamn());
+        certificate.setCivicRegistrationNumber(utlatande.getGrundData().getPatient().getPersonId());
+        certificate.setDeletedByCareGiver(false);
+        OriginalCertificate originalCertificate = new OriginalCertificate(utlatande.getGrundData().getSigneringsdatum(),
+            xmlString, certificate);
+        certificate.setOriginalCertificate(originalCertificate);
+        certificate.setSignedDate(utlatande.getGrundData().getSigneringsdatum());
+        certificate.setSigningDoctorName(utlatande.getGrundData().getSkapadAv().getFullstandigtNamn());
+        certificate.setStates(Arrays.asList(
+            new CertificateStateHistoryEntry("HSVARD", CertificateState.RECEIVED,
+                utlatande.getGrundData().getSigneringsdatum().plusMinutes(1)),
+            new CertificateStateHistoryEntry(defaultRecipient, CertificateState.SENT,
+                utlatande.getGrundData().getSigneringsdatum().plusMinutes(2))));
+        certificate.setType(utlatande.getTyp());
+        certificate.setTypeVersion(utlatande.getTextVersion() != null ? utlatande.getTextVersion() : DEFAULT_TYPE_VERSION_FALLBACK);
+        certificate.setValidFromDate(null);
+        certificate.setValidToDate(null);
+        certificate.setWireTapped(false);
 
-                CertificateMetaData metaData = new CertificateMetaData(certificate, utlatande.getGrundData().getSkapadAv().getPersonId(),
-                    utlatande.getGrundData().getSkapadAv().getFullstandigtNamn(), false, null);
-                certificate.setCertificateMetaData(metaData);
+        CertificateMetaData metaData = new CertificateMetaData(certificate, utlatande.getGrundData().getSkapadAv().getPersonId(),
+            utlatande.getGrundData().getSkapadAv().getFullstandigtNamn(), false, null);
+        certificate.setCertificateMetaData(metaData);
 
-                entityManager.persist(metaData);
-                entityManager.persist(originalCertificate);
-                entityManager.persist(certificate);
-
-                // Handle sjukfall creation for applicable intygstyper (fk7273, lisjp)
-                if (isSjukfallsGrundandeIntyg(certificate.getType())) {
-                    if (certificateToSjukfallCertificateConverter.isConvertableFk7263(utlatande)) {
-                        entityManager.persist(certificateToSjukfallCertificateConverter.convertFk7263(certificate, utlatande));
-                    }
-                    if (certificateToSjukfallCertificateConverter.isConvertableLisjp(utlatande)) {
-                        entityManager.persist(certificateToSjukfallCertificateConverter.convertLisjp(certificate, utlatande));
-                    }
-                }
-            } else {
-                LOG.info("Bootstrapping of certificate '{}' skipped. Already in database.", certificate.getId());
-            }
-            return null;
-        });
+        // Delegate to @Transactional service (proxy-based, so each certificate gets its own transaction)
+        persister.persistCertificate(certificate, originalCertificate, metaData, utlatande);
     }
 
     private void bootstrapLocalCertificates() {
@@ -213,41 +178,27 @@ public class IntygBootstrapBean {
             }
             return Integer.compare(first, second);
         }
-
     }
 
     private void addIntyg(final Resource metadata, final Resource content) {
-        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-            @Override
-            protected void doInTransactionWithoutResult(TransactionStatus status) {
-                try {
-                    Certificate certificate = new CustomObjectMapper().readValue(metadata.getInputStream(), Certificate.class);
-                    if (entityManager.find(Certificate.class, certificate.getId()) == null) {
-                        String contentString = Resources.toString(content.getURL(), StandardCharsets.UTF_8);
-                        OriginalCertificate originalCertificate = new OriginalCertificate(certificate.getSignedDate(), contentString,
-                            certificate);
+        try {
+            Certificate certificate = new CustomObjectMapper().readValue(metadata.getInputStream(), Certificate.class);
+            String contentString = Resources.toString(content.getURL(), StandardCharsets.UTF_8);
+            OriginalCertificate originalCertificate = new OriginalCertificate(
+                certificate.getSignedDate(), contentString, certificate);
 
-                        ModuleApi moduleApi = moduleRegistry.getModuleApi(certificate.getType(), certificate.getTypeVersion());
-                        final Utlatande utlatande = moduleApi.getUtlatandeFromXml(contentString);
-                        certificate.setAdditionalInfo(moduleApi.getAdditionalInfo(moduleApi.getIntygFromUtlatande(utlatande)));
+            ModuleApi moduleApi = moduleRegistry.getModuleApi(certificate.getType(), certificate.getTypeVersion());
+            final Utlatande utlatande = moduleApi.getUtlatandeFromXml(contentString);
+            certificate.setAdditionalInfo(moduleApi.getAdditionalInfo(moduleApi.getIntygFromUtlatande(utlatande)));
 
-                        CertificateMetaData metaData = new CertificateMetaData(certificate,
-                            utlatande.getGrundData().getSkapadAv().getPersonId(),
-                            utlatande.getGrundData().getSkapadAv().getFullstandigtNamn(), false, null);
+            CertificateMetaData metaData = new CertificateMetaData(certificate,
+                utlatande.getGrundData().getSkapadAv().getPersonId(),
+                utlatande.getGrundData().getSkapadAv().getFullstandigtNamn(), false, null);
 
-                        entityManager.persist(metaData);
-                        entityManager.persist(originalCertificate);
-                        entityManager.persist(certificate);
-                    } else {
-                        LOG.info("Bootstrapping of certificate '{}' skipped. Already in database.", certificate.getId());
-                    }
-                } catch (Exception e) {
-                    status.setRollbackOnly();
-                    LOG.error("Loading failed of {}: {}", metadata.getFilename(), e);
-                }
-            }
-        });
-
+            persister.persistLocalCertificate(certificate, originalCertificate, metaData);
+        } catch (Exception e) {
+            LOG.error("Loading failed of {}", metadata.getFilename(), e);
+        }
     }
 
     private List<Resource> getResourceListing(String classpathResourcePath) {
@@ -265,48 +216,17 @@ public class IntygBootstrapBean {
             if (!isSjukfallsGrundandeIntyg(certificate.getType())) {
                 return;
             }
+            String contentString = Resources.toString(content.getURL(), StandardCharsets.UTF_8);
+            ModuleApi moduleApi = moduleRegistry.getModuleApi(certificate.getType(), certificate.getTypeVersion());
+            Utlatande utlatande = moduleApi.getUtlatandeFromXml(contentString);
 
-            transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-                @Override
-                protected void doInTransactionWithoutResult(TransactionStatus status) {
-                    try {
-                        String contentString = Resources.toString(content.getURL(), StandardCharsets.UTF_8);
-
-                        ModuleApi moduleApi = moduleRegistry.getModuleApi(certificate.getType(), certificate.getTypeVersion());
-                        Utlatande utlatande = moduleApi.getUtlatandeFromXml(contentString);
-
-                        if (certificateToSjukfallCertificateConverter.isConvertableFk7263(utlatande)) {
-                            SjukfallCertificate sjukfallCertificate = certificateToSjukfallCertificateConverter.convertFk7263(certificate,
-                                utlatande);
-                            if (entityManager.find(SjukfallCertificate.class, sjukfallCertificate.getId()) == null) {
-                                entityManager.persist(sjukfallCertificate);
-                            } else {
-                                LOG.info("Bootstrapping of sjukfall '{}' skipped. Already in database.", sjukfallCertificate.getId());
-                            }
-                        }
-                        if (certificateToSjukfallCertificateConverter.isConvertableLisjp(utlatande)) {
-                            SjukfallCertificate sjukfallCertificate = certificateToSjukfallCertificateConverter.convertLisjp(certificate,
-                                utlatande);
-                            if (entityManager.find(SjukfallCertificate.class, sjukfallCertificate.getId()) == null) {
-                                entityManager.persist(sjukfallCertificate);
-                            } else {
-                                LOG.info("Bootstrapping of sjukfall '{}' skipped. Already in database.", sjukfallCertificate.getId());
-                            }
-                        }
-                    } catch (Exception e) {
-                        status.setRollbackOnly();
-                        LOG.error("Loading of Sjukfall intyg failed for {}: {}", metadata.getFilename(), e);
-                    }
-                }
-            });
-
-        } catch (IOException e) {
-            LOG.error("Loading of Sjukfall intyg failed for {}: {}", metadata.getFilename(), e);
+            persister.persistSjukfall(certificate, utlatande);
+        } catch (Exception e) {
+            LOG.error("Loading of Sjukfall intyg failed for {}", metadata.getFilename(), e);
         }
     }
 
     private boolean isSjukfallsGrundandeIntyg(String type) {
         return Fk7263EntryPoint.MODULE_ID.equalsIgnoreCase(type) || LisjpEntryPoint.MODULE_ID.equalsIgnoreCase(type);
     }
-
 }

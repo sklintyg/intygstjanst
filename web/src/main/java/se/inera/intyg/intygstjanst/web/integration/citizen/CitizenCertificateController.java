@@ -31,10 +31,12 @@ import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.web.service.ListCitizenCertificatesService;
 import se.inera.intyg.intygstjanst.web.service.SendCertificateService;
 import se.inera.intyg.intygstjanst.web.service.dto.SendCertificateRequestDTO;
+import se.inera.intyg.intygstjanst.web.interceptor.ApiBasePath;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.ListCitizenCertificatesRequest;
 import se.inera.intyg.schemas.contract.Personnummer;
 
 @RestController
+@ApiBasePath("/internalapi")
 @RequestMapping("/citizen")
 @RequiredArgsConstructor
 public class CitizenCertificateController {
