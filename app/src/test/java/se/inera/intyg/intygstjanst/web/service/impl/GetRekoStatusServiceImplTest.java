@@ -27,7 +27,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import se.inera.intyg.infra.sjukfall.dto.*;
+import se.inera.intyg.intygstjanst.application.sjukfall.dto.RekoStatusDTO;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Reko;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.RekoRepository;
 import se.inera.intyg.intygstjanst.web.service.RekoStatusConverter;

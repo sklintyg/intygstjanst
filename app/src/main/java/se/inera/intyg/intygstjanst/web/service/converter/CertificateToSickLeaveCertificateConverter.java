@@ -32,9 +32,9 @@ import se.inera.intyg.common.fkparent.model.internal.Diagnos;
 import se.inera.intyg.common.support.model.InternalLocalDateInterval;
 import se.inera.intyg.common.support.model.common.internal.GrundData;
 import se.inera.intyg.common.support.model.common.internal.Utlatande;
-import se.inera.intyg.infra.certificate.builder.SickLeaveCertificateBuilder;
-import se.inera.intyg.infra.certificate.dto.SickLeaveCertificate;
-import se.inera.intyg.infra.certificate.dto.SickLeaveCertificate.WorkCapacity;
+import se.inera.intyg.intygstjanst.application.certificate.builder.SickLeaveCertificateBuilder;
+import se.inera.intyg.intygstjanst.application.certificate.dto.SickLeaveCertificate;
+import se.inera.intyg.intygstjanst.application.certificate.dto.SickLeaveCertificate.WorkCapacity;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Certificate;
 
 @Component

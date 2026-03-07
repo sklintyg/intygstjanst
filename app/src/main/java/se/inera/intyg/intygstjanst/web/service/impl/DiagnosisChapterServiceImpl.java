@@ -27,10 +27,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import se.inera.intyg.infra.sjukfall.dto.DiagnosKapitel;
-import se.inera.intyg.infra.sjukfall.dto.DiagnosKategori;
-import se.inera.intyg.infra.sjukfall.dto.DiagnosKod;
-import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
+import se.inera.intyg.intygstjanst.application.sjukfall.dto.DiagnosKapitel;
+import se.inera.intyg.intygstjanst.application.sjukfall.dto.DiagnosKategori;
+import se.inera.intyg.intygstjanst.application.sjukfall.dto.DiagnosKod;
+import se.inera.intyg.intygstjanst.application.sjukfall.dto.SjukfallEnhet;
 import se.inera.intyg.intygstjanst.web.service.DiagnosisChapterProvider;
 import se.inera.intyg.intygstjanst.web.service.DiagnosisChapterService;
 

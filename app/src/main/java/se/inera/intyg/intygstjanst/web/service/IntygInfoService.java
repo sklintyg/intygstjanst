@@ -19,7 +19,7 @@
 package se.inera.intyg.intygstjanst.web.service;
 
 import java.util.Optional;
-import se.inera.intyg.infra.intyginfo.dto.ItIntygInfo;
+import se.inera.intyg.intygstjanst.application.intyginfo.dto.ItIntygInfo;
 
 public interface IntygInfoService {
 

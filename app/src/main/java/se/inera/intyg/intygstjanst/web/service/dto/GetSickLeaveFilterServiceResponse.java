@@ -22,8 +22,8 @@ package se.inera.intyg.intygstjanst.web.service.dto;
 import java.util.List;
 import lombok.Builder;
 import lombok.Value;
-import se.inera.intyg.infra.sjukfall.dto.DiagnosKapitel;
-import se.inera.intyg.infra.sjukfall.dto.Lakare;
+import se.inera.intyg.intygstjanst.application.sjukfall.dto.DiagnosKapitel;
+import se.inera.intyg.intygstjanst.application.sjukfall.dto.Lakare;
 
 @Value
 @Builder

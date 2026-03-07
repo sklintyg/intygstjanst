@@ -28,8 +28,8 @@ import se.inera.intyg.common.luae_na.v1.model.internal.LuaenaUtlatandeV1;
 import se.inera.intyg.common.luse.v1.model.internal.LuseUtlatandeV1;
 import se.inera.intyg.common.support.model.common.internal.GrundData;
 import se.inera.intyg.common.support.model.common.internal.Utlatande;
-import se.inera.intyg.infra.certificate.builder.DiagnosedCertificateBuilder;
-import se.inera.intyg.infra.certificate.dto.DiagnosedCertificate;
+import se.inera.intyg.intygstjanst.application.certificate.builder.DiagnosedCertificateBuilder;
+import se.inera.intyg.intygstjanst.application.certificate.dto.DiagnosedCertificate;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Certificate;
 
 @Component

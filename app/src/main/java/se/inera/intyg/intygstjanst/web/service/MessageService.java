@@ -19,7 +19,7 @@
 package se.inera.intyg.intygstjanst.web.service;
 
 import java.util.List;
-import se.inera.intyg.infra.message.dto.MessageFromIT;
+import se.inera.intyg.intygstjanst.application.message.dto.MessageFromIT;
 
 public interface MessageService {
 

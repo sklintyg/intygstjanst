@@ -23,7 +23,7 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
+import se.inera.intyg.intygstjanst.application.sjukfall.dto.SjukfallEnhet;
 
 @Data
 @NoArgsConstructor

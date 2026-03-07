@@ -21,7 +21,7 @@ package se.inera.intyg.intygstjanst.web.service;
 
 import java.io.IOException;
 import java.util.List;
-import se.inera.intyg.infra.sjukfall.dto.DiagnosKapitel;
+import se.inera.intyg.intygstjanst.application.sjukfall.dto.DiagnosKapitel;
 
 public interface DiagnosisChapterProvider {
 

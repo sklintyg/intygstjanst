@@ -29,8 +29,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import se.inera.intyg.infra.testcertificate.dto.TestCertificateEraseRequest;
-import se.inera.intyg.infra.testcertificate.dto.TestCertificateEraseResult;
+import se.inera.intyg.intygstjanst.application.testcertificate.dto.TestCertificateEraseRequest;
+import se.inera.intyg.intygstjanst.application.testcertificate.dto.TestCertificateEraseResult;
 import se.inera.intyg.intygstjanst.web.service.TestCertificateService;
 
 @ExtendWith(MockitoExtension.class)

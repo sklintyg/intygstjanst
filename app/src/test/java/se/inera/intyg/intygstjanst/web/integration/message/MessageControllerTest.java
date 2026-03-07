@@ -28,7 +28,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import se.inera.intyg.infra.message.dto.MessageFromIT;
+import se.inera.intyg.intygstjanst.application.message.dto.MessageFromIT;
 import se.inera.intyg.intygstjanst.web.service.MessageService;
 
 @ExtendWith(MockitoExtension.class)

@@ -19,9 +19,9 @@
 
 package se.inera.intyg.intygstjanst.web.service;
 
-import se.inera.intyg.infra.sjukfall.dto.DiagnosKapitel;
-import se.inera.intyg.infra.sjukfall.dto.DiagnosKod;
-import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
+import se.inera.intyg.intygstjanst.application.sjukfall.dto.DiagnosKapitel;
+import se.inera.intyg.intygstjanst.application.sjukfall.dto.DiagnosKod;
+import se.inera.intyg.intygstjanst.application.sjukfall.dto.SjukfallEnhet;
 
 public interface DiagnosisChapterService {
 

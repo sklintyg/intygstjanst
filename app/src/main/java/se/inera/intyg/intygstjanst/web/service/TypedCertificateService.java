@@ -20,8 +20,8 @@ package se.inera.intyg.intygstjanst.web.service;
 
 import java.time.LocalDate;
 import java.util.List;
-import se.inera.intyg.infra.certificate.dto.DiagnosedCertificate;
-import se.inera.intyg.infra.certificate.dto.SickLeaveCertificate;
+import se.inera.intyg.intygstjanst.application.certificate.dto.DiagnosedCertificate;
+import se.inera.intyg.intygstjanst.application.certificate.dto.SickLeaveCertificate;
 import se.inera.intyg.schemas.contract.Personnummer;
 
 /**

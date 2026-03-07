@@ -18,8 +18,8 @@
  */
 package se.inera.intyg.intygstjanst.web.service;
 
-import se.inera.intyg.infra.certificate.dto.CertificateListRequest;
-import se.inera.intyg.infra.certificate.dto.CertificateListResponse;
+import se.inera.intyg.intygstjanst.application.certificate.dto.CertificateListRequest;
+import se.inera.intyg.intygstjanst.application.certificate.dto.CertificateListResponse;
 
 /**
  * Service that collects certificates into a list.

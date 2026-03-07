@@ -19,7 +19,7 @@
 
 package se.inera.intyg.intygstjanst.web.service;
 
-import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
+import se.inera.intyg.intygstjanst.application.sjukfall.dto.SjukfallEnhet;
 
 import java.util.List;
 

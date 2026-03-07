@@ -30,7 +30,7 @@ import org.springframework.stereotype.Service;
 import se.inera.intyg.infra.pu.integration.api.model.PersonSvar;
 import se.inera.intyg.infra.pu.integration.api.model.PersonSvar.Status;
 import se.inera.intyg.infra.pu.integration.api.services.PUService;
-import se.inera.intyg.infra.sjukfall.dto.IntygData;
+import se.inera.intyg.intygstjanst.application.sjukfall.dto.IntygData;
 import se.inera.intyg.intygstjanst.infrastructure.logging.HashUtility;
 import se.inera.intyg.intygstjanst.web.service.PuFilterService;
 import se.inera.intyg.schemas.contract.Personnummer;

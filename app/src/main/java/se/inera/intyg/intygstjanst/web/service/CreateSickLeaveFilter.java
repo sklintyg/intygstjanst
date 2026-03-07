@@ -20,7 +20,7 @@
 package se.inera.intyg.intygstjanst.web.service;
 
 import java.util.List;
-import se.inera.intyg.infra.sjukfall.dto.IntygData;
+import se.inera.intyg.intygstjanst.application.sjukfall.dto.IntygData;
 import se.inera.intyg.intygstjanst.web.service.dto.GetSickLeaveFilterServiceResponse;
 
 public interface CreateSickLeaveFilter {

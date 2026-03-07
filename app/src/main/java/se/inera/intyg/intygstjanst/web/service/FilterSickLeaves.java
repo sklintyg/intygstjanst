@@ -21,8 +21,8 @@ package se.inera.intyg.intygstjanst.web.service;
 
 import java.time.LocalDate;
 import java.util.List;
-import se.inera.intyg.infra.sjukfall.dto.DiagnosKapitel;
-import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
+import se.inera.intyg.intygstjanst.application.sjukfall.dto.DiagnosKapitel;
+import se.inera.intyg.intygstjanst.application.sjukfall.dto.SjukfallEnhet;
 import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveLengthInterval;
 
 public interface FilterSickLeaves {

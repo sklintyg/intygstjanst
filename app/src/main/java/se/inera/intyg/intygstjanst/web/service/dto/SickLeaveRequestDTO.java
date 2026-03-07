@@ -22,7 +22,7 @@ package se.inera.intyg.intygstjanst.web.service.dto;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.Data;
-import se.inera.intyg.infra.sjukfall.dto.DiagnosKapitel;
+import se.inera.intyg.intygstjanst.application.sjukfall.dto.DiagnosKapitel;
 
 @Data
 public class SickLeaveRequestDTO {

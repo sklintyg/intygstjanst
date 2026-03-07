@@ -29,7 +29,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
-import se.inera.intyg.infra.sjukfall.dto.DiagnosKapitel;
+import se.inera.intyg.intygstjanst.application.sjukfall.dto.DiagnosKapitel;
 import se.inera.intyg.intygstjanst.web.service.DiagnosisChapterProvider;
 
 @Component

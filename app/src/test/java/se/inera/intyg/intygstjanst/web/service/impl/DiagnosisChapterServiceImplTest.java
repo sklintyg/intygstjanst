@@ -34,10 +34,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
-import se.inera.intyg.infra.sjukfall.dto.DiagnosKapitel;
-import se.inera.intyg.infra.sjukfall.dto.DiagnosKategori;
-import se.inera.intyg.infra.sjukfall.dto.DiagnosKod;
-import se.inera.intyg.infra.sjukfall.dto.SjukfallEnhet;
+import se.inera.intyg.intygstjanst.application.sjukfall.dto.DiagnosKapitel;
+import se.inera.intyg.intygstjanst.application.sjukfall.dto.DiagnosKategori;
+import se.inera.intyg.intygstjanst.application.sjukfall.dto.DiagnosKod;
+import se.inera.intyg.intygstjanst.application.sjukfall.dto.SjukfallEnhet;
 import se.inera.intyg.intygstjanst.web.service.DiagnosisChapterProvider;
 
 @ExtendWith(MockitoExtension.class)

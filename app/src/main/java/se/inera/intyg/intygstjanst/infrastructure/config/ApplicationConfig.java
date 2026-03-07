@@ -31,9 +31,7 @@ import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistryImpl;
 import se.inera.intyg.common.support.modules.support.ApplicationOrigin;
-import se.inera.intyg.infra.security.filter.InternalApiFilter;
-import se.inera.intyg.infra.sjukfall.services.SjukfallEngineService;
-import se.inera.intyg.infra.sjukfall.services.SjukfallEngineServiceImpl;
+import se.inera.intyg.intygstjanst.infrastructure.security.filter.InternalApiFilter;
 
 @Configuration
 @EnableAspectJAutoProxy
@@ -53,11 +51,6 @@ public class ApplicationConfig {
     @Bean
     public PathMatchingResourcePatternResolver pathMatchingResourcePatternResolver() {
         return new PathMatchingResourcePatternResolver();
-    }
-
-    @Bean
-    public SjukfallEngineService sjukfallEngineService() {
-        return new SjukfallEngineServiceImpl();
     }
 
     @Bean

@@ -28,7 +28,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.Ordered;
 import org.springframework.web.servlet.DispatcherServlet;
-import se.inera.intyg.infra.security.filter.InternalApiFilter;
+import se.inera.intyg.intygstjanst.infrastructure.security.filter.InternalApiFilter;
 import se.inera.intyg.intygstjanst.infrastructure.logging.MdcServletFilter;
 
 /**

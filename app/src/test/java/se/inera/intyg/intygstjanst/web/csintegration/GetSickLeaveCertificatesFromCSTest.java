@@ -14,7 +14,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import se.inera.intyg.infra.certificate.dto.SickLeaveCertificate;
+import se.inera.intyg.intygstjanst.application.certificate.dto.SickLeaveCertificate;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.SickLeaveCertificatesRequestDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.PersonIdTypeDTO;
 import se.inera.intyg.schemas.contract.Personnummer;

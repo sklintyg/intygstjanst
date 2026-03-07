@@ -23,7 +23,7 @@ import java.time.LocalDate;
 import java.util.List;
 import lombok.Builder;
 import lombok.Value;
-import se.inera.intyg.infra.sjukfall.dto.DiagnosKapitel;
+import se.inera.intyg.intygstjanst.application.sjukfall.dto.DiagnosKapitel;
 
 @Value
 @Builder

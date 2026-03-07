@@ -24,12 +24,13 @@ import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactor
 import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import se.inera.intyg.intygstjanst.infrastructure.security.filter.InternalApiFilter;
 
 /**
  * Adds a second embedded Tomcat connector on {@code internal.api.port} (default 8081).
  *
  * <p>This replicates the two-connector setup from {@code tomcat-gretty.xml}.
- * The existing {@link se.inera.intyg.infra.security.filter.InternalApiFilter} checks
+ * The existing {@link InternalApiFilter} checks
  * {@code request.getLocalPort()} and blocks requests from the wrong port — that
  * behaviour is unchanged.</p>
  *

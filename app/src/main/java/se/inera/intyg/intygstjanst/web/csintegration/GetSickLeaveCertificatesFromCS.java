@@ -25,7 +25,7 @@ import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import se.inera.intyg.infra.certificate.dto.SickLeaveCertificate;
+import se.inera.intyg.intygstjanst.application.certificate.dto.SickLeaveCertificate;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.SickLeaveCertificatesRequestDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.PersonIdDTO;
 import se.inera.intyg.schemas.contract.Personnummer;

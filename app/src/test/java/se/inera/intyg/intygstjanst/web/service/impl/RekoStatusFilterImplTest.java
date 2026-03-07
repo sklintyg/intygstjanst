@@ -25,7 +25,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
-import se.inera.intyg.infra.sjukfall.dto.*;
+import se.inera.intyg.intygstjanst.application.sjukfall.dto.Lakare;
+import se.inera.intyg.intygstjanst.application.sjukfall.dto.Patient;
+import se.inera.intyg.intygstjanst.application.sjukfall.dto.SjukfallEnhet;
+import se.inera.intyg.intygstjanst.application.sjukfall.dto.Vardenhet;
+import se.inera.intyg.intygstjanst.application.sjukfall.dto.Vardgivare;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Reko;
 import se.inera.intyg.intygstjanst.web.service.dto.RekoStatusType;
 
