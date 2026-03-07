@@ -8,7 +8,7 @@
 | Step      | Description                                                                | Status  | Commit/PR | Verified | Notes |
 |-----------|----------------------------------------------------------------------------|---------|-----------|----------|-------|
 | **12.1**  | Add `spring-boot-starter-activemq` dependency                             | ✅ DONE | | ✅ | Starter on classpath (v3.5.10 via BOM); `compileJava` succeeds; auto-config still excluded |
-| **12.2**  | Map `activemq.broker.*` properties to Spring Boot conventions              | ⬜ TODO |           |          |       |
+| **12.2**  | Map `activemq.broker.*` properties to Spring Boot conventions              | ✅ DONE | | ✅ | spring.activemq.* and spring.jms.* added to application.properties; inert until 12.3; build + tests pass |
 | **12.3**  | Remove auto-config exclusion for ActiveMQ                                  | ⬜ TODO |           |          |       |
 | **12.4**  | Remove manual `ConnectionFactory`, `JmsTransactionManager`, and `DestinationResolver` beans | ⬜ TODO |           |          |       |
 | **12.5**  | Simplify `JmsListenerContainerFactory` to use auto-configured beans       | ⬜ TODO |           |          |       |
