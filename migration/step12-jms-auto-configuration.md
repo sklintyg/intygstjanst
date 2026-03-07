@@ -16,7 +16,7 @@
 | **12.7**  | Update `JmsTemplate` consumers to use destination names instead of `Queue` beans | ✅ DONE | | ✅ | All four consumers (StatisticsServiceImpl, InternalNotificationServiceImpl, CertificateEventRedeliveryServiceImpl, Receiver) now use destination name strings; tests updated; build + tests pass |
 | **12.8**  | Remove `Queue` beans and `Receiver` bean from `JmsConfig`                 | ✅ DONE | | ✅ | Queue beans, @Value fields, and Receiver bean removed from JmsConfig; Receiver made @Component @Profile(dev,testability-api); no Queue bean refs remain; build + tests pass |
 | **12.9**  | Remove `JmsConfig` class and `@EnableJms`                                 | ✅ DONE | | ✅ | JmsConfig.java deleted; jms/ package removed; @EnableJms provided by JmsAutoConfiguration; build + tests pass |
-| **12.10** | Remove redundant explicit dependencies from `web/build.gradle`            | ⬜ TODO |           |          |       |
+| **12.10** | Remove redundant explicit dependencies from `web/build.gradle`            | ✅ DONE | | ✅ | Removed activemq-spring and spring-jms; both still on classpath transitively via starter; build + tests pass |
 | **12.11** | Update persistence `TestConfig` — remove `ActiveMQAutoConfiguration` exclusion | ⬜ TODO |           |          |       |
 | **12.12** | Final verification — `./gradlew bootRun` + `./gradlew test`               | ⬜ TODO |           |          |       |
 

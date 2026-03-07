@@ -61,13 +61,11 @@ dependencies {
     implementation "io.prometheus:simpleclient_servlet"
     implementation "jakarta.transaction:jakarta.transaction-api"
     implementation "org.antlr:ST4"
-    implementation "org.apache.activemq:activemq-spring"
     implementation "org.apache.cxf:cxf-rt-features-logging"
     implementation "org.apache.cxf:cxf-rt-frontend-jaxws"
     implementation "org.apache.cxf:cxf-rt-transports-http"
     implementation "org.aspectj:aspectjweaver"
     implementation "org.slf4j:jul-to-slf4j"
-    implementation "org.springframework:spring-jms"
     implementation "org.springframework:spring-webmvc"
 
     annotationProcessor 'org.projectlombok:lombok'
