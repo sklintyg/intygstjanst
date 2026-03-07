@@ -18,7 +18,7 @@
  */
 package se.inera.intyg.intygstjanst.web.integration;
 
-import static se.inera.intyg.intygstjanst.logging.LogMarkers.VALIDATION;
+import static se.inera.intyg.intygstjanst.infrastructure.logging.LogMarkers.VALIDATION;
 
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
@@ -46,8 +46,8 @@ import se.inera.intyg.common.support.modules.support.api.dto.AdditionalMetaData;
 import se.inera.intyg.infra.pu.integration.api.model.PersonSvar;
 import se.inera.intyg.infra.pu.integration.api.model.PersonSvar.Status;
 import se.inera.intyg.infra.pu.integration.api.services.PUService;
-import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
-import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
+import se.inera.intyg.intygstjanst.infrastructure.logging.MdcLogConstants;
+import se.inera.intyg.intygstjanst.infrastructure.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.web.integration.util.CertificateHolderConverter;
 import se.inera.intyg.schemas.contract.Personnummer;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.ObjectFactory;

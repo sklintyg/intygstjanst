@@ -29,7 +29,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EnableAutoConfiguration()
 @EntityScan("se.inera.intyg.intygstjanst.infrastructure.persistence.model")
 @EnableJpaRepositories("se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao")
-@ComponentScan(basePackages = {"se.inera.intyg.intygstjanst.infrastructure.persistence", "se.inera.intyg.intygstjanst.logging"})
+@ComponentScan(basePackages = {"se.inera.intyg.intygstjanst.infrastructure.persistence",
+    "se.inera.intyg.intygstjanst.infrastructure.logging"})
 @PropertySource("classpath:test.properties")
 public class TestConfig {
 

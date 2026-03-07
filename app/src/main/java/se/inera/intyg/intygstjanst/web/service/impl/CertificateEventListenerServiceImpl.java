@@ -19,11 +19,11 @@
 
 package se.inera.intyg.intygstjanst.web.service.impl;
 
-import static se.inera.intyg.intygstjanst.logging.MdcLogConstants.EVENT_CERTIFICATE_ID;
-import static se.inera.intyg.intygstjanst.logging.MdcLogConstants.EVENT_MESSAGE_ID;
-import static se.inera.intyg.intygstjanst.logging.MdcLogConstants.SESSION_ID_KEY;
-import static se.inera.intyg.intygstjanst.logging.MdcLogConstants.SPAN_ID_KEY;
-import static se.inera.intyg.intygstjanst.logging.MdcLogConstants.TRACE_ID_KEY;
+import static se.inera.intyg.intygstjanst.infrastructure.logging.MdcLogConstants.EVENT_CERTIFICATE_ID;
+import static se.inera.intyg.intygstjanst.infrastructure.logging.MdcLogConstants.EVENT_MESSAGE_ID;
+import static se.inera.intyg.intygstjanst.infrastructure.logging.MdcLogConstants.SESSION_ID_KEY;
+import static se.inera.intyg.intygstjanst.infrastructure.logging.MdcLogConstants.SPAN_ID_KEY;
+import static se.inera.intyg.intygstjanst.infrastructure.logging.MdcLogConstants.TRACE_ID_KEY;
 
 import jakarta.jms.JMSException;
 import jakarta.jms.Message;
@@ -32,8 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Service;
-import se.inera.intyg.intygstjanst.logging.MdcHelper;
-import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
+import se.inera.intyg.intygstjanst.infrastructure.logging.MdcHelper;
 import se.inera.intyg.intygstjanst.web.service.CertificateEventListenerService;
 import se.inera.intyg.intygstjanst.web.service.CertificateEventService;
 import se.inera.intyg.intygstjanst.web.service.CertificateEventValidator;
@@ -100,6 +99,7 @@ public class CertificateEventListenerServiceImpl implements CertificateEventList
         return String.format("Certificate event missing required parameter(s), got eventType '%s', certificateId '%s' and messageId '%s'.",
             eventType, certificateId, messageId);
     }
+
     private String getProcessEventFailedMessage(String eventType, String certificateId, String messageId) {
         return String.format("Failure processing event '%s' for certificateId '%s' and messageId '%s'.", eventType, certificateId,
             messageId);

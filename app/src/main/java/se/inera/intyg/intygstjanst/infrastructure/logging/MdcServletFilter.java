@@ -16,11 +16,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package se.inera.intyg.intygstjanst.logging;
+package se.inera.intyg.intygstjanst.infrastructure.logging;
 
-import static se.inera.intyg.intygstjanst.logging.MdcLogConstants.SESSION_ID_KEY;
-import static se.inera.intyg.intygstjanst.logging.MdcLogConstants.SPAN_ID_KEY;
-import static se.inera.intyg.intygstjanst.logging.MdcLogConstants.TRACE_ID_KEY;
+import static se.inera.intyg.intygstjanst.infrastructure.logging.MdcLogConstants.SESSION_ID_KEY;
+import static se.inera.intyg.intygstjanst.infrastructure.logging.MdcLogConstants.SPAN_ID_KEY;
+import static se.inera.intyg.intygstjanst.infrastructure.logging.MdcLogConstants.TRACE_ID_KEY;
 
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;

@@ -16,25 +16,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package se.inera.intyg.intygstjanst.logging;
+package se.inera.intyg.intygstjanst.infrastructure.logging;
 
-import static se.inera.intyg.intygstjanst.logging.MdcLogConstants.EVENT_CATEGORY_API;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+public final class LogMarkers {
 
-@Target(ElementType.METHOD)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface PerformanceLogging {
+    public static final Marker MONITORING = MarkerFactory.getMarker("Monitoring");
+    public static final Marker VALIDATION = MarkerFactory.getMarker("Validation");
+    public static final Marker PERFORMANCE = MarkerFactory.getMarker("Performance");
 
-    String eventType();
-
-    String eventAction();
-
-    String eventCategory() default EVENT_CATEGORY_API;
-
-    boolean isActive() default true;
+    private LogMarkers() {
+    }
 
 }

@@ -18,7 +18,7 @@
  */
 package se.inera.intyg.intygstjanst.web.integration;
 
-import static se.inera.intyg.intygstjanst.logging.LogMarkers.VALIDATION;
+import static se.inera.intyg.intygstjanst.infrastructure.logging.LogMarkers.VALIDATION;
 
 import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
@@ -37,9 +37,9 @@ import se.inera.intyg.common.support.integration.module.exception.CertificateRev
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.modules.support.api.exception.ExternalServiceCallException;
 import se.inera.intyg.common.support.validate.CertificateValidationException;
-import se.inera.intyg.intygstjanst.logging.HashUtility;
-import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
-import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
+import se.inera.intyg.intygstjanst.infrastructure.logging.HashUtility;
+import se.inera.intyg.intygstjanst.infrastructure.logging.MdcLogConstants;
+import se.inera.intyg.intygstjanst.infrastructure.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.application.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.application.exception.ServerException;

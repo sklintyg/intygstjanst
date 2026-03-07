@@ -1,16 +1,17 @@
-package se.inera.intyg.intygstjanst.logging;
+package se.inera.intyg.intygstjanst.infrastructure.logging;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static se.inera.intyg.intygstjanst.logging.MdcHelper.LOG_SESSION_ID_HEADER;
-import static se.inera.intyg.intygstjanst.logging.MdcHelper.LOG_TRACE_ID_HEADER;
+import static se.inera.intyg.intygstjanst.infrastructure.logging.MdcHelper.LOG_SESSION_ID_HEADER;
+import static se.inera.intyg.intygstjanst.infrastructure.logging.MdcHelper.LOG_TRACE_ID_HEADER;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import se.inera.intyg.intygstjanst.infrastructure.logging.MdcHelper;
 
 class MdcHelperTest {
 

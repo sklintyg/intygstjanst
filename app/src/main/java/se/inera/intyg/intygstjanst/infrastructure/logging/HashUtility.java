@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package se.inera.intyg.intygstjanst.logging;
+package se.inera.intyg.intygstjanst.infrastructure.logging;
 
 import com.google.common.base.Strings;
 import com.google.common.hash.HashFunction;

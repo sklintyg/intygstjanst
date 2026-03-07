@@ -22,10 +22,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import se.inera.intyg.intygstjanst.logging.HashUtility;
-import se.inera.intyg.intygstjanst.logging.LogMarkers;
-import se.inera.intyg.intygstjanst.logging.MdcCloseableMap;
-import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
+import se.inera.intyg.intygstjanst.infrastructure.logging.HashUtility;
+import se.inera.intyg.intygstjanst.infrastructure.logging.LogMarkers;
+import se.inera.intyg.intygstjanst.infrastructure.logging.MdcCloseableMap;
+import se.inera.intyg.intygstjanst.infrastructure.logging.MdcLogConstants;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import se.inera.intyg.schemas.contract.Personnummer;
 

@@ -19,10 +19,10 @@
 
 package se.inera.intyg.intygstjanst.web.csintegration;
 
-import static se.inera.intyg.intygstjanst.logging.MdcHelper.LOG_SESSION_ID_HEADER;
-import static se.inera.intyg.intygstjanst.logging.MdcHelper.LOG_TRACE_ID_HEADER;
-import static se.inera.intyg.intygstjanst.logging.MdcLogConstants.SESSION_ID_KEY;
-import static se.inera.intyg.intygstjanst.logging.MdcLogConstants.TRACE_ID_KEY;
+import static se.inera.intyg.intygstjanst.infrastructure.logging.MdcHelper.LOG_SESSION_ID_HEADER;
+import static se.inera.intyg.intygstjanst.infrastructure.logging.MdcHelper.LOG_TRACE_ID_HEADER;
+import static se.inera.intyg.intygstjanst.infrastructure.logging.MdcLogConstants.SESSION_ID_KEY;
+import static se.inera.intyg.intygstjanst.infrastructure.logging.MdcLogConstants.TRACE_ID_KEY;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -33,8 +33,8 @@ import org.springframework.web.client.RestClient;
 import se.inera.intyg.common.support.facade.model.Certificate;
 import se.inera.intyg.common.support.facade.model.metadata.CertificateMetadata;
 import se.inera.intyg.infra.certificate.dto.SickLeaveCertificate;
-import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
-import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
+import se.inera.intyg.intygstjanst.infrastructure.logging.MdcLogConstants;
+import se.inera.intyg.intygstjanst.infrastructure.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.CertificateExistsResponse;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.ExportCertificateInternalResponseDTO;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.ExportCertificatesRequestDTO;

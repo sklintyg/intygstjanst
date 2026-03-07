@@ -17,15 +17,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package se.inera.intyg.intygstjanst.logging;
+package se.inera.intyg.intygstjanst.infrastructure.logging;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
+import se.inera.intyg.intygstjanst.infrastructure.logging.HashUtility;
 
 class HashUtilityTest {
+
     private final HashUtility hashUtility = new HashUtility();
 
     @BeforeEach

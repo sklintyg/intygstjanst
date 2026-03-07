@@ -34,7 +34,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.client.RestClientException;
-import se.inera.intyg.intygstjanst.logging.MdcHelper;
+import se.inera.intyg.intygstjanst.infrastructure.logging.MdcHelper;
 
 @ExtendWith(MockitoExtension.class)
 class CertificateEventListenerServiceImplTest {

@@ -28,10 +28,10 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static se.inera.intyg.intygstjanst.logging.MdcHelper.LOG_SESSION_ID_HEADER;
-import static se.inera.intyg.intygstjanst.logging.MdcHelper.LOG_TRACE_ID_HEADER;
-import static se.inera.intyg.intygstjanst.logging.MdcLogConstants.SESSION_ID_KEY;
-import static se.inera.intyg.intygstjanst.logging.MdcLogConstants.TRACE_ID_KEY;
+import static se.inera.intyg.intygstjanst.infrastructure.logging.MdcHelper.LOG_SESSION_ID_HEADER;
+import static se.inera.intyg.intygstjanst.infrastructure.logging.MdcHelper.LOG_TRACE_ID_HEADER;
+import static se.inera.intyg.intygstjanst.infrastructure.logging.MdcLogConstants.SESSION_ID_KEY;
+import static se.inera.intyg.intygstjanst.infrastructure.logging.MdcLogConstants.TRACE_ID_KEY;
 
 import java.time.LocalDateTime;
 import java.util.List;

@@ -29,7 +29,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.core.Ordered;
 import org.springframework.web.servlet.DispatcherServlet;
 import se.inera.intyg.infra.security.filter.InternalApiFilter;
-import se.inera.intyg.intygstjanst.logging.MdcServletFilter;
+import se.inera.intyg.intygstjanst.infrastructure.logging.MdcServletFilter;
 
 /**
  * Replicates the servlet and filter layout from {@code web.xml} as Spring Boot

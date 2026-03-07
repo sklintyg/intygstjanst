@@ -17,8 +17,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
         "se.inera.intyg.common.util.integration.json"
     }
 )
-@EntityScan(basePackages = "se.inera.intyg.intygstjanst.persistence.model")
-@EnableJpaRepositories(basePackages = "se.inera.intyg.intygstjanst.persistence.model.dao")
+@EntityScan(basePackages = "se.inera.intyg.intygstjanst.infrastructure.persistence.model")
+@EnableJpaRepositories(basePackages = "se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao")
 public class IntygstjanstApplication {
 
     public static void main(String[] args) {

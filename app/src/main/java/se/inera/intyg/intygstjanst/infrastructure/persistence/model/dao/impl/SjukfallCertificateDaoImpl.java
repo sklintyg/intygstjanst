@@ -18,8 +18,8 @@
  */
 package se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.impl;
 
-import static se.inera.intyg.intygstjanst.logging.MdcLogConstants.EVENT_CATEGORY_DATABASE;
-import static se.inera.intyg.intygstjanst.logging.MdcLogConstants.EVENT_TYPE_ACCESSED;
+import static se.inera.intyg.intygstjanst.infrastructure.logging.MdcLogConstants.EVENT_CATEGORY_DATABASE;
+import static se.inera.intyg.intygstjanst.infrastructure.logging.MdcLogConstants.EVENT_TYPE_ACCESSED;
 
 import com.google.common.base.Strings;
 import jakarta.persistence.EntityManager;
@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import se.inera.intyg.common.support.common.enumerations.RelationKod;
-import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
+import se.inera.intyg.intygstjanst.infrastructure.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.SjukfallCertificateDao;
 

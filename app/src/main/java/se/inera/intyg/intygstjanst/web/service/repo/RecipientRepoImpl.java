@@ -18,8 +18,8 @@
  */
 package se.inera.intyg.intygstjanst.web.service.repo;
 
-import static se.inera.intyg.intygstjanst.logging.MdcLogConstants.SPAN_ID_KEY;
-import static se.inera.intyg.intygstjanst.logging.MdcLogConstants.TRACE_ID_KEY;
+import static se.inera.intyg.intygstjanst.infrastructure.logging.MdcLogConstants.SPAN_ID_KEY;
+import static se.inera.intyg.intygstjanst.infrastructure.logging.MdcLogConstants.TRACE_ID_KEY;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.annotations.VisibleForTesting;
@@ -40,8 +40,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Repository;
-import se.inera.intyg.intygstjanst.logging.MdcCloseableMap;
-import se.inera.intyg.intygstjanst.logging.MdcHelper;
+import se.inera.intyg.intygstjanst.infrastructure.logging.MdcCloseableMap;
+import se.inera.intyg.intygstjanst.infrastructure.logging.MdcHelper;
 import se.inera.intyg.intygstjanst.application.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.application.exception.ServerException;
 import se.inera.intyg.intygstjanst.web.service.bean.CertificateType;

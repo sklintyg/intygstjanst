@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package se.inera.intyg.intygstjanst.logging;
+package se.inera.intyg.intygstjanst.infrastructure.logging;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -42,7 +42,7 @@ public class PerformanceLoggingAdvice {
                 return joinPoint.proceed();
             } catch (final Throwable throwable) {
                 success = false;
-                log.error( "FAILED TO CALL '%s - %s'".formatted(className, methodName), throwable);
+                log.error("FAILED TO CALL '%s - %s'".formatted(className, methodName), throwable);
                 throw throwable;
             } finally {
                 final var end = LocalDateTime.now();
