@@ -25,14 +25,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jms.annotation.EnableJms;
-import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
-import org.springframework.jms.config.JmsListenerContainerFactory;
 import org.springframework.jms.core.JmsTemplate;
 import se.inera.intyg.intygstjanst.web.integration.test.Receiver;
 
 /**
- * JMS configuration — connection infrastructure is now provided by Spring Boot ActiveMQ auto-configuration.
- * This class retains only JmsTemplate beans, Queue beans, and the Receiver test helper.
+ * JMS configuration — connection infrastructure and listener container factory are now provided
+ * by Spring Boot ActiveMQ auto-configuration. This class retains only JmsTemplate beans,
+ * Queue beans, and the Receiver test helper.
  */
 @Configuration
 @EnableJms
@@ -46,16 +45,6 @@ public class JmsConfig {
 
     @Value("${certificate.event.queue.name}")
     private String certificateEventQueue;
-
-    @Bean
-    public JmsListenerContainerFactory jmsListenerContainerFactory(ConnectionFactory connectionFactory) {
-        DefaultJmsListenerContainerFactory factory = new DefaultJmsListenerContainerFactory();
-        factory.setConnectionFactory(connectionFactory);
-        factory.setSessionTransacted(true);
-        factory.setCacheLevelName("CACHE_CONSUMER");
-        factory.setConcurrency("1-10");
-        return factory;
-    }
 
     @Bean
     public JmsTemplate jmsTemplate(ConnectionFactory connectionFactory) {
