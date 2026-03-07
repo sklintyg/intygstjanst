@@ -20,15 +20,17 @@
 package se.inera.intyg.intygstjanst.web.service.impl;
 
 import jakarta.jms.Message;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.activemq.ScheduledMessage;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.intygstjanst.web.service.CertificateEventRedeliveryService;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class CertificateEventRedeliveryServiceImpl implements CertificateEventRedeliveryService {
 
     private static final int MAX_REDELIVERIES = 5;
@@ -42,11 +44,10 @@ public class CertificateEventRedeliveryServiceImpl implements CertificateEventRe
     private static final String MESSAGE_ID = "messageId";
     private static final String REDELIVERIES = "redeliveries";
 
-    private final JmsTemplate jmsCertificateEventTemplate;
+    private final JmsTemplate jmsTemplate;
 
-    public CertificateEventRedeliveryServiceImpl(@Qualifier("jmsCertificateEventTemplate") JmsTemplate jmsCertificateEventTemplate) {
-        this.jmsCertificateEventTemplate = jmsCertificateEventTemplate;
-    }
+    @Value("${certificate.event.queue.name}")
+    private String certificateEventQueueName;
 
     @Override
     public void resend(Message message, String eventType, String certificateId, String messageId) {
@@ -70,7 +71,7 @@ public class CertificateEventRedeliveryServiceImpl implements CertificateEventRe
     }
 
     private void send(Message message, String eventType, String certificateId, String messageId, int redeliveries, Long redeliveryDelay) {
-        jmsCertificateEventTemplate.send(session -> {
+        jmsTemplate.send(certificateEventQueueName, session -> {
             final var textMessage = session.createTextMessage("");
             textMessage.setStringProperty(EVENT_TYPE, eventType);
             textMessage.setStringProperty(CERTIFICATE_ID, certificateId);
@@ -84,15 +85,11 @@ public class CertificateEventRedeliveryServiceImpl implements CertificateEventRe
     }
 
     private Long getRedeliveryDelay(int redeliveries) {
-        switch (redeliveries) {
-            case 1:
-                return ONE_MINUTE;
-            case 2:
-                return FIVE_MINUTES;
-            case 3:
-                return THIRTY_MINUTES;
-            default:
-                return ONE_HOUR;
-        }
+        return switch (redeliveries) {
+            case 1 -> ONE_MINUTE;
+            case 2 -> FIVE_MINUTES;
+            case 3 -> THIRTY_MINUTES;
+            default -> ONE_HOUR;
+        };
     }
 }

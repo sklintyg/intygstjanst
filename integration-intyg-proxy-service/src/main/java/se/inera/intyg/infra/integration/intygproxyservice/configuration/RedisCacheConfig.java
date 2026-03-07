@@ -25,57 +25,43 @@ import static se.inera.intyg.infra.integration.intygproxyservice.constants.HsaIn
 import static se.inera.intyg.infra.integration.intygproxyservice.constants.HsaIntygProxyServiceConstants.HEALTH_CARE_UNIT_MEMBERS_CACHE_NAME;
 import static se.inera.intyg.infra.integration.intygproxyservice.constants.HsaIntygProxyServiceConstants.UNIT_CACHE_NAME;
 
-import lombok.RequiredArgsConstructor;
+import java.time.Duration;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.Cache;
+import org.springframework.boot.autoconfigure.cache.RedisCacheManagerBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import se.inera.intyg.infra.rediscache.core.RedisCacheOptionsSetter;
+import org.springframework.data.redis.cache.RedisCacheConfiguration;
 
 @Configuration
-@RequiredArgsConstructor
-public class IntygProxyServiceHsaCacheConfiguration {
-
-    private final RedisCacheOptionsSetter redisCacheOptionsSetter;
+public class RedisCacheConfig {
 
     @Value("${hsa.intygproxyservice.getemployee.cache.expiry:60}")
-    private String hsaEmployeeCacheExpirySeconds;
+    private long employeeCacheTtlSeconds;
 
     @Value("${hsa.intygproxyservice.gethealthcareunit.cache.expiry:60}")
-    private String hsaHealthCareUnitCacheExpirySeconds;
+    private long healthCareUnitCacheTtlSeconds;
 
     @Value("${hsa.intygproxyservice.gethealthcareunitmembers.cache.expiry:60}")
-    private String hsaHealthCareUnitMembersCacheExpirySeconds;
+    private long healthCareUnitMembersCacheTtlSeconds;
 
     @Value("${hsa.intygproxyservice.getunit.cache.expiry:60}")
-    private String hsaUnitCacheExpirySeconds;
+    private long unitCacheTtlSeconds;
 
     @Value("${hsa.intygproxyservice.gethealthcareprovider.cache.expiry:60}")
-    private String hsaHealthCareProviderCacheExpirySeconds;
+    private long healthCareProviderCacheTtlSeconds;
 
-
-    @Bean(name = EMPLOYEE_CACHE_NAME)
-    public Cache hsaIntygProxyServiceEmployeeCache() {
-        return redisCacheOptionsSetter.createCache(EMPLOYEE_CACHE_NAME, hsaEmployeeCacheExpirySeconds);
-    }
-
-    @Bean(name = HEALTH_CARE_UNIT_CACHE_NAME)
-    public Cache hsaIntygProxyServiceHealthCareUnitCache() {
-        return redisCacheOptionsSetter.createCache(HEALTH_CARE_UNIT_CACHE_NAME, hsaHealthCareUnitCacheExpirySeconds);
-    }
-
-    @Bean(name = HEALTH_CARE_UNIT_MEMBERS_CACHE_NAME)
-    public Cache hsaIntygProxyServiceHealthCareUnitMembersCache() {
-        return redisCacheOptionsSetter.createCache(HEALTH_CARE_UNIT_MEMBERS_CACHE_NAME, hsaHealthCareUnitMembersCacheExpirySeconds);
-    }
-
-    @Bean(name = UNIT_CACHE_NAME)
-    public Cache hsaIntygProxyServiceUnitCache() {
-        return redisCacheOptionsSetter.createCache(UNIT_CACHE_NAME, hsaUnitCacheExpirySeconds);
-    }
-
-    @Bean(name = HEALTH_CARE_PROVIDER_CACHE_NAME)
-    public Cache hsaHealthCareProviderCache() {
-        return redisCacheOptionsSetter.createCache(HEALTH_CARE_PROVIDER_CACHE_NAME, hsaHealthCareProviderCacheExpirySeconds);
+    @Bean
+    public RedisCacheManagerBuilderCustomizer hsaCacheManagerBuilderCustomizer() {
+        return builder -> builder
+            .withCacheConfiguration(EMPLOYEE_CACHE_NAME,
+                RedisCacheConfiguration.defaultCacheConfig().entryTtl(Duration.ofSeconds(employeeCacheTtlSeconds)))
+            .withCacheConfiguration(HEALTH_CARE_UNIT_CACHE_NAME,
+                RedisCacheConfiguration.defaultCacheConfig().entryTtl(Duration.ofSeconds(healthCareUnitCacheTtlSeconds)))
+            .withCacheConfiguration(HEALTH_CARE_UNIT_MEMBERS_CACHE_NAME,
+                RedisCacheConfiguration.defaultCacheConfig().entryTtl(Duration.ofSeconds(healthCareUnitMembersCacheTtlSeconds)))
+            .withCacheConfiguration(UNIT_CACHE_NAME,
+                RedisCacheConfiguration.defaultCacheConfig().entryTtl(Duration.ofSeconds(unitCacheTtlSeconds)))
+            .withCacheConfiguration(HEALTH_CARE_PROVIDER_CACHE_NAME,
+                RedisCacheConfiguration.defaultCacheConfig().entryTtl(Duration.ofSeconds(healthCareProviderCacheTtlSeconds)));
     }
 }

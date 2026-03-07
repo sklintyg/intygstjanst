@@ -17,10 +17,12 @@ dependencies {
 
     runtimeOnly project(':integration-intyg-proxy-service')
 
+    implementation 'org.apache.tomcat.embed:tomcat-embed-core'
+    implementation "org.messaginghub:pooled-jms"
+    implementation "org.springframework.boot:spring-boot-starter-activemq"
     implementation "org.springframework.boot:spring-boot-starter-actuator"
     implementation "org.springframework.boot:spring-boot-starter-data-jpa"
     implementation "org.springframework.boot:spring-boot-starter-web"
-    implementation 'org.apache.tomcat.embed:tomcat-embed-core'
 
     implementation "se.inera.intyg.clinicalprocess.healthcond.certificate:intyg-clinicalprocess-healthcond-certificate-schemas:${intygClinicalprocessSchemasVersion}"
     implementation "se.inera.intyg.clinicalprocess.healthcond.rehabilitation:intyg-clinicalprocess-healthcond-rehabilitation-schemas:${intygHealthcondRehabilitationSchemasVersion}"
@@ -60,13 +62,11 @@ dependencies {
     implementation "io.prometheus:simpleclient_servlet"
     implementation "jakarta.transaction:jakarta.transaction-api"
     implementation "org.antlr:ST4"
-    implementation "org.apache.activemq:activemq-spring"
     implementation "org.apache.cxf:cxf-rt-features-logging"
     implementation "org.apache.cxf:cxf-rt-frontend-jaxws"
     implementation "org.apache.cxf:cxf-rt-transports-http"
     implementation "org.aspectj:aspectjweaver"
     implementation "org.slf4j:jul-to-slf4j"
-    implementation "org.springframework:spring-jms"
     implementation "org.springframework:spring-webmvc"
 
     annotationProcessor 'org.projectlombok:lombok'

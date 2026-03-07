@@ -30,12 +30,17 @@ import java.util.function.Consumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.support.JmsUtils;
+import org.springframework.stereotype.Component;
 
 /**
  * Class for consuming JMS messages sent to statistik (ST). Meant to be used for integration testing purposes.
  */
+@Component
+@Profile({"dev", "testability-api"})
 public class Receiver {
 
     private static final String CERTIFICATE_ID = "certificate-id";
@@ -47,8 +52,8 @@ public class Receiver {
     @Autowired
     private JmsTemplate jmsTemplate;
 
-    @Autowired
-    private Queue destinationQueue;
+    @Value("${activemq.destination.queue.name}")
+    private String destinationQueueName;
 
     private static final Logger LOG = LoggerFactory.getLogger(Receiver.class);
 
@@ -76,7 +81,8 @@ public class Receiver {
      */
     public int consume(final long timeout, final Consumer<Message> consumer) {
         return jmsTemplate.execute(session -> {
-            final MessageConsumer messageConsumer = session.createConsumer(destinationQueue);
+            final Queue queue = session.createQueue(destinationQueueName);
+            final MessageConsumer messageConsumer = session.createConsumer(queue);
             try {
                 Message msg;
                 int n = 0;

@@ -20,12 +20,11 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 
 import static java.lang.invoke.MethodHandles.lookup;
 
-import jakarta.jms.Queue;
 import jakarta.jms.TextMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jms.JmsException;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
@@ -49,9 +48,8 @@ public class InternalNotificationServiceImpl implements InternalNotificationServ
     @Autowired
     private JmsTemplate jmsTemplate;
 
-    @Autowired
-    @Qualifier(value = "internalNotificationQueue")
-    private Queue internalNotificationQueue;
+    @Value("${activemq.internal.notification.queue.name}")
+    private String internalNotificationQueueName;
 
     @Override
     public void notifyCareIfSentByCitizen(Certificate certificate, String personId, String hsaId) {
@@ -108,7 +106,7 @@ public class InternalNotificationServiceImpl implements InternalNotificationServ
     }
 
     private boolean send(final MessageCreator messageCreator) {
-        jmsTemplate.send(internalNotificationQueue, messageCreator);
+        jmsTemplate.send(internalNotificationQueueName, messageCreator);
         return true;
     }
 }

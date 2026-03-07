@@ -19,11 +19,12 @@
 package se.inera.intyg.intygstjanst.web.service.impl;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 
-import jakarta.jms.Queue;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -31,6 +32,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
+import org.springframework.test.util.ReflectionTestUtils;
 import se.inera.intyg.common.support.facade.model.metadata.CertificateMetadata;
 import se.inera.intyg.common.support.facade.model.metadata.Unit;
 import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
@@ -47,17 +49,18 @@ class InternalNotificationServiceImplTest {
     @Mock
     private JmsTemplate jmsTemplate;
 
-    @Mock
-    private Queue internalNotificationQueue;
-
     @InjectMocks
     private InternalNotificationServiceImpl testee;
 
+    @BeforeEach
+    void setUp() {
+        ReflectionTestUtils.setField(testee, "internalNotificationQueueName", "internal.notification.queue");
+    }
 
     @Test
     void testSendsNotificationIfSentByCitizen() {
         testee.notifyCareIfSentByCitizen(buildCert(), PERSON_ID, null);
-        verify(jmsTemplate, times(1)).send(any(Queue.class), any(MessageCreator.class));
+        verify(jmsTemplate, times(1)).send(anyString(), any(MessageCreator.class));
     }
 
     @Test
@@ -83,7 +86,7 @@ class InternalNotificationServiceImplTest {
         );
         testee.notifyCareIfSentByCitizen(certificate,
             PERSON_ID, null);
-        verify(jmsTemplate, times(1)).send(any(Queue.class), any(MessageCreator.class));
+        verify(jmsTemplate, times(1)).send(anyString(), any(MessageCreator.class));
     }
 
     @Test

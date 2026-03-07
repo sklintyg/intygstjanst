@@ -20,7 +20,6 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 
 import static java.lang.invoke.MethodHandles.lookup;
 
-import jakarta.jms.Queue;
 import jakarta.jms.TextMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,8 +54,8 @@ public class StatisticsServiceImpl implements StatisticsService {
     @Autowired
     private MonitoringLogService monitoringLogService;
 
-    @Autowired
-    private Queue destinationQueue;
+    @Value("${activemq.destination.queue.name}")
+    private String destinationQueueName;
 
     @Value("${statistics.enabled}")
     private boolean enabled;
@@ -166,9 +165,8 @@ public class StatisticsServiceImpl implements StatisticsService {
         }
     }
 
-    //
     boolean send(final MessageCreator messageCreator) {
-        jmsTemplate.send(destinationQueue, messageCreator);
+        jmsTemplate.send(destinationQueueName, messageCreator);
         return true;
     }
 }

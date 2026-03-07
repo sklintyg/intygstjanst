@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
@@ -33,9 +34,9 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import jakarta.jms.JMSException;
-import jakarta.jms.Queue;
 import jakarta.jms.Session;
 import jakarta.jms.TextMessage;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -57,24 +58,26 @@ class StatisticsServiceImplTest {
     private JmsTemplate template;
 
     @Mock
-    private Queue destinationQueue;
-
-    @Mock
     private MonitoringLogService monitoringLogService;
 
     @InjectMocks
     private StatisticsServiceImpl serviceImpl;
 
+    @BeforeEach
+    void setUp() {
+        ReflectionTestUtils.setField(serviceImpl, "destinationQueueName", "certificate.queue");
+    }
+
     @Test
     void disabledServiceDoesNothingOnCreated() {
         serviceImpl.created(null, null, null, null);
-        verify(template, never()).send(any(Queue.class), any(MessageCreator.class));
+        verify(template, never()).send(anyString(), any(MessageCreator.class));
     }
 
     @Test
     void disabledServiceDoesNothingOnRevoked() {
         serviceImpl.revoked(null, null, null, null);
-        verify(template, never()).send(any(Queue.class), any(MessageCreator.class));
+        verify(template, never()).send(anyString(), any(MessageCreator.class));
     }
 
     @Test
@@ -85,7 +88,7 @@ class StatisticsServiceImplTest {
 
         ReflectionTestUtils.setField(serviceImpl, "enabled", Boolean.TRUE);
 
-        ArgumentCaptor<Queue> queue = ArgumentCaptor.forClass(Queue.class);
+        ArgumentCaptor<String> destination = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<MessageCreator> messageCreator = ArgumentCaptor.forClass(MessageCreator.class);
 
         TextMessage message = mock(TextMessage.class);
@@ -96,7 +99,7 @@ class StatisticsServiceImplTest {
         boolean created = serviceImpl.created(xml, id, type, "unit");
 
         assertTrue(created);
-        verify(template, only()).send(queue.capture(), messageCreator.capture());
+        verify(template, only()).send(destination.capture(), messageCreator.capture());
         messageCreator.getValue().createMessage(session);
         verify(message).setStringProperty("action", "created");
         verify(message).setStringProperty("certificate-id", id);
@@ -117,7 +120,7 @@ class StatisticsServiceImplTest {
 
         ReflectionTestUtils.setField(serviceImpl, "enabled", Boolean.TRUE);
 
-        ArgumentCaptor<Queue> queue = ArgumentCaptor.forClass(Queue.class);
+        ArgumentCaptor<String> destination = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<MessageCreator> messageCreator = ArgumentCaptor.forClass(MessageCreator.class);
 
         TextMessage message = mock(TextMessage.class);
@@ -128,7 +131,7 @@ class StatisticsServiceImplTest {
         boolean sent = serviceImpl.sent(id, type, unit, recipient);
 
         assertTrue(sent);
-        verify(template, only()).send(queue.capture(), messageCreator.capture());
+        verify(template, only()).send(destination.capture(), messageCreator.capture());
         messageCreator.getValue().createMessage(session);
 
         verify(message).setStringProperty("action", action);
@@ -147,7 +150,7 @@ class StatisticsServiceImplTest {
 
         ReflectionTestUtils.setField(serviceImpl, "enabled", Boolean.TRUE);
 
-        ArgumentCaptor<Queue> queue = ArgumentCaptor.forClass(Queue.class);
+        ArgumentCaptor<String> destination = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<MessageCreator> messageCreator = ArgumentCaptor.forClass(MessageCreator.class);
 
         TextMessage message = mock(TextMessage.class);
@@ -165,7 +168,7 @@ class StatisticsServiceImplTest {
             certificate.getType(), "unit");
 
         assertTrue(revoked);
-        verify(template, only()).send(queue.capture(), messageCreator.capture());
+        verify(template, only()).send(destination.capture(), messageCreator.capture());
         messageCreator.getValue().createMessage(session);
 
         verify(message).setStringProperty("action", "revoked");
@@ -182,7 +185,7 @@ class StatisticsServiceImplTest {
 
         ReflectionTestUtils.setField(serviceImpl, "enabled", Boolean.TRUE);
 
-        ArgumentCaptor<Queue> queue = ArgumentCaptor.forClass(Queue.class);
+        ArgumentCaptor<String> destination = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<MessageCreator> messageCreator = ArgumentCaptor.forClass(MessageCreator.class);
 
         TextMessage message = mock(TextMessage.class);
@@ -193,7 +196,7 @@ class StatisticsServiceImplTest {
         boolean messageSent = serviceImpl.messageSent(messageBody, messageId, "topic");
 
         assertTrue(messageSent);
-        verify(template, only()).send(queue.capture(), messageCreator.capture());
+        verify(template, only()).send(destination.capture(), messageCreator.capture());
         messageCreator.getValue().createMessage(session);
 
         verify(message).setStringProperty("action", "message-sent");
@@ -212,12 +215,12 @@ class StatisticsServiceImplTest {
     @Test
     void testJmsTemplateThrowsJmsException() {
         ReflectionTestUtils.setField(serviceImpl, "enabled", Boolean.TRUE);
-        doThrow(mock(JmsException.class)).when(template).send(any(Queue.class), any(MessageCreator.class));
+        doThrow(mock(JmsException.class)).when(template).send(anyString(), any(MessageCreator.class));
 
         boolean created = serviceImpl.created("The document", "The id", "luse", "unit");
 
         assertFalse(created);
-        verify(template, only()).send(any(Queue.class), any(MessageCreator.class));
+        verify(template, only()).send(anyString(), any(MessageCreator.class));
         verifyNoInteractions(monitoringLogService);
     }
 }
