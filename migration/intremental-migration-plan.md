@@ -18,7 +18,7 @@ after each batch.
 
 ---
 
-## Step 2 — Inline `se.inera.intyg.infra` DTOs and utilities *(add code, don't remove deps yet)*
+## Step 2 — Inline `se.inera.intyg.intygstjanst` DTOs and utilities *(add code, don't remove deps yet)*
 
 Copy the required classes from infra into the project **without removing the infra dependencies yet**. Change imports in your code to point
 to the local copies. This is purely additive — the infra deps are still on the classpath but unused.
@@ -71,12 +71,13 @@ the responses.
 
 ---
 
-## Step 7 — Remove all `se.inera.intyg.infra` dependencies from `build.gradle`
+## Step 7 — Remove all `se.inera.intyg.intygstjanst` dependencies from `build.gradle`
 
 Now that all infra code is either inlined or replaced, remove all 11 infra dependency lines from `web/build.gradle` and the `infraVersion`
 property from `build.gradle`.
 
-**Verify:** `./gradlew build` — compiles, all tests pass. `grep -r "se.inera.intyg.infra" web/build.gradle` returns nothing. Application
+**Verify:** `./gradlew build` — compiles, all tests pass. `grep -r "se.inera.intyg.intygstjanst" web/build.gradle` returns nothing.
+Application
 starts.
 
 ---

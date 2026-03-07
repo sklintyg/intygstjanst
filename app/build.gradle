@@ -1,0 +1,129 @@
+plugins {
+    alias(libs.plugins.org.cyclonedx.bom)
+    alias(libs.plugins.org.springframework.boot)
+}
+
+tasks.named('bootJar') {
+    archiveFileName.set('app.jar')
+}
+
+def applicationDir = "${rootProject.projectDir}/devops/dev"
+
+dependencies {
+    implementation project(':integration-api')
+
+    runtimeOnly project(':integration-intyg-proxy-service')
+
+    implementation 'org.apache.tomcat.embed:tomcat-embed-core'
+    implementation "org.messaginghub:pooled-jms"
+    implementation "org.springframework.boot:spring-boot-starter-activemq"
+    implementation "org.springframework.boot:spring-boot-starter-actuator"
+    implementation "org.springframework.boot:spring-boot-starter-data-jpa"
+    implementation "org.springframework.boot:spring-boot-starter-web"
+
+    implementation "se.inera.intyg.clinicalprocess.healthcond.certificate:intyg-clinicalprocess-healthcond-certificate-schemas:${intygClinicalprocessSchemasVersion}"
+    implementation "se.inera.intyg.clinicalprocess.healthcond.rehabilitation:intyg-clinicalprocess-healthcond-rehabilitation-schemas:${intygHealthcondRehabilitationSchemasVersion}"
+    implementation "se.inera.intyg.schemas:schemas-contract:${schemasContractVersion}"
+    implementation "se.inera.intyg.transportstyrelsen:intyg-transportstyrelsen-schemas:${intygTransportstyrelsenSchemasVersion}"
+    implementation "se.riv.clinicalprocess.healthcond.certificate:clinicalprocess-healthcond-certificate-schemas:${rivtaClinicalprocessSchemasVersion}"
+    implementation "se.riv.insuranceprocess.healthreporting:insuranceprocess-healthreporting-schemas:${rivtaInsuranceprocessSchemasVersion}"
+
+    implementation "se.inera.intyg.common:af00213:${commonVersion}"
+    implementation "se.inera.intyg.common:af00251:${commonVersion}"
+    implementation "se.inera.intyg.common:ag114:${commonVersion}"
+    implementation "se.inera.intyg.common:ag7804:${commonVersion}"
+    implementation "se.inera.intyg.common:common-schemas:${commonVersion}"
+    implementation "se.inera.intyg.common:common-services:${commonVersion}"
+    implementation "se.inera.intyg.common:common-support:${commonVersion}"
+    implementation "se.inera.intyg.common:db:${commonVersion}"
+    implementation "se.inera.intyg.common:doi:${commonVersion}"
+    implementation "se.inera.intyg.common:fk-parent:${commonVersion}"
+    implementation "se.inera.intyg.common:fk7263:${commonVersion}"
+    implementation "se.inera.intyg.common:integration-util:${commonVersion}"
+    implementation "se.inera.intyg.common:lisjp:${commonVersion}"
+    implementation "se.inera.intyg.common:luae_fs:${commonVersion}"
+    implementation "se.inera.intyg.common:luae_na:${commonVersion}"
+    implementation "se.inera.intyg.common:luse:${commonVersion}"
+    implementation "se.inera.intyg.common:ts-parent:${commonVersion}"
+    implementation "se.inera.intyg.common:ts-bas:${commonVersion}"
+    implementation "se.inera.intyg.common:ts-diabetes:${commonVersion}"
+    implementation "se.inera.intyg.common:tstrk1009:${commonVersion}"
+    implementation "se.inera.intyg.common:tstrk1062:${commonVersion}"
+
+    implementation "se.inera.intyg.refdata:refdata:${refDataVersion}"
+
+    implementation "ch.qos.logback:logback-classic"
+    implementation "codes.rafael.jaxb2_commons:jaxb2-basics"
+    implementation "com.google.guava:guava"
+    implementation "commons-io:commons-io"
+    implementation "io.prometheus:simpleclient_servlet"
+    implementation "jakarta.transaction:jakarta.transaction-api"
+    implementation "org.antlr:ST4"
+    implementation "org.apache.cxf:cxf-rt-features-logging"
+    implementation "org.apache.cxf:cxf-rt-frontend-jaxws"
+    implementation "org.apache.cxf:cxf-rt-transports-http"
+    implementation "org.aspectj:aspectjweaver"
+    implementation "org.slf4j:jul-to-slf4j"
+    implementation "org.springframework:spring-webmvc"
+    implementation "org.springframework.security:spring-security-web"
+    implementation "org.apache.commons:commons-lang3"
+    
+    annotationProcessor 'org.projectlombok:lombok'
+
+    compileOnly "jakarta.persistence:jakarta.persistence-api"
+
+    runtimeOnly "com.mysql:mysql-connector-j"
+    runtimeOnly "com.sun.xml.messaging.saaj:saaj-impl"
+
+    testAnnotationProcessor 'org.projectlombok:lombok'
+
+    testImplementation "org.mockito:mockito-core"
+    testImplementation "org.mockito:mockito-junit-jupiter"
+    testImplementation "org.springframework:spring-test"
+    testImplementation "org.xmlunit:xmlunit-legacy"
+
+    testCompileOnly "jakarta.persistence:jakarta.persistence-api"
+    testCompileOnly 'org.projectlombok:lombok'
+
+    testRuntimeOnly "se.riv.clinicalprocess.healthcond.certificate:clinicalprocess-healthcond-certificate-schemas:${rivtaClinicalprocessSchemasVersion}"
+
+    implementation "com.fasterxml.jackson.core:jackson-annotations"
+    implementation "com.google.guava:guava"
+    implementation "org.springframework.boot:spring-boot-starter-data-jpa"
+    implementation "jakarta.persistence:jakarta.persistence-api"
+    implementation "jakarta.xml.ws:jakarta.xml.ws-api"
+    implementation "org.liquibase:liquibase-core"
+    implementation "se.inera.intyg.common:common-support:${commonVersion}"
+    implementation "se.inera.intyg.schemas:schemas-contract:${schemasContractVersion}"
+
+    annotationProcessor 'org.projectlombok:lombok'
+
+    testImplementation "org.junit.jupiter:junit-jupiter"
+    testImplementation "org.mockito:mockito-junit-jupiter"
+    testImplementation "org.springframework:spring-test"
+
+    testRuntimeOnly "com.h2database:h2"
+}
+
+bootRun {
+    systemProperty("application.dir", "${rootProject.projectDir}/devops/dev")
+    systemProperty("spring.profiles.active", "dev,bootstrap,testability-api,caching-enabled,it-fk-stub")
+    systemProperty("spring.config.additional-location", "file:${applicationDir}/config/")
+}
+
+tasks.register("appRunDebug") {
+    println("######## Running in Debug mode ########")
+    doFirst {
+        bootRun.configure {
+            jvmArgs = [
+                    "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8880"
+            ]
+        }
+    }
+    finalizedBy("bootRun")
+}
+
+tasks.register("appRun") {
+    println("######## Running in normal mode ########")
+    finalizedBy("bootRun")
+}

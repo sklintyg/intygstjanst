@@ -1,6 +1,7 @@
 # Intygstjänst — First Migration Scope
 
-*Target: Spring Boot application with no XML configuration, Spring MVC REST, no `se.inera.intyg.infra` dependencies, JUnit 5 only, and
+*Target: Spring Boot application with no XML configuration, Spring MVC REST, no `se.inera.intyg.intygstjanst` dependencies, JUnit 5 only,
+and
 Spring Boot structured ECS logging.*
 
 ---
@@ -13,7 +14,7 @@ Complete the first migration step towards the [goal tech stack](goal-tech-stack.
 2. **Use Spring Boot starters and auto-configuration** — replacing manual bean wiring wherever possible.
 3. **Have all bean configuration in Java code** — zero XML-based Spring configuration.
 4. **Expose REST APIs via Spring MVC** — replacing JAX-RS (`jakarta.ws.rs`) endpoints.
-5. **Have no dependencies on `se.inera.intyg.infra`** — all infra functionality either inlined, replaced, or accessed via REST APIs.
+5. **Have no dependencies on `se.inera.intyg.intygstjanst`** — all infra functionality either inlined, replaced, or accessed via REST APIs.
 6. **Use JUnit Jupiter exclusively** — no JUnit 4 tests or vintage engine.
 7. **Use Spring Boot structured logging in ECS format** — replacing the manual logback-ecs-encoder setup.
 
@@ -24,18 +25,18 @@ Complete the first migration step towards the [goal tech stack](goal-tech-stack.
 
 ## 2. Current State Summary
 
-| Aspect                          | Current State                                                                                                                                                                                                                                                    |
-|---------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Application type**            | Traditional Spring Framework WAR deployed on external Tomcat 10 via Gretty                                                                                                                                                                                       |
-| **REST APIs**                   | JAX-RS (`jakarta.ws.rs`) routed through CXF `jaxrs:server` (~15 controller files)                                                                                                                                                                                |
-| **SOAP APIs**                   | Apache CXF (`jaxws:endpoint`) configured in `application-context-ws.xml` (~20 endpoints)                                                                                                                                                                         |
-| **Bean configuration**          | Mix of XML files (`application-context.xml`, `application-context-ws.xml`, `application-context-ws-stub.xml`, `jaxrs-context.xml`, `persistence.xml`, `web.xml`) and Java `@Configuration` classes (4 classes)                                                   |
-| **`se.inera.intyg.infra` deps** | 10 modules: `certificate`, `hsa-integration-api`, `pu-integration-api`, `intyginfo`, `message`, `monitoring`, `security-filter`, `sjukfall-engine`, `testcertificate`, + 2 runtime (`hsa-integration-intyg-proxy-service`, `pu-integration-intyg-proxy-service`) |
-| **Test framework**              | Mix of JUnit 4 (~100 files) and JUnit 5 (~63 files); `junit-vintage-engine` in both `web` and `persistence`                                                                                                                                                      |
-| **Logging**                     | Logback + `co.elastic.logging:logback-ecs-encoder` with manual `LogbackConfiguratorContextListener` and custom `logback-spring-base.xml`                                                                                                                         |
-| **Metrics**                     | Prometheus `simpleclient_servlet` with manual servlet mapping                                                                                                                                                                                                    |
-| **Persistence config**          | Manual `JpaConfigBase` with explicit DataSource, EntityManagerFactory, TransactionManager, and Liquibase beans                                                                                                                                                   |
-| **JMS config**                  | Manual ActiveMQ `ConnectionFactory`, `PooledConnectionFactory`, and `JmsTemplate` beans in `JmsConfig`                                                                                                                                                           |
+| Aspect                                 | Current State                                                                                                                                                                                                                                                    |
+|----------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Application type**                   | Traditional Spring Framework WAR deployed on external Tomcat 10 via Gretty                                                                                                                                                                                       |
+| **REST APIs**                          | JAX-RS (`jakarta.ws.rs`) routed through CXF `jaxrs:server` (~15 controller files)                                                                                                                                                                                |
+| **SOAP APIs**                          | Apache CXF (`jaxws:endpoint`) configured in `application-context-ws.xml` (~20 endpoints)                                                                                                                                                                         |
+| **Bean configuration**                 | Mix of XML files (`application-context.xml`, `application-context-ws.xml`, `application-context-ws-stub.xml`, `jaxrs-context.xml`, `persistence.xml`, `web.xml`) and Java `@Configuration` classes (4 classes)                                                   |
+| **`se.inera.intyg.intygstjanst` deps** | 10 modules: `certificate`, `hsa-integration-api`, `pu-integration-api`, `intyginfo`, `message`, `monitoring`, `security-filter`, `sjukfall-engine`, `testcertificate`, + 2 runtime (`hsa-integration-intyg-proxy-service`, `pu-integration-intyg-proxy-service`) |
+| **Test framework**                     | Mix of JUnit 4 (~100 files) and JUnit 5 (~63 files); `junit-vintage-engine` in both `web` and `persistence`                                                                                                                                                      |
+| **Logging**                            | Logback + `co.elastic.logging:logback-ecs-encoder` with manual `LogbackConfiguratorContextListener` and custom `logback-spring-base.xml`                                                                                                                         |
+| **Metrics**                            | Prometheus `simpleclient_servlet` with manual servlet mapping                                                                                                                                                                                                    |
+| **Persistence config**                 | Manual `JpaConfigBase` with explicit DataSource, EntityManagerFactory, TransactionManager, and Liquibase beans                                                                                                                                                   |
+| **JMS config**                         | Manual ActiveMQ `ConnectionFactory`, `PooledConnectionFactory`, and `JmsTemplate` beans in `JmsConfig`                                                                                                                                                           |
 
 ---
 
@@ -102,7 +103,7 @@ covers the concern.
 | `META-INF/cxf/cxf.xml` (imported) | **Keep** — this is a CXF framework resource. The `@ImportResource` for it moves into the new CXF config class.                                              |
 | `test-application-context.xml`    | **Remove.** Replace with `@SpringBootTest` or explicit `@Configuration` test classes.                                                                       |
 
-**Classpath XML imports from `se.inera.intyg.infra` and `se.inera.intyg.common` to handle:**
+**Classpath XML imports from `se.inera.intyg.intygstjanst` and `se.inera.intyg.common` to handle:**
 
 - `classpath:basic-cache-config.xml` — Replace with Spring Boot Redis auto-configuration.
 - `classpath:/hsa-integration-intyg-proxy-service-config.xml` — Remove (infra dependency removed; see §3.5).
@@ -156,7 +157,8 @@ All REST controllers currently using JAX-RS annotations must be converted to Spr
 - `FkStubResource` (`/resources/...`)
 - `TestabilityController` (`/resources/...`)
 
-**Internal API filter:** The `InternalApiFilter` (from `se.inera.intyg.infra.security.filter`) currently restricts `/internalapi/*` by
+**Internal API filter:** The `InternalApiFilter` (from `se.inera.intyg.intygstjanst.security.filter`) currently restricts `/internalapi/*`
+by
 source port. This must be replaced with a local implementation registered as a Spring Boot `FilterRegistrationBean`.
 
 **Notes:**
@@ -227,11 +229,12 @@ Replace manually configured beans with Spring Boot auto-configuration.
 
 ---
 
-### 3.5 Remove All `se.inera.intyg.infra` Dependencies
+### 3.5 Remove All `se.inera.intyg.intygstjanst` Dependencies
 
 **What changes:**
 
-Every `se.inera.intyg.infra` dependency must be removed. The functionality they provide is either inlined, replaced with standard Spring
+Every `se.inera.intyg.intygstjanst` dependency must be removed. The functionality they provide is either inlined, replaced with standard
+Spring
 Boot equivalents, or accessed via REST API calls to `intyg-proxy-service`.
 
 | Infra Module                                                                        | Files Using It                                        | Replacement Strategy                                                                                                                                                                                                                                                                                              |
@@ -250,17 +253,17 @@ Boot equivalents, or accessed via REST API calls to `intyg-proxy-service`.
 
 ```groovy
 // All of these are removed:
-implementation "se.inera.intyg.infra:certificate:${infraVersion}"
-implementation "se.inera.intyg.infra:hsa-integration-api:${infraVersion}"
-implementation "se.inera.intyg.infra:pu-integration-api:${infraVersion}"
-implementation "se.inera.intyg.infra:intyginfo:${infraVersion}"
-implementation "se.inera.intyg.infra:message:${infraVersion}"
-implementation "se.inera.intyg.infra:monitoring:${infraVersion}"
-implementation "se.inera.intyg.infra:security-filter:${infraVersion}"
-implementation "se.inera.intyg.infra:sjukfall-engine:${infraVersion}"
-implementation "se.inera.intyg.infra:testcertificate:${infraVersion}"
-runtimeOnly "se.inera.intyg.infra:hsa-integration-intyg-proxy-service:${infraVersion}"
-runtimeOnly "se.inera.intyg.infra:pu-integration-intyg-proxy-service:${infraVersion}"
+implementation "se.inera.intyg.intygstjanst:certificate:${infraVersion}"
+implementation "se.inera.intyg.intygstjanst:hsa-integration-api:${infraVersion}"
+implementation "se.inera.intyg.intygstjanst:pu-integration-api:${infraVersion}"
+implementation "se.inera.intyg.intygstjanst:intyginfo:${infraVersion}"
+implementation "se.inera.intyg.intygstjanst:message:${infraVersion}"
+implementation "se.inera.intyg.intygstjanst:monitoring:${infraVersion}"
+implementation "se.inera.intyg.intygstjanst:security-filter:${infraVersion}"
+implementation "se.inera.intyg.intygstjanst:sjukfall-engine:${infraVersion}"
+implementation "se.inera.intyg.intygstjanst:testcertificate:${infraVersion}"
+runtimeOnly "se.inera.intyg.intygstjanst:hsa-integration-intyg-proxy-service:${infraVersion}"
+runtimeOnly "se.inera.intyg.intygstjanst:pu-integration-intyg-proxy-service:${infraVersion}"
 ```
 
 **The `infraVersion` property can be removed from `build.gradle` entirely.**
@@ -341,7 +344,8 @@ logging.structured.ecs.service.environment=${spring.profiles.active:default}
 - The `logging` module's `MdcServletFilter`, `MdcHelper`, `MdcLogConstants`, `PerformanceLogging`, and `PerformanceLoggingAdvice` — these
   are local to the project and work with any Logback setup. Register `MdcServletFilter` as a `FilterRegistrationBean` in the Spring Boot
   config.
-- The local `LogMarkers` class in the `logging` module (replace any imports of `se.inera.intyg.infra.monitoring.logging.LogMarkers` with the
+- The local `LogMarkers` class in the `logging` module (replace any imports of `se.inera.intyg.intygstjanst.monitoring.logging.LogMarkers`
+  with the
   local version).
 
 ---
@@ -364,7 +368,7 @@ The work items have dependencies. The recommended execution order is:
 │ Phase 2: API & Dependencies                         │
 │                                                     │
 │  3.3  JAX-RS → Spring MVC                           │
-│  3.5  Remove se.inera.intyg.infra dependencies      │
+│  3.5  Remove se.inera.intyg.intygstjanst dependencies      │
 │  3.7  Spring Boot ECS logging                        │
 └──────────────────────┬──────────────────────────────┘
                        │
@@ -388,7 +392,7 @@ The migration is complete when:
 - [ ] No XML files are used for Spring bean configuration (data XML files like Liquibase changelogs and XSLT transforms are fine).
 - [ ] All REST endpoints respond correctly using Spring MVC (`@RestController`).
 - [ ] All SOAP endpoints respond correctly via CXF (configured in Java).
-- [ ] `grep -r "se.inera.intyg.infra" build.gradle` returns no results.
+- [ ] `grep -r "se.inera.intyg.intygstjanst" build.gradle` returns no results.
 - [ ] `grep -r "import org.junit\." --include="*.java" src/ | grep -v jupiter` returns no results.
 - [ ] `junit-vintage-engine` is not in any `build.gradle`.
 - [ ] `junit:junit` is not in any `build.gradle`.
