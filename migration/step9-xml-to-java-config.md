@@ -137,9 +137,9 @@ profiles. This matches the XML behavior where `<cache:annotation-driven>` was at
 **What:** Two XML files each contain only a `<context:component-scan>`:
 
 - `hsa-integration-intyg-proxy-service-config.xml` →
-  `<context:component-scan base-package="se.inera.intyg.infra.integration.intygproxyservice"/>`
+  `<context:component-scan base-package="se.inera.intyg.intygstjanst.integration.intygproxyservice"/>`
 - `pu-integration-intyg-proxy-service-config.xml` →
-  `<context:component-scan base-package="se.inera.intyg.infra.pu.integration.intygproxyservice"/>`
+  `<context:component-scan base-package="se.inera.intyg.intygstjanst.pu.integration.intygproxyservice"/>`
 
 These packages are **already under component-scan** from `application-context.xml`'s broader scan if the class is in the classpath. But
 since they are in a separate module (`integration-intyg-proxy-service`), the main `application-context.xml` component-scan does not cover
@@ -151,8 +151,8 @@ them — the XML imports are how they get loaded.
    ```java
    @Configuration
    @ComponentScan(basePackages = {
-       "se.inera.intyg.infra.integration.intygproxyservice",
-       "se.inera.intyg.infra.pu.integration.intygproxyservice"
+       "se.inera.intyg.intygstjanst.integration.intygproxyservice",
+       "se.inera.intyg.intygstjanst.pu.integration.intygproxyservice"
    })
    public class IntygProxyServiceConfig {
    }
@@ -172,9 +172,9 @@ them — the XML imports are how they get loaded.
        se.inera.intyg.intygstjanst.logging,
        se.inera.intyg.intygstjanst.persistence,
        se.inera.intyg.intygstjanst.web,
-       se.inera.intyg.infra.integration.intygproxyservice,
-       se.inera.intyg.infra.pu.integration.intygproxyservice,
-       se.inera.intyg.infra.rediscache.core"/>
+       se.inera.intyg.intygstjanst.integration.intygproxyservice,
+       se.inera.intyg.intygstjanst.pu.integration.intygproxyservice,
+       se.inera.intyg.intygstjanst.rediscache.core"/>
    ```
 
 3. Remove the two `<import>` lines from `application-context.xml`
@@ -685,9 +685,9 @@ Move any remaining configuration to `ApplicationConfig.java` and switch `web.xml
        "se.inera.intyg.common.services",
        "se.inera.intyg.common.support.services",
        "se.inera.intyg.common.util.integration.json",
-       "se.inera.intyg.infra.integration.intygproxyservice",
-       "se.inera.intyg.infra.pu.integration.intygproxyservice",
-       "se.inera.intyg.infra.rediscache.core"
+       "se.inera.intyg.intygstjanst.integration.intygproxyservice",
+       "se.inera.intyg.intygstjanst.pu.integration.intygproxyservice",
+       "se.inera.intyg.intygstjanst.rediscache.core"
    })
    ```
 

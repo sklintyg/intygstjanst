@@ -34,11 +34,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import se.inera.intyg.infra.pu.integration.api.model.Person;
-import se.inera.intyg.infra.pu.integration.api.model.PersonSvar;
-import se.inera.intyg.infra.pu.integration.api.services.PUService;
+import se.inera.intyg.intygstjanst.integration.pu.model.Person;
+import se.inera.intyg.intygstjanst.integration.pu.model.PersonSvar;
+import se.inera.intyg.intygstjanst.integration.pu.services.PUService;
 import se.inera.intyg.intygstjanst.application.sickleave.dto.IntygData;
-import se.inera.intyg.intygstjanst.application.sickleave.services.PuFilterService;
 import se.inera.intyg.schemas.contract.Personnummer;
 
 @ExtendWith(MockitoExtension.class)

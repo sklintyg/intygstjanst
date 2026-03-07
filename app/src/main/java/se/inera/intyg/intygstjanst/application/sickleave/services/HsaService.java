@@ -27,9 +27,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-import se.inera.intyg.infra.integration.hsatk.model.PersonInformation;
-import se.inera.intyg.infra.integration.hsatk.services.HsatkEmployeeService;
-import se.inera.intyg.infra.integration.hsatk.services.legacy.HsaOrganizationsService;
+import se.inera.intyg.intygstjanst.integration.hsa.model.PersonInformation;
+import se.inera.intyg.intygstjanst.integration.hsa.services.HsatkEmployeeService;
+import se.inera.intyg.intygstjanst.integration.hsa.services.legacy.HsaOrganizationsService;
 
 /**
  * Interfaces with {@link HsaOrganizationsService} from hsa-integration.

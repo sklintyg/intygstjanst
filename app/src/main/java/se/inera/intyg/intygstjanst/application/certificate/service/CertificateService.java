@@ -45,7 +45,7 @@ import se.inera.intyg.common.support.modules.support.api.ModuleContainerApi;
 import se.inera.intyg.common.support.modules.support.api.dto.AdditionalMetaData;
 import se.inera.intyg.common.support.modules.support.api.dto.CertificateRelation;
 import se.inera.intyg.common.support.modules.support.api.exception.ModuleException;
-import se.inera.intyg.infra.pu.integration.api.services.PUService;
+import se.inera.intyg.intygstjanst.integration.pu.services.PUService;
 import se.inera.intyg.intygstjanst.infrastructure.logging.HashUtility;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.exception.PersistenceException;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Certificate;

@@ -200,8 +200,8 @@ ConnectionFactory creation**.
    @SpringBootApplication(
        scanBasePackages = {
            "se.inera.intyg.intygstjanst",
-           "se.inera.intyg.infra.integration.intygproxyservice",
-           "se.inera.intyg.infra.pu.integration.intygproxyservice",
+           "se.inera.intyg.intygstjanst.integration.intygproxyservice",
+           "se.inera.intyg.intygstjanst.pu.integration.intygproxyservice",
            "se.inera.intyg.common.support.modules.support.api",
            "se.inera.intyg.common.services",
            "se.inera.intyg.common",
