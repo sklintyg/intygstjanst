@@ -18,20 +18,18 @@
  */
 package se.inera.intyg.intygstjanst.config.jms;
 
-import jakarta.jms.ConnectionFactory;
 import jakarta.jms.Queue;
 import org.apache.activemq.command.ActiveMQQueue;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jms.annotation.EnableJms;
-import org.springframework.jms.core.JmsTemplate;
 import se.inera.intyg.intygstjanst.web.integration.test.Receiver;
 
 /**
- * JMS configuration — connection infrastructure and listener container factory are now provided
- * by Spring Boot ActiveMQ auto-configuration. This class retains only JmsTemplate beans,
- * Queue beans, and the Receiver test helper.
+ * JMS configuration — connection infrastructure, listener container factory, and JmsTemplate are now
+ * provided by Spring Boot ActiveMQ auto-configuration. This class retains only Queue beans
+ * (removed in step 12.8) and the Receiver test helper.
  */
 @Configuration
 @EnableJms
@@ -45,16 +43,6 @@ public class JmsConfig {
 
     @Value("${certificate.event.queue.name}")
     private String certificateEventQueue;
-
-    @Bean
-    public JmsTemplate jmsTemplate(ConnectionFactory connectionFactory) {
-        return template(connectionFactory, destinationQueue());
-    }
-
-    @Bean(value = "jmsCertificateEventTemplate")
-    public JmsTemplate jmsCertificateEventTemplate(ConnectionFactory connectionFactory) {
-        return template(connectionFactory, certificateEventQueue());
-    }
 
     @Bean(value = "destinationQueue")
     public Queue destinationQueue() {
@@ -75,13 +63,5 @@ public class JmsConfig {
     @Bean
     public Receiver receiver() {
         return new Receiver();
-    }
-
-    JmsTemplate template(final ConnectionFactory connectionFactory, final Queue queue) {
-        final JmsTemplate jmsTemplate = new JmsTemplate();
-        jmsTemplate.setDefaultDestination(queue);
-        jmsTemplate.setConnectionFactory(connectionFactory);
-        jmsTemplate.setSessionTransacted(true);
-        return jmsTemplate;
     }
 }

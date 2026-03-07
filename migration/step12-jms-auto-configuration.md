@@ -12,8 +12,8 @@
 | **12.3**  | Remove auto-config exclusion for ActiveMQ                                  | ✅ DONE | | ✅ | Removed from @SpringBootApplication exclude and spring.autoconfigure.exclude; auto-config backs off due to manual ConnectionFactory bean; build + tests pass |
 | **12.4**  | Remove manual `ConnectionFactory`, `JmsTransactionManager`, and `DestinationResolver` beans | ✅ DONE | | ✅ | Removed from JmsConfig; listener factory now injects auto-configured ConnectionFactory; build + tests pass |
 | **12.5**  | Simplify `JmsListenerContainerFactory` to use auto-configured beans       | ✅ DONE | | ✅ | Removed custom bean from JmsConfig; added spring.jms.listener.session-transacted=true; @JmsListener uses auto-configured factory by default; build + tests pass |
-| **12.6**  | Remove manual `JmsTemplate` beans — replace with auto-configured `JmsTemplate` | ⬜ TODO |           |          |       |
-| **12.7**  | Update `JmsTemplate` consumers to use destination names instead of `Queue` beans | ⬜ TODO |           |          |       |
+| **12.6**  | Remove manual `JmsTemplate` beans — replace with auto-configured `JmsTemplate` | ✅ DONE | | ✅ | Removed jmsTemplate/jmsCertificateEventTemplate beans and template() helper from JmsConfig; added spring.jms.template.session-transacted=true; committed atomically with 12.7 |
+| **12.7**  | Update `JmsTemplate` consumers to use destination names instead of `Queue` beans | ✅ DONE | | ✅ | All four consumers (StatisticsServiceImpl, InternalNotificationServiceImpl, CertificateEventRedeliveryServiceImpl, Receiver) now use destination name strings; tests updated; build + tests pass |
 | **12.8**  | Remove `Queue` beans and `Receiver` bean from `JmsConfig`                 | ⬜ TODO |           |          |       |
 | **12.9**  | Remove `JmsConfig` class and `@EnableJms`                                 | ⬜ TODO |           |          |       |
 | **12.10** | Remove redundant explicit dependencies from `web/build.gradle`            | ⬜ TODO |           |          |       |

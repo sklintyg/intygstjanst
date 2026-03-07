@@ -22,7 +22,7 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 import jakarta.jms.Message;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.activemq.ScheduledMessage;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.intygstjanst.web.service.CertificateEventRedeliveryService;
@@ -42,10 +42,13 @@ public class CertificateEventRedeliveryServiceImpl implements CertificateEventRe
     private static final String MESSAGE_ID = "messageId";
     private static final String REDELIVERIES = "redeliveries";
 
-    private final JmsTemplate jmsCertificateEventTemplate;
+    private final JmsTemplate jmsTemplate;
 
-    public CertificateEventRedeliveryServiceImpl(@Qualifier("jmsCertificateEventTemplate") JmsTemplate jmsCertificateEventTemplate) {
-        this.jmsCertificateEventTemplate = jmsCertificateEventTemplate;
+    @Value("${certificate.event.queue.name}")
+    private String certificateEventQueueName;
+
+    public CertificateEventRedeliveryServiceImpl(JmsTemplate jmsTemplate) {
+        this.jmsTemplate = jmsTemplate;
     }
 
     @Override
@@ -70,7 +73,7 @@ public class CertificateEventRedeliveryServiceImpl implements CertificateEventRe
     }
 
     private void send(Message message, String eventType, String certificateId, String messageId, int redeliveries, Long redeliveryDelay) {
-        jmsCertificateEventTemplate.send(session -> {
+        jmsTemplate.send(certificateEventQueueName, session -> {
             final var textMessage = session.createTextMessage("");
             textMessage.setStringProperty(EVENT_TYPE, eventType);
             textMessage.setStringProperty(CERTIFICATE_ID, certificateId);
