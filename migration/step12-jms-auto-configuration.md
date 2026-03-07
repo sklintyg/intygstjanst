@@ -18,7 +18,7 @@
 | **12.9**  | Remove `JmsConfig` class and `@EnableJms`                                 | ✅ DONE | | ✅ | JmsConfig.java deleted; jms/ package removed; @EnableJms provided by JmsAutoConfiguration; build + tests pass |
 | **12.10** | Remove redundant explicit dependencies from `web/build.gradle`            | ✅ DONE | | ✅ | Removed activemq-spring and spring-jms; added org.messaginghub:pooled-jms (required by Spring Boot 3.x ActiveMQ pooling — spring.activemq.pool.enabled=true uses JmsPoolConnectionFactory from pooled-jms, not the old activemq-pool); build + tests pass; bootRun verified |
 | **12.11** | Update persistence `TestConfig` — remove `ActiveMQAutoConfiguration` exclusion | ✅ DONE | | ✅ | ActiveMQ not on persistence test classpath; exclusion and import removed; persistence tests pass |
-| **12.12** | Final verification — `./gradlew bootRun` + `./gradlew test`               | ⬜ TODO |           |          |       |
+| **12.12** | Final verification — `./gradlew bootRun` + `./gradlew test`               | ✅ DONE | | ✅ | All tests pass across all modules; no JmsConfig refs; no manual ConnectionFactory imports; app starts with auto-configured JMS (verified by user) |
 
 **Deployment batches:**
 
