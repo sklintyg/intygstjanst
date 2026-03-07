@@ -22,7 +22,6 @@ package se.inera.intyg.intygstjanst.config;
 import jakarta.persistence.EntityManagerFactory;
 import org.apache.cxf.Bus;
 import org.apache.cxf.bus.spring.SpringBus;
-import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
@@ -37,7 +36,6 @@ import se.inera.intyg.infra.sjukfall.services.SjukfallEngineService;
 import se.inera.intyg.infra.sjukfall.services.SjukfallEngineServiceImpl;
 
 @Configuration
-@EnableCaching
 @EnableAspectJAutoProxy
 public class ApplicationConfig {
 

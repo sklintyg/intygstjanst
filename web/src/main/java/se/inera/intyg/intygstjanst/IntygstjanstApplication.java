@@ -2,7 +2,6 @@ package se.inera.intyg.intygstjanst;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
@@ -16,9 +15,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
         "se.inera.intyg.common",
         "se.inera.intyg.common.support.services",
         "se.inera.intyg.common.util.integration.json"
-    },
-    exclude = {
-        RedisAutoConfiguration.class
     }
 )
 @EntityScan(basePackages = "se.inera.intyg.intygstjanst.persistence.model")
