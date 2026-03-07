@@ -19,7 +19,140 @@
 
 package se.inera.intyg.intygstjanst.application.event.service;
 
-public interface CertificateEventSendMessageService {
+import java.util.ArrayList;
+import java.util.List;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.ws.soap.SOAPFaultException;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import se.inera.intyg.common.support.integration.converter.util.ResultTypeUtil;
+import se.inera.intyg.common.support.xml.XmlMarshallerHelper;
+import se.inera.intyg.intygstjanst.application.message.converter.ArendeConverter;
+import se.inera.intyg.intygstjanst.application.message.validator.CSSendMessageToRecipientValidator;
+import se.inera.intyg.intygstjanst.application.message.service.ArendeService;
+import se.inera.intyg.intygstjanst.infrastructure.logging.MonitoringLogService;
+import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientResponderInterface;
+import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientResponseType;
+import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientType;
+import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
 
-    void sendMessage(String xml);
+@Service
+@Slf4j
+public class CertificateEventSendMessageService {
+
+    private final SendMessageToRecipientResponderInterface sendMessageToRecipientResponderInterface;
+    private final CSSendMessageToRecipientValidator csSendMessageToRecipientValidator;
+    private final MonitoringLogService monitoringLogService;
+    private final ArendeService arendeService;
+
+    public CertificateEventSendMessageService(
+        @Qualifier("sendMessageToRecipientClient") SendMessageToRecipientResponderInterface sendMessageToRecipientResponderInterface,
+        MonitoringLogService monitoringLogService,
+        ArendeService arendeService, CSSendMessageToRecipientValidator csSendMessageToRecipientValidator) {
+        this.sendMessageToRecipientResponderInterface = sendMessageToRecipientResponderInterface;
+        this.csSendMessageToRecipientValidator = csSendMessageToRecipientValidator;
+        this.monitoringLogService = monitoringLogService;
+        this.arendeService = arendeService;
+    }
+
+    @Transactional(rollbackFor = IllegalStateException.class)
+    public void sendMessage(String xml) {
+        try {
+            final var wsRequest = (SendMessageToRecipientType) XmlMarshallerHelper.unmarshal(xml).getValue();
+            final var certificateId = wsRequest.getIntygsId().getExtension();
+            final var logicalAddress = wsRequest.getLogiskAdressMottagare();
+            final var messageId = wsRequest.getMeddelandeId();
+            final var topic = wsRequest.getAmne().getCode();
+
+            final var isTestCertificate = validateMessageToRecipient(wsRequest, messageId, certificateId, topic, logicalAddress);
+            storeValidatedMessage(wsRequest, messageId, certificateId, topic, logicalAddress);
+
+            final var wsResponse = isTestCertificate ? getResultOk()
+                : sendMessageToRecipientResponderInterface.sendMessageToRecipient(logicalAddress, wsRequest);
+            handleResponse(wsResponse, messageId, certificateId, topic, logicalAddress);
+
+        } catch (SOAPFaultException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    private boolean validateMessageToRecipient(SendMessageToRecipientType wsRequest, String messageId, String certificateId, String topic,
+        String logicalAddress) {
+        final var validationErrors = new ArrayList<String>();
+        final var isTestCertificate = csSendMessageToRecipientValidator.validate(wsRequest, validationErrors);
+
+        if (!validationErrors.isEmpty()) {
+            throw new IllegalArgumentException(validationErrorMessage(messageId, certificateId, topic, logicalAddress,
+                validationErrors));
+        }
+
+        return isTestCertificate;
+    }
+
+    private void handleResponse(SendMessageToRecipientResponseType wsResponse, String messageId, String certificateId, String topic,
+        String recipient) {
+
+        if (wsResponse == null || wsResponse.getResult() == null || wsResponse.getResult().getResultCode() == null) {
+            throw new IllegalStateException(getResultNullMessage(messageId, topic, certificateId, recipient));
+        }
+
+        final var result = wsResponse.getResult().getResultCode();
+        if (result == ResultCodeType.OK) {
+            monitoringLogService.logSendMessageToRecipient(messageId, recipient);
+        }
+
+        final var wsResponseMessage = wsResponse.getResult().getResultText();
+        if (result == ResultCodeType.INFO) {
+            monitoringLogService.logSendMessageToRecipient(messageId, recipient);
+            log.info("Received INFO result sending messageId '{}' with topic '{}' for certificateId '{}' to recipient '{}'. "
+                + "INFO-message '{}'", messageId, topic, certificateId, recipient, wsResponseMessage);
+        }
+
+        if (result == ResultCodeType.ERROR) {
+            throw new IllegalStateException(getResultErrorMessage(messageId, topic, certificateId, recipient, wsResponseMessage));
+        }
+    }
+
+    private void storeValidatedMessage(SendMessageToRecipientType wsRequest, String certificateId, String messageId, String recipient,
+        String topic) {
+
+        try {
+            final var message = ArendeConverter.convertSendMessageToRecipient(wsRequest);
+            arendeService.processIncomingMessage(message);
+        } catch (JAXBException | IllegalArgumentException e) {
+            throw new IllegalArgumentException(persistenceFailureMessage(certificateId, messageId, recipient, topic), e);
+        }
+    }
+
+    private static String persistenceFailureMessage(String certificateId, String messageId, String recipient, String topic) {
+        return String.format("Failure storing messageId '%s' with topic '%s' for certificateId '%s' to recipient '%s'.", messageId, topic,
+            certificateId, recipient);
+    }
+
+    private static String validationErrorMessage(String messageId, String certificateId, String topic, String logicalAddress,
+        List<String> validationErrors) {
+        return String.format("Received validation errors sending message to recipient for messageId '%s' with topic '%s' for "
+                + "certificateId '%s' to recipient '%s'. Errors detected: %s", messageId, topic, certificateId, logicalAddress,
+            validationErrors);
+    }
+
+    private static String getResultNullMessage(String messageid, String topic, String certificateId, String recipient) {
+        return String.format("Received null result sending messageId '%s' with topic '%s' for certificateId '%s' to recipient '%s'.",
+            messageid, topic, certificateId, recipient);
+    }
+
+    private static String getResultErrorMessage(String messageid, String topic, String certificateId, String recipient,
+        String wsResponseMessage) {
+        return String.format("Received ERROR result sending messageId '%s' with topic '%s' for certificateId '%s' to recipient '%s'. "
+            + "ERROR-message '%s'", messageid, topic, certificateId, recipient, wsResponseMessage);
+    }
+
+    private static SendMessageToRecipientResponseType getResultOk() {
+        final var response = new SendMessageToRecipientResponseType();
+        response.setResult(ResultTypeUtil.okResult());
+        return response;
+    }
+
 }

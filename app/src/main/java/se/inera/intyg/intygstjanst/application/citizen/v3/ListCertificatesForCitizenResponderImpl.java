@@ -41,7 +41,7 @@ import se.inera.intyg.intygstjanst.application.certificate.converter.ConverterUt
 import se.inera.intyg.intygstjanst.application.certificate.util.CertificateStateFilterUtil;
 import se.inera.intyg.intygstjanst.application.certificate.service.CertificateService;
 import se.inera.intyg.intygstjanst.infrastructure.logging.MonitoringLogService;
-import se.inera.intyg.intygstjanst.application.certificate.service.IntygInfoServiceImpl;
+import se.inera.intyg.intygstjanst.application.certificate.service.IntygInfoService;
 import se.inera.intyg.schemas.contract.Personnummer;
 import se.riv.clinicalprocess.healthcond.certificate.listCertificatesForCitizen.v3.ListCertificatesForCitizenResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.listCertificatesForCitizen.v3.ListCertificatesForCitizenResponseType;
@@ -97,7 +97,7 @@ public class ListCertificatesForCitizenResponderImpl implements ListCertificates
         }
 
         response.getIntygsLista().getIntyg().addAll(certificates.stream()
-            .filter(c -> !IntygInfoServiceImpl.EXCLUDED_CITIZEN_CERTIFICATES.contains(c.getType()))
+            .filter(c -> !IntygInfoService.EXCLUDED_CITIZEN_CERTIFICATES.contains(c.getType()))
             .filter(c -> c.isDeleted() == parameters.isArkiverade())
             .map(c -> convert(c, parameters.getPart().getCode()))
             .toList());

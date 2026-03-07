@@ -18,43 +18,139 @@
  */
 package se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
-/**
- * Created by eriklupander on 2016-02-02.
- */
-public interface RelationDao {
+@Repository
+public class RelationDao {
 
-    List<Relation> getChildren(String intygsId);
+    private static final Logger LOG = LoggerFactory.getLogger(RelationDao.class);
 
-    List<Relation> getParent(String intygsId);
+    @PersistenceContext
+    private EntityManager entityManager;
 
-    Map<String, List<Relation>> getRelations(List<String> certificateIds, List<String> revokedCertificateIds);
+    public List<Relation> getChildren(String intygsId) {
+        return entityManager.createQuery("SELECT r FROM Relation r WHERE r.toIntygsId = :intygsId", Relation.class)
+            .setParameter("intygsId", intygsId)
+            .getResultList();
+    }
 
-    List<Relation> getGraph(String intygsId);
+    public List<Relation> getParent(String intygsId) {
+        return entityManager.createQuery("SELECT r FROM Relation r WHERE r.fromIntygsId = :intygsId", Relation.class)
+            .setParameter("intygsId", intygsId)
+            .getResultList();
+    }
 
-    void store(Relation relation);
+    public Map<String, List<Relation>> getRelations(List<String> certificateIds, List<String> revokedCertificateIds) {
+        final var query = entityManager.createQuery(
+                "SELECT r FROM Relation r "
+                    + "WHERE r.toIntygsId IN :certificateIds OR r.fromIntygsId IN :certificateIds",
+                Relation.class
+            )
+            .setParameter("certificateIds", certificateIds);
+
+        final var relations = query.getResultList()
+            .stream()
+            .filter((relation) ->
+                !revokedCertificateIds.contains(relation.getToIntygsId())
+                    && !revokedCertificateIds.contains(relation.getFromIntygsId()))
+            .collect(Collectors.toList());
+
+        return certificateIds
+            .stream()
+            .filter((id) -> !revokedCertificateIds.contains(id))
+            .collect(
+                Collectors.toMap(id -> id, id -> getRelationsForCertificate(relations, id))
+            );
+    }
+
+    private List<Relation> getRelationsForCertificate(List<Relation> relations, String certificateId) {
+        return relations
+            .stream()
+            .filter(
+                (relation) -> relation.getToIntygsId().equals(certificateId)
+                    || relation.getFromIntygsId().equals(certificateId)
+            )
+            .collect(Collectors.toList());
+    }
+
+    public List<Relation> getGraph(String intygsId) {
+        List<Relation> graph = new ArrayList<>();
+        buildChildGraph(intygsId, graph);
+        buildParentGraph(intygsId, graph);
+
+        return graph.stream()
+            .sorted(Comparator.comparing(Relation::getCreated))
+            .collect(Collectors.toList());
+    }
+
+    public void store(Relation relation) {
+        entityManager.persist(relation);
+    }
+
+    public Optional<Relation> getParentRelation(String intygsId) {
+        List<Relation> parentRelations = getParent(intygsId);
+        if (parentRelations.size() >= 1) {
+            return Optional.of(parentRelations.get(0));
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    public void eraseTestCertificates(List<String> ids) {
+        for (var id : ids) {
+            final var relationList = getGraph(id);
+            for (var relation : relationList) {
+                entityManager.remove(relation);
+            }
+        }
+    }
+
+    @Transactional
+    public void eraseCertificateRelations(List<String> certificateIds, String careProviderId) {
+        for (final var certificateId : certificateIds) {
+            final var relationList = new ArrayList<Relation>();
+            relationList.addAll(getParent(certificateId));
+            relationList.addAll(getChildren(certificateId));
+            for (var relation : relationList) {
+                entityManager.remove(relation);
+                LOG.debug("Relation with id {} for certificate id {} from care provider {} was successfully erased.", relation.getId(),
+                    certificateId, careProviderId);
+            }
+        }
+    }
 
     /**
-     * A certificate cannot have more than zero or exactly one parent relation.
-     *
-     * @return The parent relation (e.g. relation that points at the Certificate the identified certificate originated from.
+     * Starting with a given intyg, builds a graph of descendants.
      */
-    Optional<Relation> getParentRelation(String intygsId);
+    private void buildChildGraph(String intygsId, List<Relation> graph) {
+
+        List<Relation> children = getChildren(intygsId);
+        for (Relation child : children) {
+            graph.add(child);
+            buildChildGraph(child.getFromIntygsId(), graph);
+        }
+    }
 
     /**
-     * Erase any data related to test certificates passed as ids.
-     *
-     * @param ids Certificate ids.
+     * Builds a graph of ancestors direction.
      */
-    void eraseTestCertificates(List<String> ids);
+    private void buildParentGraph(String intygsId, List<Relation> graph) {
 
-    /**
-     * Erase any relations for certificates, passed as certificate ids, from specific care provider.
-     *
-     * @param ids Certificate ids.
-     */
-    void eraseCertificateRelations(List<String> ids, String careProvider);
+        List<Relation> parents = getParent(intygsId);
+        for (Relation parent : parents) {
+            graph.add(parent);
+            buildParentGraph(parent.getToIntygsId(), graph);
+        }
+    }
 }

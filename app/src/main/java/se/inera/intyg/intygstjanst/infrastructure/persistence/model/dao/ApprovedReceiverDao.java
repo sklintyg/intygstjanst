@@ -18,25 +18,70 @@
  */
 package se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Created by eriklupander.
+ * Relations.
+ *
+ * @author eriklupander
  */
-public interface ApprovedReceiverDao {
+@Repository
+public class ApprovedReceiverDao {
 
-    List<ApprovedReceiver> getApprovedReceiverIdsForCertificate(String intygsId);
+    private static final Logger LOG = LoggerFactory.getLogger(ApprovedReceiverDao.class);
 
-    void clearApprovedReceiversForCertificate(String intygsId);
+    @PersistenceContext
+    private EntityManager entityManager;
 
-    void store(ApprovedReceiver approvedReceiver);
+    public List<ApprovedReceiver> getApprovedReceiverIdsForCertificate(String intygsId) {
+        return entityManager.createQuery("SELECT ar FROM ApprovedReceiver ar WHERE ar.certificateId = :intygsId", ApprovedReceiver.class)
+            .setParameter("intygsId", intygsId)
+            .getResultList();
+    }
 
-    /**
-     * Erase any data related to test certificates passed as ids.
-     *
-     * @param ids Certificate ids.
-     */
-    void eraseTestCertificates(List<String> ids);
+    public void clearApprovedReceiversForCertificate(String intygsId) {
+        List<ApprovedReceiver> resultList = getApprovedReceivers(intygsId);
+        removeApprovedReceivers(resultList);
+    }
 
-    void eraseApprovedReceivers(List<String> certificateIds, String careProviderId);
+    private void removeApprovedReceivers(List<ApprovedReceiver> resultList) {
+        for (ApprovedReceiver ar : resultList) {
+            entityManager.remove(ar);
+        }
+    }
+
+    private List<ApprovedReceiver> getApprovedReceivers(String intygsId) {
+        return entityManager
+            .createQuery("SELECT ar FROM ApprovedReceiver ar WHERE ar.certificateId = :intygsId", ApprovedReceiver.class)
+            .setParameter("intygsId", intygsId)
+            .getResultList();
+    }
+
+    public void store(ApprovedReceiver approvedReceiver) {
+        entityManager.persist(approvedReceiver);
+    }
+
+    public void eraseTestCertificates(List<String> ids) {
+        for (var id : ids) {
+            clearApprovedReceiversForCertificate(id);
+        }
+    }
+
+    @Transactional
+    public void eraseApprovedReceivers(List<String> certificateIds, String careProviderId) {
+        for (var certificateId : certificateIds) {
+            final var approvedReceivers = getApprovedReceivers(certificateId);
+            if (!approvedReceivers.isEmpty()) {
+                removeApprovedReceivers(approvedReceivers);
+                LOG.debug("Successfully erased {} approved receivers for certificate id {} from care provider {}.",
+                    approvedReceivers.size(), certificateId, careProviderId);
+            }
+        }
+    }
 }

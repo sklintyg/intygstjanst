@@ -30,10 +30,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.common.support.facade.model.Certificate;
-import se.inera.intyg.intygstjanst.infrastructure.csintegration.dto.GetCitizenCertificatesRequest;
+import se.inera.intyg.intygstjanst.application.citizen.dto.CitizenCertificateDTO;
 import se.inera.intyg.intygstjanst.application.sickleave.dto.PersonIdDTO;
 import se.inera.intyg.intygstjanst.application.sickleave.dto.PersonIdTypeDTO;
-import se.inera.intyg.intygstjanst.application.citizen.dto.CitizenCertificateDTO;
+import se.inera.intyg.intygstjanst.infrastructure.csintegration.dto.GetCitizenCertificatesRequest;
 import se.inera.intyg.schemas.contract.Personnummer;
 
 @ExtendWith(MockitoExtension.class)
@@ -45,7 +45,7 @@ class CitizenCertificatesFromCSTest {
     @Mock
     private CSIntegrationService csIntegrationService;
     @Mock
-    private CitizenCertificateConverter citizenCertificateConverter;
+    private CitizenCertificateConverterFromCS citizenCertificateConverterFromCS;
     @InjectMocks
     private CitizenCertificatesFromCS citizenCertificatesFromCS;
 
@@ -101,7 +101,7 @@ class CitizenCertificatesFromCSTest {
                         .build())
                 .build()
         );
-        doReturn(citizenCertificateDTO).when(citizenCertificateConverter).convert(certificate);
+        doReturn(citizenCertificateDTO).when(citizenCertificateConverterFromCS).convert(certificate);
 
         final var actualResult = citizenCertificatesFromCS.get(PERSONAL_IDENTITY_NUMBER);
         assertEquals(expectedResult, actualResult);

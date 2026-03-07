@@ -19,7 +19,33 @@
 
 package se.inera.intyg.intygstjanst.infrastructure.diagnosis;
 
-public interface DiagnosisDescriptionService {
+import java.io.IOException;
+import java.util.Map;
+import jakarta.annotation.PostConstruct;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-    String getDiagnosisDescriptionFromSickLeave(String diagnosisCode);
+@Service
+public class DiagnosisDescriptionService {
+
+    @Autowired
+    private DiagnosisDescriptionProvider diagnosisDescriptionProvider;
+    private static final Logger LOG = LoggerFactory.getLogger(DiagnosisDescriptionService.class);
+    private Map<String, String> diagnosisDescriptionsMap;
+
+    @PostConstruct
+    private void init() {
+        try {
+            diagnosisDescriptionsMap = diagnosisDescriptionProvider.getDiagnosisDescription();
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load diagnosis chapters!", e);
+        }
+        LOG.info("Loaded " + diagnosisDescriptionsMap.size() + " diagnosis chapter definitions");
+    }
+
+    public String getDiagnosisDescriptionFromSickLeave(String diagnosisCode) {
+        return diagnosisDescriptionsMap.get(diagnosisCode);
+    }
 }

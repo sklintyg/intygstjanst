@@ -20,9 +20,74 @@
 package se.inera.intyg.intygstjanst.application.event.service;
 
 import jakarta.jms.Message;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.activemq.ScheduledMessage;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.jms.core.JmsTemplate;
+import org.springframework.stereotype.Service;
 
-public interface CertificateEventRedeliveryService {
+@Service
+@Slf4j
+@RequiredArgsConstructor
+public class CertificateEventRedeliveryService {
 
-    void resend(Message message, String eventType, String certificateId, String messageId);
+    private static final int MAX_REDELIVERIES = 5;
+    private static final long ONE_MINUTE = 60000L;
+    private static final long FIVE_MINUTES = ONE_MINUTE * 5;
+    private static final long THIRTY_MINUTES = ONE_MINUTE * 30;
+    private static final long ONE_HOUR = ONE_MINUTE * 60;
 
+    private static final String EVENT_TYPE = "eventType";
+    private static final String CERTIFICATE_ID = "certificateId";
+    private static final String MESSAGE_ID = "messageId";
+    private static final String REDELIVERIES = "redeliveries";
+
+    private final JmsTemplate jmsTemplate;
+
+    @Value("${certificate.event.queue.name}")
+    private String certificateEventQueueName;
+
+    public void resend(Message message, String eventType, String certificateId, String messageId) {
+
+        try {
+            int redeliveries = message.propertyExists(REDELIVERIES) ? message.getIntProperty(REDELIVERIES) + 1 : 1;
+
+            if (redeliveries > MAX_REDELIVERIES) {
+                log.error("Certificate event handler failure after {} redeliveries for event type '{}', certificate '{}' and message '{}'.",
+                    MAX_REDELIVERIES, eventType, certificateId, messageId);
+                return;
+            }
+
+            final var redeliveryDelay = getRedeliveryDelay(redeliveries);
+            send(message, eventType, certificateId, messageId, redeliveries, redeliveryDelay);
+
+        } catch (Exception e) {
+            log.error("Failure creating redelivery for certificate event with event type '{}', certificate '{}' and message '{}'.",
+                eventType, certificateId, messageId);
+        }
+    }
+
+    private void send(Message message, String eventType, String certificateId, String messageId, int redeliveries, Long redeliveryDelay) {
+        jmsTemplate.send(certificateEventQueueName, session -> {
+            final var textMessage = session.createTextMessage("");
+            textMessage.setStringProperty(EVENT_TYPE, eventType);
+            textMessage.setStringProperty(CERTIFICATE_ID, certificateId);
+            if (message.propertyExists(MESSAGE_ID)) {
+                textMessage.setStringProperty(MESSAGE_ID, messageId);
+            }
+            textMessage.setIntProperty(REDELIVERIES, redeliveries);
+            textMessage.setLongProperty(ScheduledMessage.AMQ_SCHEDULED_DELAY, redeliveryDelay);
+            return textMessage;
+        });
+    }
+
+    private Long getRedeliveryDelay(int redeliveries) {
+        return switch (redeliveries) {
+            case 1 -> ONE_MINUTE;
+            case 2 -> FIVE_MINUTES;
+            case 3 -> THIRTY_MINUTES;
+            default -> ONE_HOUR;
+        };
+    }
 }

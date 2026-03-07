@@ -18,28 +18,150 @@
  */
 package se.inera.intyg.intygstjanst.application.certificate.service;
 
-public interface StatisticsService {
+import static java.lang.invoke.MethodHandles.lookup;
 
-    /**
-     * Sends data to Statistik (ST) about a created certificate (intyg), returning true if successfully sent, false
-     * otherwise.
-     */
-    boolean created(String certificateXml, String certificateId, String certificateType, String careUnitId);
+import jakarta.jms.TextMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.jms.JmsException;
+import org.springframework.jms.core.JmsTemplate;
+import org.springframework.jms.core.MessageCreator;
+import org.springframework.stereotype.Service;
+import se.inera.intyg.intygstjanst.infrastructure.logging.MonitoringLogService;
 
-    /**
-     * Sends data to Statistic (ST) about a revoked certificate (intyg), returning true if successfully sent,
-     * false otherwise.
-     */
-    boolean revoked(String certificateXml, String certificateId, String certificateType, String careUnitId);
+@Service
+public class StatisticsService {
 
-    /**
-     * Sends data to Statistic (ST) about a revoked certificate (intyg), returning true if successfully sent,
-     * false otherwise.
-     */
-    boolean sent(String certificateId, String certificateType, String careUnitId, String recipientId);
+    private static final String ACTION = "action";
+    private static final String CREATED = "created";
+    private static final String REVOKED = "revoked";
+    private static final String SENT = "sent";
+    private static final String MESSAGE_SENT = "message-sent";
 
-    /**
-     * Sends data to Statistik (ST) about a sent message, returning true if data was successfully sent, false otherwise.
-     */
-    boolean messageSent(String xml, String messageId, String topic);
+    private static final String MESSAGE_ID = "message-id";
+    private static final String CERTIFICATE_ID = "certificate-id";
+    private static final String CERTIFICATE_TYPE = "certificate-type";
+    private static final String CERTIFICATE_RECIPIENT = "certificate-recipient";
+
+    private static final Logger LOG = LoggerFactory.getLogger(lookup().getClass());
+
+    @Autowired
+    private JmsTemplate jmsTemplate;
+
+    @Autowired
+    private MonitoringLogService monitoringLogService;
+
+    @Value("${activemq.destination.queue.name}")
+    private String destinationQueueName;
+
+    @Value("${statistics.enabled}")
+    private boolean enabled;
+
+    public boolean created(String certificateXml, String certificateId, String certificateType, String careUnitId) {
+        boolean rc = true;
+        if (enabled) {
+            rc = sendIntygDataPointToStatistik(CREATED, certificateXml, certificateId, certificateType);
+            if (rc) {
+                monitoringLogService.logStatisticsCreated(certificateId, certificateType, careUnitId);
+            }
+        }
+        return rc;
+    }
+
+    public boolean revoked(String certificateXml, String certificateId, String certificateType, String careUnitId) {
+        boolean rc = true;
+        if (enabled) {
+            rc = sendIntygDataPointToStatistik(REVOKED, certificateXml, certificateId, certificateType);
+            if (rc) {
+                monitoringLogService.logStatisticsRevoked(certificateId, certificateType, careUnitId);
+            }
+        }
+        return rc;
+    }
+
+    public boolean sent(
+        final String certificateId,
+        final String certificateType,
+        final String careUnitId,
+        final String recipientId) {
+
+        boolean rc = true;
+        if (enabled) {
+            rc = sendIntygDataPointToStatistik(SENT, null, certificateId, certificateType, recipientId);
+        }
+        if (rc) {
+            monitoringLogService.logStatisticsSent(certificateId, certificateType, careUnitId, recipientId);
+        }
+        return rc;
+    }
+
+    public boolean messageSent(String xml, String messageId, String topic) {
+        boolean rc = true;
+        if (enabled) {
+            rc = sendFkMessageDataPointToStatistik(MESSAGE_SENT, xml, messageId);
+        }
+        if (rc) {
+            monitoringLogService.logStatisticsMessageSent(messageId, topic);
+        }
+        return rc;
+    }
+
+    private boolean sendIntygDataPointToStatistik(
+        final String actionType,
+        final String certificateXml,
+        final String certificateId,
+        final String certificateType) {
+
+        return sendIntygDataPointToStatistik(
+            actionType,
+            certificateXml,
+            certificateId,
+            certificateType,
+            null);
+    }
+
+    private boolean sendIntygDataPointToStatistik(
+        final String actionType,
+        final String certificateXml,
+        final String certificateId,
+        final String certificateType,
+        final String certificateRecipientId) {
+
+        try {
+            return send(session -> {
+                TextMessage message = session.createTextMessage(certificateXml);
+                message.setStringProperty(ACTION, actionType);
+                message.setStringProperty(CERTIFICATE_ID, certificateId);
+                message.setStringProperty(CERTIFICATE_TYPE, certificateType);
+                if (certificateRecipientId != null) {
+                    message.setStringProperty(CERTIFICATE_RECIPIENT, certificateRecipientId);
+                }
+                return message;
+            });
+        } catch (JmsException e) {
+            LOG.error("Failure sending '{}' type with certificate id '{}'to statistics", actionType, certificateId, e);
+            return false;
+        }
+    }
+
+    private boolean sendFkMessageDataPointToStatistik(String actionType, String messageXml, String messageId) {
+        try {
+            return send(session -> {
+                final TextMessage message = session.createTextMessage(messageXml);
+                message.setStringProperty(ACTION, actionType);
+                message.setStringProperty(MESSAGE_ID, messageId);
+                return message;
+            });
+        } catch (JmsException e) {
+            LOG.error("Failure sending '{}' type with message id '{}'to statistics", actionType, messageId, e);
+            return false;
+        }
+    }
+
+    boolean send(final MessageCreator messageCreator) {
+        jmsTemplate.send(destinationQueueName, messageCreator);
+        return true;
+    }
 }

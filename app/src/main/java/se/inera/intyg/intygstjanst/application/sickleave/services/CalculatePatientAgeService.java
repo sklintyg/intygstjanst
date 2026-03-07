@@ -19,7 +19,33 @@
 
 package se.inera.intyg.intygstjanst.application.sickleave.services;
 
-public interface CalculatePatientAgeService {
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.format.DateTimeFormatter;
+import org.springframework.stereotype.Service;
+import se.inera.intyg.schemas.contract.Personnummer;
 
-    Integer get(String patientId);
+@Service
+public class CalculatePatientAgeService {
+
+    private static final int SAMORDNINGSNUMMER_DAY_CONSTANT = 60;
+
+    public Integer get(String patientId) {
+        final var normalizedPnr = Personnummer.createPersonnummer(patientId).orElseThrow().getPersonnummer();
+        return getPatientAge(normalizedPnr);
+    }
+
+    private int getPatientAge(String normalizedPnr) {
+        final var date = normalizedPnr.substring(0, 8);
+        final var birthDate = LocalDate.from(DateTimeFormatter.BASIC_ISO_DATE.parse(subtractDaysIfSamordningsNummer(date)));
+        return Period.between(birthDate, LocalDate.now()).getYears();
+    }
+
+    private String subtractDaysIfSamordningsNummer(String date) {
+        var day = Integer.parseInt(date.substring(6));
+        if (day > SAMORDNINGSNUMMER_DAY_CONSTANT) {
+            return date.replaceFirst("(?<=\\d{6})\\d{2}", String.format("%02d", day - SAMORDNINGSNUMMER_DAY_CONSTANT));
+        }
+        return date;
+    }
 }

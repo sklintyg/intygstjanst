@@ -265,7 +265,7 @@ class SjukfallEngineServiceTest {
         return new IntygParametrar(maxIntygsGlapp, aktivtDatum);
     }
 
-    private class SjukfallEngineServiceImplTest extends SjukfallEngineServiceImpl {
+    private class SjukfallEngineServiceImplTest extends SjukfallEngineService {
 
         public SjukfallEngineServiceImplTest() {
             super();

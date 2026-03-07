@@ -20,9 +20,51 @@
 package se.inera.intyg.intygstjanst.infrastructure.diagnosis;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.Map;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.LineIterator;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ResourceLoader;
+import org.springframework.stereotype.Component;
 
-public interface DiagnosisDescriptionProvider {
+@Component
+public class DiagnosisDescriptionProvider {
 
-    Map<String, String> getDiagnosisDescription() throws IOException;
+    @Value("${it.diagnosisCodes.icd10se.file}")
+    private String diagnoseCodeIcd10SeFile;
+    @Value("${it.diagnosisCodes.ksh97p_kod.file}")
+    private String diagnosKodKS97PKodFile;
+    private final ResourceLoader resourceLoader;
+    private final IcdCodeConverter icdCodeConverter;
+
+    public DiagnosisDescriptionProvider(IcdCodeConverter icdCodeConverter, ResourceLoader resourceLoader) {
+        this.icdCodeConverter = icdCodeConverter;
+        this.resourceLoader = resourceLoader;
+    }
+
+    public Map<String, String> getDiagnosisDescription() throws IOException {
+        final var diagnosisDescriptionMap = new HashMap<String, String>();
+        diagnosisDescriptionMap.putAll(icdCodeConverter.convert(diagnoseCodeIcd10SeFile));
+        diagnosisDescriptionMap.putAll(loadDiagnosFile(diagnosKodKS97PKodFile));
+        return diagnosisDescriptionMap;
+    }
+
+    private Map<String, String> loadDiagnosFile(final String file) throws IOException {
+        final var resource = resourceLoader.getResource(file);
+        final var diagnosisDescriptionMap = new HashMap<String, String>();
+        try (LineIterator it = IOUtils.lineIterator(resource.getInputStream(), StandardCharsets.ISO_8859_1)) {
+            while (it.hasNext()) {
+                final String line = it.next();
+                final var diagnosisCode = new DiagnosisFromFile(line, diagnosisDescriptionMap.isEmpty());
+                if (diagnosisCode.getCode() != null) {
+                    diagnosisDescriptionMap.put(diagnosisCode.getCode(), diagnosisCode.getName());
+                }
+            }
+        }
+
+        return diagnosisDescriptionMap;
+    }
+
 }

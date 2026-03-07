@@ -18,14 +18,25 @@
  */
 package se.inera.intyg.intygstjanst.application.recipient;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.ApprovedReceiver;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.ApprovedReceiverDao;
 
-public interface ReceiverService {
+@Service
+public class ReceiverService {
+
+    @Autowired
+    private ApprovedReceiverDao approvedReceiverDao;
 
     @Transactional
-    void registerApprovedReceiver(ApprovedReceiver approvedReceiver);
+    public void registerApprovedReceiver(ApprovedReceiver approvedReceiver) {
+        approvedReceiverDao.store(approvedReceiver);
+    }
 
     @Transactional
-    void clearApprovedReceiversForCertificate(String intygsId);
+    public void clearApprovedReceiversForCertificate(String intygsId) {
+        approvedReceiverDao.clearApprovedReceiversForCertificate(intygsId);
+    }
 }

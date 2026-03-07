@@ -19,8 +19,29 @@
 
 package se.inera.intyg.intygstjanst.application.event.validator;
 
-public interface CertificateEventValidator {
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
-    boolean validate(String eventType, String certificateId, String messageId);
+@Service
+@Slf4j
+public class CertificateEventValidator {
 
+    private static final String MESSAGE_SENT = "message-sent";
+
+    public boolean validate(String eventType, String certificateId, String messageId) {
+        if (eventType == null || eventType.isBlank()) {
+            log.warn("Missing required parameter 'eventType'.");
+            return false;
+        }
+        if (certificateId == null || certificateId.isBlank()) {
+            log.warn("Missing required parameter 'certificateId'.");
+            return false;
+        }
+        if (eventType.equals(MESSAGE_SENT) && (messageId == null || messageId.isBlank())) {
+            log.warn("Missing required parameter 'messageId'.");
+            return false;
+        }
+
+        return true;
+    }
 }

@@ -19,11 +19,91 @@
 
 package se.inera.intyg.intygstjanst.application.sickleave.services;
 
+import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import org.springframework.stereotype.Service;
+import se.inera.intyg.intygstjanst.application.sickleave.dto.Formaga;
 import se.inera.intyg.intygstjanst.application.sickleave.dto.IntygData;
+import se.inera.intyg.intygstjanst.application.sickleave.dto.Lakare;
+import se.inera.intyg.intygstjanst.infrastructure.diagnosis.DiagnosisChapterService;
 import se.inera.intyg.intygstjanst.application.sickleave.dto.GetSickLeaveFilterServiceResponse;
+import se.inera.intyg.intygstjanst.application.sickleave.dto.OccupationType;
+import se.inera.intyg.intygstjanst.application.sickleave.dto.OccupationTypeDTO;
+import se.inera.intyg.intygstjanst.application.reko.dto.RekoStatusType;
+import se.inera.intyg.intygstjanst.application.reko.dto.RekoStatusTypeDTO;
 
-public interface CreateSickLeaveFilter {
+@Service
+public class CreateSickLeaveFilter {
 
-    GetSickLeaveFilterServiceResponse create(List<IntygData> intygDataList);
+    private final DiagnosisChapterService diagnosisChapterService;
+
+    public CreateSickLeaveFilter(DiagnosisChapterService diagnosisChapterService) {
+        this.diagnosisChapterService = diagnosisChapterService;
+    }
+
+    public GetSickLeaveFilterServiceResponse create(List<IntygData> intygDataList) {
+        if (intygDataList.isEmpty()) {
+            return GetSickLeaveFilterServiceResponse.builder()
+                .rekoStatusTypes(getRekoStatuses())
+                .occupationTypes(getOccupationTypeDTOList())
+                .build();
+        }
+
+        final var doctorsForCareUnit = intygDataList.stream()
+            .map(IntygData::getLakareId)
+            .distinct()
+            .filter(Objects::nonNull)
+            .map(doctorId -> Lakare.create(doctorId, doctorId))
+            .collect(Collectors.toList());
+
+        final var diagnosisChaptersForCareUnit = intygDataList.stream()
+            .map(IntygData::getDiagnosKod)
+            .distinct()
+            .filter(Objects::nonNull)
+            .map(diagnosisChapterService::getDiagnosisChapter)
+            .distinct()
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
+
+        final var containsOngoingSickLeaves = intygDataList.stream()
+            .map(IntygData::getFormagor)
+            .filter(Objects::nonNull)
+            .map(CreateSickLeaveFilter::getEndDate)
+            .anyMatch(endDate -> endDate.isAfter(LocalDate.now()) || endDate.isEqual(LocalDate.now()));
+
+        final var occupationTypeDTOList = getOccupationTypeDTOList();
+
+        final var rekoStatuses = getRekoStatuses();
+
+        return GetSickLeaveFilterServiceResponse.builder()
+            .activeDoctors(doctorsForCareUnit)
+            .diagnosisChapters(diagnosisChaptersForCareUnit)
+            .nbrOfSickLeaves(intygDataList.size())
+            .rekoStatusTypes(rekoStatuses)
+            .occupationTypes(occupationTypeDTOList)
+            .hasOngoingSickLeaves(containsOngoingSickLeaves)
+            .build();
+    }
+
+    private static List<OccupationTypeDTO> getOccupationTypeDTOList() {
+        return Arrays
+            .stream(OccupationType.values())
+            .map(status -> new OccupationTypeDTO(status.toString(), status.getName()))
+            .collect(Collectors.toList());
+    }
+
+    private static List<RekoStatusTypeDTO> getRekoStatuses() {
+        return Arrays
+            .stream(RekoStatusType.values())
+            .map((status) -> new RekoStatusTypeDTO(status.toString(), status.getName()))
+            .collect(Collectors.toList());
+    }
+
+    private static LocalDate getEndDate(List<Formaga> abilities) {
+        return abilities.stream().max(Comparator.comparing(Formaga::getSlutdatum)).get().getSlutdatum();
+    }
 }

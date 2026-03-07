@@ -19,10 +19,50 @@
 
 package se.inera.intyg.intygstjanst.application.sickleave.services;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import org.springframework.stereotype.Service;
 import se.inera.intyg.intygstjanst.application.sickleave.dto.IntygData;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.SjukfallCertificate;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.SjukfallCertificateDao;
+import se.inera.intyg.intygstjanst.application.sickleave.converter.SjukfallCertificateIntygsDataConverter;
+import se.inera.intyg.intygstjanst.application.sickleave.converter.IntygsDataConverter;
 
-public interface IntygDataService {
+@Service
+public class IntygDataService {
 
-    List<IntygData> getIntygData(String careUnitId, int maxDaysSinceSickLeaveCompleted);
+
+    private final HsaService hsaService;
+    private final SjukfallCertificateDao sjukfallCertificateDao;
+    private final IntygsDataConverter intygDataConverter;
+
+    public IntygDataService(HsaService hsaService, SjukfallCertificateDao sjukfallCertificateDao,
+        IntygsDataConverter intygDataConverter) {
+        this.hsaService = hsaService;
+        this.sjukfallCertificateDao = sjukfallCertificateDao;
+        this.intygDataConverter = intygDataConverter;
+    }
+
+    public List<IntygData> getIntygData(String careUnitId, int maxDaysSinceSickLeaveCompleted) {
+        final var careProviderId = hsaService.getHsaIdForVardgivare(careUnitId);
+        final var careUnitAndSubUnits = hsaService.getHsaIdsForCareUnitAndSubUnits(careUnitId);
+        final var activeSickLeaveCertificateForCareUnits = sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(
+            careProviderId, careUnitAndSubUnits, maxDaysSinceSickLeaveCompleted);
+        final var filteredSickLeaveCertificates = filterTestCertificates(activeSickLeaveCertificateForCareUnits);
+        return convertToIntygData(filteredSickLeaveCertificates);
+    }
+
+    private static List<SjukfallCertificate> filterTestCertificates(
+        List<SjukfallCertificate> activeSickLeaveCertificateForCareUnits) {
+        return activeSickLeaveCertificateForCareUnits.stream()
+            .filter(sjukfallCertificate -> !sjukfallCertificate.isTestCertificate())
+            .collect(Collectors.toList());
+    }
+
+    private List<IntygData> convertToIntygData(List<SjukfallCertificate> activeSjukfallCertificateForCareUnits) {
+        return new ArrayList<>(
+            new SjukfallCertificateIntygsDataConverter().buildIntygsData(activeSjukfallCertificateForCareUnits)).stream()
+            .map((intygDataConverter::map)).collect(Collectors.toList());
+    }
 }

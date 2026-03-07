@@ -19,10 +19,87 @@
 
 package se.inera.intyg.intygstjanst.application.event;
 
+import static se.inera.intyg.intygstjanst.infrastructure.logging.MdcLogConstants.EVENT_CERTIFICATE_ID;
+import static se.inera.intyg.intygstjanst.infrastructure.logging.MdcLogConstants.EVENT_MESSAGE_ID;
+import static se.inera.intyg.intygstjanst.infrastructure.logging.MdcLogConstants.SESSION_ID_KEY;
+import static se.inera.intyg.intygstjanst.infrastructure.logging.MdcLogConstants.SPAN_ID_KEY;
+import static se.inera.intyg.intygstjanst.infrastructure.logging.MdcLogConstants.TRACE_ID_KEY;
+
+import jakarta.jms.JMSException;
 import jakarta.jms.Message;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
+import org.springframework.jms.annotation.JmsListener;
+import org.springframework.stereotype.Service;
+import se.inera.intyg.intygstjanst.infrastructure.logging.MdcHelper;
+import se.inera.intyg.intygstjanst.application.event.service.CertificateEventService;
+import se.inera.intyg.intygstjanst.application.event.validator.CertificateEventValidator;
 
-public interface CertificateEventListenerService {
+@Service
+@Slf4j
+@RequiredArgsConstructor
+public class CertificateEventListenerService {
 
-    void processMessage(Message message);
+    private final CertificateEventService certificateEventService;
+    private final CertificateEventValidator certificateEventMessageValidator;
+    private final MdcHelper mdcHelper;
 
+    private static final String EVENT_TYPE = "eventType";
+    private static final String CERTIFICATE_ID = "certificateId";
+    private static final String MESSAGE_ID = "messageId";
+    private static final String ERROR_MESSAGE = "Failure processing certificate event '{}', for certificateId '{}' and messageId '{}'.";
+
+    @JmsListener(destination = "${certificate.event.queue.name}")
+    public void processMessage(Message message) {
+        String eventType = null;
+        String certificateId = null;
+        String messageId = null;
+        String sessionId = null;
+        String traceId = null;
+
+        try {
+            eventType = message.getStringProperty(EVENT_TYPE);
+            certificateId = message.getStringProperty(CERTIFICATE_ID);
+            messageId = message.getStringProperty(MESSAGE_ID);
+            sessionId = message.getStringProperty(SESSION_ID_KEY);
+            traceId = message.getStringProperty(TRACE_ID_KEY);
+
+            MDC.put(SPAN_ID_KEY, mdcHelper.spanId());
+            MDC.put(SESSION_ID_KEY, sessionId == null ? "-" : sessionId);
+            MDC.put(TRACE_ID_KEY, traceId == null ? mdcHelper.traceId() : traceId);
+            MDC.put(EVENT_CERTIFICATE_ID, certificateId);
+            MDC.put(EVENT_MESSAGE_ID, messageId == null ? "-" : messageId);
+            MDC.put(EVENT_TYPE, eventType);
+
+            if (!certificateEventMessageValidator.validate(eventType, certificateId, messageId)) {
+                log.error(getMissingParametersMessage(eventType, certificateId, messageId));
+                return;
+            }
+
+            final var success = certificateEventService.processEvent(eventType, certificateId, messageId);
+
+            if (!success) {
+                throw new IllegalStateException(getProcessEventFailedMessage(eventType, certificateId, messageId));
+            }
+
+        } catch (JMSException | IllegalArgumentException e) {
+            log.error(ERROR_MESSAGE, eventType, certificateId, messageId, e);
+        } catch (Exception e) {
+            log.error(ERROR_MESSAGE, eventType, certificateId, messageId, e);
+            throw e;
+        } finally {
+            MDC.clear();
+        }
+    }
+
+    private String getMissingParametersMessage(String eventType, String certificateId, String messageId) {
+        return String.format("Certificate event missing required parameter(s), got eventType '%s', certificateId '%s' and messageId '%s'.",
+            eventType, certificateId, messageId);
+    }
+
+    private String getProcessEventFailedMessage(String eventType, String certificateId, String messageId) {
+        return String.format("Failure processing event '%s' for certificateId '%s' and messageId '%s'.", eventType, certificateId,
+            messageId);
+    }
 }

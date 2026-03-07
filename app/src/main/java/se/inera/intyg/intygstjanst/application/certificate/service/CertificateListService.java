@@ -18,20 +18,111 @@
  */
 package se.inera.intyg.intygstjanst.application.certificate.service;
 
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import se.inera.intyg.common.support.model.CertificateState;
+import se.inera.intyg.intygstjanst.application.certificate.dto.CertificateListEntry;
 import se.inera.intyg.intygstjanst.application.certificate.dto.CertificateListRequest;
 import se.inera.intyg.intygstjanst.application.certificate.dto.CertificateListResponse;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Certificate;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.CertificateDao;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.CertificateType;
+import se.inera.intyg.schemas.contract.Personnummer;
 
-/**
- * Service that collects certificates into a list.
- */
+@Service
+public class CertificateListService {
 
-public interface CertificateListService {
+    private final CertificateDao certificateDao;
 
-    /**
-     * Collects certificates for a specific doctor on the logged in unit.
-     *
-     * @param request Request with filter query including filters that user has chosen or default filters.
-     * @return Response including all signed certificates and the total amount of certificates.
-     */
-    CertificateListResponse listCertificatesForDoctor(CertificateListRequest request);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CertificateListService.class);
+
+    @Autowired
+    public CertificateListService(CertificateDao certificateDao) {
+        this.certificateDao = certificateDao;
+    }
+
+    public CertificateListResponse listCertificatesForDoctor(CertificateListRequest parameters) {
+        CertificateListResponse certificateListResponse = new CertificateListResponse();
+
+        var civicRegistrationNumber = parameters.getCivicRegistrationNumber() == null
+            || parameters.getCivicRegistrationNumber().isEmpty() ? null
+            : Personnummer.createPersonnummer(parameters.getCivicRegistrationNumber()).get();
+
+        var certificates = certificateDao.findCertificates(civicRegistrationNumber, parameters.getUnitIds(), parameters.getFromDate(),
+            parameters.getToDate(), parameters.getOrderBy(), parameters.isOrderAscending(), parameters.getTypes(), parameters.getHsaId());
+        LOGGER.debug(String.format("Getting signed certificates for units (%s)", Arrays.toString(parameters.getUnitIds())));
+        var certificateTypes = certificateDao.getCertificateTypes();
+
+        var certificateList = certificates.stream()
+            .filter(cert -> !cert.isRevoked())
+            .map(this::convertToCertificateListEntry)
+            .map(c -> addCertificateTypeName(c, certificateTypes))
+            .collect(Collectors.toList());
+
+        sortList(certificateList, parameters.getOrderBy(), parameters.isOrderAscending());
+        certificateListResponse.setTotalCount(certificateList.size());
+        certificateListResponse.setCertificates(getSubList(certificateList, parameters.getStartFrom(),
+            parameters.getPageSize() >= 0 ? parameters.getPageSize() : certificateList.size()));
+        return certificateListResponse;
+    }
+
+    private void sortList(List<CertificateListEntry> certificates, String orderBy, boolean ascending) {
+        Comparator<CertificateListEntry> comparator = null;
+        if (orderBy != null) {
+            switch (orderBy) {
+                case "type":
+                    comparator = Comparator.comparing(CertificateListEntry::getCertificateTypeName);
+                    break;
+                case "status":
+                    comparator = (c1, c2) -> Boolean.compare(c2.isSent(), c1.isSent());
+                    break;
+                default:
+                    break;
+            }
+        }
+        if (comparator != null) {
+            if (!ascending) {
+                comparator = comparator.reversed();
+            }
+            certificates.sort(comparator);
+        }
+    }
+
+    private CertificateListEntry convertToCertificateListEntry(Certificate certificate) {
+        CertificateListEntry certificateListEntry = new CertificateListEntry();
+        certificateListEntry.setCivicRegistrationNumber(certificate.getCivicRegistrationNumber().getPersonnummer());
+        certificateListEntry.setSignedDate(certificate.getSignedDate());
+        certificateListEntry.setCertificateType(certificate.getType());
+        certificateListEntry.setCertificateId(certificate.getId());
+        certificateListEntry.setCertificateTypeVersion(certificate.getTypeVersion());
+        certificateListEntry.setSent(isCertificateSent(certificate));
+        return certificateListEntry;
+    }
+
+    private boolean isCertificateSent(Certificate certificate) {
+        return certificate.getStates().stream().anyMatch(state -> state.getState().equals(CertificateState.SENT));
+    }
+
+    private CertificateListEntry addCertificateTypeName(CertificateListEntry certificateListEntry,
+        List<CertificateType> certificateTypes) {
+        certificateListEntry.setCertificateTypeName(
+            certificateTypes.stream().filter(ct -> ct.getId().equals(certificateListEntry.getCertificateType()))
+                .map(CertificateType::getName).findFirst().orElse(certificateListEntry.getCertificateType()));
+        return certificateListEntry;
+    }
+
+    private List<CertificateListEntry> getSubList(List<CertificateListEntry> certificates, int startFrom, int pageSize) {
+        if (pageSize > certificates.size()) {
+            return certificates;
+        } else {
+            int endPoint = Math.min(certificates.size(), startFrom + pageSize);
+            return certificates.subList(startFrom, endPoint);
+        }
+    }
 }

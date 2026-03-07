@@ -19,15 +19,35 @@
 
 package se.inera.intyg.intygstjanst.application.reko.service;
 
+import org.springframework.stereotype.Service;
 import se.inera.intyg.intygstjanst.application.sickleave.dto.RekoStatusDTO;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.RekoRepository;
 
 import java.time.LocalDate;
 
-public interface GetRekoStatusService {
+@Service
+public class GetRekoStatusService {
 
-    RekoStatusDTO get(
+    private final RekoRepository rekoRepository;
+    private final RekoStatusFilter rekoStatusFilter;
+    private final RekoStatusConverter rekoStatusConverter;
+
+    public GetRekoStatusService(RekoRepository rekoRepository,
+        RekoStatusFilter rekoStatusFilter,
+        RekoStatusConverter rekoStatusConverter) {
+        this.rekoRepository = rekoRepository;
+        this.rekoStatusFilter = rekoStatusFilter;
+        this.rekoStatusConverter = rekoStatusConverter;
+    }
+
+    public RekoStatusDTO get(
         String patientId,
         LocalDate endDate,
         LocalDate startDate,
-        String careUnitId);
+        String careUnitId) {
+
+        final var rekoStatuses = rekoRepository.findByPatientIdAndCareUnitId(patientId, careUnitId);
+        final var filteredRekoStatus = rekoStatusFilter.filter(rekoStatuses, patientId, endDate, startDate);
+        return filteredRekoStatus.map(rekoStatusConverter::convert).orElse(null);
+    }
 }

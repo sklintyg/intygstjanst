@@ -18,16 +18,35 @@
  */
 package se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao;
 
-/**
- * Data Access Object for obtaining statistics and performance indicators.
- */
-public interface HealthCheckDao {
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
+import java.sql.Time;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Repository;
 
-    /**
-     * Returns true if it was possible to retrieve the time from the DB.
-     *
-     * @return true if the DB connection succeeded.
-     */
-    boolean checkTimeFromDb();
+@Repository
+public class HealthCheckDao {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(HealthCheckDao.class);
+
+    private static final String CURR_TIME_SQL = "SELECT CURRENT_TIME()";
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    public boolean checkTimeFromDb() {
+        Time timestamp;
+        try {
+            Query query = entityManager.createNativeQuery(CURR_TIME_SQL);
+            timestamp = (Time) query.getSingleResult();
+        } catch (Exception e) {
+            LOGGER.error("checkTimeFromDb failed with exception: " + e.getMessage());
+            return false;
+        }
+        return timestamp != null;
+
+    }
 
 }

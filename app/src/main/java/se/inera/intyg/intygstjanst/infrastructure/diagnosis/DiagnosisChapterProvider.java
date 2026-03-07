@@ -20,10 +20,35 @@
 package se.inera.intyg.intygstjanst.infrastructure.diagnosis;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.LineIterator;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
+import org.springframework.stereotype.Component;
 import se.inera.intyg.intygstjanst.application.sickleave.dto.DiagnosKapitel;
 
-public interface DiagnosisChapterProvider {
+@Component
+public class DiagnosisChapterProvider {
 
-    List<DiagnosKapitel> getDiagnosisChapters() throws IOException;
+    @Value("${it.diagnosis.chapters.file}")
+    private String diagnosisChaptersFile;
+    private final ResourceLoader resourceLoader;
+
+    public DiagnosisChapterProvider(ResourceLoader resourceLoader) {
+        this.resourceLoader = resourceLoader;
+    }
+
+    public List<DiagnosKapitel> getDiagnosisChapters() throws IOException {
+        Resource resource = resourceLoader.getResource(diagnosisChaptersFile);
+
+        List<DiagnosKapitel> list = new ArrayList<>();
+        try (LineIterator it = IOUtils.lineIterator(resource.getInputStream(), StandardCharsets.UTF_8)) {
+            it.forEachRemaining(line -> list.add(new DiagnosKapitel(line)));
+        }
+        return list;
+    }
 }

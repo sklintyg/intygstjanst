@@ -19,11 +19,78 @@
 
 package se.inera.intyg.intygstjanst.application.citizen.service;
 
+import java.util.List;
+import org.springframework.stereotype.Service;
 import se.inera.intyg.intygstjanst.application.citizen.dto.CitizenCertificateDTO;
+import se.inera.intyg.intygstjanst.application.citizen.dto.CitizenCertificateStatusTypeDTO;
 import se.inera.intyg.intygstjanst.application.citizen.dto.ListCitizenCertificatesRequest;
 
+@Service
+public class CitizenCertificateFilterService {
 
-public interface CitizenCertificateFilterService {
+    public boolean filter(CitizenCertificateDTO certificate, ListCitizenCertificatesRequest request) {
+        return filterOnYears(certificate, request.getYears())
+            && filterOnUnits(certificate, request.getUnits())
+            && filterOnCertificateTypes(certificate, request.getCertificateTypes())
+            && filterOnSentStatus(certificate, request.getStatuses());
+    }
 
-    boolean filter(CitizenCertificateDTO certificate, ListCitizenCertificatesRequest request);
+    private boolean filterOnYears(CitizenCertificateDTO certificate, List<String> includedYears) {
+        if (includedYears == null || includedYears.isEmpty()) {
+            return true;
+        }
+
+        final var signedYear = certificate.getIssued().getYear();
+
+        return includedYears
+            .stream()
+            .anyMatch(year -> Integer.parseInt(year) == signedYear);
+    }
+
+    private boolean filterOnSentStatus(CitizenCertificateDTO certificate, List<CitizenCertificateStatusTypeDTO> statuses) {
+        if (statuses == null || statuses.isEmpty()) {
+            return true;
+        }
+
+        final var includeSent = statuses.stream().anyMatch(status -> status == CitizenCertificateStatusTypeDTO.SENT);
+        final var includeNotSent = statuses.stream().anyMatch(status -> status == CitizenCertificateStatusTypeDTO.NOT_SENT);
+
+        if (includeSent && includeNotSent) {
+            return filterOnSent(certificate) || filterOnNotSent(certificate);
+        }
+
+        if (includeSent) {
+            return filterOnSent(certificate);
+        }
+
+        if (includeNotSent) {
+            return filterOnNotSent(certificate);
+        }
+
+        return true;
+    }
+
+    private boolean filterOnSent(CitizenCertificateDTO certificate) {
+        return certificate.getRecipient() != null && certificate.getRecipient().getSent() != null;
+    }
+
+    private boolean filterOnNotSent(CitizenCertificateDTO certificate) {
+        return certificate.getRecipient() != null && certificate.getRecipient().getSent() == null;
+    }
+
+    private boolean filterOnUnits(CitizenCertificateDTO certificate, List<String> unitIds) {
+        if (unitIds == null || unitIds.isEmpty()) {
+            return true;
+        }
+
+        return unitIds.contains(certificate.getUnit().getId());
+    }
+
+    private boolean filterOnCertificateTypes(CitizenCertificateDTO certificate, List<String> certificateTypes) {
+        if (certificateTypes == null || certificateTypes.isEmpty()) {
+            return true;
+        }
+
+        return certificateTypes.contains(certificate.getType().getId());
+    }
 }

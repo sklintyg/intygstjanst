@@ -18,12 +18,187 @@
  */
 package se.inera.intyg.intygstjanst.application.certificate.service;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import se.inera.intyg.common.db.support.DbModuleEntryPoint;
+import se.inera.intyg.common.doi.support.DoiModuleEntryPoint;
+import se.inera.intyg.common.support.common.enumerations.RelationKod;
+import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
+import se.inera.intyg.common.support.model.CertificateState;
+import se.inera.intyg.common.support.model.common.internal.Utlatande;
+import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
+import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
+import se.inera.intyg.common.support.modules.support.ModuleEntryPoint;
+import se.inera.intyg.common.support.modules.support.api.ModuleApi;
+import se.inera.intyg.common.support.modules.support.api.exception.ModuleException;
+import se.inera.intyg.intygstjanst.application.intyginfo.dto.IntygInfoEvent;
+import se.inera.intyg.intygstjanst.application.intyginfo.dto.IntygInfoEvent.Source;
+import se.inera.intyg.intygstjanst.application.intyginfo.dto.IntygInfoEventType;
 import se.inera.intyg.intygstjanst.application.intyginfo.dto.ItIntygInfo;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Certificate;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.CertificateRepository;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.CertificateStateHistoryEntry;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Relation;
+import se.inera.intyg.intygstjanst.application.recipient.RecipientService;
+import se.inera.intyg.intygstjanst.application.recipient.Recipient;
 
-public interface IntygInfoService {
+@Service
+public class IntygInfoService {
 
-    Optional<ItIntygInfo> getIntygInfo(String id);
+    private static final Logger LOG = LoggerFactory.getLogger(IntygInfoService.class);
 
-    Long getCertificateCount(String hsaId);
+    public static final Set<String> EXCLUDED_CITIZEN_CERTIFICATES =
+        new HashSet<>(Arrays.asList(DbModuleEntryPoint.MODULE_ID, DoiModuleEntryPoint.MODULE_ID));
+
+    private final CertificateService certificateService;
+    private final RecipientService recipientService;
+    private final IntygModuleRegistry moduleRegistry;
+    private final RelationService relationService;
+    private final CertificateRepository certificateRepository;
+
+    public IntygInfoService(CertificateService certificateService, RecipientService recipientService,
+        IntygModuleRegistry moduleRegistry, RelationService relationService, CertificateRepository certificateRepository) {
+        this.certificateService = certificateService;
+        this.recipientService = recipientService;
+        this.moduleRegistry = moduleRegistry;
+        this.relationService = relationService;
+        this.certificateRepository = certificateRepository;
+    }
+
+    public Optional<ItIntygInfo> getIntygInfo(String id) {
+
+        try {
+            Certificate certificate = certificateService.getCertificateForCare(id);
+
+            ItIntygInfo response = new ItIntygInfo();
+
+            // General info
+            response.setIntygId(certificate.getId());
+            response.setIntygType(certificate.getType());
+            response.setIntygVersion(certificate.getTypeVersion());
+
+            response.setTestCertificate(certificate.isTestCertificate());
+
+            response.setSignedDate(certificate.getSignedDate());
+            response.setReceivedDate(certificate.getOriginalCertificate().getReceived());
+
+            List<CertificateStateHistoryEntry> states = certificate.getStates();
+            Optional<CertificateStateHistoryEntry> sent = states.stream()
+                .filter(state -> state.getState().equals(CertificateState.SENT))
+                .findAny();
+
+            response.setSentToRecipient(sent.map(CertificateStateHistoryEntry::getTimestamp).orElse(null));
+
+            response.setSignedByName(certificate.getSigningDoctorName());
+
+            response.setCareUnitHsaId(certificate.getCareUnitId());
+            response.setCareUnitName(certificate.getCareUnitName());
+
+            response.setCareGiverHsaId(certificate.getCareGiverId());
+
+            List<Recipient> recipients = recipientService.listRecipients(id);
+            response.setNumberOfRecipients(recipients.size());
+
+            try {
+                ModuleApi moduleApi = moduleRegistry.getModuleApi(certificate.getType(), certificate.getTypeVersion());
+
+                Utlatande utlatande = moduleApi.getUtlatandeFromXml(certificate.getOriginalCertificate().getDocument());
+
+                response.setSignedByHsaId(utlatande.getGrundData().getSkapadAv().getPersonId());
+                response.setCareGiverName(utlatande.getGrundData().getSkapadAv().getVardenhet().getVardgivare().getVardgivarnamn());
+
+                ModuleEntryPoint entryPoint = moduleRegistry.getModuleEntryPoint(certificate.getType());
+
+                if (!StringUtils.isEmpty(entryPoint.getDefaultRecipient())) {
+                    if (response.getNumberOfRecipients() == 0) {
+                        response.setNumberOfRecipients(1);
+                    }
+                }
+
+            } catch (ModuleException | ModuleNotFoundException e) {
+                LOG.error("ModuleApi not working", e);
+            }
+
+            addEvents(response, certificate);
+
+            return Optional.of(response);
+        } catch (InvalidCertificateException e) {
+            LOG.info("Intyg not found", e);
+        }
+
+        return Optional.empty();
+    }
+
+    public Long getCertificateCount(String hsaId) {
+        return certificateRepository.getCertificateCountForCareProvider(hsaId);
+    }
+
+    private void addEvents(ItIntygInfo response, Certificate certificate) {
+        List<IntygInfoEvent> events = response.getEvents();
+
+        // Signed by
+        IntygInfoEvent signedBy = new IntygInfoEvent(Source.INTYGSTJANSTEN, certificate.getSignedDate(), IntygInfoEventType.IS004);
+        signedBy.addData("name", certificate.getSigningDoctorName());
+        signedBy.addData("hsaId", response.getSignedByHsaId());
+        events.add(signedBy);
+
+        certificate.getStates().forEach(state -> {
+            IntygInfoEvent event = null;
+
+            switch (state.getState()) {
+                case SENT:
+                    event = new IntygInfoEvent(Source.INTYGSTJANSTEN, state.getTimestamp(), IntygInfoEventType.IS006);
+                    event.addData("intygsmottagare", state.getTarget());
+                    break;
+                case RECEIVED:
+                    if (!EXCLUDED_CITIZEN_CERTIFICATES.contains(certificate.getType())) {
+                        event = new IntygInfoEvent(Source.INTYGSTJANSTEN, state.getTimestamp(), IntygInfoEventType.IS005);
+                    }
+                    break;
+                case CANCELLED:
+                    event = new IntygInfoEvent(Source.INTYGSTJANSTEN, state.getTimestamp(), IntygInfoEventType.IS009);
+                    break;
+                default:
+                    break;
+            }
+
+            if (event != null) {
+                events.add(event);
+            }
+        });
+
+        List<Relation> relations = relationService.getChildRelations(certificate.getId());
+
+        relations.forEach(relation -> {
+            IntygInfoEvent event = null;
+
+            RelationKod kod = RelationKod.fromValue(relation.getRelationKod());
+
+            switch (kod) {
+                case ERSATT:
+                    event = new IntygInfoEvent(Source.INTYGSTJANSTEN, relation.getCreated(), IntygInfoEventType.IS008);
+                    break;
+                case KOMPLT:
+                    event = new IntygInfoEvent(Source.INTYGSTJANSTEN, relation.getCreated(), IntygInfoEventType.IS014);
+                    break;
+                case FRLANG:
+                    event = new IntygInfoEvent(Source.INTYGSTJANSTEN, relation.getCreated(), IntygInfoEventType.IS007);
+                    break;
+                default:
+
+            }
+
+            if (event != null) {
+                event.addData("intygsId", relation.getFromIntygsId());
+                events.add(event);
+            }
+        });
+    }
 }

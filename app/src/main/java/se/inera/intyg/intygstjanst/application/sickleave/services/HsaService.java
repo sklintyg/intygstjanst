@@ -18,19 +18,67 @@
  */
 package se.inera.intyg.intygstjanst.application.sickleave.services;
 
+import jakarta.xml.ws.WebServiceException;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
+import se.inera.intyg.infra.integration.hsatk.model.PersonInformation;
+import se.inera.intyg.infra.integration.hsatk.services.HsatkEmployeeService;
+import se.inera.intyg.infra.integration.hsatk.services.legacy.HsaOrganizationsService;
 
 /**
+ * Interfaces with {@link HsaOrganizationsService} from hsa-integration.
+ *
  * Created by eriklupander on 2016-02-02.
  */
-public interface HsaService {
+@Service
+public class HsaService {
 
-    List<String> getHsaIdForUnderenheter(String careUnitHsaId);
+    @Autowired
+    private HsaOrganizationsService hsaOrganizationsService;
 
-    String getHsaIdForVardgivare(String careUnitHsaId);
+    @Autowired
+    private HsatkEmployeeService hsaEmployeeService;
 
-    List<String> getHsaIdsForCareUnitAndSubUnits(String careUnitId);
+    private static final String EMPLOYEE_NAME_CACHE = "employeeNameCache";
 
-    String getHsaEmployeeName(String doctorId);
 
+    private static final Logger LOG = LoggerFactory.getLogger(HsaService.class);
+
+    public List<String> getHsaIdForUnderenheter(String careUnitHsaId) {
+        return hsaOrganizationsService.getHsaIdForAktivaUnderenheter(careUnitHsaId);
+    }
+
+    public String getHsaIdForVardgivare(String careUnitHsaId) {
+        return hsaOrganizationsService.getVardgivareOfVardenhet(careUnitHsaId);
+    }
+
+    public List<String> getHsaIdsForCareUnitAndSubUnits(String careUnitId) {
+        final var unitAndSubUnits = hsaOrganizationsService.getHsaIdForAktivaUnderenheter(careUnitId);
+        return Stream.concat(Stream.of(careUnitId), unitAndSubUnits.stream())
+            .collect(Collectors.toList());
+    }
+
+    @Cacheable(cacheNames = EMPLOYEE_NAME_CACHE, key = "#doctorId")
+    public String getHsaEmployeeName(String doctorId) {
+        try {
+            final var employee = hsaEmployeeService.getEmployee(null, doctorId, null);
+            if (employee == null || employee.isEmpty()) {
+                return doctorId;
+            }
+            return getName(employee);
+        } catch (WebServiceException e) {
+            LOG.error(e.getMessage());
+            throw new WebServiceException();
+        }
+    }
+
+    private String getName(List<PersonInformation> employeeInfo) {
+        return employeeInfo.get(0).getGivenName() + " " + employeeInfo.get(0).getMiddleAndSurName();
+    }
 }

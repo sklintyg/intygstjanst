@@ -19,18 +19,78 @@
 
 package se.inera.intyg.intygstjanst.application.reko.service;
 
+import org.springframework.stereotype.Service;
+import se.inera.intyg.intygstjanst.application.sickleave.dto.RekoStatusTypeDTO;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Reko;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.RekoRepository;
 import se.inera.intyg.intygstjanst.application.sickleave.dto.RekoStatusDTO;
+import se.inera.intyg.intygstjanst.application.reko.dto.RekoStatusType;
 
 import java.time.LocalDateTime;
 
-public interface CreateRekoStatusService {
+@Service
+public class CreateRekoStatusService {
 
-    RekoStatusDTO create(String patientId,
+    private final RekoRepository rekoRepository;
+
+    public CreateRekoStatusService(RekoRepository rekoRepository) {
+        this.rekoRepository = rekoRepository;
+    }
+
+    public RekoStatusDTO create(String patientId,
         String status,
         String careProviderId,
         String careUnitId,
         String unitId,
         String staffId,
         String staffName,
-        LocalDateTime sickLeaveTimestamp);
+        LocalDateTime sickLeaveTimestamp) {
+
+        final var reko = getReko(
+            status,
+            patientId,
+            careProviderId,
+            careUnitId,
+            unitId,
+            staffId,
+            staffName,
+            sickLeaveTimestamp
+        );
+
+        rekoRepository.save(reko);
+
+        return new RekoStatusDTO(
+            new RekoStatusTypeDTO(status, RekoStatusType.fromId(status).getName()),
+            patientId,
+            careProviderId,
+            careUnitId,
+            unitId,
+            staffId,
+            staffName,
+            sickLeaveTimestamp,
+            reko.getRegistrationTimestamp()
+        );
+    }
+
+    private Reko getReko(String status,
+        String patientId,
+        String careProviderId,
+        String careUnitId,
+        String unitId,
+        String staffId,
+        String staffName,
+        LocalDateTime sickLeaveTimestamp) {
+        final var reko = new Reko();
+        reko.setPatientId(patientId);
+        reko.setStatus(status);
+        reko.setSickLeaveTimestamp(sickLeaveTimestamp);
+        reko.setCareProviderId(careProviderId);
+        reko.setCareUnitId(careUnitId);
+        reko.setUnitId(unitId);
+        reko.setRegistrationTimestamp(LocalDateTime.now());
+        reko.setStaffId(staffId);
+        reko.setStaffName(staffName);
+
+        return reko;
+    }
 }

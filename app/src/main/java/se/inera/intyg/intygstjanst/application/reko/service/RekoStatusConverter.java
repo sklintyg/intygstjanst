@@ -19,10 +19,33 @@
 
 package se.inera.intyg.intygstjanst.application.reko.service;
 
+import org.springframework.stereotype.Component;
 import se.inera.intyg.intygstjanst.application.sickleave.dto.RekoStatusDTO;
+import se.inera.intyg.intygstjanst.application.sickleave.dto.RekoStatusTypeDTO;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Reko;
+import se.inera.intyg.intygstjanst.application.reko.dto.RekoStatusType;
 
-public interface RekoStatusConverter {
+@Component
+public class RekoStatusConverter {
 
-    RekoStatusDTO convert(Reko rekoStatus);
+    public RekoStatusDTO convert(Reko rekoStatus) {
+        final var convertedRekoStatus = new RekoStatusDTO();
+        convertedRekoStatus.setStatus(
+            new RekoStatusTypeDTO(
+                rekoStatus.getStatus(),
+                RekoStatusType.fromId(rekoStatus.getStatus()).getName()
+            )
+        );
+        convertedRekoStatus.setRegistrationTimestamp(rekoStatus.getRegistrationTimestamp());
+        convertedRekoStatus.setPatientId(rekoStatus.getPatientId());
+        convertedRekoStatus.setCareProviderId(rekoStatus.getCareProviderId());
+        convertedRekoStatus.setCareUnitId(rekoStatus.getCareUnitId());
+        convertedRekoStatus.setUnitId(rekoStatus.getUnitId());
+        convertedRekoStatus.setPatientId(rekoStatus.getPatientId());
+        convertedRekoStatus.setStaffId(rekoStatus.getStaffId());
+        convertedRekoStatus.setStaffName(rekoStatus.getStaffName());
+        convertedRekoStatus.setSickLeaveTimestamp(rekoStatus.getSickLeaveTimestamp());
+
+        return convertedRekoStatus;
+    }
 }

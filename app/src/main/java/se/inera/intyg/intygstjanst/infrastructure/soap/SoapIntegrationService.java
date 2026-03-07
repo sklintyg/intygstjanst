@@ -19,31 +19,80 @@
 
 package se.inera.intyg.intygstjanst.infrastructure.soap;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 import org.w3.wsaddressing10.AttributedURIType;
+import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificate.rivtabp20.v1.RevokeMedicalCertificateResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateRequestType;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateResponseType;
+import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
 import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
 import se.inera.intyg.common.support.modules.support.api.exception.ModuleException;
+import se.inera.intyg.intygstjanst.infrastructure.logging.MdcLogConstants;
+import se.inera.intyg.intygstjanst.infrastructure.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Certificate;
+import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateType;
+import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.SendMessageToCareResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.SendMessageToCareResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.SendMessageToCareType;
+import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientType;
 
-public interface SoapIntegrationService {
+@Service
+public class SoapIntegrationService {
 
-    void sendCertificateToRecipient(Certificate certificate, String logicalAddress, String recipientId)
-        throws ModuleNotFoundException, ModuleException;
 
-    RevokeCertificateResponseType revokeCertificate(String logicalAddress, RevokeCertificateType revokeCertificateType);
+    @Autowired
+    private IntygModuleRegistry moduleRegistry;
 
-    RevokeMedicalCertificateResponseType revokeMedicalCertificate(
-        AttributedURIType logicalAdress, RevokeMedicalCertificateRequestType revokeMedicalCertificateRequestType);
+    @Autowired
+    @Qualifier("revokeCertificateClient")
+    private RevokeCertificateResponderInterface revokeCertificateResponder;
 
-    SendMessageToRecipientResponseType sendMessageToRecipient(String logicalAddress, SendMessageToRecipientType sendMessageToRecipientType);
+    @Autowired
+    @Qualifier("revokeMedicalCertificateClient")
+    private RevokeMedicalCertificateResponderInterface revokeMedicalCertificateResponder;
 
-    SendMessageToCareResponseType sendMessageToCare(String logicalAddress, SendMessageToCareType sendMessageToCareType);
+    @Autowired
+    @Qualifier("sendMessageToRecipientClient")
+    private SendMessageToRecipientResponderInterface sendMessageToRecipientResponder;
+
+    @Autowired
+    @Qualifier("sendMessageToCareClient")
+    private SendMessageToCareResponderInterface sendMessageToCareResponder;
+
+    @PerformanceLogging(eventAction = "send-certificate-to-recipient", eventType = MdcLogConstants.EVENT_TYPE_CHANGE)
+    public void sendCertificateToRecipient(Certificate certificate, String logicalAddress, String recipientId)
+        throws ModuleNotFoundException, ModuleException {
+        moduleRegistry.getModuleApi(certificate.getType(), certificate.getTypeVersion())
+            .sendCertificateToRecipient(certificate.getOriginalCertificate().getDocument(), logicalAddress, recipientId);
+    }
+
+    @PerformanceLogging(eventAction = "revoke-certificate-notify-recipient", eventType = MdcLogConstants.EVENT_TYPE_CHANGE)
+    public RevokeCertificateResponseType revokeCertificate(String logicalAddress, RevokeCertificateType revokeCertificateType) {
+        return revokeCertificateResponder.revokeCertificate(logicalAddress, revokeCertificateType);
+    }
+
+    @PerformanceLogging(eventAction = "revoke-medical-certificate-notify-recipient", eventType = MdcLogConstants.EVENT_TYPE_CHANGE)
+    public RevokeMedicalCertificateResponseType revokeMedicalCertificate(AttributedURIType logicalAddress,
+        RevokeMedicalCertificateRequestType revokeMedicalCertificateRequestType) {
+        return revokeMedicalCertificateResponder.revokeMedicalCertificate(logicalAddress, revokeMedicalCertificateRequestType);
+    }
+
+    @PerformanceLogging(eventAction = "send-message-to-recipient", eventType = MdcLogConstants.EVENT_TYPE_CHANGE)
+    public SendMessageToRecipientResponseType sendMessageToRecipient(String logicalAddress,
+        SendMessageToRecipientType sendMessageToRecipientType) {
+        return sendMessageToRecipientResponder.sendMessageToRecipient(logicalAddress, sendMessageToRecipientType);
+    }
+
+    @PerformanceLogging(eventAction = "send-message-to-care", eventType = MdcLogConstants.EVENT_TYPE_CHANGE)
+    public SendMessageToCareResponseType sendMessageToCare(String logicalAddress,
+        SendMessageToCareType sendMessageToCareType) {
+        return sendMessageToCareResponder.sendMessageToCare(logicalAddress, sendMessageToCareType);
+    }
 
 }

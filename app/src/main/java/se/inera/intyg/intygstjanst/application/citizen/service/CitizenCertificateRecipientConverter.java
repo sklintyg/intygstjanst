@@ -19,12 +19,39 @@
 
 package se.inera.intyg.intygstjanst.application.citizen.service;
 
+import org.springframework.stereotype.Service;
+import se.inera.intyg.intygstjanst.application.recipient.CertificateRecipientType;
 import se.inera.intyg.intygstjanst.application.citizen.dto.CitizenCertificateRecipientDTO;
+import se.inera.intyg.intygstjanst.application.recipient.repository.RecipientRepo;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-public interface CitizenCertificateRecipientConverter {
+@Service
+public class CitizenCertificateRecipientConverter {
 
-    Optional<CitizenCertificateRecipientDTO> convert(String certificateType, LocalDateTime sent);
+    private final RecipientRepo recipientRepo;
+
+    public CitizenCertificateRecipientConverter(RecipientRepo recipientRepo) {
+        this.recipientRepo = recipientRepo;
+    }
+
+    public Optional<CitizenCertificateRecipientDTO> convert(String certificateType, LocalDateTime sent) {
+        return recipientRepo
+            .listRecipients()
+            .stream()
+            .filter(
+                (recipient) -> recipient.getCertificateTypes().contains(certificateType)
+                    && recipient.getRecipientType() == CertificateRecipientType.HUVUDMOTTAGARE
+            )
+            .findFirst()
+            .map(recipient ->
+                CitizenCertificateRecipientDTO
+                    .builder()
+                    .id(recipient.getId())
+                    .name(recipient.getName())
+                    .sent(sent)
+                    .build()
+            );
+    }
 }

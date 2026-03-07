@@ -19,8 +19,93 @@
 
 package se.inera.intyg.intygstjanst.application.event.service;
 
-public interface CertificateEventService {
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import se.inera.intyg.intygstjanst.infrastructure.csintegration.CSIntegrationService;
+import se.inera.intyg.intygstjanst.application.certificate.service.StatisticsService;
+import se.inera.intyg.intygstjanst.application.sickleave.services.HandleSickLeaveService;
 
-    boolean processEvent(String eventType, String certificateId, String messageId);
+@Service
+@Slf4j
+@RequiredArgsConstructor
+public class CertificateEventService {
 
+    private final StatisticsService statisticsService;
+    private final CSIntegrationService csIntegrationService;
+    private final CertificateEventSendService certificateEventSendService;
+    private final CertificateEventRevokeService certificateEventRevokeService;
+    private final CertificateEventSendMessageService certificateEventSendMessageService;
+    private final HandleSickLeaveService handleSickleaveService;
+
+    private static final String CERTIFICATE_REVOKED = "certificate-revoked";
+    private static final String CERTIFICATE_SIGNED = "certificate-signed";
+    private static final String CERTIFICATE_SENT = "certificate-sent";
+    private static final String MESSAGE_SENT = "message-sent";
+
+    @Transactional
+    public boolean processEvent(String eventType, String certificateId, String messageId) {
+        final var metadata = csIntegrationService.getCertificateMetadata(certificateId);
+
+        if (metadata.isTestCertificate()) {
+            log.info(String.format(
+                    "Not processing event of type '%S' for certificate with id '%s' since it is test indicated", eventType, certificateId
+                )
+            );
+            return true;
+        }
+
+        switch (eventType) {
+            case CERTIFICATE_SIGNED:
+                return created(certificateId);
+            case CERTIFICATE_REVOKED:
+                return revoked(certificateId);
+            case CERTIFICATE_SENT:
+                return sent(certificateId);
+            case MESSAGE_SENT:
+                return messageSent(messageId);
+            default:
+                throw new IllegalArgumentException(
+                    String.format("Invalid eventType '%s' received for certificate '%s' and message '%s'.",
+                        eventType, certificateId, messageId));
+        }
+    }
+
+    private boolean created(String certificateId) {
+        final var response = csIntegrationService.getCertificateXmlResponse(certificateId);
+        final var certificateXml = decodeXml(response.getXml());
+        handleSickleaveService.created(response);
+        return statisticsService.created(certificateXml, certificateId, response.getCertificateType(), response.getUnit().getUnitId());
+    }
+
+    private boolean revoked(String certificateId) {
+        final var response = csIntegrationService.getCertificateXmlResponse(certificateId);
+        final var certificateXml = decodeXml(response.getXml());
+        if (response.getRecipient() != null && response.getRecipient().getSent() != null) {
+            certificateEventRevokeService.revoke(response);
+        }
+        handleSickleaveService.revoked(response);
+        return statisticsService.revoked(certificateXml, certificateId, response.getCertificateType(), response.getUnit().getUnitId());
+    }
+
+    private boolean sent(String certificateId) {
+        final var response = csIntegrationService.getCertificateXmlResponse(certificateId);
+        certificateEventSendService.send(response, decodeXml(response.getXml()));
+        return statisticsService.sent(certificateId, response.getCertificateType(), response.getUnit().getUnitId(),
+            response.getRecipient().getId());
+    }
+
+    private boolean messageSent(String messageId) {
+        final var response = csIntegrationService.getMessageXmlResponse(messageId);
+        final var messageXml = decodeXml(response.getXml());
+        certificateEventSendMessageService.sendMessage(messageXml);
+        return true;
+    }
+
+    private String decodeXml(String xmlBase64Encoded) {
+        return new String(Base64.getDecoder().decode(xmlBase64Encoded), StandardCharsets.UTF_8);
+    }
 }

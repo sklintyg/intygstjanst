@@ -38,7 +38,6 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.intygstjanst.application.sickleave.services.SjukfallEngineService;
-import se.inera.intyg.intygstjanst.application.sickleave.services.SjukfallEngineServiceImpl;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.SjukfallCertificateDao;
 import se.inera.intyg.intygstjanst.infrastructure.csintegration.aggregator.ValidSickLeaveAggregator;
@@ -63,7 +62,7 @@ class ListSickLeavesForCareResponderImplTest {
     private HsaService hsaService;
 
     @Spy
-    private SjukfallEngineService sjukfallEngineService = new SjukfallEngineServiceImpl();
+    private SjukfallEngineService sjukfallEngineService = new SjukfallEngineService();
 
     @Mock
     private SjukfallCertificateDao sjukfallCertificateDao;

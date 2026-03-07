@@ -19,10 +19,68 @@
 
 package se.inera.intyg.intygstjanst.application.citizen.service;
 
+import org.springframework.stereotype.Service;
 import se.inera.intyg.intygstjanst.application.citizen.dto.CitizenCertificateDTO;
+import se.inera.intyg.intygstjanst.application.citizen.dto.CitizenCertificateIssuerDTO;
+import se.inera.intyg.intygstjanst.application.citizen.dto.CitizenCertificateSummaryDTO;
+import se.inera.intyg.intygstjanst.application.citizen.dto.CitizenCertificateTypeDTO;
+import se.inera.intyg.intygstjanst.application.citizen.dto.CitizenCertificateUnitDTO;
 import se.inera.intyg.intygstjanst.application.citizen.repository.model.CitizenCertificate;
 
-public interface CitizenCertificateDTOConverter {
+@Service
+public class CitizenCertificateDTOConverter {
 
-    CitizenCertificateDTO convert(CitizenCertificate certificate, String typeName, String summaryLabel);
+    private final CitizenCertificateRecipientConverter citizenCertificateRecipientConverter;
+
+    public CitizenCertificateDTOConverter(CitizenCertificateRecipientConverter citizenCertificateRecipientConverter) {
+        this.citizenCertificateRecipientConverter = citizenCertificateRecipientConverter;
+    }
+
+    public CitizenCertificateDTO convert(CitizenCertificate certificate, String typeName, String summaryLabel) {
+        return CitizenCertificateDTO
+            .builder()
+            .id(certificate.getId())
+            .type(getType(typeName, certificate.getType(), certificate.getTypeVersion()))
+            .summary(getSummary(certificate.getAdditionalInfo(), summaryLabel))
+            .issuer(getIssuer(certificate.getIssuerName()))
+            .unit(getUnit(certificate.getUnitId(), certificate.getUnitName()))
+            .recipient(
+                citizenCertificateRecipientConverter.convert(certificate.getType(), certificate.getSentDate()).orElse(null)
+            )
+            .issued(certificate.getIssued())
+            .relations(certificate.getRelations())
+            .build();
+    }
+
+    private CitizenCertificateIssuerDTO getIssuer(String name) {
+        return CitizenCertificateIssuerDTO
+            .builder()
+            .name(name)
+            .build();
+    }
+
+    private CitizenCertificateTypeDTO getType(String name, String id, String version) {
+        return CitizenCertificateTypeDTO
+            .builder()
+            .id(id)
+            .name(name)
+            .version(version)
+            .build();
+    }
+
+    private CitizenCertificateSummaryDTO getSummary(String value, String label) {
+        return CitizenCertificateSummaryDTO
+            .builder()
+            .value(value)
+            .label(label)
+            .build();
+    }
+
+    private CitizenCertificateUnitDTO getUnit(String id, String name) {
+        return CitizenCertificateUnitDTO
+            .builder()
+            .id(id)
+            .name(name)
+            .build();
+    }
 }

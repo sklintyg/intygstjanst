@@ -19,15 +19,28 @@
 package se.inera.intyg.intygstjanst.application.message.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import se.inera.intyg.intygstjanst.application.message.dto.MessageFromIT;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Arende;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.ArendeRepository;
 
-public interface MessageService {
+@Service
+public class MessageService {
 
-    /**
-     * Find messages related to a particular certificate.
-     *
-     * @param certificateId Id of the certificate
-     * @return List of messages
-     */
-    List<MessageFromIT> findMessagesByCertificateId(String certificateId);
+    @Autowired
+    private ArendeRepository messageRepository;
+
+    public List<MessageFromIT> findMessagesByCertificateId(String certificateId) {
+        final var messages = messageRepository.findByIntygsId(certificateId);
+        return messages.stream()
+            .map(message -> convert(message))
+            .collect(Collectors.toList());
+    }
+
+    private MessageFromIT convert(Arende message) {
+        return MessageFromIT.create(message.getIntygsId(), message.getMeddelandeId(), message.getMeddelande(), message.getAmne(),
+            message.getLogiskAdressmottagare(), message.getTimestamp());
+    }
 }

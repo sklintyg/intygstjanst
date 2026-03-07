@@ -20,43 +20,33 @@ package se.inera.intyg.intygstjanst.application.certificate.service;
 
 import java.util.List;
 import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Relation;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.RelationDao;
 
 /**
  * Created by eriklupander on 2017-05-10.
  */
-public interface RelationService {
+@Service
+public class RelationService {
 
-    /**
-     * Stores a single relation.
-     *
-     * @param relation The relation to store.
-     */
-    void storeRelation(Relation relation);
+    @Autowired
+    private RelationDao relationDao;
 
-    /**
-     * Builds a full relation graph. Parent relations will be linear while child relations may branch out.
-     * Ordered by created date.
-     *
-     * @param intygsId intygsId of the certficate whose relations to query.
-     * @return a full relation graph
-     */
-    List<Relation> getRelationGraph(String intygsId);
+    public void storeRelation(Relation relation) {
+        relationDao.store(relation);
+    }
 
-    /**
-     * Returns the parent relation of the specified intygsId.
-     *
-     * @param intygsId intygsId of the certficate whose relations to query.
-     * @return Returns null if no such relation exists.
-     */
-    Optional<Relation> getParentRelation(String intygsId);
+    public List<Relation> getRelationGraph(String intygsId) {
+        return relationDao.getGraph(intygsId);
+    }
 
-    /**
-     * Returns all child relations, non-recursively - e.g. only direct descendants will be returned.
-     *
-     * @param intygsId intygsId of the certficate whose relations to query.
-     * @return List of direct descendants related to the specified intygsId.
-     */
-    List<Relation> getChildRelations(String intygsId);
+    public Optional<Relation> getParentRelation(String intygsId) {
+        return relationDao.getParentRelation(intygsId);
+    }
 
+    public List<Relation> getChildRelations(String intygsId) {
+        return relationDao.getChildren(intygsId);
+    }
 }

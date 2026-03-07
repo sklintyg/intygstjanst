@@ -19,11 +19,53 @@
 
 package se.inera.intyg.intygstjanst.application.reko.service;
 
+import org.springframework.stereotype.Service;
+import se.inera.intyg.intygstjanst.application.sickleave.dto.RekoStatusDTO;
 import se.inera.intyg.intygstjanst.application.sickleave.dto.SjukfallEnhet;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Reko;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.RekoRepository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
-public interface RekoStatusDecorator {
+@Service
+public class RekoStatusDecorator {
 
-    void decorate(List<SjukfallEnhet> sickLeaves, String careUnitId);
+    final RekoRepository rekoRepository;
+    final RekoStatusFilter rekoStatusFilter;
+    final RekoStatusConverter rekoStatusConverter;
+
+    public RekoStatusDecorator(RekoRepository rekoRepository,
+        RekoStatusFilter rekoStatusFilter,
+        RekoStatusConverter rekoStatusConverter) {
+        this.rekoRepository = rekoRepository;
+        this.rekoStatusFilter = rekoStatusFilter;
+        this.rekoStatusConverter = rekoStatusConverter;
+    }
+
+    public void decorate(List<SjukfallEnhet> sickLeaves, String careUnitId) {
+        if (sickLeaves.isEmpty()) {
+            return;
+        }
+
+        final var rekoStatuses = rekoRepository.findByPatientIdInAndCareUnitId(
+            sickLeaves
+                .stream()
+                .map((sickLeave) -> sickLeave.getPatient().getId())
+                .collect(Collectors.toList()), careUnitId
+
+        );
+
+        sickLeaves.forEach((sickLeave) -> sickLeave.setRekoStatus(getRekoStatus(sickLeave, rekoStatuses)));
+    }
+
+    private RekoStatusDTO getRekoStatus(SjukfallEnhet sickLeave, List<Reko> rekoStatuses) {
+        final var filteredRekoStatus = rekoStatusFilter.filter(
+            rekoStatuses,
+            sickLeave.getPatient().getId(),
+            sickLeave.getSlut(),
+            sickLeave.getStart());
+
+        return filteredRekoStatus.map(rekoStatusConverter::convert).orElse(null);
+    }
 }

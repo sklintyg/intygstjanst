@@ -19,9 +19,32 @@
 
 package se.inera.intyg.intygstjanst.application.citizen.service;
 
-public interface CitizenCertificateTextService {
+import org.springframework.stereotype.Service;
+import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
+import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
 
-    String getTypeName(String typeId);
+@Service
+public class CitizenCertificateTextService {
 
-    String getAdditionalInfoLabel(String typeId, String typeVersion);
+    private final IntygModuleRegistry intygModuleRegistry;
+
+    public CitizenCertificateTextService(IntygModuleRegistry intygModuleRegistry) {
+        this.intygModuleRegistry = intygModuleRegistry;
+    }
+
+    public String getTypeName(String typeId) {
+        try {
+            return intygModuleRegistry.getModuleEntryPoint(typeId).getModuleName();
+        } catch (ModuleNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public String getAdditionalInfoLabel(String typeId, String typeVersion) {
+        try {
+            return intygModuleRegistry.getModuleApi(typeId, typeVersion).getAdditionalInfoLabel();
+        } catch (ModuleNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

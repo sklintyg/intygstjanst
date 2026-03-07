@@ -19,54 +19,80 @@
 package se.inera.intyg.intygstjanst.application.recipient;
 
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.ApprovedReceiver;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.ApprovedReceiverDao;
 import se.inera.intyg.intygstjanst.application.exception.RecipientUnknownException;
+import se.inera.intyg.intygstjanst.application.recipient.repository.RecipientRepo;
 
-public interface RecipientService {
+@Service
+public class RecipientService {
 
-    /**
-     * Get the {@link Recipient} that corresponds to a given logical address.
-     *
-     * @param logicalAddress the logical address to check
-     * @return {@link Recipient}
-     */
-    Recipient getRecipientForLogicalAddress(String logicalAddress) throws RecipientUnknownException;
+    @Autowired
+    private ApprovedReceiverDao approvedReceiverDao;
 
-    /**
-     * Get the {@link Recipient} that corresponds to a given id.
-     *
-     * @param recipientId the id to check
-     * @return {@link Recipient}
-     */
-    Recipient getRecipient(String recipientId) throws RecipientUnknownException;
+    @Autowired
+    private RecipientRepo recipientRepo;
 
-    /**
-     * List all {@link Recipient}[s] currently known.
-     *
-     * @return List of {@link Recipient}[s]
-     */
-    List<Recipient> listRecipients();
+    public Recipient getRecipientForLogicalAddress(String logicalAddress) throws RecipientUnknownException {
+        return recipientRepo.getRecipientForLogicalAddress(logicalAddress);
+    }
 
-    /**
-     * Get a list of registered recipients for a specific certificate}.
-     *
-     * @param certificateId the certificate id
-     * @return a List of {@link Recipient}
-     */
-    List<Recipient> listRecipients(String certificateId);
+    public Recipient getRecipient(String recipientId) throws RecipientUnknownException {
+        return recipientRepo.getRecipient(recipientId);
+    }
 
-    /**
-     * Get a list of registered recipients for a certain {@link CertificateType}.
-     *
-     * @return a List of {@link Recipient}
-     */
-    List<Recipient> listRecipients(CertificateType certificateType);
+    public List<Recipient> listRecipients() {
+        return recipientRepo.listRecipients();
+    }
 
-    Recipient getPrimaryRecipientFkassa();
+    public List<Recipient> listRecipients(String certificateId) {
+        // Get list of registered possible receivers.
+        List<ApprovedReceiver> possibleReceivers =
+            approvedReceiverDao.getApprovedReceiverIdsForCertificate(certificateId);
 
-    Recipient getPrimaryRecipientHsvard();
+        // Reduce to approved recipients
+        return recipientRepo.listRecipients().stream()
+            .filter(isApprovedRecipient(possibleReceivers))
+            .collect(Collectors.toList());
+    }
 
-    Recipient getPrimaryRecipientInvana();
+    public List<Recipient> listRecipients(CertificateType certificateType) {
+        // Filter out HSVARD and INVANA recipients, as these are in fact Webcert/intygstjansten and Mina intyg)
+        return recipientRepo.listRecipients().stream()
+            .filter(r -> !getPrimaryRecipientHsvard().getId().equals(r.getId())
+                && !getPrimaryRecipientInvana().getId().equals(r.getId()))
+            .filter(r -> r.getCertificateTypes().contains(certificateType.getCertificateTypeId()))
+            .collect(Collectors.toList());
+    }
 
-    Recipient getPrimaryRecipientTransp();
+    public Recipient getPrimaryRecipientFkassa() {
+        return recipientRepo.getRecipientFkassa();
+    }
+
+    public Recipient getPrimaryRecipientHsvard() {
+        return recipientRepo.getRecipientHsvard();
+    }
+
+    public Recipient getPrimaryRecipientInvana() {
+        return recipientRepo.getRecipientInvana();
+    }
+
+    public Recipient getPrimaryRecipientTransp() {
+        return recipientRepo.getRecipientTransp();
+    }
+
+    private Predicate<Recipient> isApprovedRecipient(List<ApprovedReceiver> receivers) {
+        return recipient -> !getPrimaryRecipientHsvard().getId().equals(recipient.getId())
+            && !getPrimaryRecipientInvana().getId().equals(recipient.getId())
+            && receivers.stream()
+            .anyMatch(approvedReceiver -> approvedReceiver.isApproved()
+                && approvedReceiver.getReceiverId().equals(recipient.getId())
+            );
+    }
+
 
 }

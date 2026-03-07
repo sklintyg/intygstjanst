@@ -25,9 +25,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import se.inera.intyg.intygstjanst.infrastructure.csintegration.dto.GetCitizenCertificatesRequest;
-import se.inera.intyg.intygstjanst.application.sickleave.dto.PersonIdDTO;
 import se.inera.intyg.intygstjanst.application.citizen.dto.CitizenCertificateDTO;
+import se.inera.intyg.intygstjanst.application.sickleave.dto.PersonIdDTO;
+import se.inera.intyg.intygstjanst.infrastructure.csintegration.dto.GetCitizenCertificatesRequest;
 import se.inera.intyg.schemas.contract.Personnummer;
 
 @Service
@@ -35,7 +35,7 @@ import se.inera.intyg.schemas.contract.Personnummer;
 public class CitizenCertificatesFromCS {
 
     private final CSIntegrationService csIntegrationService;
-    private final CitizenCertificateConverter citizenCertificateConverter;
+    private final CitizenCertificateConverterFromCS citizenCertificateConverterFromCS;
 
     public List<CitizenCertificateDTO> get(Personnummer personId) {
 
@@ -50,7 +50,7 @@ public class CitizenCertificatesFromCS {
         );
 
         return citizenCertificates.stream()
-            .map(citizenCertificateConverter::convert)
+            .map(citizenCertificateConverterFromCS::convert)
             .collect(Collectors.toList());
     }
 }

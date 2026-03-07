@@ -19,12 +19,48 @@
 
 package se.inera.intyg.intygstjanst.application.citizen.repository.model;
 
+import org.springframework.stereotype.Service;
+import se.inera.intyg.common.support.common.enumerations.RelationKod;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Relation;
 import se.inera.intyg.intygstjanst.application.citizen.dto.CitizenCertificateRelationDTO;
+import se.inera.intyg.intygstjanst.application.citizen.dto.CitizenCertificateRelationType;
 
 import java.util.Optional;
 
-public interface CitizenCertificateRelationConverter {
+@Service
+public class CitizenCertificateRelationConverter {
 
-    Optional<CitizenCertificateRelationDTO> convert(String certificateId, Relation relation);
+    public Optional<CitizenCertificateRelationDTO> convert(String certificateId, Relation relation) {
+        if (!certificateId.equals(relation.getToIntygsId()) && !certificateId.equals(relation.getFromIntygsId())) {
+            return Optional.empty();
+        }
+
+        if (!isRelationCodeIncluded(relation.getRelationKod())) {
+            return Optional.empty();
+        }
+
+        return Optional.of(
+            CitizenCertificateRelationDTO
+                .builder()
+                .certificateId(getRelatedId(certificateId, relation.getToIntygsId(), relation.getFromIntygsId()))
+                .timestamp(relation.getCreated())
+                .type(getType(certificateId, relation.getToIntygsId()))
+                .build()
+        );
+    }
+
+    private String getRelatedId(String id, String toId, String fromId) {
+        return id.equals(toId) ? fromId : toId;
+    }
+
+    private boolean isRelationCodeIncluded(String code) {
+        return code.equals(RelationKod.ERSATT.toString())
+            || code.equals(RelationKod.KOMPLT.toString());
+    }
+
+    private CitizenCertificateRelationType getType(String certificateId, String toCertificateId) {
+        return certificateId.equals(toCertificateId)
+            ? CitizenCertificateRelationType.REPLACED
+            : CitizenCertificateRelationType.REPLACES;
+    }
 }

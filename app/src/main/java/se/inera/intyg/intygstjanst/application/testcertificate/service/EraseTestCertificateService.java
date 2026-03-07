@@ -19,16 +19,34 @@
 package se.inera.intyg.intygstjanst.application.testcertificate.service;
 
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.ApprovedReceiverDao;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.CertificateDao;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.RelationDao;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.SjukfallCertificateDao;
 
-/**
- * Service for erasing test certificates
- */
-public interface EraseTestCertificateService {
+@Service
+public class EraseTestCertificateService {
 
-    /**
-     * This method will permanently erase all data related to the test certificates passed as argument.
-     *
-     * @param testCertificateIds List of test certificate ids.
-     */
-    void eraseTestCertificates(List<String> testCertificateIds);
+    @Autowired
+    private CertificateDao certificateDao;
+
+    @Autowired
+    private RelationDao relationDao;
+
+    @Autowired
+    private SjukfallCertificateDao sjukfallCertificateDao;
+
+    @Autowired
+    private ApprovedReceiverDao approvedReceiverDao;
+
+    @Transactional
+    public void eraseTestCertificates(List<String> testCertificateIds) {
+        certificateDao.eraseTestCertificates(testCertificateIds);
+        relationDao.eraseTestCertificates(testCertificateIds);
+        approvedReceiverDao.eraseTestCertificates(testCertificateIds);
+        sjukfallCertificateDao.eraseTestCertificates(testCertificateIds);
+    }
 }

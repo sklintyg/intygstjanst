@@ -18,167 +18,482 @@
  */
 package se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import se.inera.intyg.common.support.model.CertificateState;
+import se.inera.intyg.common.support.peristence.dao.util.DaoUtil;
+import se.inera.intyg.intygstjanst.infrastructure.logging.HashUtility;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.exception.PersistenceException;
 import se.inera.intyg.schemas.contract.Personnummer;
 
-/**
- * Data Access Object for handling {@link Certificate}.
- *
- * @author parwenaker
- */
-public interface CertificateDao {
+@Repository
+public class CertificateDao {
 
-    /**
-     * Retrieves a list of {@link Certificate} filtered by parameters.
-     *
-     * @param civicRegistrationNumber Civic registration number of patient
-     * @param units The unit ids of the care unit and/or sub units that the certificate was issued from
-     * @param fromDate From date when the certificate was signed
-     * @param toDate To date when the certificate was signed
-     * @param orderBy Field that list should be sorted according to
-     * @param orderAscending If list should be sorted ascending or not
-     * @return filtered list of certificates
-     */
-    List<Certificate> findCertificates(Personnummer civicRegistrationNumber, String[] units, LocalDateTime fromDate,
-        LocalDateTime toDate, String orderBy, boolean orderAscending, Set<String> types, String doctorId);
+    @Autowired
+    private HashUtility hashUtility;
 
-    /**
-     * Retrieves a list of {@link Certificate} filtered by parameters.
-     *
-     * @param civicRegistrationNumber Civic registration number
-     * @param types Type of certificate
-     * @param fromDate From date when the certificate is valid
-     * @param toDate To data when the certificate is valid
-     * @return filtered list
-     */
-    List<Certificate> findCertificate(Personnummer civicRegistrationNumber, List<String> types, LocalDate fromDate, LocalDate toDate,
-        List<String> careUnits);
+    private static final Logger LOG = LoggerFactory.getLogger(CertificateDao.class);
+    private static final int MONTHS = -3;
 
-    /**
-     * Retrieves a list of {@link Certificate} filtered by parameters.
-     *
-     * @param careUnits List of care units
-     * @param types Type of certificate
-     * @param fromDate From date when the certificate is valid
-     * @param toDate To data when the certificate is valid
-     * @return filtered list
-     */
-    List<Certificate> findCertificate(List<String> careUnits, List<String> types, LocalDate fromDate, LocalDate toDate);
+    @PersistenceContext
+    private EntityManager entityManager;
 
-    /**
-     * This method will replace findCertificate(careUnits, types, fromDate, toDate). For backward compatibility both methods will
-     * coexist until the new MetaData table is in full use. This method can be renamed and the old method removed from 2021-2 and after.
-     */
-    List<Certificate> findCertificatesUsingMetaDataTable(List<String> careUnits, List<String> types, LocalDate fromDate, LocalDate toDate,
-        List<String> doctorIds);
+    public List<Certificate> findCertificates(Personnummer civicRegistrationNumber, String[] units,
+        LocalDateTime fromDate, LocalDateTime toDate, String orderBy, boolean orderAscending, Set<String> types, String doctorId) {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Certificate> query = criteriaBuilder.createQuery(Certificate.class);
+        Root<Certificate> root = query.from(Certificate.class);
 
-    /**
-     * Retrieves a list of issuing doctors hsa-ids.
-     *
-     * @param careUnits List of units (care units or sub units)
-     * @param types Type of certificates
-     * @param fromDate From date when the certificate is valid
-     * @param toDate To data when the certificate is valid
-     * @return List of hsa-id of doctors that have issued certificates matching the parameters.
-     */
-    List<String> findDoctorIds(List<String> careUnits, List<String> types, LocalDate fromDate, LocalDate toDate);
+        List<Predicate> predicates = new ArrayList<>();
 
-    /**
-     * Gets one {@link Certificate}.
-     *
-     * @param civicRegistrationNumber the user's civic registration number or null, if no check for civic registration number is desired
-     * @param certificateId Id of the Certificate
-     * @return the matching certificate or {@code null} if there is no certificate for the given certificate ID and
-     * civic registration number
-     * @throws PersistenceException if the given civic registration number does not match
-     * with
-     * the certificate's patient civic registration number
-     */
-    Certificate getCertificate(Personnummer civicRegistrationNumber, String certificateId) throws PersistenceException;
+        if (civicRegistrationNumber != null) {
+            predicates
+                .add(criteriaBuilder.equal(root.get("civicRegistrationNumber"), DaoUtil.formatPnrForPersistence(civicRegistrationNumber)));
+        }
 
-    /**
-     * Stores a {@link Certificate}.
-     *
-     * @param certificate certificate
-     */
-    void store(Certificate certificate);
+        if (doctorId != null) {
+            Join<Certificate, CertificateMetaData> certificateMetaData = root.join("certificateMetaData", JoinType.INNER);
+            predicates.add(criteriaBuilder.equal(certificateMetaData.get("doctorId"), doctorId));
+        }
+        if (units != null && units.length > 0) {
+            predicates.add(root.get("careUnitId").in((Object[]) units));
+        } else {
+            return Collections.emptyList();
+        }
+        if (types != null && !types.isEmpty()) {
+            List<String> typesList = new ArrayList<>(types);
+            predicates.add(criteriaBuilder.lower(root.get("type")).in(toLowerCase(typesList)));
+        }
+        if (toDate != null) {
+            predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("signedDate"), toDate.plusDays(1)));
+        } else {
+            predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("signedDate"), LocalDateTime.now()));
+        }
+        if (fromDate != null) {
+            predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("signedDate"), fromDate));
+        } else {
+            predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("signedDate"),
+                LocalDateTime.now().plusMonths(MONTHS)));
+        }
 
-    /**
-     * Stores the original JAXB serialization of a received certificate {@link OriginalCertificate}.
-     *
-     * @param originalCertificate certificate
-     * @return The id that the entity got when persisted.
-     */
-    long storeOriginalCertificate(OriginalCertificate originalCertificate);
+        query.where(predicates.toArray(new Predicate[predicates.size()]));
 
-    /**
-     * Updates the certificate's status.
-     *
-     * @param certificateId the certificate's ID
-     * @param civicRegistrationNumber the civic registration number of the patient associated to the certificate
-     * @param state the state of the certificate
-     * @param target the target associated with the status update (e.g. Försäkringskassan)
-     * @param timestamp the timestamp of the status update
-     * @throws PersistenceException if the combination of certificate ID and civic
-     * registration number
-     * does not match
-     */
-    void updateStatus(String certificateId, Personnummer civicRegistrationNumber, CertificateState state, String target,
+        if (!("status").equals(orderBy) && !("type").equals(orderBy)) {
+            if (orderAscending) {
+                query.orderBy(criteriaBuilder.asc(root.get(orderBy)), criteriaBuilder.desc(root.get("signedDate")));
+            } else {
+                query.orderBy(criteriaBuilder.desc(root.get(orderBy)), criteriaBuilder.desc(root.get("signedDate")));
+            }
+        } else {
+            query.orderBy(criteriaBuilder.desc(root.get("signedDate")));
+        }
+
+        List<Certificate> tmpResult = entityManager.createQuery(query).getResultList();
+        return filterDuplicates(tmpResult);
+    }
+
+    public List<Certificate> findCertificate(Personnummer civicRegistrationNumber, List<String> types, LocalDate fromDate, LocalDate toDate,
+        List<String> careUnits) {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Certificate> query = criteriaBuilder.createQuery(Certificate.class);
+        Root<Certificate> root = query.from(Certificate.class);
+
+        root.fetch("states", JoinType.LEFT);
+
+        if (civicRegistrationNumber == null) {
+            return Collections.emptyList();
+        }
+
+        List<Predicate> predicates = new ArrayList<>();
+
+        // meta data has to match civic registration number
+        predicates
+            .add(criteriaBuilder.equal(root.get("civicRegistrationNumber"), DaoUtil.formatPnrForPersistence(civicRegistrationNumber)));
+
+        // filter by certificate types
+        if (types != null && !types.isEmpty()) {
+            predicates.add(criteriaBuilder.lower(root.get("type")).in(toLowerCase(types)));
+        }
+
+        // filter by care unit
+        if (careUnits != null && !careUnits.isEmpty()) {
+            predicates.add(root.<String>get("careUnitId").in(careUnits));
+        }
+
+        if (fromDate != null) {
+            predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("signedDate"), fromDate.atStartOfDay()));
+        }
+
+        if (toDate != null) {
+            predicates.add(criteriaBuilder.lessThan(root.get("signedDate"), toDate.plusDays(1).atStartOfDay()));
+        }
+
+        query.where(predicates.toArray(new Predicate[predicates.size()]));
+
+        // order by signed date
+        query.orderBy(criteriaBuilder.asc(root.get("signedDate")));
+
+        List<Certificate> tmpResult = entityManager.createQuery(query).getResultList();
+
+        return filterDuplicates(tmpResult);
+    }
+
+    public List<Certificate> findCertificate(List<String> careUnits, List<String> types, LocalDate fromDate, LocalDate toDate) {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Certificate> query = criteriaBuilder.createQuery(Certificate.class);
+        Root<Certificate> root = query.from(Certificate.class);
+
+        root.fetch("states", JoinType.LEFT);
+
+        if (careUnits == null || careUnits.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        List<Predicate> predicates = new ArrayList<>();
+
+        // filter by care unit
+        predicates.add(root.<String>get("careUnitId").in(careUnits));
+
+        // filter by certificate types
+        if (types != null && !types.isEmpty()) {
+            predicates.add(criteriaBuilder.lower(root.get("type")).in(toLowerCase(types)));
+        }
+
+        if (fromDate != null) {
+            predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("signedDate"), fromDate.atStartOfDay()));
+        }
+
+        if (toDate != null) {
+            predicates.add(criteriaBuilder.lessThan(root.get("signedDate"), toDate.plusDays(1).atStartOfDay()));
+        }
+
+        query.where(predicates.toArray(new Predicate[0]));
+
+        // order by signed date
+        query.orderBy(criteriaBuilder.asc(root.get("signedDate")));
+
+        List<Certificate> tmpResult = entityManager.createQuery(query).getResultList();
+
+        return filterDuplicates(tmpResult);
+    }
+
+    public List<Certificate> findCertificatesUsingMetaDataTable(List<String> careUnits, List<String> types, LocalDate fromDate,
+        LocalDate toDate, List<String> doctorIds) {
+
+        if (!listContainsValues(careUnits)) {
+            return Collections.emptyList();
+        }
+
+        final var criteriaBuilder = entityManager.getCriteriaBuilder();
+        final var query = criteriaBuilder.createQuery(Certificate.class);
+        final var root = query.from(Certificate.class);
+        final var certificateMetaData = root.join("certificateMetaData", JoinType.INNER);
+
+        root.fetch("states", JoinType.LEFT);
+        root.fetch("certificateMetaData", JoinType.INNER);
+        root.fetch("originalCertificate", JoinType.INNER);
+
+        final var listOfPredicates = new ArrayList<>();
+
+        listOfPredicates.add(root.<String>get("careUnitId").in(careUnits));
+
+        listOfPredicates.add(criteriaBuilder.equal(certificateMetaData.get("isRevoked"), false));
+
+        if (listContainsValues(doctorIds)) {
+            listOfPredicates.add(certificateMetaData.get("doctorId").in(doctorIds));
+        }
+
+        if (listContainsValues(types)) {
+            listOfPredicates.add(root.<String>get("type").in(toLowerCase(types)));
+        }
+
+        if (isNotNull(fromDate)) {
+            listOfPredicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("signedDate"), fromDate.atStartOfDay()));
+        }
+
+        if (isNotNull(toDate)) {
+            listOfPredicates.add(criteriaBuilder.lessThan(root.get("signedDate"), toDate.plusDays(1).atStartOfDay()));
+        }
+
+        query.where(listOfPredicates.toArray(new Predicate[listOfPredicates.size()]));
+
+        query.orderBy(criteriaBuilder.asc(root.get("signedDate")));
+
+        return filterDuplicates(entityManager.createQuery(query).getResultList());
+    }
+
+    public List<String> findDoctorIds(List<String> careUnits, List<String> types, LocalDate fromDate, LocalDate toDate) {
+
+        if (!listContainsValues(careUnits)) {
+            return Collections.emptyList();
+        }
+
+        final var jpqlBuffer = new StringBuilder(200);
+        jpqlBuffer.append("SELECT DISTINCT cm.doctorId ");
+        jpqlBuffer.append("FROM CertificateMetaData cm ");
+        jpqlBuffer.append("JOIN cm.certificate c ");
+        jpqlBuffer.append("WHERE c.careUnitId in (:careUnitIdValue) ");
+        jpqlBuffer.append("AND cm.isRevoked = false ");
+
+        if (listContainsValues(types)) {
+            jpqlBuffer.append("AND c.type in (:typesValue) ");
+        }
+
+        if (isNotNull(fromDate)) {
+            jpqlBuffer.append("AND c.signedDate >= :fromDateValue ");
+        }
+
+        if (isNotNull(toDate)) {
+            jpqlBuffer.append("AND c.signedDate < :toDateValue ");
+        }
+
+        var query = entityManager
+            .createQuery(jpqlBuffer.toString(), String.class)
+            .setParameter("careUnitIdValue", careUnits);
+
+        if (listContainsValues(types)) {
+            query = query.setParameter("typesValue", types);
+        }
+
+        if (isNotNull(fromDate)) {
+            query = query.setParameter("fromDateValue", fromDate.atStartOfDay());
+        }
+
+        if (isNotNull(toDate)) {
+            query = query.setParameter("toDateValue", toDate.plusDays(1).atStartOfDay());
+        }
+
+        return query.getResultList();
+    }
+
+    private boolean isNotNull(Object object) {
+        return object != null;
+    }
+
+    private boolean listContainsValues(List list) {
+        return list != null && list.size() > 0;
+    }
+
+    public Certificate getCertificate(Personnummer civicRegistrationNumber, String certificateId) throws PersistenceException {
+        Certificate certificate = entityManager.find(Certificate.class, certificateId);
+
+        if (certificate == null) {
+            return null;
+        }
+
+        // if provided, the civic registration number has to match the certificate's civic registration number
+        if (civicRegistrationNumber != null && !certificate.getCivicRegistrationNumber().equals(civicRegistrationNumber)) {
+
+            final var civicRegistrationNumberHash = hashUtility.hash(civicRegistrationNumber.getPersonnummer());
+            LOG.warn("Trying to access certificate '{}' for user '{}' but certificate's user is '{}'.",
+                certificateId,
+                civicRegistrationNumberHash,
+                hashUtility.hash(certificate.getCivicRegistrationNumber().getPersonnummer()));
+
+            throw new PersistenceException(certificateId, civicRegistrationNumberHash);
+        }
+
+        return certificate;
+    }
+
+    public void store(Certificate certificate) {
+        entityManager.persist(certificate);
+    }
+
+    public long storeOriginalCertificate(OriginalCertificate originalCertificate) {
+        entityManager.persist(originalCertificate);
+        return originalCertificate.getId();
+    }
+
+    public void storeCertificateMetadata(CertificateMetaData metadata) {
+        entityManager.persist(metadata);
+    }
+
+    public void updateStatus(String id, Personnummer civicRegistrationNumber, CertificateState state, String target,
         LocalDateTime timestamp)
-        throws PersistenceException;
+        throws PersistenceException {
+
+        Certificate certificate = entityManager.find(Certificate.class, id);
+
+        if (certificate == null || !certificate.getCivicRegistrationNumber().equals(civicRegistrationNumber)) {
+            throw new PersistenceException(id, hashUtility.hash(civicRegistrationNumber.getPersonnummer()));
+        }
+
+        CertificateStateHistoryEntry historyEntry = new CertificateStateHistoryEntry(target, state, timestamp);
+
+        certificate.addState(historyEntry);
+    }
+
+    public void updateStatus(String id, CertificateState state, String target, LocalDateTime timestamp)
+        throws PersistenceException {
+
+        Certificate certificate = entityManager.find(Certificate.class, id);
+
+        if (certificate == null) {
+            throw new PersistenceException(id, null);
+        }
+
+        CertificateStateHistoryEntry historyEntry = new CertificateStateHistoryEntry(target, state, timestamp);
+
+        certificate.addState(historyEntry);
+    }
 
     /**
-     * Updates the certificate's status.
-     *
-     * @param certificateId the certificate's ID
-     * @param state the state of the certificate
-     * @param target the target associated with the status update (e.g. Försäkringskassan)
-     * @param timestamp the timestamp of the status update
-     * @throws PersistenceException if the certificate does not exist
-     */
-    void updateStatus(String certificateId, CertificateState state, String target, LocalDateTime timestamp)
-        throws PersistenceException;
-
-    /**
-     * Removes all {@link Certificate}s belonging to specified citizen which have the flag
-     * {@link Certificate#isDeletedByCareGiver()} set to <code>true</code>.
+     * {@inheritDoc}
      * <p>
-     * NOTE: This method should only be called for citizens WHITOUT a given consent.
-     *
-     * @param civicRegistrationNumber The citizen for which to remove certificates.
+     * Implementation note: This method is executed in a new nested transaction. This ensures that any errors that might
+     * occur while removing intygs doesn't affect the other changes that are done in the parent transaction.
      */
-    void removeCertificatesDeletedByCareGiver(Personnummer civicRegistrationNumber);
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void removeCertificatesDeletedByCareGiver(Personnummer civicRegistrationNumber) {
+        List<Certificate> certificatesOfCitizen = findCertificate(civicRegistrationNumber, null, null, null, null);
+        for (Certificate certificate : certificatesOfCitizen) {
+            if (certificate.isDeletedByCareGiver()) {
+                entityManager.remove(certificate);
+                LOG.info("Removing intyg {} from database since it's flaged as deletedByCareGiver", certificate.getId());
+            }
+        }
+    }
 
-    /**
-     * Find test certificates with signed dates within passed date/time interval.
-     *
-     * @param from From datetime. Can be null.
-     * @param to To datetime. Can be null.
-     * @return List of matching test certificates.
-     */
-    List<Certificate> findTestCertificates(LocalDateTime from, LocalDateTime to);
+    public List<Certificate> findTestCertificates(LocalDateTime from, LocalDateTime to) {
+        final var criteriaBuilder = entityManager.getCriteriaBuilder();
+        final var query = criteriaBuilder.createQuery(Certificate.class);
+        final var queryRoot = query.from(Certificate.class);
 
-    /**
-     * Erase any data related to test certificates passed as ids.
-     *
-     * @param ids Certificate ids.
-     */
-    void eraseTestCertificates(List<String> ids);
+        final var predicates = new ArrayList<Predicate>();
 
-    int eraseCertificates(List<String> certificateIds, String careProviderId);
+        predicates.add(
+            criteriaBuilder.isTrue(
+                queryRoot.get("testCertificate")
+            )
+        );
 
-    void storeCertificateMetadata(CertificateMetaData metadata);
+        if (from != null) {
+            predicates.add(
+                criteriaBuilder.greaterThanOrEqualTo(
+                    queryRoot.get("signedDate"), from
+                )
+            );
+        }
 
-    /**
-     * @return List of all certificate types
-     */
-    List<CertificateType> getCertificateTypes();
+        if (to != null) {
+            predicates.add(
+                criteriaBuilder.lessThan(
+                    queryRoot.get("signedDate"), to
+                )
+            );
+        }
 
-    List<Certificate> findCertificatesForPatient(String patientId);
+        query.where(predicates.toArray(new Predicate[predicates.size()]));
 
+        return entityManager.createQuery(query).getResultList();
+    }
+
+    public void eraseTestCertificates(List<String> ids) {
+        for (var id : ids) {
+            try {
+                final var certificate = getCertificate(null, id);
+                entityManager.remove(certificate);
+            } catch (PersistenceException ex) {
+                LOG.warn(String.format("Couldn't find certificate with id %s when erasing test certificates", id), ex);
+            }
+        }
+    }
+
+    @Transactional
+    public int eraseCertificates(List<String> certificateIds, String careProviderId) {
+        int erasedCertificatesCount = 0;
+        for (final var certificateId : certificateIds) {
+            final var certificate = entityManager.find(Certificate.class, certificateId);
+
+            if (certificate == null) {
+                LOG.error("Certificate with id {} from care provider {} was not found and could not be erased.", certificateId,
+                    careProviderId);
+                continue;
+            }
+
+            entityManager.remove(certificate);
+            erasedCertificatesCount++;
+            LOG.debug("Certificate with id {} from care provider {} was successfully erased.", certificateId, careProviderId);
+        }
+
+        return erasedCertificatesCount;
+    }
+
+    public List<CertificateType> getCertificateTypes() {
+        var criteriaBuilder = entityManager.getCriteriaBuilder();
+        var query = criteriaBuilder.createQuery(CertificateType.class);
+        query.from(CertificateType.class);
+        return entityManager.createQuery(query).getResultList();
+    }
+
+    public List<Certificate> findCertificatesForPatient(String patientId) {
+        final var criteriaBuilder = entityManager.getCriteriaBuilder();
+        final var query = criteriaBuilder.createQuery(Certificate.class);
+        final var queryRoot = query.from(Certificate.class);
+
+        queryRoot.fetch("states", JoinType.LEFT);
+        queryRoot.fetch("certificateMetaData", JoinType.INNER);
+        queryRoot.fetch("originalCertificate", JoinType.INNER);
+
+        final var predicates = new ArrayList<Predicate>();
+
+        predicates.add(
+            criteriaBuilder.isFalse(
+                queryRoot.get("testCertificate")
+            )
+        );
+
+        if (patientId != null) {
+            predicates.add(
+                criteriaBuilder.equal(
+                    queryRoot.get("civicRegistrationNumber"), patientId
+                )
+            );
+        }
+
+        query.where(predicates.toArray(new Predicate[predicates.size()]));
+
+        return filterDuplicates(entityManager.createQuery(query).getResultList());
+    }
+
+    private List<String> toLowerCase(List<String> list) {
+        List<String> result = new ArrayList<>();
+        for (String item : list) {
+            result.add(item.toLowerCase());
+        }
+        return result;
+    }
+
+    private List<Certificate> filterDuplicates(List<Certificate> all) {
+        Set<String> found = new HashSet<>();
+        List<Certificate> filtered = new ArrayList<>(all.size()); // keep list sorted
+        for (Certificate certificate : all) {
+            if (!found.contains(certificate.getId())) {
+                filtered.add(certificate);
+                found.add(certificate.getId());
+            }
+        }
+        return filtered;
+    }
 }
+

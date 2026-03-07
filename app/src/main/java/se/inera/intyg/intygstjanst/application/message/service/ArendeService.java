@@ -18,10 +18,19 @@
  */
 package se.inera.intyg.intygstjanst.application.message.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Arende;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.ArendeRepository;
 
-public interface ArendeService {
+@Service
+public class ArendeService {
 
-    Arende processIncomingMessage(Arende message);
+    @Autowired
+    private ArendeRepository arendeRepository;
+
+    public Arende processIncomingMessage(Arende message) {
+        return arendeRepository.save(message);
+    }
 
 }

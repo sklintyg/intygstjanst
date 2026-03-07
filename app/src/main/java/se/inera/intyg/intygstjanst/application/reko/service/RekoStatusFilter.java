@@ -19,13 +19,34 @@
 
 package se.inera.intyg.intygstjanst.application.reko.service;
 
+import org.springframework.stereotype.Component;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Reko;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
-public interface RekoStatusFilter {
+@Component
+public class RekoStatusFilter {
 
-    Optional<Reko> filter(List<Reko> rekoStatuses, String patientId, LocalDate endDate, LocalDate startDate);
+    public Optional<Reko> filter(List<Reko> rekoStatuses, String patientId, LocalDate endDate, LocalDate startDate) {
+        return rekoStatuses
+            .stream()
+            .filter(status -> status.getPatientId().equals(patientId))
+            .filter(status -> equalsOrAfterStartDate(startDate, status))
+            .filter(status -> beforeEndDate(endDate, status)
+            ).max(Comparator.comparing(Reko::getRegistrationTimestamp));
+    }
+
+
+    private static boolean beforeEndDate(LocalDate endDate, Reko status) {
+        return status.getSickLeaveTimestamp().isBefore(endDate.plusDays(1).atStartOfDay());
+    }
+
+    private static boolean equalsOrAfterStartDate(LocalDate startDate, Reko status) {
+        final var sickLeaveStartLocalDatetime = startDate.atStartOfDay();
+        return status.getSickLeaveTimestamp().isAfter(sickLeaveStartLocalDatetime)
+            || sickLeaveStartLocalDatetime.equals(status.getSickLeaveTimestamp());
+    }
 }
