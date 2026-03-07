@@ -16,25 +16,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package se.inera.intyg.intygstjanst.web.exception;
+package se.inera.intyg.intygstjanst.application.exception;
 
-public class ServerException extends RuntimeException {
+public class MissingModuleException extends ServerException {
 
-    private static final long serialVersionUID = -582116076029565657L;
+    private static final long serialVersionUID = 2123077268951651241L;
 
-    public ServerException() {
+    public MissingModuleException() {
         super();
     }
 
-    public ServerException(String message, Throwable cause) {
+    public MissingModuleException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public ServerException(String message) {
+    public MissingModuleException(String message) {
         super(message);
     }
 
-    public ServerException(Throwable cause) {
+    public MissingModuleException(Throwable cause) {
         super(cause);
     }
 }

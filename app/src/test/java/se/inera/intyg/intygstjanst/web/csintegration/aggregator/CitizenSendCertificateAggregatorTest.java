@@ -12,47 +12,48 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
-import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
-import se.inera.intyg.intygstjanst.web.exception.TestCertificateException;
+import se.inera.intyg.intygstjanst.application.exception.RecipientUnknownException;
+import se.inera.intyg.intygstjanst.application.exception.TestCertificateException;
 import se.inera.intyg.intygstjanst.web.service.CertificateService.SendStatus;
 import se.inera.intyg.intygstjanst.web.service.SendCertificateService;
 import se.inera.intyg.intygstjanst.web.service.dto.SendCertificateRequestDTO;
 
 @ExtendWith(MockitoExtension.class)
 class CitizenSendCertificateAggregatorTest {
-  @Mock
-  SendCertificateService sendCertificateFromIT;
-  @Mock
-  SendCertificateService sendCertificateFromCS;
-  CitizenSendCertificateAggregator aggregator;
 
-  private static final SendCertificateRequestDTO REQUEST = SendCertificateRequestDTO.builder().build();
+    @Mock
+    SendCertificateService sendCertificateFromIT;
+    @Mock
+    SendCertificateService sendCertificateFromCS;
+    CitizenSendCertificateAggregator aggregator;
 
-  @BeforeEach
-  void setup() {
-    aggregator = new CitizenSendCertificateAggregator(
-        sendCertificateFromIT,
-        sendCertificateFromCS
-    );
-  }
+    private static final SendCertificateRequestDTO REQUEST = SendCertificateRequestDTO.builder().build();
 
-  @Test
-  void shallReturnResponseFromCS()
-      throws TestCertificateException, CertificateRevokedException, RecipientUnknownException, InvalidCertificateException {
-    doReturn(SendStatus.OK).when(sendCertificateFromCS).send(REQUEST);
+    @BeforeEach
+    void setup() {
+        aggregator = new CitizenSendCertificateAggregator(
+            sendCertificateFromIT,
+            sendCertificateFromCS
+        );
+    }
 
-    aggregator.send(REQUEST);
-    verify(sendCertificateFromCS).send(REQUEST);
-    verifyNoInteractions(sendCertificateFromIT);
-  }
+    @Test
+    void shallReturnResponseFromCS()
+        throws TestCertificateException, CertificateRevokedException, RecipientUnknownException, InvalidCertificateException {
+        doReturn(SendStatus.OK).when(sendCertificateFromCS).send(REQUEST);
 
-  @Test
-  void shallReturnResponseFromITIfResponseFromCSIsNull()
-      throws TestCertificateException, CertificateRevokedException, RecipientUnknownException, InvalidCertificateException {
-    doReturn(null).when(sendCertificateFromCS).send(REQUEST);
-    doReturn(SendStatus.OK).when(sendCertificateFromIT).send(REQUEST);
+        aggregator.send(REQUEST);
+        verify(sendCertificateFromCS).send(REQUEST);
+        verifyNoInteractions(sendCertificateFromIT);
+    }
 
-    final var result = aggregator.send(REQUEST);
-    assertEquals(SendStatus.OK, result);
-  }
+    @Test
+    void shallReturnResponseFromITIfResponseFromCSIsNull()
+        throws TestCertificateException, CertificateRevokedException, RecipientUnknownException, InvalidCertificateException {
+        doReturn(null).when(sendCertificateFromCS).send(REQUEST);
+        doReturn(SendStatus.OK).when(sendCertificateFromIT).send(REQUEST);
+
+        final var result = aggregator.send(REQUEST);
+        assertEquals(SendStatus.OK, result);
+    }
 }

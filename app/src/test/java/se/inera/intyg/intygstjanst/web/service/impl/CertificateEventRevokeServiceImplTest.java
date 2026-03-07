@@ -45,7 +45,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCertificateXmlResponse;
-import se.inera.intyg.intygstjanst.web.exception.RecipientUnknownException;
+import se.inera.intyg.intygstjanst.application.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
 import se.inera.intyg.intygstjanst.web.service.RecipientService;
 import se.inera.intyg.intygstjanst.web.service.SoapIntegrationService;
@@ -64,12 +64,12 @@ import se.riv.clinicalprocess.healthcond.certificate.v3.ResultType;
 
 @ExtendWith(MockitoExtension.class)
 class CertificateEventRevokeServiceImplTest {
-    
+
     @Mock
     private RecipientService recipientService;
     @Mock
     private MonitoringLogService monitoringLogService;
-    
+
     @Mock
     private SoapIntegrationService soapIntegrationService;
 

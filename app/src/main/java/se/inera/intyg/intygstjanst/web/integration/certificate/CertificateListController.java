@@ -27,7 +27,7 @@ import se.inera.intyg.infra.certificate.dto.CertificateListRequest;
 import se.inera.intyg.infra.certificate.dto.CertificateListResponse;
 import se.inera.intyg.intygstjanst.logging.MdcLogConstants;
 import se.inera.intyg.intygstjanst.logging.PerformanceLogging;
-import se.inera.intyg.intygstjanst.web.interceptor.ApiBasePath;
+import se.inera.intyg.intygstjanst.infrastructure.security.interceptor.ApiBasePath;
 import se.inera.intyg.intygstjanst.web.service.CertificateListService;
 
 /**

@@ -16,19 +16,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package se.inera.intyg.intygstjanst.config;
+package se.inera.intyg.intygstjanst.application.exception;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
-import se.inera.intyg.common.support.stub.MedicalCertificatesStore;
+/**
+ * Exception to be used when test certificates are not allowed.
+ */
+public class TestCertificateException extends Exception {
 
-@Configuration
-@Profile({"dev", "testability-api", "it-fk-stub"})
-public class StubConfig {
-
-    @Bean
-    public MedicalCertificatesStore medicalCertificateStore() {
-        return new MedicalCertificatesStore();
+    public TestCertificateException(String certificateId) {
+        super(String.format("Certificate '%s' is a test certificate", certificateId));
     }
 }

@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 import se.inera.intyg.intygstjanst.web.integration.testability.dto.CreateSickLeaveRequestDTO;
 import se.inera.intyg.intygstjanst.web.integration.testability.dto.CreateSickLeaveResponseDTO;
 import se.inera.intyg.intygstjanst.web.integration.testability.dto.TestDataOptionsDTO;
-import se.inera.intyg.intygstjanst.web.interceptor.ApiBasePath;
+import se.inera.intyg.intygstjanst.infrastructure.security.interceptor.ApiBasePath;
 import se.inera.intyg.intygstjanst.web.service.TestabilityService;
 
 @RestController

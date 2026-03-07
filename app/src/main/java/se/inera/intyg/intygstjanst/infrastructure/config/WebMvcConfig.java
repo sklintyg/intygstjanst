@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package se.inera.intyg.intygstjanst.config;
+package se.inera.intyg.intygstjanst.infrastructure.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.nio.charset.StandardCharsets;
@@ -29,7 +29,7 @@ import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import se.inera.intyg.intygstjanst.web.interceptor.ApiBasePathEnforcingInterceptor;
+import se.inera.intyg.intygstjanst.infrastructure.security.interceptor.ApiBasePathEnforcingInterceptor;
 
 @Configuration
 @RequiredArgsConstructor

@@ -16,23 +16,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package se.inera.intyg.intygstjanst.web.interceptor;
+package se.inera.intyg.intygstjanst.infrastructure.config;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
+import se.inera.intyg.common.support.stub.MedicalCertificatesStore;
 
-/**
- * Declares which servlet base path(s) a REST controller is accessible on.
- * Enforced by {@link ApiBasePathEnforcingInterceptor}.
- *
- * <p>Example: {@code @ApiBasePath("/internalapi")} restricts the controller to
- * requests arriving via the {@code /internalapi/*} servlet mapping.</p>
- */
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface ApiBasePath {
+@Configuration
+@Profile({"dev", "testability-api", "it-fk-stub"})
+public class StubConfig {
 
-    String[] value();
+    @Bean
+    public MedicalCertificatesStore medicalCertificateStore() {
+        return new MedicalCertificatesStore();
+    }
 }

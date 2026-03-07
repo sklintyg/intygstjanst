@@ -36,7 +36,7 @@ import se.inera.intyg.intygstjanst.web.service.dto.GetSickLeaveFilterServiceRequ
 import se.inera.intyg.intygstjanst.web.service.dto.GetSickLeaveServiceRequest;
 import se.inera.intyg.intygstjanst.web.service.dto.PopulateFiltersRequestDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.PopulateFiltersResponseDTO;
-import se.inera.intyg.intygstjanst.web.interceptor.ApiBasePath;
+import se.inera.intyg.intygstjanst.infrastructure.security.interceptor.ApiBasePath;
 import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveRequestDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveResponseDTO;
 

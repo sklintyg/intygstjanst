@@ -1,4 +1,4 @@
-package se.inera.intyg.intygstjanst.config;
+package se.inera.intyg.intygstjanst.infrastructure.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

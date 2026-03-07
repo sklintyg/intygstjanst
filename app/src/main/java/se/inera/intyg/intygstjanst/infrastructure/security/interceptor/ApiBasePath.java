@@ -16,25 +16,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package se.inera.intyg.intygstjanst.web.exception;
+package se.inera.intyg.intygstjanst.infrastructure.security.interceptor;
 
-public class MissingModuleException extends ServerException {
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-    private static final long serialVersionUID = 2123077268951651241L;
+/**
+ * Declares which servlet base path(s) a REST controller is accessible on.
+ * Enforced by {@link ApiBasePathEnforcingInterceptor}.
+ *
+ * <p>Example: {@code @ApiBasePath("/internalapi")} restricts the controller to
+ * requests arriving via the {@code /internalapi/*} servlet mapping.</p>
+ */
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface ApiBasePath {
 
-    public MissingModuleException() {
-        super();
-    }
-
-    public MissingModuleException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public MissingModuleException(String message) {
-        super(message);
-    }
-
-    public MissingModuleException(Throwable cause) {
-        super(cause);
-    }
+    String[] value();
 }

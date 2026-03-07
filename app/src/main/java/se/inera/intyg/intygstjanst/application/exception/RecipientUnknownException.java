@@ -16,25 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package se.inera.intyg.intygstjanst.web.exception;
+package se.inera.intyg.intygstjanst.application.exception;
 
-public class ClientException extends Exception {
+public class RecipientUnknownException extends ClientException {
 
-    private static final long serialVersionUID = -239449104469100203L;
+    private static final long serialVersionUID = -2850911343263575085L;
 
-    public ClientException() {
-        super();
-    }
-
-    public ClientException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public ClientException(String message) {
+    public RecipientUnknownException(String message) {
         super(message);
-    }
-
-    public ClientException(Throwable cause) {
-        super(cause);
     }
 }
