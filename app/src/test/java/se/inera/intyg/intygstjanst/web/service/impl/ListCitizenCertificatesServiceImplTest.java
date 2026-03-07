@@ -35,16 +35,17 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
-import se.inera.intyg.intygstjanst.web.csintegration.CitizenCertificatesFromCS;
-import se.inera.intyg.intygstjanst.web.service.CitizenCertificateDTOConverter;
-import se.inera.intyg.intygstjanst.web.service.CitizenCertificateFilterService;
-import se.inera.intyg.intygstjanst.web.service.CitizenCertificateTextService;
-import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
-import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateDTO;
-import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateStatusTypeDTO;
-import se.inera.intyg.intygstjanst.web.service.dto.citizen.ListCitizenCertificatesRequest;
-import se.inera.intyg.intygstjanst.web.service.repo.CitizenCertificatesRepositoryImpl;
-import se.inera.intyg.intygstjanst.web.service.repo.model.CitizenCertificate;
+import se.inera.intyg.intygstjanst.application.citizen.service.ListCitizenCertificatesServiceImpl;
+import se.inera.intyg.intygstjanst.infrastructure.csintegration.CitizenCertificatesFromCS;
+import se.inera.intyg.intygstjanst.application.citizen.service.CitizenCertificateDTOConverter;
+import se.inera.intyg.intygstjanst.application.citizen.service.CitizenCertificateFilterService;
+import se.inera.intyg.intygstjanst.application.citizen.service.CitizenCertificateTextService;
+import se.inera.intyg.intygstjanst.infrastructure.logging.MonitoringLogService;
+import se.inera.intyg.intygstjanst.application.citizen.dto.CitizenCertificateDTO;
+import se.inera.intyg.intygstjanst.application.citizen.dto.CitizenCertificateStatusTypeDTO;
+import se.inera.intyg.intygstjanst.application.citizen.dto.ListCitizenCertificatesRequest;
+import se.inera.intyg.intygstjanst.application.citizen.repository.CitizenCertificatesRepositoryImpl;
+import se.inera.intyg.intygstjanst.application.citizen.repository.model.CitizenCertificate;
 import se.inera.intyg.schemas.contract.Personnummer;
 
 @ExtendWith(MockitoExtension.class)

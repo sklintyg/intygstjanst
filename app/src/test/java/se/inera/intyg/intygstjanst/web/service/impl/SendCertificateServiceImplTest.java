@@ -35,12 +35,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
+import se.inera.intyg.intygstjanst.application.certificate.service.SendCertificateServiceImpl;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Certificate;
-import se.inera.intyg.intygstjanst.web.service.CertificateService;
-import se.inera.intyg.intygstjanst.web.service.CertificateService.SendStatus;
-import se.inera.intyg.intygstjanst.web.service.InternalNotificationService;
-import se.inera.intyg.intygstjanst.web.service.StatisticsService;
-import se.inera.intyg.intygstjanst.web.service.dto.SendCertificateRequestDTO;
+import se.inera.intyg.intygstjanst.application.certificate.service.CertificateService;
+import se.inera.intyg.intygstjanst.application.certificate.service.CertificateService.SendStatus;
+import se.inera.intyg.intygstjanst.application.citizen.service.InternalNotificationService;
+import se.inera.intyg.intygstjanst.application.certificate.service.StatisticsService;
+import se.inera.intyg.intygstjanst.application.certificate.dto.SendCertificateRequestDTO;
 import se.inera.intyg.schemas.contract.Personnummer;
 
 @ExtendWith(MockitoExtension.class)

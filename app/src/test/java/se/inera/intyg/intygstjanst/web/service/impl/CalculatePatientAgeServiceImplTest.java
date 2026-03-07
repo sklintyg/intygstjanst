@@ -27,6 +27,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
+import se.inera.intyg.intygstjanst.application.sickleave.services.CalculatePatientAgeServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
 class CalculatePatientAgeServiceImplTest {

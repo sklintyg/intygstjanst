@@ -36,15 +36,16 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import se.inera.intyg.intygstjanst.application.sjukfall.dto.DiagnosKapitel;
-import se.inera.intyg.intygstjanst.application.sjukfall.dto.IntygData;
-import se.inera.intyg.intygstjanst.application.sjukfall.dto.Lakare;
-import se.inera.intyg.intygstjanst.web.integration.hsa.HsaService;
-import se.inera.intyg.intygstjanst.web.service.CreateSickLeaveFilter;
-import se.inera.intyg.intygstjanst.web.service.GetActiveSickLeaveCertificates;
-import se.inera.intyg.intygstjanst.web.service.PuFilterService;
-import se.inera.intyg.intygstjanst.web.service.dto.GetSickLeaveFilterServiceRequest;
-import se.inera.intyg.intygstjanst.web.service.dto.GetSickLeaveFilterServiceResponse;
+import se.inera.intyg.intygstjanst.application.sickleave.dto.DiagnosKapitel;
+import se.inera.intyg.intygstjanst.application.sickleave.dto.IntygData;
+import se.inera.intyg.intygstjanst.application.sickleave.dto.Lakare;
+import se.inera.intyg.intygstjanst.application.sickleave.services.GetSickLeaveFilterServiceImpl;
+import se.inera.intyg.intygstjanst.application.sickleave.services.HsaService;
+import se.inera.intyg.intygstjanst.application.sickleave.services.CreateSickLeaveFilter;
+import se.inera.intyg.intygstjanst.application.sickleave.services.GetActiveSickLeaveCertificates;
+import se.inera.intyg.intygstjanst.application.sickleave.services.PuFilterService;
+import se.inera.intyg.intygstjanst.application.sickleave.dto.GetSickLeaveFilterServiceRequest;
+import se.inera.intyg.intygstjanst.application.sickleave.dto.GetSickLeaveFilterServiceResponse;
 
 @ExtendWith(MockitoExtension.class)
 class GetSickLeaveFilterServiceImplTest {

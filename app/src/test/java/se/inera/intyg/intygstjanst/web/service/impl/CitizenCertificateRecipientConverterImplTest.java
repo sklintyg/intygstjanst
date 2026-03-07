@@ -27,9 +27,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import se.inera.intyg.intygstjanst.web.service.bean.CertificateRecipientType;
-import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
-import se.inera.intyg.intygstjanst.web.service.repo.RecipientRepo;
+import se.inera.intyg.intygstjanst.application.citizen.service.CitizenCertificateRecipientConverterImpl;
+import se.inera.intyg.intygstjanst.application.recipient.CertificateRecipientType;
+import se.inera.intyg.intygstjanst.application.recipient.Recipient;
+import se.inera.intyg.intygstjanst.application.recipient.repository.RecipientRepo;
 
 import java.time.LocalDateTime;
 import java.util.List;

@@ -25,8 +25,8 @@ import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.common.support.common.enumerations.RelationKod;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Relation;
-import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateRelationType;
-import se.inera.intyg.intygstjanst.web.service.repo.model.CitizenCertificateRelationConverterImpl;
+import se.inera.intyg.intygstjanst.application.citizen.dto.CitizenCertificateRelationType;
+import se.inera.intyg.intygstjanst.application.citizen.repository.model.CitizenCertificateRelationConverterImpl;
 
 import java.time.LocalDateTime;
 

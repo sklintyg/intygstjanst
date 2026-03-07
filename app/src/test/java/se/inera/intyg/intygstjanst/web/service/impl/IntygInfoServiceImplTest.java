@@ -54,6 +54,7 @@ import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
 import se.inera.intyg.common.support.modules.support.ModuleEntryPoint;
 import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.common.support.modules.support.api.exception.ModuleException;
+import se.inera.intyg.intygstjanst.application.certificate.service.IntygInfoServiceImpl;
 import se.inera.intyg.intygstjanst.application.intyginfo.dto.IntygInfoEvent;
 import se.inera.intyg.intygstjanst.application.intyginfo.dto.IntygInfoEvent.Source;
 import se.inera.intyg.intygstjanst.application.intyginfo.dto.IntygInfoEventType;
@@ -63,9 +64,9 @@ import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Certific
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.CertificateStateHistoryEntry;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.OriginalCertificate;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Relation;
-import se.inera.intyg.intygstjanst.web.service.CertificateService;
-import se.inera.intyg.intygstjanst.web.service.RecipientService;
-import se.inera.intyg.intygstjanst.web.service.RelationService;
+import se.inera.intyg.intygstjanst.application.certificate.service.CertificateService;
+import se.inera.intyg.intygstjanst.application.recipient.RecipientService;
+import se.inera.intyg.intygstjanst.application.certificate.service.RelationService;
 
 @ExtendWith(MockitoExtension.class)
 class IntygInfoServiceImplTest {

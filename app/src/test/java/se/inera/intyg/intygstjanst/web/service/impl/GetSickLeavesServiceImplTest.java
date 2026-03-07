@@ -38,18 +38,19 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import se.inera.intyg.intygstjanst.application.sjukfall.dto.DiagnosKapitel;
-import se.inera.intyg.intygstjanst.application.sjukfall.dto.IntygData;
-import se.inera.intyg.intygstjanst.application.sjukfall.dto.SjukfallEnhet;
-import se.inera.intyg.intygstjanst.web.integration.hsa.HsaService;
-import se.inera.intyg.intygstjanst.web.service.FilterSickLeaves;
-import se.inera.intyg.intygstjanst.web.service.GetActiveSickLeaveCertificates;
-import se.inera.intyg.intygstjanst.web.service.GetSickLeaveCertificates;
-import se.inera.intyg.intygstjanst.web.service.RekoStatusDecorator;
-import se.inera.intyg.intygstjanst.web.service.dto.GetSickLeaveServiceRequest;
-import se.inera.intyg.intygstjanst.web.service.dto.GetSickLeaveServiceRequest.GetSickLeaveServiceRequestBuilder;
-import se.inera.intyg.intygstjanst.web.service.dto.OccupationType;
-import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveLengthInterval;
+import se.inera.intyg.intygstjanst.application.sickleave.dto.DiagnosKapitel;
+import se.inera.intyg.intygstjanst.application.sickleave.dto.IntygData;
+import se.inera.intyg.intygstjanst.application.sickleave.dto.SjukfallEnhet;
+import se.inera.intyg.intygstjanst.application.sickleave.services.GetSickLeavesServiceImpl;
+import se.inera.intyg.intygstjanst.application.sickleave.services.HsaService;
+import se.inera.intyg.intygstjanst.application.sickleave.services.FilterSickLeaves;
+import se.inera.intyg.intygstjanst.application.sickleave.services.GetActiveSickLeaveCertificates;
+import se.inera.intyg.intygstjanst.application.sickleave.services.GetSickLeaveCertificates;
+import se.inera.intyg.intygstjanst.application.reko.service.RekoStatusDecorator;
+import se.inera.intyg.intygstjanst.application.sickleave.dto.GetSickLeaveServiceRequest;
+import se.inera.intyg.intygstjanst.application.sickleave.dto.GetSickLeaveServiceRequest.GetSickLeaveServiceRequestBuilder;
+import se.inera.intyg.intygstjanst.application.sickleave.dto.OccupationType;
+import se.inera.intyg.intygstjanst.application.sickleave.dto.SickLeaveLengthInterval;
 
 @ExtendWith(MockitoExtension.class)
 class GetSickLeavesServiceImplTest {

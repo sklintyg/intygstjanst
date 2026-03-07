@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
-import static se.inera.intyg.intygstjanst.web.support.CertificateForSjukfallFactory.getFactoryInstance;
+import static se.inera.intyg.intygstjanst.support.CertificateForSjukfallFactory.getFactoryInstance;
 
 import com.google.common.collect.ImmutableList;
 import java.time.LocalDateTime;
@@ -32,6 +32,7 @@ import se.inera.intyg.common.fk7263.model.internal.Fk7263Utlatande;
 import se.inera.intyg.common.fkparent.model.internal.Diagnos;
 import se.inera.intyg.common.lisjp.v1.model.internal.LisjpUtlatandeV1;
 import se.inera.intyg.common.ts_bas.v6.model.internal.TsBasUtlatandeV6;
+import se.inera.intyg.intygstjanst.application.sickleave.converter.CertificateToSjukfallCertificateConverter;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.SjukfallCertificate;
 
 /**

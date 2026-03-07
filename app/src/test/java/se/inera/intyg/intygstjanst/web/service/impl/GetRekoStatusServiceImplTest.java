@@ -27,11 +27,12 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import se.inera.intyg.intygstjanst.application.sjukfall.dto.RekoStatusDTO;
+import se.inera.intyg.intygstjanst.application.reko.service.GetRekoStatusServiceImpl;
+import se.inera.intyg.intygstjanst.application.sickleave.dto.RekoStatusDTO;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Reko;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.RekoRepository;
-import se.inera.intyg.intygstjanst.web.service.RekoStatusConverter;
-import se.inera.intyg.intygstjanst.web.service.RekoStatusFilter;
+import se.inera.intyg.intygstjanst.application.reko.service.RekoStatusConverter;
+import se.inera.intyg.intygstjanst.application.reko.service.RekoStatusFilter;
 
 import java.time.LocalDate;
 import java.util.Collections;

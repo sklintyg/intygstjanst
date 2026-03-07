@@ -6,7 +6,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Collections;
 import org.junit.jupiter.api.Test;
-import se.inera.intyg.intygstjanst.web.csintegration.dto.ExportCertificateInternalResponseDTO;
+import se.inera.intyg.intygstjanst.application.export.dto.CertificateExportPageDTO;
+import se.inera.intyg.intygstjanst.application.export.dto.CertificateXmlDTO;
+import se.inera.intyg.intygstjanst.infrastructure.csintegration.dto.ExportCertificateInternalResponseDTO;
 
 class CertificateExportPageDTOTest {
 
@@ -60,7 +62,7 @@ class CertificateExportPageDTOTest {
                     .build()
             )
         );
-        
+
         assertEquals(1, exportPageDTO.getCount());
     }
 }

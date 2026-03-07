@@ -34,11 +34,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
-import se.inera.intyg.intygstjanst.application.sjukfall.dto.DiagnosKapitel;
-import se.inera.intyg.intygstjanst.application.sjukfall.dto.DiagnosKategori;
-import se.inera.intyg.intygstjanst.application.sjukfall.dto.DiagnosKod;
-import se.inera.intyg.intygstjanst.application.sjukfall.dto.SjukfallEnhet;
-import se.inera.intyg.intygstjanst.web.service.DiagnosisChapterProvider;
+import se.inera.intyg.intygstjanst.application.sickleave.dto.DiagnosKapitel;
+import se.inera.intyg.intygstjanst.application.sickleave.dto.DiagnosKategori;
+import se.inera.intyg.intygstjanst.application.sickleave.dto.DiagnosKod;
+import se.inera.intyg.intygstjanst.application.sickleave.dto.SjukfallEnhet;
+import se.inera.intyg.intygstjanst.infrastructure.diagnosis.DiagnosisChapterServiceImpl;
+import se.inera.intyg.intygstjanst.infrastructure.diagnosis.DiagnosisChapterProvider;
 
 @ExtendWith(MockitoExtension.class)
 class DiagnosisChapterServiceImplTest {

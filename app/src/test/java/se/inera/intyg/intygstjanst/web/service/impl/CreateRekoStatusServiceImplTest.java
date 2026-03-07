@@ -26,6 +26,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import se.inera.intyg.intygstjanst.application.reko.service.CreateRekoStatusServiceImpl;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Reko;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.RekoRepository;
 

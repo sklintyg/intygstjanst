@@ -40,13 +40,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import se.inera.intyg.intygstjanst.application.citizen.repository.CitizenCertificatesRepositoryImpl;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.CertificateDao;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.CertificateMetaData;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Relation;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.RelationDao;
-import se.inera.intyg.intygstjanst.web.service.repo.model.CitizenCertificate;
-import se.inera.intyg.intygstjanst.web.service.repo.model.CitizenCertificateConverter;
+import se.inera.intyg.intygstjanst.application.citizen.repository.model.CitizenCertificate;
+import se.inera.intyg.intygstjanst.application.citizen.repository.model.CitizenCertificateConverter;
 
 @ExtendWith(MockitoExtension.class)
 class CitizenCertificatesRepositoryImplTest {

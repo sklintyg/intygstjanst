@@ -40,15 +40,17 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.client.RestClientException;
 import se.inera.intyg.common.support.facade.model.metadata.CertificateMetadata;
-import se.inera.intyg.intygstjanst.web.csintegration.CSIntegrationService;
-import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCertificateXmlResponse;
-import se.inera.intyg.intygstjanst.web.csintegration.dto.GetMessageXmlResponse;
-import se.inera.intyg.intygstjanst.web.service.CertificateEventRevokeService;
-import se.inera.intyg.intygstjanst.web.service.CertificateEventSendMessageService;
-import se.inera.intyg.intygstjanst.web.service.CertificateEventSendService;
-import se.inera.intyg.intygstjanst.web.service.StatisticsService;
-import se.inera.intyg.intygstjanst.web.service.dto.RecipientDTO;
-import se.inera.intyg.intygstjanst.web.service.dto.UnitDTO;
+import se.inera.intyg.intygstjanst.application.event.service.CertificateEventServiceImpl;
+import se.inera.intyg.intygstjanst.application.sickleave.services.HandleSickLeaveService;
+import se.inera.intyg.intygstjanst.infrastructure.csintegration.CSIntegrationService;
+import se.inera.intyg.intygstjanst.infrastructure.csintegration.dto.GetCertificateXmlResponse;
+import se.inera.intyg.intygstjanst.infrastructure.csintegration.dto.GetMessageXmlResponse;
+import se.inera.intyg.intygstjanst.application.event.service.CertificateEventRevokeService;
+import se.inera.intyg.intygstjanst.application.event.service.CertificateEventSendMessageService;
+import se.inera.intyg.intygstjanst.application.event.service.CertificateEventSendService;
+import se.inera.intyg.intygstjanst.application.certificate.service.StatisticsService;
+import se.inera.intyg.intygstjanst.application.recipient.dto.RecipientDTO;
+import se.inera.intyg.intygstjanst.application.event.dto.UnitDTO;
 
 @ExtendWith(MockitoExtension.class)
 class CertificateEventServiceImplTest {

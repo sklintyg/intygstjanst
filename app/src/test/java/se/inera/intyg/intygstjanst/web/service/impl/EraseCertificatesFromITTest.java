@@ -32,6 +32,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.test.util.ReflectionTestUtils;
+import se.inera.intyg.intygstjanst.application.erase.EraseCertificatesFromIT;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.ApprovedReceiverDao;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.ArendeRepository;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.CertificateDao;

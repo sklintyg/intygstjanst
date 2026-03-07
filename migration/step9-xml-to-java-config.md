@@ -243,7 +243,7 @@ This creates an `IntygModuleRegistryImpl` bean with the `origin` property set, a
 ```xml
 
 <beans profile="bootstrap">
-	<bean id="IntygBootstrapBean" class="se.inera.intyg.intygstjanst.web.service.bean.IntygBootstrapBean">
+	<bean id="IntygBootstrapBean" class="se.inera.intyg.intygstjanst.testability.IntygBootstrapBean">
 		<property name="txManager" ref="transactionManager"/>
 	</bean>
 </beans>

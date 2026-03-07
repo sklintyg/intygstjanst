@@ -34,17 +34,18 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import se.inera.intyg.intygstjanst.application.sjukfall.dto.DiagnosKapitel;
-import se.inera.intyg.intygstjanst.application.sjukfall.dto.DiagnosKategori;
-import se.inera.intyg.intygstjanst.application.sjukfall.dto.DiagnosKod;
-import se.inera.intyg.intygstjanst.application.sjukfall.dto.Lakare;
-import se.inera.intyg.intygstjanst.application.sjukfall.dto.Patient;
-import se.inera.intyg.intygstjanst.application.sjukfall.dto.RekoStatusDTO;
-import se.inera.intyg.intygstjanst.application.sjukfall.dto.RekoStatusTypeDTO;
-import se.inera.intyg.intygstjanst.application.sjukfall.dto.SjukfallEnhet;
-import se.inera.intyg.intygstjanst.web.service.CalculatePatientAgeService;
-import se.inera.intyg.intygstjanst.web.service.DiagnosisDescriptionService;
-import se.inera.intyg.intygstjanst.web.service.ResolvePatientGenderService;
+import se.inera.intyg.intygstjanst.application.sickleave.dto.DiagnosKapitel;
+import se.inera.intyg.intygstjanst.application.sickleave.dto.DiagnosKategori;
+import se.inera.intyg.intygstjanst.application.sickleave.dto.DiagnosKod;
+import se.inera.intyg.intygstjanst.application.sickleave.dto.Lakare;
+import se.inera.intyg.intygstjanst.application.sickleave.dto.Patient;
+import se.inera.intyg.intygstjanst.application.sickleave.dto.RekoStatusDTO;
+import se.inera.intyg.intygstjanst.application.sickleave.dto.RekoStatusTypeDTO;
+import se.inera.intyg.intygstjanst.application.sickleave.dto.SjukfallEnhet;
+import se.inera.intyg.intygstjanst.application.sickleave.services.TextSearchFilterServiceImpl;
+import se.inera.intyg.intygstjanst.application.sickleave.services.CalculatePatientAgeService;
+import se.inera.intyg.intygstjanst.infrastructure.diagnosis.DiagnosisDescriptionService;
+import se.inera.intyg.intygstjanst.application.testcertificate.service.ResolvePatientGenderService;
 
 @ExtendWith(MockitoExtension.class)
 class TextSearchFilterServiceImplTest {

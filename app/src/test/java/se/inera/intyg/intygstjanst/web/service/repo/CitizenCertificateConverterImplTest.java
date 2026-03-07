@@ -32,10 +32,10 @@ import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.CertificateStateHistoryEntry;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Relation;
-import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateRelationDTO;
-import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateRelationType;
-import se.inera.intyg.intygstjanst.web.service.repo.model.CitizenCertificateRelationConverter;
-import se.inera.intyg.intygstjanst.web.service.repo.model.CitizenCertificateConverterImpl;
+import se.inera.intyg.intygstjanst.application.citizen.dto.CitizenCertificateRelationDTO;
+import se.inera.intyg.intygstjanst.application.citizen.dto.CitizenCertificateRelationType;
+import se.inera.intyg.intygstjanst.application.citizen.repository.model.CitizenCertificateRelationConverter;
+import se.inera.intyg.intygstjanst.application.citizen.repository.model.CitizenCertificateConverterImpl;
 
 import java.time.LocalDateTime;
 import java.util.Collections;

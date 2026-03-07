@@ -34,20 +34,21 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import se.inera.intyg.intygstjanst.application.sjukfall.dto.DiagnosKapitel;
-import se.inera.intyg.intygstjanst.application.sjukfall.dto.DiagnosKod;
-import se.inera.intyg.intygstjanst.application.sjukfall.dto.Lakare;
-import se.inera.intyg.intygstjanst.application.sjukfall.dto.Patient;
-import se.inera.intyg.intygstjanst.application.sjukfall.dto.RekoStatusDTO;
-import se.inera.intyg.intygstjanst.application.sjukfall.dto.RekoStatusTypeDTO;
-import se.inera.intyg.intygstjanst.application.sjukfall.dto.SjukfallEnhet;
-import se.inera.intyg.intygstjanst.application.sjukfall.dto.Vardenhet;
-import se.inera.intyg.intygstjanst.web.service.CalculatePatientAgeService;
-import se.inera.intyg.intygstjanst.web.service.DiagnosisChapterService;
-import se.inera.intyg.intygstjanst.web.service.TextSearchFilterService;
-import se.inera.intyg.intygstjanst.web.service.dto.OccupationType;
-import se.inera.intyg.intygstjanst.web.service.dto.RekoStatusType;
-import se.inera.intyg.intygstjanst.web.service.dto.SickLeaveLengthInterval;
+import se.inera.intyg.intygstjanst.application.sickleave.dto.DiagnosKapitel;
+import se.inera.intyg.intygstjanst.application.sickleave.dto.DiagnosKod;
+import se.inera.intyg.intygstjanst.application.sickleave.dto.Lakare;
+import se.inera.intyg.intygstjanst.application.sickleave.dto.Patient;
+import se.inera.intyg.intygstjanst.application.sickleave.dto.RekoStatusDTO;
+import se.inera.intyg.intygstjanst.application.sickleave.dto.RekoStatusTypeDTO;
+import se.inera.intyg.intygstjanst.application.sickleave.dto.SjukfallEnhet;
+import se.inera.intyg.intygstjanst.application.sickleave.dto.Vardenhet;
+import se.inera.intyg.intygstjanst.application.sickleave.services.FilterSickLeavesImpl;
+import se.inera.intyg.intygstjanst.application.sickleave.services.CalculatePatientAgeService;
+import se.inera.intyg.intygstjanst.infrastructure.diagnosis.DiagnosisChapterService;
+import se.inera.intyg.intygstjanst.application.sickleave.services.TextSearchFilterService;
+import se.inera.intyg.intygstjanst.application.sickleave.dto.OccupationType;
+import se.inera.intyg.intygstjanst.application.reko.dto.RekoStatusType;
+import se.inera.intyg.intygstjanst.application.sickleave.dto.SickLeaveLengthInterval;
 
 @ExtendWith(MockitoExtension.class)
 class FilterSickLeavesImplTest {

@@ -36,12 +36,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import se.inera.intyg.intygstjanst.application.sickleave.services.IntygDataServiceImpl;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.SjukfallCertificateDao;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.SjukfallCertificateWorkCapacity;
-import se.inera.intyg.intygstjanst.web.integration.hsa.HsaService;
-import se.inera.intyg.intygstjanst.web.integration.rehabstod.converter.SjukfallCertificateIntygsDataConverter;
-import se.inera.intyg.intygstjanst.web.integration.sickleave.converter.IntygsDataConverter;
+import se.inera.intyg.intygstjanst.application.sickleave.services.HsaService;
+import se.inera.intyg.intygstjanst.application.sickleave.converter.SjukfallCertificateIntygsDataConverter;
+import se.inera.intyg.intygstjanst.application.sickleave.converter.IntygsDataConverter;
 
 @ExtendWith(MockitoExtension.class)
 class IntygDataServiceImplTest {

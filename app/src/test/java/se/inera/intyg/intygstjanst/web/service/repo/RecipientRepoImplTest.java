@@ -41,10 +41,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.util.ReflectionTestUtils;
+import se.inera.intyg.intygstjanst.application.recipient.repository.RecipientRepoImpl;
 import se.inera.intyg.intygstjanst.infrastructure.logging.MdcHelper;
 import se.inera.intyg.intygstjanst.application.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.application.exception.ServerException;
-import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
+import se.inera.intyg.intygstjanst.application.recipient.Recipient;
 
 
 @ExtendWith(MockitoExtension.class)

@@ -36,6 +36,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.common.support.model.common.internal.GrundData;
 import se.inera.intyg.common.support.model.common.internal.HoSPersonal;
 import se.inera.intyg.intygstjanst.application.certificate.dto.CertificateListRequest;
+import se.inera.intyg.intygstjanst.application.certificate.service.CertificateListServiceImpl;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.CertificateDao;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.OriginalCertificate;

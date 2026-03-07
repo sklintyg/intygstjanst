@@ -12,12 +12,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import se.inera.intyg.intygstjanst.application.sickleave.services.HandleSickLeaveService;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.SjukfallCertificateDao;
-import se.inera.intyg.intygstjanst.web.csintegration.CSIntegrationService;
-import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCertificateXmlResponse;
-import se.inera.intyg.intygstjanst.web.csintegration.dto.SickLeaveCertificateDTO;
-import se.inera.intyg.intygstjanst.web.csintegration.dto.SickLeaveResponseDTO;
-import se.inera.intyg.intygstjanst.web.service.converter.SickLeaveCertificateToSjukfallCertificateConverter;
+import se.inera.intyg.intygstjanst.infrastructure.csintegration.CSIntegrationService;
+import se.inera.intyg.intygstjanst.infrastructure.csintegration.dto.GetCertificateXmlResponse;
+import se.inera.intyg.intygstjanst.infrastructure.csintegration.dto.SickLeaveCertificateDTO;
+import se.inera.intyg.intygstjanst.infrastructure.csintegration.dto.SickLeaveResponseDTO;
+import se.inera.intyg.intygstjanst.application.sickleave.converter.SickLeaveCertificateToSjukfallCertificateConverter;
 
 @ExtendWith(MockitoExtension.class)
 class HandleSickLeaveServiceTest {

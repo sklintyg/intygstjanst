@@ -40,14 +40,15 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import se.inera.intyg.intygstjanst.application.sjukfall.dto.IntygData;
-import se.inera.intyg.intygstjanst.application.sjukfall.dto.IntygParametrar;
-import se.inera.intyg.intygstjanst.application.sjukfall.dto.SjukfallEnhet;
-import se.inera.intyg.intygstjanst.application.sjukfall.services.SjukfallEngineService;
+import se.inera.intyg.intygstjanst.application.sickleave.dto.IntygData;
+import se.inera.intyg.intygstjanst.application.sickleave.dto.IntygParametrar;
+import se.inera.intyg.intygstjanst.application.sickleave.dto.SjukfallEnhet;
+import se.inera.intyg.intygstjanst.application.sickleave.services.GetActiveSickLeaveCertificatesImpl;
+import se.inera.intyg.intygstjanst.application.sickleave.services.SjukfallEngineService;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.SjukfallCertificateDao;
-import se.inera.intyg.intygstjanst.web.csintegration.aggregator.ValidSickLeaveAggregator;
-import se.inera.intyg.intygstjanst.web.integration.sickleave.converter.IntygsDataConverter;
+import se.inera.intyg.intygstjanst.infrastructure.csintegration.aggregator.ValidSickLeaveAggregator;
+import se.inera.intyg.intygstjanst.application.sickleave.converter.IntygsDataConverter;
 
 @ExtendWith(MockitoExtension.class)
 class GetActiveSickLeaveCertificatesImplTest {

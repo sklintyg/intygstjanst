@@ -30,10 +30,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import se.inera.intyg.intygstjanst.web.service.bean.CertificateType;
-import se.inera.intyg.intygstjanst.web.service.bean.Recipient;
+import se.inera.intyg.intygstjanst.application.recipient.RecipientServiceImpl;
+import se.inera.intyg.intygstjanst.application.recipient.CertificateType;
+import se.inera.intyg.intygstjanst.application.recipient.Recipient;
 import se.inera.intyg.intygstjanst.web.service.builder.RecipientBuilder;
-import se.inera.intyg.intygstjanst.web.service.repo.RecipientRepoImpl;
+import se.inera.intyg.intygstjanst.application.recipient.repository.RecipientRepoImpl;
 
 @ExtendWith(MockitoExtension.class)
 class RecipientServiceImplTest {

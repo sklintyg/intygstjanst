@@ -34,7 +34,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
-import se.inera.intyg.intygstjanst.web.service.DiagnosisDescriptionProvider;
+import se.inera.intyg.intygstjanst.infrastructure.diagnosis.DiagnosisDescriptionServiceImpl;
+import se.inera.intyg.intygstjanst.infrastructure.diagnosis.DiagnosisDescriptionProvider;
 
 @ExtendWith(MockitoExtension.class)
 class DiagnosisDescriptionServiceImplTest {

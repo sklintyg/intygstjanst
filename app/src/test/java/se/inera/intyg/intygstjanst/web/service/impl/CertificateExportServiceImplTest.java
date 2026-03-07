@@ -36,9 +36,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import se.inera.intyg.intygstjanst.web.csintegration.aggregator.EraseCertificatesAggregator;
-import se.inera.intyg.intygstjanst.web.csintegration.aggregator.ExportCertificateAggregator;
-import se.inera.intyg.intygstjanst.web.service.dto.CertificateExportPageDTO;
+import se.inera.intyg.intygstjanst.application.export.service.CertificateExportServiceImpl;
+import se.inera.intyg.intygstjanst.infrastructure.csintegration.aggregator.EraseCertificatesAggregator;
+import se.inera.intyg.intygstjanst.infrastructure.csintegration.aggregator.ExportCertificateAggregator;
+import se.inera.intyg.intygstjanst.application.export.dto.CertificateExportPageDTO;
 
 @ExtendWith(MockitoExtension.class)
 class CertificateExportServiceImplTest {

@@ -42,13 +42,14 @@ import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.common.support.modules.support.api.exception.ModuleException;
 import se.inera.intyg.intygstjanst.application.certificate.dto.DiagnosedCertificate;
 import se.inera.intyg.intygstjanst.application.certificate.dto.SickLeaveCertificate;
+import se.inera.intyg.intygstjanst.application.certificate.service.TypedCertificateServiceImpl;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.CertificateDao;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.CertificateMetaData;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.OriginalCertificate;
-import se.inera.intyg.intygstjanst.web.csintegration.GetSickLeaveCertificatesFromCS;
-import se.inera.intyg.intygstjanst.web.service.converter.CertificateToDiagnosedCertificateConverter;
-import se.inera.intyg.intygstjanst.web.service.converter.CertificateToSickLeaveCertificateConverter;
+import se.inera.intyg.intygstjanst.infrastructure.csintegration.GetSickLeaveCertificatesFromCS;
+import se.inera.intyg.intygstjanst.application.certificate.converter.CertificateToDiagnosedCertificateConverter;
+import se.inera.intyg.intygstjanst.application.sickleave.converter.CertificateToSickLeaveCertificateConverter;
 import se.inera.intyg.schemas.contract.Personnummer;
 
 @ExtendWith(MockitoExtension.class)

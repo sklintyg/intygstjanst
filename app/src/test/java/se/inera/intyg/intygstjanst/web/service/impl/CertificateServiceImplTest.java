@@ -62,6 +62,8 @@ import se.inera.intyg.common.support.modules.support.api.exception.ModuleExcepti
 import se.inera.intyg.infra.pu.integration.api.model.Person;
 import se.inera.intyg.infra.pu.integration.api.model.PersonSvar;
 import se.inera.intyg.infra.pu.integration.api.services.PUService;
+import se.inera.intyg.intygstjanst.application.certificate.service.CertificateServiceImpl;
+import se.inera.intyg.intygstjanst.application.recipient.RecipientServiceImpl;
 import se.inera.intyg.intygstjanst.infrastructure.logging.HashUtility;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.exception.PersistenceException;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Certificate;
@@ -69,12 +71,12 @@ import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Certific
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.CertificateStateHistoryEntry;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.OriginalCertificate;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Relation;
-import se.inera.intyg.intygstjanst.web.service.CertificateSenderService;
-import se.inera.intyg.intygstjanst.web.service.CertificateService.SendStatus;
-import se.inera.intyg.intygstjanst.web.service.MonitoringLogService;
-import se.inera.intyg.intygstjanst.web.service.RelationService;
-import se.inera.intyg.intygstjanst.web.service.SjukfallCertificateService;
-import se.inera.intyg.intygstjanst.web.service.StatisticsService;
+import se.inera.intyg.intygstjanst.application.certificate.service.CertificateSenderService;
+import se.inera.intyg.intygstjanst.application.certificate.service.CertificateService.SendStatus;
+import se.inera.intyg.intygstjanst.infrastructure.logging.MonitoringLogService;
+import se.inera.intyg.intygstjanst.application.certificate.service.RelationService;
+import se.inera.intyg.intygstjanst.application.sickleave.services.SjukfallCertificateService;
+import se.inera.intyg.intygstjanst.application.certificate.service.StatisticsService;
 import se.inera.intyg.intygstjanst.web.service.builder.RecipientBuilder;
 import se.inera.intyg.schemas.contract.Personnummer;
 

@@ -32,14 +32,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import se.inera.intyg.intygstjanst.web.service.CitizenCertificateRecipientConverter;
-import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateIssuerDTO;
-import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateRecipientDTO;
-import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateRelationDTO;
-import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateSummaryDTO;
-import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateTypeDTO;
-import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateUnitDTO;
-import se.inera.intyg.intygstjanst.web.service.repo.model.CitizenCertificate;
+import se.inera.intyg.intygstjanst.application.citizen.service.CitizenCertificateDTOConverterImpl;
+import se.inera.intyg.intygstjanst.application.citizen.service.CitizenCertificateRecipientConverter;
+import se.inera.intyg.intygstjanst.application.citizen.dto.CitizenCertificateIssuerDTO;
+import se.inera.intyg.intygstjanst.application.citizen.dto.CitizenCertificateRecipientDTO;
+import se.inera.intyg.intygstjanst.application.citizen.dto.CitizenCertificateRelationDTO;
+import se.inera.intyg.intygstjanst.application.citizen.dto.CitizenCertificateSummaryDTO;
+import se.inera.intyg.intygstjanst.application.citizen.dto.CitizenCertificateTypeDTO;
+import se.inera.intyg.intygstjanst.application.citizen.dto.CitizenCertificateUnitDTO;
+import se.inera.intyg.intygstjanst.application.citizen.repository.model.CitizenCertificate;
 
 @ExtendWith(MockitoExtension.class)
 class CitizenCertificateDTOConverterImplTest {

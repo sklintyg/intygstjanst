@@ -24,8 +24,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
+import se.inera.intyg.intygstjanst.application.reko.service.RekoStatusConverterImpl;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Reko;
-import se.inera.intyg.intygstjanst.web.service.dto.RekoStatusType;
+import se.inera.intyg.intygstjanst.application.reko.dto.RekoStatusType;
 
 import java.time.LocalDateTime;
 
