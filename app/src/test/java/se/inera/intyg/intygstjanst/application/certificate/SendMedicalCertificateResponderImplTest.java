@@ -62,7 +62,7 @@ import se.inera.intyg.intygstjanst.application.certificate.service.CertificateSe
 import se.inera.intyg.intygstjanst.application.recipient.RecipientService;
 import se.inera.intyg.intygstjanst.application.certificate.service.StatisticsService;
 import se.inera.intyg.intygstjanst.application.recipient.Recipient;
-import se.inera.intyg.intygstjanst.web.service.builder.RecipientBuilder;
+import se.inera.intyg.intygstjanst.application.recipient.RecipientBuilder;
 import se.inera.intyg.schemas.contract.Personnummer;
 
 @ExtendWith(MockitoExtension.class)

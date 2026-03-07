@@ -27,9 +27,9 @@ import jakarta.jms.TextMessage;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.jms.core.JmsTemplate;
@@ -41,6 +41,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Profile({"dev", "testability-api"})
+@RequiredArgsConstructor
 public class Receiver {
 
     private static final String CERTIFICATE_ID = "certificate-id";
@@ -49,8 +50,7 @@ public class Receiver {
     private static final String FK_MESSAGE_ACTION = "message-sent";
     private static final long TIMEOUT = 3000;
 
-    @Autowired
-    private JmsTemplate jmsTemplate;
+    private final JmsTemplate jmsTemplate;
 
     @Value("${activemq.destination.queue.name}")
     private String destinationQueueName;
@@ -66,7 +66,7 @@ public class Receiver {
                 final String key = generateKey(id, action);
                 map.put(key, ((TextMessage) msg).getText());
             } catch (JMSException e) {
-                throw new RuntimeException(e);
+                throw new IllegalStateException(e);
             }
         });
         return map;
@@ -111,14 +111,11 @@ public class Receiver {
         return consume(-1L, consumer);
     }
 
-    //
     Message next(final long timeout, final MessageConsumer consumer) throws JMSException {
         return (timeout < 0L) ? consumer.receiveNoWait() : consumer.receive(timeout);
     }
 
-    //
-    static String generateKey(String certificateId, String action) {
+    public static String generateKey(String certificateId, String action) {
         return Joiner.on("-").join(certificateId, action);
     }
-
 }
