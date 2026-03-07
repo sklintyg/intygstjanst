@@ -15,14 +15,14 @@ rootProject.name = 'intygstjanst'
 
 include 'infra'
 include 'logging'
-include ':persistence'
-include ':web'
-include ':integration-api'
-include ':integration-intyg-proxy-service'
+include 'persistence'
+include 'app'
+include 'integration-api'
+include 'integration-intyg-proxy-service'
 
 project(':infra').projectDir = "$rootDir/infra" as File
 project(':logging').projectDir = "$rootDir/logging" as File
 project(':persistence').projectDir = "$rootDir/persistence" as File
-project(':web').projectDir = "$rootDir/web" as File
+project(':app').projectDir = "$rootDir/app" as File
 project(':integration-api').projectDir = "$rootDir/integration-api" as File
 project(':integration-intyg-proxy-service').projectDir = "$rootDir/integration-intyg-proxy-service" as File
