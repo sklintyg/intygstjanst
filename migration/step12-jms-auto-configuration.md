@@ -17,7 +17,7 @@
 | **12.8**  | Remove `Queue` beans and `Receiver` bean from `JmsConfig`                 | ✅ DONE | | ✅ | Queue beans, @Value fields, and Receiver bean removed from JmsConfig; Receiver made @Component @Profile(dev,testability-api); no Queue bean refs remain; build + tests pass |
 | **12.9**  | Remove `JmsConfig` class and `@EnableJms`                                 | ✅ DONE | | ✅ | JmsConfig.java deleted; jms/ package removed; @EnableJms provided by JmsAutoConfiguration; build + tests pass |
 | **12.10** | Remove redundant explicit dependencies from `web/build.gradle`            | ✅ DONE | | ✅ | Removed activemq-spring and spring-jms; both still on classpath transitively via starter; build + tests pass |
-| **12.11** | Update persistence `TestConfig` — remove `ActiveMQAutoConfiguration` exclusion | ⬜ TODO |           |          |       |
+| **12.11** | Update persistence `TestConfig` — remove `ActiveMQAutoConfiguration` exclusion | ✅ DONE | | ✅ | ActiveMQ not on persistence test classpath; exclusion and import removed; persistence tests pass |
 | **12.12** | Final verification — `./gradlew bootRun` + `./gradlew test`               | ⬜ TODO |           |          |       |
 
 **Deployment batches:**
