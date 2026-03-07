@@ -14,7 +14,7 @@
 | **12.5**  | Simplify `JmsListenerContainerFactory` to use auto-configured beans       | ✅ DONE | | ✅ | Removed custom bean from JmsConfig; added spring.jms.listener.session-transacted=true; @JmsListener uses auto-configured factory by default; build + tests pass |
 | **12.6**  | Remove manual `JmsTemplate` beans — replace with auto-configured `JmsTemplate` | ✅ DONE | | ✅ | Removed jmsTemplate/jmsCertificateEventTemplate beans and template() helper from JmsConfig; added spring.jms.template.session-transacted=true; committed atomically with 12.7 |
 | **12.7**  | Update `JmsTemplate` consumers to use destination names instead of `Queue` beans | ✅ DONE | | ✅ | All four consumers (StatisticsServiceImpl, InternalNotificationServiceImpl, CertificateEventRedeliveryServiceImpl, Receiver) now use destination name strings; tests updated; build + tests pass |
-| **12.8**  | Remove `Queue` beans and `Receiver` bean from `JmsConfig`                 | ⬜ TODO |           |          |       |
+| **12.8**  | Remove `Queue` beans and `Receiver` bean from `JmsConfig`                 | ✅ DONE | | ✅ | Queue beans, @Value fields, and Receiver bean removed from JmsConfig; Receiver made @Component @Profile(dev,testability-api); no Queue bean refs remain; build + tests pass |
 | **12.9**  | Remove `JmsConfig` class and `@EnableJms`                                 | ⬜ TODO |           |          |       |
 | **12.10** | Remove redundant explicit dependencies from `web/build.gradle`            | ⬜ TODO |           |          |       |
 | **12.11** | Update persistence `TestConfig` — remove `ActiveMQAutoConfiguration` exclusion | ⬜ TODO |           |          |       |
