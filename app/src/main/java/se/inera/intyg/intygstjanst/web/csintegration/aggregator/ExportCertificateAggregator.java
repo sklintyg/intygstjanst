@@ -7,8 +7,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
-import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
-import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateRepository;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Certificate;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.CertificateRepository;
 import se.inera.intyg.intygstjanst.web.csintegration.ExportCertificateFromCS;
 import se.inera.intyg.intygstjanst.web.service.dto.CertificateExportPageDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.CertificateXmlDTO;
@@ -39,7 +39,6 @@ public class ExportCertificateAggregator {
             totalRevoked,
             certificateXmls
         );
-
 
         return exportCertificateFromCS.addCertificatesFromCS(certificateExportPage, careProviderId, collected, batchSize);
     }

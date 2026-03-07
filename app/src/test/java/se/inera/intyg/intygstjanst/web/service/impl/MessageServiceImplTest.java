@@ -29,8 +29,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
-import se.inera.intyg.intygstjanst.persistence.model.dao.ArendeRepository;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Arende;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.ArendeRepository;
 
 @ExtendWith(MockitoExtension.class)
 class MessageServiceImplTest {

@@ -20,7 +20,7 @@
 package se.inera.intyg.intygstjanst.web.service.impl;
 
 import org.springframework.stereotype.Component;
-import se.inera.intyg.intygstjanst.persistence.model.dao.Reko;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Reko;
 import se.inera.intyg.intygstjanst.web.service.RekoStatusFilter;
 
 import java.time.LocalDate;

@@ -19,7 +19,7 @@
 package se.inera.intyg.intygstjanst.web.service;
 
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeType;
-import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Certificate;
 
 /**
  * @author rogerlindsjo

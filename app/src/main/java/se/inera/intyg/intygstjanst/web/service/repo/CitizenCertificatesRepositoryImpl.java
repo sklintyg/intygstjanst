@@ -25,9 +25,9 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Repository;
 import se.inera.intyg.common.db.support.DbModuleEntryPoint;
 import se.inera.intyg.common.doi.support.DoiModuleEntryPoint;
-import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
-import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
-import se.inera.intyg.intygstjanst.persistence.model.dao.RelationDao;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Certificate;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.CertificateDao;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.RelationDao;
 import se.inera.intyg.intygstjanst.web.service.repo.model.CitizenCertificate;
 import se.inera.intyg.intygstjanst.web.service.repo.model.CitizenCertificateConverter;
 

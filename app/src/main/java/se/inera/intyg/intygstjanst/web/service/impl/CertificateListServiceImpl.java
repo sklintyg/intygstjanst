@@ -30,9 +30,9 @@ import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.infra.certificate.dto.CertificateListEntry;
 import se.inera.intyg.infra.certificate.dto.CertificateListRequest;
 import se.inera.intyg.infra.certificate.dto.CertificateListResponse;
-import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
-import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
-import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateType;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Certificate;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.CertificateDao;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.CertificateType;
 import se.inera.intyg.intygstjanst.web.service.CertificateListService;
 import se.inera.intyg.schemas.contract.Personnummer;
 

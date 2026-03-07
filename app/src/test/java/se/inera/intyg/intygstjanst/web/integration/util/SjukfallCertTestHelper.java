@@ -23,8 +23,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificate;
-import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateWorkCapacity;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.SjukfallCertificate;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.SjukfallCertificateWorkCapacity;
 
 /**
  * Created by eriklupander on 2017-02-17.

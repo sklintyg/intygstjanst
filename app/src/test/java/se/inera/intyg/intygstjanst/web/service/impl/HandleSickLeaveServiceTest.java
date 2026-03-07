@@ -12,7 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.SjukfallCertificateDao;
 import se.inera.intyg.intygstjanst.web.csintegration.CSIntegrationService;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCertificateXmlResponse;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.SickLeaveCertificateDTO;
@@ -70,10 +70,10 @@ class HandleSickLeaveServiceTest {
 
             final var cert = mock(SickLeaveResponseDTO.class);
 
-          final var data = SickLeaveResponseDTO.builder()
-              .sickLeaveCertificate(SICK_LEAVE_CERTIFICATE_DTO)
-              .available(false)
-              .build();
+            final var data = SickLeaveResponseDTO.builder()
+                .sickLeaveCertificate(SICK_LEAVE_CERTIFICATE_DTO)
+                .available(false)
+                .build();
 
             when(cert.isAvailable()).thenReturn(data.isAvailable());
             when(csIntegrationService.getSickLeaveCertificate(CERTIFICATE_ID)).thenReturn(cert);
@@ -86,27 +86,26 @@ class HandleSickLeaveServiceTest {
 
         @Test
         void shouldStoreIfAvailable() {
-          final var response = GetCertificateXmlResponse.builder()
-              .certificateType(FK7804_TYPE)
-              .certificateId(CERTIFICATE_ID)
-              .build();
+            final var response = GetCertificateXmlResponse.builder()
+                .certificateType(FK7804_TYPE)
+                .certificateId(CERTIFICATE_ID)
+                .build();
 
-          final var cert = mock(SickLeaveResponseDTO.class);
+            final var cert = mock(SickLeaveResponseDTO.class);
 
-          final var data = SickLeaveResponseDTO.builder()
-              .sickLeaveCertificate(SICK_LEAVE_CERTIFICATE_DTO)
-              .available(true)
-              .build();
+            final var data = SickLeaveResponseDTO.builder()
+                .sickLeaveCertificate(SICK_LEAVE_CERTIFICATE_DTO)
+                .available(true)
+                .build();
 
+            when(cert.getSickLeaveCertificate()).thenReturn(data.getSickLeaveCertificate());
+            when(cert.isAvailable()).thenReturn(data.isAvailable());
+            when(csIntegrationService.getSickLeaveCertificate(CERTIFICATE_ID)).thenReturn(cert);
 
-          when(cert.getSickLeaveCertificate()).thenReturn(data.getSickLeaveCertificate());
-          when(cert.isAvailable()).thenReturn(data.isAvailable());
-          when(csIntegrationService.getSickLeaveCertificate(CERTIFICATE_ID)).thenReturn(cert);
+            handleSickleaveService.created(response);
 
-          handleSickleaveService.created(response);
-
-          verify(csIntegrationService).getSickLeaveCertificate(CERTIFICATE_ID);
-          verify(sjukfallCertificateDao).store(converter.convert(data.getSickLeaveCertificate()));
+            verify(csIntegrationService).getSickLeaveCertificate(CERTIFICATE_ID);
+            verify(sjukfallCertificateDao).store(converter.convert(data.getSickLeaveCertificate()));
         }
     }
 
@@ -126,7 +125,6 @@ class HandleSickLeaveServiceTest {
                 .sickLeaveCertificate(SICK_LEAVE_CERTIFICATE_DTO)
                 .available(false)
                 .build();
-
 
             when(cert.isAvailable()).thenReturn(data.isAvailable());
             when(csIntegrationService.getSickLeaveCertificate(CERTIFICATE_ID)).thenReturn(cert);
@@ -150,7 +148,6 @@ class HandleSickLeaveServiceTest {
                 .sickLeaveCertificate(SICK_LEAVE_CERTIFICATE_DTO)
                 .available(true)
                 .build();
-
 
             when(cert.getSickLeaveCertificate()).thenReturn(data.getSickLeaveCertificate());
             when(cert.isAvailable()).thenReturn(data.isAvailable());

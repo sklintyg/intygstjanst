@@ -21,10 +21,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
-import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
-import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateMetaData;
-import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateRepository;
-import se.inera.intyg.intygstjanst.persistence.model.dao.OriginalCertificate;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Certificate;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.CertificateMetaData;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.CertificateRepository;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.OriginalCertificate;
 import se.inera.intyg.intygstjanst.web.csintegration.ExportCertificateFromCS;
 import se.inera.intyg.intygstjanst.web.service.dto.CertificateExportPageDTO;
 

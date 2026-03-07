@@ -22,10 +22,10 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import se.inera.intyg.intygstjanst.persistence.model.dao.ApprovedReceiverDao;
-import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
-import se.inera.intyg.intygstjanst.persistence.model.dao.RelationDao;
-import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.ApprovedReceiverDao;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.CertificateDao;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.RelationDao;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.SjukfallCertificateDao;
 import se.inera.intyg.intygstjanst.web.service.EraseTestCertificateService;
 
 @Service

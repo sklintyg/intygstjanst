@@ -30,7 +30,7 @@ import se.inera.intyg.common.support.model.common.internal.GrundData;
 import se.inera.intyg.common.support.model.common.internal.Utlatande;
 import se.inera.intyg.infra.certificate.builder.DiagnosedCertificateBuilder;
 import se.inera.intyg.infra.certificate.dto.DiagnosedCertificate;
-import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Certificate;
 
 @Component
 public class CertificateToDiagnosedCertificateConverter {

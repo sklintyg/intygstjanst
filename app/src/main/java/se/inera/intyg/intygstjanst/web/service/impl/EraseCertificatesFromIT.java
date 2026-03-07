@@ -9,12 +9,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
-import se.inera.intyg.intygstjanst.persistence.model.dao.ApprovedReceiverDao;
-import se.inera.intyg.intygstjanst.persistence.model.dao.ArendeRepository;
-import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
-import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateRepository;
-import se.inera.intyg.intygstjanst.persistence.model.dao.RelationDao;
-import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.ApprovedReceiverDao;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.ArendeRepository;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.CertificateDao;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.CertificateRepository;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.RelationDao;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.SjukfallCertificateDao;
 
 @Slf4j
 @Service
@@ -23,7 +23,7 @@ public class EraseCertificatesFromIT {
 
     @Value("${erase.certificates.page.size:1000}")
     private int eraseCertificatesPageSize;
-    
+
     private final CertificateRepository certificateRepository;
     private final ArendeRepository arendeRepository;
     private final ApprovedReceiverDao approvedReceiverDao;

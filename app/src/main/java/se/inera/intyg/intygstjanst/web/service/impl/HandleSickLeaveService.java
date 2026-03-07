@@ -2,7 +2,7 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.SjukfallCertificateDao;
 import se.inera.intyg.intygstjanst.web.csintegration.CSIntegrationService;
 import se.inera.intyg.intygstjanst.web.csintegration.dto.GetCertificateXmlResponse;
 import se.inera.intyg.intygstjanst.web.service.converter.SickLeaveCertificateToSjukfallCertificateConverter;
@@ -29,7 +29,7 @@ public class HandleSickLeaveService {
         final var sickLeaveResponse = csIntegrationService.getSickLeaveCertificate(response.getCertificateId());
 
         if (sickLeaveResponse.isAvailable()) {
-          sjukfallCertificateDao.revoke(sickLeaveResponse.getSickLeaveCertificate().getId());
+            sjukfallCertificateDao.revoke(sickLeaveResponse.getSickLeaveCertificate().getId());
         }
     }
 }

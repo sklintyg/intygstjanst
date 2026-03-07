@@ -21,8 +21,8 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import se.inera.intyg.intygstjanst.persistence.model.dao.ApprovedReceiver;
-import se.inera.intyg.intygstjanst.persistence.model.dao.ApprovedReceiverDao;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.ApprovedReceiver;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.ApprovedReceiverDao;
 import se.inera.intyg.intygstjanst.web.service.ReceiverService;
 
 @Service

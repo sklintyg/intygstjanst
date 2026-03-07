@@ -32,12 +32,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.test.util.ReflectionTestUtils;
-import se.inera.intyg.intygstjanst.persistence.model.dao.ApprovedReceiverDao;
-import se.inera.intyg.intygstjanst.persistence.model.dao.ArendeRepository;
-import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateDao;
-import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateRepository;
-import se.inera.intyg.intygstjanst.persistence.model.dao.RelationDao;
-import se.inera.intyg.intygstjanst.persistence.model.dao.SjukfallCertificateDao;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.ApprovedReceiverDao;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.ArendeRepository;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.CertificateDao;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.CertificateRepository;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.RelationDao;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.SjukfallCertificateDao;
 
 @ExtendWith(MockitoExtension.class)
 class EraseCertificatesFromITTest {

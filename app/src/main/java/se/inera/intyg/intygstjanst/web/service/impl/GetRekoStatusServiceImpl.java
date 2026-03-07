@@ -21,7 +21,7 @@ package se.inera.intyg.intygstjanst.web.service.impl;
 
 import org.springframework.stereotype.Service;
 import se.inera.intyg.infra.sjukfall.dto.RekoStatusDTO;
-import se.inera.intyg.intygstjanst.persistence.model.dao.RekoRepository;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.RekoRepository;
 import se.inera.intyg.intygstjanst.web.service.GetRekoStatusService;
 import se.inera.intyg.intygstjanst.web.service.RekoStatusConverter;
 import se.inera.intyg.intygstjanst.web.service.RekoStatusFilter;

@@ -23,8 +23,8 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.infra.message.dto.MessageFromIT;
-import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
-import se.inera.intyg.intygstjanst.persistence.model.dao.ArendeRepository;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Arende;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.ArendeRepository;
 import se.inera.intyg.intygstjanst.web.service.MessageService;
 
 @Service

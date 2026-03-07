@@ -26,9 +26,9 @@ import org.apache.commons.lang3.StringUtils;
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.common.support.modules.support.api.CertificateStateHolder;
 import se.inera.intyg.common.support.modules.support.api.dto.AdditionalMetaData;
-import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
-import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateMetaData;
-import se.inera.intyg.intygstjanst.persistence.model.dao.CertificateStateHistoryEntry;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Certificate;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.CertificateMetaData;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.CertificateStateHistoryEntry;
 
 public final class ConverterUtil {
 

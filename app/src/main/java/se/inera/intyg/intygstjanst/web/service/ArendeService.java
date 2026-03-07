@@ -18,7 +18,7 @@
  */
 package se.inera.intyg.intygstjanst.web.service;
 
-import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Arende;
 
 public interface ArendeService {
 

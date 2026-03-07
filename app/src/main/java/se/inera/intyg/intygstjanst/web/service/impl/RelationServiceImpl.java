@@ -22,8 +22,8 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import se.inera.intyg.intygstjanst.persistence.model.dao.Relation;
-import se.inera.intyg.intygstjanst.persistence.model.dao.RelationDao;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Relation;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.RelationDao;
 import se.inera.intyg.intygstjanst.web.service.RelationService;
 
 /**

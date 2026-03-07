@@ -35,7 +35,7 @@ import org.springframework.jms.core.MessageCreator;
 import org.springframework.test.util.ReflectionTestUtils;
 import se.inera.intyg.common.support.facade.model.metadata.CertificateMetadata;
 import se.inera.intyg.common.support.facade.model.metadata.Unit;
-import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Certificate;
 
 @ExtendWith(MockitoExtension.class)
 class InternalNotificationServiceImplTest {

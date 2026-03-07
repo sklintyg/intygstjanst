@@ -18,10 +18,11 @@
  */
 package se.inera.intyg.intygstjanst.web.service;
 
-import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Certificate;
 
 public interface InternalNotificationService {
 
     void notifyCareIfSentByCitizen(Certificate certificate, String personId, String hsaId);
+
     void notifyCareIfSentByCitizen(se.inera.intyg.common.support.facade.model.Certificate certificate, String personId, String hsaId);
 }

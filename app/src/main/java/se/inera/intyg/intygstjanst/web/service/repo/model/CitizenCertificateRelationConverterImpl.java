@@ -21,7 +21,7 @@ package se.inera.intyg.intygstjanst.web.service.repo.model;
 
 import org.springframework.stereotype.Service;
 import se.inera.intyg.common.support.common.enumerations.RelationKod;
-import se.inera.intyg.intygstjanst.persistence.model.dao.Relation;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Relation;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateRelationDTO;
 import se.inera.intyg.intygstjanst.web.service.dto.citizen.CitizenCertificateRelationType;
 

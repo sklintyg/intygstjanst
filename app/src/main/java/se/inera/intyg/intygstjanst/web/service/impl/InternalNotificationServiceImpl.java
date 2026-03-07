@@ -29,7 +29,7 @@ import org.springframework.jms.JmsException;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import org.springframework.stereotype.Service;
-import se.inera.intyg.intygstjanst.persistence.model.dao.Certificate;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.web.service.InternalNotificationService;
 
 @Service
@@ -66,7 +66,8 @@ public class InternalNotificationServiceImpl implements InternalNotificationServ
         String hsaId) {
         if (personId != null && hsaId == null) {
             notifyCertificateSentByCitizenToRecipient(
-                certificate.getMetadata().getId(), certificate.getMetadata().getType(), certificate.getMetadata().getTypeVersion(), certificate.getMetadata().getUnit().getUnitId()
+                certificate.getMetadata().getId(), certificate.getMetadata().getType(), certificate.getMetadata().getTypeVersion(),
+                certificate.getMetadata().getUnit().getUnitId()
             );
         }
     }

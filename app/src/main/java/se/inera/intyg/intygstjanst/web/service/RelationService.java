@@ -20,7 +20,7 @@ package se.inera.intyg.intygstjanst.web.service;
 
 import java.util.List;
 import java.util.Optional;
-import se.inera.intyg.intygstjanst.persistence.model.dao.Relation;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Relation;
 
 /**
  * Created by eriklupander on 2017-05-10.

@@ -32,8 +32,8 @@ import se.inera.clinicalprocess.healthcond.certificate.receiver.types.v1.Certifi
 import se.inera.clinicalprocess.healthcond.certificate.types.v3.IntygId;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.listapprovedreceivers.v1.ListApprovedReceiversResponseType;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.listapprovedreceivers.v1.ListApprovedReceiversType;
-import se.inera.intyg.intygstjanst.persistence.model.dao.ApprovedReceiver;
-import se.inera.intyg.intygstjanst.persistence.model.dao.ApprovedReceiverDao;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.ApprovedReceiver;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.ApprovedReceiverDao;
 import se.inera.intyg.intygstjanst.application.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.web.service.RecipientService;
 import se.inera.intyg.intygstjanst.web.service.bean.CertificateRecipientType;

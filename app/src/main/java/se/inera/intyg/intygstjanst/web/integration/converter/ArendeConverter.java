@@ -25,7 +25,7 @@ import jakarta.xml.bind.Marshaller;
 import java.io.StringWriter;
 import java.time.Clock;
 import java.time.LocalDateTime;
-import se.inera.intyg.intygstjanst.persistence.model.dao.Arende;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Arende;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.ObjectFactory;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.SendMessageToCareType;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientType;
