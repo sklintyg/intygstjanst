@@ -20,40 +20,23 @@ package se.inera.intyg.intygstjanst.config.jms;
 
 import jakarta.jms.ConnectionFactory;
 import jakarta.jms.Queue;
-import java.util.Objects;
-import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.command.ActiveMQQueue;
-import org.apache.activemq.pool.PooledConnectionFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jms.annotation.EnableJms;
 import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
 import org.springframework.jms.config.JmsListenerContainerFactory;
-import org.springframework.jms.connection.JmsTransactionManager;
 import org.springframework.jms.core.JmsTemplate;
-import org.springframework.jms.support.destination.DestinationResolver;
-import org.springframework.jms.support.destination.DynamicDestinationResolver;
 import se.inera.intyg.intygstjanst.web.integration.test.Receiver;
 
 /**
- * Creates connection factory and JMS templates for communicating with ActiveMQ. Note that this JmsConfig creates its
- * {@link ActiveMQConnectionFactory} directly rather than looking up a container-provided ConnectionFactory through
- * JNDI.
- * Created by Magnus Ekstrand 2018-06-13
+ * JMS configuration — connection infrastructure is now provided by Spring Boot ActiveMQ auto-configuration.
+ * This class retains only JmsTemplate beans, Queue beans, and the Receiver test helper.
  */
 @Configuration
 @EnableJms
 public class JmsConfig {
-
-    @Value("${activemq.broker.url}")
-    private String brokerUrl;
-
-    @Value("${activemq.broker.username}")
-    private String brokerUsername;
-
-    @Value("${activemq.broker.password}")
-    private String brokerPassword;
 
     @Value("${activemq.destination.queue.name}")
     private String destinationQueueName;
@@ -65,35 +48,23 @@ public class JmsConfig {
     private String certificateEventQueue;
 
     @Bean
-    public JmsListenerContainerFactory jmsListenerContainerFactory(JmsTransactionManager jmsTransactionManager) {
+    public JmsListenerContainerFactory jmsListenerContainerFactory(ConnectionFactory connectionFactory) {
         DefaultJmsListenerContainerFactory factory = new DefaultJmsListenerContainerFactory();
-        factory.setConnectionFactory(Objects.requireNonNull(jmsTransactionManager.getConnectionFactory()));
-        factory.setDestinationResolver(destinationResolver());
+        factory.setConnectionFactory(connectionFactory);
         factory.setSessionTransacted(true);
-        factory.setTransactionManager(jmsTransactionManager);
         factory.setCacheLevelName("CACHE_CONSUMER");
         factory.setConcurrency("1-10");
         return factory;
     }
 
     @Bean
-    public ConnectionFactory connectionFactory() {
-        return new PooledConnectionFactory(new ActiveMQConnectionFactory(brokerUsername, brokerPassword, brokerUrl));
-    }
-
-    @Bean
-    public JmsTransactionManager jmsTransactionManager() {
-        return new JmsTransactionManager(connectionFactory());
-    }
-
-    @Bean
-    public JmsTemplate jmsTemplate() {
-        return template(connectionFactory(), destinationQueue());
+    public JmsTemplate jmsTemplate(ConnectionFactory connectionFactory) {
+        return template(connectionFactory, destinationQueue());
     }
 
     @Bean(value = "jmsCertificateEventTemplate")
-    public JmsTemplate jmsCertificateEventTemplate(ConnectionFactory jmsConnectionFactory) {
-        return template(jmsConnectionFactory, certificateEventQueue());
+    public JmsTemplate jmsCertificateEventTemplate(ConnectionFactory connectionFactory) {
+        return template(connectionFactory, certificateEventQueue());
     }
 
     @Bean(value = "destinationQueue")
@@ -111,17 +82,11 @@ public class JmsConfig {
         return new ActiveMQQueue(certificateEventQueue);
     }
 
-    @Bean
-    public DestinationResolver destinationResolver() {
-        return new DynamicDestinationResolver();
-    }
-
     // Only used by test API features
     @Bean
     public Receiver receiver() {
         return new Receiver();
     }
-
 
     JmsTemplate template(final ConnectionFactory connectionFactory, final Queue queue) {
         final JmsTemplate jmsTemplate = new JmsTemplate();
