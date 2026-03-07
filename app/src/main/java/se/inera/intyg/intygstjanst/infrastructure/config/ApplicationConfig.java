@@ -19,19 +19,14 @@
 package se.inera.intyg.intygstjanst.infrastructure.config;
 
 
-import jakarta.persistence.EntityManagerFactory;
 import org.apache.cxf.Bus;
 import org.apache.cxf.bus.spring.SpringBus;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.orm.jpa.JpaTransactionManager;
-import org.springframework.transaction.PlatformTransactionManager;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistryImpl;
 import se.inera.intyg.common.support.modules.support.ApplicationOrigin;
-import se.inera.intyg.intygstjanst.infrastructure.security.filter.InternalApiFilter;
 
 @Configuration
 @EnableAspectJAutoProxy
@@ -42,20 +37,9 @@ public class ApplicationConfig {
         return new SpringBus();
     }
 
-    @Primary
-    @Bean
-    public PlatformTransactionManager transactionManager(EntityManagerFactory emf) {
-        return new JpaTransactionManager(emf);
-    }
-
     @Bean
     public PathMatchingResourcePatternResolver pathMatchingResourcePatternResolver() {
         return new PathMatchingResourcePatternResolver();
-    }
-
-    @Bean
-    public InternalApiFilter internalApiFilter() {
-        return new InternalApiFilter();
     }
 
     @Bean
