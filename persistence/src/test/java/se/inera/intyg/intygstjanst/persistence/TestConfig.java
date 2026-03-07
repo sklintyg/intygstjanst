@@ -19,7 +19,6 @@
 package se.inera.intyg.intygstjanst.persistence;
 
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -27,9 +26,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @Configuration
-@EnableAutoConfiguration(exclude = {
-    RedisAutoConfiguration.class
-})
+@EnableAutoConfiguration()
 @EntityScan("se.inera.intyg.intygstjanst.persistence.model")
 @EnableJpaRepositories("se.inera.intyg.intygstjanst.persistence.model.dao")
 @ComponentScan(basePackages = {"se.inera.intyg.intygstjanst.persistence", "se.inera.intyg.intygstjanst.logging"})
