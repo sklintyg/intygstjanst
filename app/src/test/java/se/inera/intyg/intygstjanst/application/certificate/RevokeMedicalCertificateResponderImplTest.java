@@ -38,7 +38,7 @@ import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.test.util.ReflectionTestUtils;
+import se.inera.intyg.intygstjanst.infrastructure.config.properties.AppProperties;
 import org.w3.wsaddressing10.AttributedURIType;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificate.rivtabp20.v1.RevokeMedicalCertificateResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateRequestType;
@@ -89,14 +89,16 @@ class RevokeMedicalCertificateResponderImplTest {
     private RecipientService recipientService;
 
     @Spy
-    private HashUtility hashUtility;
+    private HashUtility hashUtility = new HashUtility(
+        new AppProperties(null, null, null, null, null, null,
+            new AppProperties.Security("salt"), null));
 
     @InjectMocks
     private RevokeMedicalCertificateResponderInterface responder = new RevokeMedicalCertificateResponderImpl();
 
     @BeforeEach
     void setup() {
-        ReflectionTestUtils.setField(hashUtility, "salt", "salt");
+        // no field injection needed — hashUtility initialized with salt directly
     }
 
     private RevokeMedicalCertificateRequestType cachedRevokeRequest;

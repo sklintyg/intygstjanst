@@ -33,10 +33,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Repository;
@@ -46,9 +45,11 @@ import se.inera.intyg.intygstjanst.application.exception.RecipientUnknownExcepti
 import se.inera.intyg.intygstjanst.application.exception.ServerException;
 import se.inera.intyg.intygstjanst.application.recipient.CertificateType;
 import se.inera.intyg.intygstjanst.application.recipient.Recipient;
+import se.inera.intyg.intygstjanst.infrastructure.config.properties.AppProperties;
 
 @Repository
 @EnableScheduling
+@RequiredArgsConstructor
 public class RecipientRepo {
 
     private static final Logger LOG = LoggerFactory.getLogger(RecipientRepo.class);
@@ -61,11 +62,8 @@ public class RecipientRepo {
     protected Map<Recipient, Set<CertificateType>> certificateTypesForRecipient;
     private Map<String, Recipient> recipientMap;
 
-    @Value("${recipient.file}")
-    private String recipientFile;
-
-    @Autowired
-    private MdcHelper mdcHelper;
+    private final AppProperties appProperties;
+    private final MdcHelper mdcHelper;
 
     /**
      * Initial setup of the in-memory database.
@@ -115,7 +113,7 @@ public class RecipientRepo {
         recipientMap.clear();
     }
 
-    @Scheduled(cron = "${recipients.update.cron}")
+    @Scheduled(cron = "${app.recipients.update-cron}")
     public void update() {
         try (MdcCloseableMap mdc =
             MdcCloseableMap.builder()
@@ -131,7 +129,7 @@ public class RecipientRepo {
         LOG.info("Performing scheduled recipient update.");
         ObjectMapper objectMapper = new ObjectMapper();
 
-        try (FileInputStream fis = new FileInputStream(recipientFile)) {
+        try (FileInputStream fis = new FileInputStream(appProperties.recipients().file())) {
             Recipient[] recipientArray = objectMapper
                 .readValue(fis, Recipient[].class);
 

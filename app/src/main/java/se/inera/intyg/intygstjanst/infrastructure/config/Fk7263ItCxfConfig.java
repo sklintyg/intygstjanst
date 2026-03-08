@@ -24,7 +24,6 @@ import org.apache.cxf.Bus;
 import org.apache.cxf.jaxws.EndpointImpl;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import se.inera.ifv.insuranceprocess.healthreporting.getcertificate.rivtabp20.v1.GetCertificateResponderInterface;
@@ -35,12 +34,14 @@ import se.inera.intyg.common.fk7263.integration.GetMedicalCertificateResponderIm
 import se.inera.intyg.common.fk7263.integration.RegisterMedicalCertificateResponderImpl;
 import se.inera.intyg.common.support.modules.support.api.ModuleContainerApi;
 import se.inera.intyg.common.util.integration.interceptor.SoapFaultToSoapResponseTransformerInterceptor;
+import se.inera.intyg.intygstjanst.infrastructure.config.properties.AppProperties;
 
 @Configuration
 @RequiredArgsConstructor
 public class Fk7263ItCxfConfig {
 
     private final Bus bus;
+    private final AppProperties appProperties;
 
     @Bean
     public GetCertificateResponderInterface getCertificateResponder(ModuleContainerApi moduleContainer) {
@@ -142,11 +143,10 @@ public class Fk7263ItCxfConfig {
      * }</pre>
      */
     @Bean("registerMedicalCertificateClient")
-    public RegisterMedicalCertificateResponderInterface registerMedicalCertificateClient(
-        @Value("${registermedicalcertificatev3.endpoint.url}") String address) {
+    public RegisterMedicalCertificateResponderInterface registerMedicalCertificateClient() {
         final JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean();
         factory.setServiceClass(RegisterMedicalCertificateResponderInterface.class);
-        factory.setAddress(address);
+        factory.setAddress(appProperties.ntjp().endpoints().registerMedicalCertificateV3());
         return (RegisterMedicalCertificateResponderInterface) factory.create();
     }
 }

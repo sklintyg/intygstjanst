@@ -46,8 +46,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.jms.JmsException;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
-import org.springframework.test.util.ReflectionTestUtils;
 import se.inera.intyg.intygstjanst.application.certificate.service.StatisticsService;
+import se.inera.intyg.intygstjanst.infrastructure.config.properties.AppProperties;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.OriginalCertificate;
 import se.inera.intyg.intygstjanst.infrastructure.logging.MonitoringLogService;
@@ -55,18 +55,26 @@ import se.inera.intyg.intygstjanst.infrastructure.logging.MonitoringLogService;
 @ExtendWith(MockitoExtension.class)
 class StatisticsServiceTest {
 
+    private static final AppProperties.Jms JMS_DISABLED =
+        new AppProperties.Jms("certificate.queue", "internal.queue", "event.queue", false);
+    private static final AppProperties.Jms JMS_ENABLED =
+        new AppProperties.Jms("certificate.queue", "internal.queue", "event.queue", true);
+
     @Mock
     private JmsTemplate template;
 
     @Mock
     private MonitoringLogService monitoringLogService;
 
+    @Mock
+    private AppProperties appProperties;
+
     @InjectMocks
     private StatisticsService serviceImpl;
 
     @BeforeEach
     void setUp() {
-        ReflectionTestUtils.setField(serviceImpl, "destinationQueueName", "certificate.queue");
+        when(appProperties.jms()).thenReturn(JMS_DISABLED);
     }
 
     @Test
@@ -87,7 +95,7 @@ class StatisticsServiceTest {
         final String id = "The id";
         final String type = "the type of the certificate";
 
-        ReflectionTestUtils.setField(serviceImpl, "enabled", Boolean.TRUE);
+        when(appProperties.jms()).thenReturn(JMS_ENABLED);
 
         ArgumentCaptor<String> destination = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<MessageCreator> messageCreator = ArgumentCaptor.forClass(MessageCreator.class);
@@ -119,7 +127,7 @@ class StatisticsServiceTest {
         final String unit = "unit";
         final String recipient = "recipient";
 
-        ReflectionTestUtils.setField(serviceImpl, "enabled", Boolean.TRUE);
+        when(appProperties.jms()).thenReturn(JMS_ENABLED);
 
         ArgumentCaptor<String> destination = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<MessageCreator> messageCreator = ArgumentCaptor.forClass(MessageCreator.class);
@@ -149,7 +157,7 @@ class StatisticsServiceTest {
         final String xmlBody = "xml body";
         final String id = "The id";
 
-        ReflectionTestUtils.setField(serviceImpl, "enabled", Boolean.TRUE);
+        when(appProperties.jms()).thenReturn(JMS_ENABLED);
 
         ArgumentCaptor<String> destination = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<MessageCreator> messageCreator = ArgumentCaptor.forClass(MessageCreator.class);
@@ -184,7 +192,7 @@ class StatisticsServiceTest {
         final String messageBody = "Message body";
         final String messageId = "This is the id of the message";
 
-        ReflectionTestUtils.setField(serviceImpl, "enabled", Boolean.TRUE);
+        when(appProperties.jms()).thenReturn(JMS_ENABLED);
 
         ArgumentCaptor<String> destination = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<MessageCreator> messageCreator = ArgumentCaptor.forClass(MessageCreator.class);
@@ -207,15 +215,15 @@ class StatisticsServiceTest {
 
     @Test
     void testNoJmsTemplateConfigured() {
-        ReflectionTestUtils.setField(serviceImpl, "jmsTemplate", null);
-        ReflectionTestUtils.setField(serviceImpl, "enabled", Boolean.TRUE);
+        when(appProperties.jms()).thenReturn(JMS_ENABLED);
+        StatisticsService serviceWithNullTemplate = new StatisticsService(null, monitoringLogService, appProperties);
 
-        assertThrows(NullPointerException.class, () -> serviceImpl.created("The document", "The id", "luse", "unit"));
+        assertThrows(NullPointerException.class, () -> serviceWithNullTemplate.created("The document", "The id", "luse", "unit"));
     }
 
     @Test
     void testJmsTemplateThrowsJmsException() {
-        ReflectionTestUtils.setField(serviceImpl, "enabled", Boolean.TRUE);
+        when(appProperties.jms()).thenReturn(JMS_ENABLED);
         doThrow(mock(JmsException.class)).when(template).send(anyString(), any(MessageCreator.class));
 
         boolean created = serviceImpl.created("The document", "The id", "luse", "unit");

@@ -25,29 +25,27 @@ import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
+import se.inera.intyg.intygstjanst.infrastructure.config.properties.AppProperties;
 
 @Component
 public class DiagnosisDescriptionProvider {
 
-    @Value("${it.diagnosisCodes.icd10se.file}")
-    private String diagnoseCodeIcd10SeFile;
-    @Value("${it.diagnosisCodes.ksh97p_kod.file}")
-    private String diagnosKodKS97PKodFile;
     private final ResourceLoader resourceLoader;
     private final IcdCodeConverter icdCodeConverter;
+    private final AppProperties appProperties;
 
-    public DiagnosisDescriptionProvider(IcdCodeConverter icdCodeConverter, ResourceLoader resourceLoader) {
+    public DiagnosisDescriptionProvider(IcdCodeConverter icdCodeConverter, ResourceLoader resourceLoader, AppProperties appProperties) {
         this.icdCodeConverter = icdCodeConverter;
         this.resourceLoader = resourceLoader;
+        this.appProperties = appProperties;
     }
 
     public Map<String, String> getDiagnosisDescription() throws IOException {
         final var diagnosisDescriptionMap = new HashMap<String, String>();
-        diagnosisDescriptionMap.putAll(icdCodeConverter.convert(diagnoseCodeIcd10SeFile));
-        diagnosisDescriptionMap.putAll(loadDiagnosFile(diagnosKodKS97PKodFile));
+        diagnosisDescriptionMap.putAll(icdCodeConverter.convert(appProperties.diagnosis().icd10seFile()));
+        diagnosisDescriptionMap.putAll(loadDiagnosFile(appProperties.diagnosis().ksh97pFile()));
         return diagnosisDescriptionMap;
     }
 

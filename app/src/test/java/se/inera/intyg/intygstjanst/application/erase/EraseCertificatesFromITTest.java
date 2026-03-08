@@ -10,6 +10,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
@@ -31,8 +32,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
-import org.springframework.test.util.ReflectionTestUtils;
+import org.mockito.Mock;
 import se.inera.intyg.intygstjanst.application.erase.EraseCertificatesFromIT;
+import se.inera.intyg.intygstjanst.infrastructure.config.properties.AppProperties;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.ApprovedReceiverDao;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.ArendeRepository;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.CertificateDao;
@@ -55,6 +57,8 @@ class EraseCertificatesFromITTest {
     SjukfallCertificateDao sjukfallCertificateDao;
     @Mock
     CertificateDao certificateDao;
+    @Mock
+    AppProperties appProperties;
     @InjectMocks
     EraseCertificatesFromIT eraseCertificatesFromIT;
     @Captor
@@ -67,7 +71,7 @@ class EraseCertificatesFromITTest {
 
     @BeforeEach
     void setUp() {
-        ReflectionTestUtils.setField(eraseCertificatesFromIT, "eraseCertificatesPageSize", ERASE_SIZE);
+        when(appProperties.erase()).thenReturn(new AppProperties.Erase(ERASE_SIZE));
     }
 
     @Nested

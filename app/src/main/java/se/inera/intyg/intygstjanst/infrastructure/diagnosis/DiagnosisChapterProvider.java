@@ -25,25 +25,25 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 import se.inera.intyg.intygstjanst.application.sickleave.dto.DiagnosKapitel;
+import se.inera.intyg.intygstjanst.infrastructure.config.properties.AppProperties;
 
 @Component
 public class DiagnosisChapterProvider {
 
-    @Value("${it.diagnosis.chapters.file}")
-    private String diagnosisChaptersFile;
     private final ResourceLoader resourceLoader;
+    private final AppProperties appProperties;
 
-    public DiagnosisChapterProvider(ResourceLoader resourceLoader) {
+    public DiagnosisChapterProvider(ResourceLoader resourceLoader, AppProperties appProperties) {
         this.resourceLoader = resourceLoader;
+        this.appProperties = appProperties;
     }
 
     public List<DiagnosKapitel> getDiagnosisChapters() throws IOException {
-        Resource resource = resourceLoader.getResource(diagnosisChaptersFile);
+        Resource resource = resourceLoader.getResource(appProperties.diagnosis().chaptersFile());
 
         List<DiagnosKapitel> list = new ArrayList<>();
         try (LineIterator it = IOUtils.lineIterator(resource.getInputStream(), StandardCharsets.UTF_8)) {

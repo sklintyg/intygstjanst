@@ -38,7 +38,7 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.LoggerFactory;
-import org.springframework.test.util.ReflectionTestUtils;
+import se.inera.intyg.intygstjanst.infrastructure.config.properties.AppProperties;
 import se.inera.intyg.intygstjanst.infrastructure.logging.HashUtility;
 import se.inera.intyg.intygstjanst.infrastructure.logging.MonitoringLogService;
 import se.inera.intyg.schemas.contract.Personnummer;
@@ -60,7 +60,9 @@ class MonitoringLogServiceTest {
     private Appender<ILoggingEvent> mockAppender;
 
     @Spy
-    private HashUtility hashUtility;
+    private HashUtility hashUtility = new HashUtility(
+        new AppProperties(null, null, null, null, null, null,
+            new AppProperties.Security("salt"), null));
 
     @Captor
     private ArgumentCaptor<LoggingEvent> captorLoggingEvent;
@@ -70,7 +72,7 @@ class MonitoringLogServiceTest {
 
     @BeforeEach
     void setup() {
-        ReflectionTestUtils.setField(hashUtility, "salt", "salt");
+        // no field injection needed — hashUtility initialized with salt directly
         final Logger logger = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
         logger.addAppender(mockAppender);
     }

@@ -27,27 +27,31 @@ import static se.inera.intyg.intygstjanst.integration.intygproxyservice.hsa.conf
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
+import se.inera.intyg.intygstjanst.integration.intygproxyservice.configuration.IntygProxyServiceProperties;
 import se.inera.intyg.intygstjanst.integration.intygproxyservice.hsa.dto.organization.GetHealthCareProviderRequestDTO;
 import se.inera.intyg.intygstjanst.integration.intygproxyservice.hsa.dto.organization.GetHealthCareProviderResponseDTO;
 
 @Service
 public class HsaIntygProxyServiceHealthCareProviderClient {
 
-    @Autowired
-    @Qualifier("hsaIntygProxyServiceRestClient")
-    private RestClient ipsRestClient;
+    private final RestClient ipsRestClient;
+    private final IntygProxyServiceProperties properties;
 
-    @Value("${integration.intygproxyservice.provider.endpoint}")
-    private String getHealthCareProviderEndpoint;
+    @Autowired
+    public HsaIntygProxyServiceHealthCareProviderClient(
+        @Qualifier("hsaIntygProxyServiceRestClient") RestClient ipsRestClient,
+        IntygProxyServiceProperties properties) {
+        this.ipsRestClient = ipsRestClient;
+        this.properties = properties;
+    }
 
     public GetHealthCareProviderResponseDTO get(GetHealthCareProviderRequestDTO request) {
         return ipsRestClient
             .post()
-            .uri(getHealthCareProviderEndpoint)
+            .uri(properties.hsa().healthcareProviderEndpoint())
             .body(request)
             .header(LOG_TRACE_ID_HEADER, MDC.get(TRACE_ID_KEY))
             .header(LOG_SESSION_ID_HEADER, MDC.get(SESSION_ID_KEY))

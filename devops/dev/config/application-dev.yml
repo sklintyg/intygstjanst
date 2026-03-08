@@ -1,0 +1,50 @@
+# ============================================================
+# Canonical application overrides for local development.
+# These override the empty/default values in application.yml.
+# ============================================================
+app:
+  server:
+    internal-port: 8180
+
+  ntjp:
+    base-url: "http://localhost:8080/inera-certificate/stubs"
+    tls:
+      certificate-file: dummy
+      certificate-password: dummy
+      key-manager-password: dummy
+      truststore-file: dummy
+      truststore-password: dummy
+
+  integration:
+    certificate-service:
+      base-url: "http://localhost:18030"
+    intyg-proxy-service:
+      base-url: "http://localhost:18020"
+
+  recipients:
+    file: "${application.dir}/config/recipients-dev.json"
+
+  security:
+    hash-salt: salt
+
+db:
+  server: localhost
+  port: 3306
+  name: intyg
+  username: intyg
+  password: intyg
+  pool:
+    maxSize: 5
+
+logging:
+  structured:
+    format:
+      console: ""
+
+spring:
+  activemq:
+    user: activemqUser
+    password: activemqPassword
+  data:
+    redis:
+      password: redis

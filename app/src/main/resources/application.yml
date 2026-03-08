@@ -1,0 +1,149 @@
+# ============================================================
+# Canonical application properties (app.*)
+# All custom application properties are defined here.
+# Override via external config (K8s ConfigMap/Secret) or
+# devops/dev/config/application-dev.yml for local development.
+# ============================================================
+app:
+  server:
+    internal-port: 8081
+
+  ntjp:
+    tls:
+      certificate-type: PKCS12
+      truststore-type: JKS
+    endpoints:
+      register-certificate-v1: "${app.ntjp.base-url}/clinicalprocess/healthcond/certificate/RegisterCertificate/1/rivtabp21"
+      register-certificate-v3: "${app.ntjp.base-url}/clinicalprocess/healthcond/certificate/RegisterCertificate/3/rivtabp21"
+      register-medical-certificate-v3: "${app.ntjp.base-url}/RegisterMedicalCertificate/3/rivtabp20"
+      revoke-certificate-v2: "${app.ntjp.base-url}/clinicalprocess/healthcond/certificate/RevokeCertificate/2/rivtabp21"
+      revoke-medical-certificate-v1: "${app.ntjp.base-url}/RevokeMedicalCertificate/1/rivtabp20"
+      send-medical-certificate-question-v1: "${app.ntjp.base-url}/SendMedicalCertificateQuestion/1/rivtabp20"
+      send-message-to-care-v2: "${app.ntjp.base-url}/clinicalprocess/healthcond/certificate/SendMessageToCare/2/rivtabp21"
+      send-message-to-recipient-v2: "${app.ntjp.base-url}/clinicalprocess/healthcond/certificate/SendMessageToRecipient/2/rivtabp21"
+    ts-bas-register-certificate-version: v3
+
+  jms:
+    statistics-queue: certificate.queue
+    internal-notification-queue: internal.notification.queue
+    certificate-event-queue: intygstjanst.certificate.event.queue
+    statistics-enabled: true
+
+  integration:
+    intyg-proxy-service:
+      hsa:
+        employee-endpoint: /api/v2/employee
+        credential-information-endpoint: /api/v1/credentialinformation
+        healthcare-unit-endpoint: /api/v2/healthcareunit
+        healthcare-unit-members-endpoint: /api/v2/healthcareunitmembers
+        unit-endpoint: /api/v1/unit
+        credentials-for-person-endpoint: /api/v1/credentialsForPerson
+        certification-person-endpoint: /api/v1/certificationPerson
+        last-update-endpoint: /api/v1/lastUpdate
+        healthcare-provider-endpoint: /api/v1/healthcareprovider
+      pu:
+        person-endpoint: /api/v1/person
+        persons-endpoint: /api/v1/persons
+      cache:
+        employee-ttl-seconds: 60
+        healthcare-unit-ttl-seconds: 60
+        healthcare-unit-members-ttl-seconds: 60
+        unit-ttl-seconds: 60
+        healthcare-provider-ttl-seconds: 60
+
+  diagnosis:
+    chapters-file: classpath:/diagnoskoder/diagnoskapitel.txt
+    icd10se-file: classpath:/diagnoskoder/icd10se/icd-10-se.tsv
+    ksh97p-file: classpath:/diagnoskoder/KSH97P_KOD.ANS
+
+  recipients:
+    update-cron: "0 0 0 * * *"
+
+  security:
+    hash-salt: "${HASH_SALT:}"
+
+  erase:
+    page-size: 1000
+
+db:
+  port: 3306
+
+logging:
+  structured:
+    format:
+      console: ecs
+
+management:
+  server:
+    port: 8082
+  endpoints:
+    web:
+      exposure:
+        include: "health,info"
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: always
+
+server:
+  port: 8080
+  servlet:
+    context-path: /inera-certificate
+
+spring:
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration
+
+  datasource:
+    url: "jdbc:mysql://${db.server}:${db.port}/${db.name}?useSSL=false&serverTimezone=Europe/Stockholm&allowPublicKeyRetrieval=true"
+    username: "${db.username}"
+    password: "${db.password}"
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 3
+  jpa:
+    hibernate:
+      ddl-auto: none
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    open-in-view: false
+  liquibase:
+    change-log: classpath:changelog/changelog.xml
+
+  activemq:
+    broker-url: "tcp://localhost:61616?jms.nonBlockingRedelivery=true&jms.redeliveryPolicy.maximumRedeliveries=3&jms.redeliveryPolicy.maximumRedeliveryDelay=6000&jms.redeliveryPolicy.initialRedeliveryDelay=4000&jms.redeliveryPolicy.useExponentialBackOff=true&jms.redeliveryPolicy.backOffMultiplier=2"
+    pool:
+      enabled: true
+      max-connections: 8
+
+  jms:
+    listener:
+      auto-startup: true
+      session-transacted: true
+      concurrency: 1
+      max-concurrency: 10
+    cache:
+      consumers: true
+    template:
+      session-transacted: true
+
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+  cache:
+    type: redis
+    redis:
+      time-to-live: 86400s
+
+# ============================================================
+# Required by Common for loading texts from file system or classpath.
+# This cannot be modified until both Intygstjanst and Webcert have
+# been updated to use new properties with app prefix.
+# ============================================================
+texts:
+  file:
+    directory: classpath:/texts/
+  update:
+    cron: "0 0 0 * * *"

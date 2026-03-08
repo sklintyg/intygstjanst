@@ -30,11 +30,11 @@ import java.util.function.Consumer;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.support.JmsUtils;
 import org.springframework.stereotype.Component;
+import se.inera.intyg.intygstjanst.infrastructure.config.properties.AppProperties;
 
 /**
  * Class for consuming JMS messages sent to statistik (ST). Meant to be used for integration testing purposes.
@@ -51,9 +51,7 @@ public class Receiver {
     private static final long TIMEOUT = 3000;
 
     private final JmsTemplate jmsTemplate;
-
-    @Value("${activemq.destination.queue.name}")
-    private String destinationQueueName;
+    private final AppProperties appProperties;
 
     private static final Logger LOG = LoggerFactory.getLogger(Receiver.class);
 
@@ -81,7 +79,7 @@ public class Receiver {
      */
     public int consume(final long timeout, final Consumer<Message> consumer) {
         return jmsTemplate.execute(session -> {
-            final Queue queue = session.createQueue(destinationQueueName);
+            final Queue queue = session.createQueue(appProperties.jms().statisticsQueue());
             final MessageConsumer messageConsumer = session.createConsumer(queue);
             try {
                 Message msg;

@@ -38,7 +38,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.util.ReflectionTestUtils;
+import se.inera.intyg.intygstjanst.infrastructure.config.properties.AppProperties;
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.model.CertificateState;
@@ -76,7 +76,9 @@ class RevokeCertificateResponderImplTest {
     private RecipientService recipientService;
 
     @Spy
-    private HashUtility hashUtility;
+    private HashUtility hashUtility = new HashUtility(
+        new AppProperties(null, null, null, null, null, null,
+            new AppProperties.Security("salt"), null));
 
     @Mock
     private SoapIntegrationService soapIntegrationService;
@@ -86,7 +88,7 @@ class RevokeCertificateResponderImplTest {
 
     @BeforeEach
     void setup() {
-        ReflectionTestUtils.setField(hashUtility, "salt", "salt");
+        // no field injection needed — hashUtility initialized with salt directly
     }
 
     @Test

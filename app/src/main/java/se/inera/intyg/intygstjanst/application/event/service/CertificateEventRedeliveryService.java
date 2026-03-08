@@ -23,9 +23,9 @@ import jakarta.jms.Message;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.activemq.ScheduledMessage;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
+import se.inera.intyg.intygstjanst.infrastructure.config.properties.AppProperties;
 
 @Service
 @Slf4j
@@ -44,9 +44,7 @@ public class CertificateEventRedeliveryService {
     private static final String REDELIVERIES = "redeliveries";
 
     private final JmsTemplate jmsTemplate;
-
-    @Value("${certificate.event.queue.name}")
-    private String certificateEventQueueName;
+    private final AppProperties appProperties;
 
     public void resend(Message message, String eventType, String certificateId, String messageId) {
 
@@ -69,7 +67,7 @@ public class CertificateEventRedeliveryService {
     }
 
     private void send(Message message, String eventType, String certificateId, String messageId, int redeliveries, Long redeliveryDelay) {
-        jmsTemplate.send(certificateEventQueueName, session -> {
+        jmsTemplate.send(appProperties.jms().certificateEventQueue(), session -> {
             final var textMessage = session.createTextMessage("");
             textMessage.setStringProperty(EVENT_TYPE, eventType);
             textMessage.setStringProperty(CERTIFICATE_ID, certificateId);

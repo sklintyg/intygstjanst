@@ -23,16 +23,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.util.ReflectionTestUtils;
+import org.mockito.Mockito;
+import se.inera.intyg.intygstjanst.infrastructure.config.properties.AppProperties;
 import se.inera.intyg.intygstjanst.infrastructure.logging.HashUtility;
 
 class HashUtilityTest {
 
-    private final HashUtility hashUtility = new HashUtility();
+    private final AppProperties appProperties = Mockito.mock(AppProperties.class);
+    private HashUtility hashUtility;
 
     @BeforeEach
     void setUp() {
-        ReflectionTestUtils.setField(hashUtility, "salt", "salt");
+        Mockito.when(appProperties.security()).thenReturn(new AppProperties.Security("salt"));
+        hashUtility = new HashUtility(appProperties);
     }
 
     @Test

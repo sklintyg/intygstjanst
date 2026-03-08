@@ -29,13 +29,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
-import org.springframework.test.util.ReflectionTestUtils;
 import se.inera.intyg.common.support.facade.model.metadata.CertificateMetadata;
 import se.inera.intyg.common.support.facade.model.metadata.Unit;
 import se.inera.intyg.intygstjanst.application.citizen.service.InternalNotificationService;
+import se.inera.intyg.intygstjanst.infrastructure.config.properties.AppProperties;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Certificate;
 
 @ExtendWith(MockitoExtension.class)
@@ -50,12 +51,16 @@ class InternalNotificationServiceTest {
     @Mock
     private JmsTemplate jmsTemplate;
 
+    @Mock
+    private AppProperties appProperties;
+
     @InjectMocks
     private InternalNotificationService testee;
 
     @BeforeEach
     void setUp() {
-        ReflectionTestUtils.setField(testee, "internalNotificationQueueName", "internal.notification.queue");
+        Mockito.lenient().when(appProperties.jms()).thenReturn(
+            new AppProperties.Jms("certificate.queue", "internal.notification.queue", "event.queue", false));
     }
 
     @Test
