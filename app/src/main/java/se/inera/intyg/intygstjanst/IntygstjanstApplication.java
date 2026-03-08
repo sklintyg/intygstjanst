@@ -2,7 +2,9 @@ package se.inera.intyg.intygstjanst;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 
+@ConfigurationPropertiesScan
 @SpringBootApplication(
     scanBasePackages = {
         "se.inera.intyg.intygstjanst",
