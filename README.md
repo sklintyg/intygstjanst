@@ -1,30 +1,82 @@
 # Intygstjänsten
-Intygstjänsten är den underliggande tjänsten för [Mina intyg](https://github.com/sklintyg/minaintyg), [Webcert](https://github.com/sklintyg/webcert) och [Statistik](https://github.com/sklintyg/statistik).
 
-## Kom igång
-Här hittar du grundläggande instruktioner för hur man kommer igång med projektet. Mer detaljerade instruktioner för att sätta upp sin utvecklingsmiljö och liknande hittar du på projektets [Wiki för utveckling](https://github.com/sklintyg/common/wiki) samt [devops/develop README-filen](https://github.com/sklintyg/devops/tree/release/2021-1/develop/README.md)
+## Tech Stack
 
+- **Java** 21
+- **Gradle** 8.14
+- **Spring Boot** (Web, Data JPA, Actuator, ActiveMQ, Data Redis)
+- **MySQL** (with Liquibase for database migrations)
+- **Redis** (caching)
+- **ActiveMQ** (messaging)
+- **Apache CXF** (SOAP/web services)
+- **JUnit 5** + **Mockito** (testing)
 
-Bas-URL för webbtjänsten är: http://localhost:8080/inera-certificate
+## Run Locally
 
-### Spring Profiler
+### Prerequisites
 
-| Profilnamn | Beskrivning |
-| :------------ | :----------- |
-| dev | Generellt för exekvering i dev miljö, används även i infra |
-| bootstrap | Laddar databasen med testdata |
-| testability-api | Aktiverar APIer för integrationstester (restAssuredTest) |
-| caching-enabled | Aktiverar cache, se infra och redis-cache |
-| it-fk-stub | Aktiverar NTJP stubbar, om denna inte anges måste NTJP-integration konfigureras   | 
-| wc-hsa-stub | Aktiverar HSA stubbar, se infra och hsa-integration |
+The following services must be available locally:
 
-Aktiverade profiler i dev: `dev,bootstrap,testability-api,caching-enabled,it-fk-stub,wc-hsa-stub`
+| Service  | Default address   | Dev credentials                 |
+|----------|-------------------|---------------------------------|
+| MySQL    | `localhost:3306`  | `intyg` / `intyg` (db: `intyg`) |
+| ActiveMQ | `localhost:61616` | —                               |
+| Redis    | `localhost:6379`  | —                               |
 
-## Licens
-Copyright (C) 2021 Inera AB (http://www.inera.se)
+### Start the application
 
-Intygstjänst is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+```bash
+./gradlew appRun
+```
 
-Intygstjänst is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details.
+Debug mode (JDWP on port 8880):
 
-Se även [LICENSE.md](LICENSE.md). 
+```bash
+./gradlew appRunDebug
+```
+
+### Ports
+
+| Port | Purpose                            |
+|------|------------------------------------|
+| 8080 | Application (`/inera-certificate`) |
+| 8081 | Internal API                       |
+| 8082 | Management / Actuator              |
+
+Active Spring profiles in dev: `dev,bootstrap,testability-api,caching-enabled,it-fk-stub`
+
+## Verify the Service
+
+**Health check:**
+
+```bash
+curl http://localhost:8082/actuator/health
+```
+
+**Run tests:**
+
+```bash
+./gradlew test
+```
+
+**Code coverage report:**
+
+```bash
+./gradlew jacocoTestReport
+# Report: app/build/jacocoHtml/index.html
+```
+
+<!-- TODO: Is there a smoke test or specific integration test command to run? -->
+
+## Further Documentation
+
+- [`migration/`](migration/) — Technical migration plans and analysis
+- [`LICENSE.md`](LICENSE.md) — LGPL-3.0
+
+<!-- TODO: Add links to:
+  - Internal wiki / Confluence
+  - Architecture documentation
+  - API documentation (Swagger/OpenAPI)
+  - Runbooks
+  - Dashboards (Grafana, etc.)
+-->
