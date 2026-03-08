@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.application.message;
 
 import jakarta.xml.bind.JAXBContext;
@@ -26,11 +27,14 @@ import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.SendMe
 
 public class SendMessageToCareUtil {
 
-    public static SendMessageToCareType getSendMessageToCareTypeFromFile(String fileName) throws Exception {
-        JAXBContext jaxbContext = JAXBContext.newInstance(SendMessageToCareType.class);
-        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-        return unmarshaller.unmarshal(
+  public static SendMessageToCareType getSendMessageToCareTypeFromFile(String fileName)
+      throws Exception {
+    JAXBContext jaxbContext = JAXBContext.newInstance(SendMessageToCareType.class);
+    Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+    return unmarshaller
+        .unmarshal(
             new StreamSource(new ClassPathResource(fileName).getInputStream()),
-            SendMessageToCareType.class).getValue();
-    }
+            SendMessageToCareType.class)
+        .getValue();
+  }
 }

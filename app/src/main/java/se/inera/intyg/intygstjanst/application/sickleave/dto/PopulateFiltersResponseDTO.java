@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -30,10 +30,10 @@ import se.inera.intyg.intygstjanst.application.reko.dto.RekoStatusTypeDTO;
 @AllArgsConstructor
 public class PopulateFiltersResponseDTO {
 
-    private List<Lakare> activeDoctors;
-    private List<DiagnosKapitel> diagnosisChapters;
-    private int nbrOfSickLeaves;
-    private boolean hasOngoingSickLeaves;
-    private List<RekoStatusTypeDTO> rekoStatusTypes;
-    private List<OccupationTypeDTO> occupationTypes;
+  private List<Lakare> activeDoctors;
+  private List<DiagnosKapitel> diagnosisChapters;
+  private int nbrOfSickLeaves;
+  private boolean hasOngoingSickLeaves;
+  private List<RekoStatusTypeDTO> rekoStatusTypes;
+  private List<OccupationTypeDTO> occupationTypes;
 }

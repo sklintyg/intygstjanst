@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.application.recipient;
 
 import java.util.ArrayList;
@@ -32,98 +33,108 @@ import se.inera.intyg.clinicalprocess.healthcond.certificate.getrecipientsforcer
 import se.inera.intyg.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v11.GetRecipientsForCertificateType;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.getrecipientsforcertificate.v11.RecipientType;
 import se.inera.intyg.common.schemas.clinicalprocess.healthcond.certificate.v1.utils.ResultTypeUtil;
+import se.inera.intyg.intygstjanst.application.certificate.service.CertificateService;
 import se.inera.intyg.intygstjanst.infrastructure.logging.MdcLogConstants;
 import se.inera.intyg.intygstjanst.infrastructure.logging.PerformanceLogging;
-import se.inera.intyg.intygstjanst.application.certificate.service.CertificateService;
 
 @Service
-public class GetRecipientsForCertificateResponderImpl implements GetRecipientsForCertificateResponderInterface {
+public class GetRecipientsForCertificateResponderImpl
+    implements GetRecipientsForCertificateResponderInterface {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(GetRecipientsForCertificateResponderImpl.class);
+  private static final Logger LOGGER =
+      LoggerFactory.getLogger(GetRecipientsForCertificateResponderImpl.class);
 
-    @Autowired
-    private RecipientService recipientService;
+  @Autowired private RecipientService recipientService;
 
-    @Autowired
-    private CertificateService certificateService;
+  @Autowired private CertificateService certificateService;
 
-    @Override
+  @Override
+  @PerformanceLogging(
+      eventAction = "list-certificate-recipients",
+      eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
+  public GetRecipientsForCertificateResponseType getRecipientsForCertificate(
+      String logicalAddress, GetRecipientsForCertificateType request) {
 
-    @PerformanceLogging(eventAction = "list-certificate-recipients", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
-    public GetRecipientsForCertificateResponseType getRecipientsForCertificate(String logicalAddress,
-        GetRecipientsForCertificateType request) {
+    GetRecipientsForCertificateResponseType response =
+        new GetRecipientsForCertificateResponseType();
 
-        GetRecipientsForCertificateResponseType response = new GetRecipientsForCertificateResponseType();
+    String intygsId = request.getCertificateId().trim();
+    List<Recipient> recipientList = getRecipientList(logicalAddress, intygsId);
 
-        String intygsId = request.getCertificateId().trim();
-        List<Recipient> recipientList = getRecipientList(logicalAddress, intygsId);
+    if (recipientList.isEmpty()) {
+      LOGGER.error("No recipients found for certificate {}", intygsId);
+      response.setResult(
+          ResultTypeUtil.errorResult(
+              ErrorIdType.APPLICATION_ERROR,
+              String.format("No recipients found for certificate id: %s", intygsId)));
+    } else {
+      response.getRecipient().addAll(getRecipientTypeList(recipientList));
 
-        if (recipientList.isEmpty()) {
-            LOGGER.error("No recipients found for certificate {}", intygsId);
-            response.setResult(ResultTypeUtil.errorResult(ErrorIdType.APPLICATION_ERROR,
-                String.format("No recipients found for certificate id: %s", intygsId)));
-        } else {
-            response.getRecipient().addAll(getRecipientTypeList(recipientList));
-
-            LOGGER.debug("{} recipient(s) found for {}", response.getRecipient().size(), intygsId);
-            response.setResult(ResultTypeUtil.okResult());
-        }
-
-        return response;
+      LOGGER.debug("{} recipient(s) found for {}", response.getRecipient().size(), intygsId);
+      response.setResult(ResultTypeUtil.okResult());
     }
 
-    private RecipientType createRecipientType(Recipient recipient) {
-        RecipientType recipientType = new RecipientType();
-        recipientType.setId(recipient.getId());
-        recipientType.setName(recipient.getName());
-        recipientType.setTrusted(recipient.isTrusted());
-        recipientType.setType(recipient.getRecipientType().name());
+    return response;
+  }
 
-        return recipientType;
-    }
+  private RecipientType createRecipientType(Recipient recipient) {
+    RecipientType recipientType = new RecipientType();
+    recipientType.setId(recipient.getId());
+    recipientType.setName(recipient.getName());
+    recipientType.setTrusted(recipient.isTrusted());
+    recipientType.setType(recipient.getRecipientType().name());
 
-    private List<RecipientType> getRecipientTypeList(List<Recipient> recipientList) {
-        return recipientList.stream()
-            .map(r -> {
-                return createRecipientType(r);
+    return recipientType;
+  }
+
+  private List<RecipientType> getRecipientTypeList(List<Recipient> recipientList) {
+    return recipientList.stream()
+        .map(
+            r -> {
+              return createRecipientType(r);
             })
-            .collect(Collectors.toList());
-    }
+        .collect(Collectors.toList());
+  }
 
-    private List<Recipient> getRecipientList(String logicalAddress, String intygsId) {
-        List<Recipient> recipientList = new ArrayList<>();
+  private List<Recipient> getRecipientList(String logicalAddress, String intygsId) {
+    List<Recipient> recipientList = new ArrayList<>();
 
-        try {
-            // Get approved recipients
-            recipientList = recipientService.listRecipients(intygsId).stream()
-                .filter(Recipient::isActive).collect(Collectors.toList());
+    try {
+      // Get approved recipients
+      recipientList =
+          recipientService.listRecipients(intygsId).stream()
+              .filter(Recipient::isActive)
+              .collect(Collectors.toList());
 
-            // There might be zero recipients...
-            // Then get the main receiver for this certificate's type
-            if (recipientList.size() == 0) {
-                String intygsTyp = getIntygsTyp(intygsId);
-                if (StringUtils.isNotBlank(intygsTyp)) {
-                    CertificateType certificateType = new CertificateType(intygsTyp);
-                    recipientList = recipientService.listRecipients(certificateType).stream()
-                        .filter(r -> r.getRecipientType().equals(CertificateRecipientType.HUVUDMOTTAGARE))
-                        .collect(Collectors.toList());
-                }
-            }
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+      // There might be zero recipients...
+      // Then get the main receiver for this certificate's type
+      if (recipientList.size() == 0) {
+        String intygsTyp = getIntygsTyp(intygsId);
+        if (StringUtils.isNotBlank(intygsTyp)) {
+          CertificateType certificateType = new CertificateType(intygsTyp);
+          recipientList =
+              recipientService.listRecipients(certificateType).stream()
+                  .filter(r -> r.getRecipientType().equals(CertificateRecipientType.HUVUDMOTTAGARE))
+                  .collect(Collectors.toList());
         }
-
-        return recipientList;
+      }
+    } catch (Exception e) {
+      LOGGER.error(e.getMessage());
     }
 
-    private String getIntygsTyp(String intygsId) {
-        final CertificateTypeInfo certificateTypeInfo = certificateService.getCertificateTypeInfo(intygsId);
-        if (certificateTypeInfo != null && certificateTypeInfo.getTypAvIntyg() != null) {
-            return certificateTypeInfo.getTypAvIntyg().getCode();
-        }
+    return recipientList;
+  }
 
-        LOGGER.error("Failed to get certificate's type. Certificate with id {} is invalid or does not exist", intygsId);
-        return null;
+  private String getIntygsTyp(String intygsId) {
+    final CertificateTypeInfo certificateTypeInfo =
+        certificateService.getCertificateTypeInfo(intygsId);
+    if (certificateTypeInfo != null && certificateTypeInfo.getTypAvIntyg() != null) {
+      return certificateTypeInfo.getTypAvIntyg().getCode();
     }
 
+    LOGGER.error(
+        "Failed to get certificate's type. Certificate with id {} is invalid or does not exist",
+        intygsId);
+    return null;
+  }
 }

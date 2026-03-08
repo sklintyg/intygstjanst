@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.application.sickleave.converter;
 
 import com.google.common.base.Strings;
@@ -39,107 +40,104 @@ import se.riv.clinicalprocess.healthcond.rehabilitation.v1.Vardgivare;
 /**
  * Converts a list of {@link SjukfallCertificate} into a list of {@link IntygsData}.
  *
- * Created by eriklupander on 2016-02-04.
+ * <p>Created by eriklupander on 2016-02-04.
  */
 public class SjukfallCertificateIntygsDataConverter {
 
-    public List<IntygsData> buildIntygsData(List<SjukfallCertificate> sjukfallCertificates) {
-        List<IntygsData> intygsDataList = new ArrayList<>();
+  public List<IntygsData> buildIntygsData(List<SjukfallCertificate> sjukfallCertificates) {
+    List<IntygsData> intygsDataList = new ArrayList<>();
 
-        for (SjukfallCertificate sc : sjukfallCertificates) {
-            IntygsData intygsData = new IntygsData();
+    for (SjukfallCertificate sc : sjukfallCertificates) {
+      IntygsData intygsData = new IntygsData();
 
-            intygsData.setIntygsId(Strings.nullToEmpty(sc.getId()).trim());
-            intygsData.setSigneringsTidpunkt(sc.getSigningDateTime());
-            intygsData.setPatient(buildPatient(sc.getCivicRegistrationNumber(), sc.getPatientName()));
-            intygsData.setDiagnoskod(sc.getDiagnoseCode());
+      intygsData.setIntygsId(Strings.nullToEmpty(sc.getId()).trim());
+      intygsData.setSigneringsTidpunkt(sc.getSigningDateTime());
+      intygsData.setPatient(buildPatient(sc.getCivicRegistrationNumber(), sc.getPatientName()));
+      intygsData.setDiagnoskod(sc.getDiagnoseCode());
 
-            if (sc.getBiDiagnoseCode1() != null) {
-                intygsData.getBidiagnoser().add(sc.getBiDiagnoseCode1());
-            }
-            if (sc.getBiDiagnoseCode2() != null) {
-                intygsData.getBidiagnoser().add(sc.getBiDiagnoseCode2());
-            }
+      if (sc.getBiDiagnoseCode1() != null) {
+        intygsData.getBidiagnoser().add(sc.getBiDiagnoseCode1());
+      }
+      if (sc.getBiDiagnoseCode2() != null) {
+        intygsData.getBidiagnoser().add(sc.getBiDiagnoseCode2());
+      }
 
-            intygsData.getSysselsattning().addAll(buildSysselsattning(sc));
+      intygsData.getSysselsattning().addAll(buildSysselsattning(sc));
 
-            Vardgivare vardgivare = buildVardgivare(sc.getCareGiverId());
-            Enhet enhet = buildEnhet(sc.getCareUnitId(), sc.getCareUnitName(), vardgivare);
+      Vardgivare vardgivare = buildVardgivare(sc.getCareGiverId());
+      Enhet enhet = buildEnhet(sc.getCareUnitId(), sc.getCareUnitName(), vardgivare);
 
-            intygsData.setSkapadAv(buildHoSPerson(enhet, sc.getSigningDoctorName(), sc.getSigningDoctorId()));
-            intygsData.setEnkeltIntyg(false);
+      intygsData.setSkapadAv(
+          buildHoSPerson(enhet, sc.getSigningDoctorName(), sc.getSigningDoctorId()));
+      intygsData.setEnkeltIntyg(false);
 
-            Arbetsformaga arbetsformaga = new Arbetsformaga();
-            arbetsformaga.getFormaga().addAll(buildFormaga(sc.getSjukfallCertificateWorkCapacity()));
-            intygsData.setArbetsformaga(arbetsformaga);
+      Arbetsformaga arbetsformaga = new Arbetsformaga();
+      arbetsformaga.getFormaga().addAll(buildFormaga(sc.getSjukfallCertificateWorkCapacity()));
+      intygsData.setArbetsformaga(arbetsformaga);
 
-            intygsDataList.add(intygsData);
-        }
-
-        return intygsDataList;
-
+      intygsDataList.add(intygsData);
     }
 
-    private List<String> buildSysselsattning(SjukfallCertificate sc) {
-        List<String> sysselsattningList = new ArrayList<>();
-        if (Strings.isNullOrEmpty(sc.getEmployment())) {
-            return sysselsattningList;
-        }
+    return intygsDataList;
+  }
 
-        sysselsattningList.addAll(Arrays.asList(sc.getEmployment().split(",", -1)));
-        return sysselsattningList;
+  private List<String> buildSysselsattning(SjukfallCertificate sc) {
+    List<String> sysselsattningList = new ArrayList<>();
+    if (Strings.isNullOrEmpty(sc.getEmployment())) {
+      return sysselsattningList;
     }
 
-    private Vardgivare buildVardgivare(String vardgivarId) {
-        Vardgivare vardgivare = new Vardgivare();
-        HsaId hsaId = new HsaId();
-        hsaId.setExtension(Strings.nullToEmpty(vardgivarId).trim());
-        vardgivare.setVardgivarId(hsaId);
-        return vardgivare;
-    }
+    sysselsattningList.addAll(Arrays.asList(sc.getEmployment().split(",", -1)));
+    return sysselsattningList;
+  }
 
-    private List<Formaga> buildFormaga(List<SjukfallCertificateWorkCapacity> workCapacities) {
+  private Vardgivare buildVardgivare(String vardgivarId) {
+    Vardgivare vardgivare = new Vardgivare();
+    HsaId hsaId = new HsaId();
+    hsaId.setExtension(Strings.nullToEmpty(vardgivarId).trim());
+    vardgivare.setVardgivarId(hsaId);
+    return vardgivare;
+  }
 
-        return workCapacities.stream()
-            .map(this::buildFormaga)
-            .collect(Collectors.toList());
-    }
+  private List<Formaga> buildFormaga(List<SjukfallCertificateWorkCapacity> workCapacities) {
 
-    private Formaga buildFormaga(SjukfallCertificateWorkCapacity wc) {
-        Formaga formaga = new Formaga();
-        formaga.setNedsattning(wc.getCapacityPercentage());
-        formaga.setStartdatum(LocalDate.parse(wc.getFromDate()));
-        formaga.setSlutdatum(LocalDate.parse(wc.getToDate()));
-        return formaga;
-    }
+    return workCapacities.stream().map(this::buildFormaga).collect(Collectors.toList());
+  }
 
-    private Patient buildPatient(String pnr, String namn) {
-        Patient patient = new Patient();
-        PersonId personId = new PersonId();
-        personId.setExtension(Strings.nullToEmpty(pnr).trim());
-        patient.setPersonId(personId);
-        patient.setFullstandigtNamn(namn);
-        return patient;
-    }
+  private Formaga buildFormaga(SjukfallCertificateWorkCapacity wc) {
+    Formaga formaga = new Formaga();
+    formaga.setNedsattning(wc.getCapacityPercentage());
+    formaga.setStartdatum(LocalDate.parse(wc.getFromDate()));
+    formaga.setSlutdatum(LocalDate.parse(wc.getToDate()));
+    return formaga;
+  }
 
-    private Enhet buildEnhet(String hsaId, String hsaName, Vardgivare vardgivare) {
-        Enhet enhet = new Enhet();
-        HsaId hsaIdType = new HsaId();
-        hsaIdType.setExtension(Strings.nullToEmpty(hsaId).trim());
-        enhet.setEnhetsId(hsaIdType);
-        enhet.setEnhetsnamn(hsaName);
-        enhet.setVardgivare(vardgivare);
-        return enhet;
-    }
+  private Patient buildPatient(String pnr, String namn) {
+    Patient patient = new Patient();
+    PersonId personId = new PersonId();
+    personId.setExtension(Strings.nullToEmpty(pnr).trim());
+    patient.setPersonId(personId);
+    patient.setFullstandigtNamn(namn);
+    return patient;
+  }
 
-    private HosPersonal buildHoSPerson(Enhet enhet, String namn, String hsaId) {
-        HosPersonal hosPerson = new HosPersonal();
-        hosPerson.setEnhet(enhet);
-        hosPerson.setFullstandigtNamn(namn);
-        HsaId hsaIdType = new HsaId();
-        hsaIdType.setExtension(Strings.nullToEmpty(hsaId).trim());
-        hosPerson.setPersonalId(hsaIdType);
-        return hosPerson;
-    }
+  private Enhet buildEnhet(String hsaId, String hsaName, Vardgivare vardgivare) {
+    Enhet enhet = new Enhet();
+    HsaId hsaIdType = new HsaId();
+    hsaIdType.setExtension(Strings.nullToEmpty(hsaId).trim());
+    enhet.setEnhetsId(hsaIdType);
+    enhet.setEnhetsnamn(hsaName);
+    enhet.setVardgivare(vardgivare);
+    return enhet;
+  }
 
+  private HosPersonal buildHoSPerson(Enhet enhet, String namn, String hsaId) {
+    HosPersonal hosPerson = new HosPersonal();
+    hosPerson.setEnhet(enhet);
+    hosPerson.setFullstandigtNamn(namn);
+    HsaId hsaIdType = new HsaId();
+    hsaIdType.setExtension(Strings.nullToEmpty(hsaId).trim());
+    hosPerson.setPersonalId(hsaIdType);
+    return hosPerson;
+  }
 }

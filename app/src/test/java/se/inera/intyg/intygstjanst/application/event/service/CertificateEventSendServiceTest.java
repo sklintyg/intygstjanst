@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -40,15 +40,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import se.inera.intyg.intygstjanst.application.event.service.CertificateEventSendService;
-import se.inera.intyg.intygstjanst.infrastructure.csintegration.dto.GetCertificateXmlResponse;
+import se.inera.intyg.intygstjanst.application.event.dto.UnitDTO;
 import se.inera.intyg.intygstjanst.application.exception.RecipientUnknownException;
-import se.inera.intyg.intygstjanst.infrastructure.logging.MonitoringLogService;
-import se.inera.intyg.intygstjanst.application.recipient.RecipientService;
 import se.inera.intyg.intygstjanst.application.recipient.CertificateRecipientType;
 import se.inera.intyg.intygstjanst.application.recipient.Recipient;
+import se.inera.intyg.intygstjanst.application.recipient.RecipientService;
 import se.inera.intyg.intygstjanst.application.recipient.dto.RecipientDTO;
-import se.inera.intyg.intygstjanst.application.event.dto.UnitDTO;
+import se.inera.intyg.intygstjanst.infrastructure.csintegration.dto.GetCertificateXmlResponse;
+import se.inera.intyg.intygstjanst.infrastructure.logging.MonitoringLogService;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.RegisterCertificateResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.RegisterCertificateResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.RegisterCertificateType;
@@ -58,186 +57,221 @@ import se.riv.clinicalprocess.healthcond.certificate.v3.ResultType;
 @ExtendWith(MockitoExtension.class)
 class CertificateEventSendServiceTest {
 
-    @Mock
-    private RegisterCertificateResponderInterface registerCertificateResponderInterface;
-    @Mock
-    private RecipientService recipientService;
-    @Mock
-    private MonitoringLogService monitoringLogService;
+  @Mock private RegisterCertificateResponderInterface registerCertificateResponderInterface;
+  @Mock private RecipientService recipientService;
+  @Mock private MonitoringLogService monitoringLogService;
 
-    @InjectMocks
-    private CertificateEventSendService certificateEventSendService;
+  @InjectMocks private CertificateEventSendService certificateEventSendService;
 
-    private static final String ERROR_MESSAGE = "errorMessage";
-    private static final String CERTIFICATE_ID = "certificateId";
-    private static final String CERTIFICATE_TYPE = "fk7211";
-    private static final String UNIT_ID = "unitId";
-    private static final String RECIPIENT_ID = "recipientId";
-    private static final String RECIPIENT_NAME = "recipientName";
-    private static final String LOGICAL_ADDRESS = "logicalAddress";
-    private static final Recipient RECIPIENT = new Recipient(LOGICAL_ADDRESS, RECIPIENT_NAME, RECIPIENT_ID,
-        CertificateRecipientType.HUVUDMOTTAGARE.name(), CERTIFICATE_TYPE, true, true);
-    private static final String ENCODED_XML = Base64.getEncoder().encodeToString("xmlFromCertificateService"
-        .getBytes(StandardCharsets.UTF_8));
-    private static final String EXAMPLE_CERTIFICATE_FILE_PATH = "GetCertificateResponderImplTest/valid-minimal-registercertificate-v3.xml";
+  private static final String ERROR_MESSAGE = "errorMessage";
+  private static final String CERTIFICATE_ID = "certificateId";
+  private static final String CERTIFICATE_TYPE = "fk7211";
+  private static final String UNIT_ID = "unitId";
+  private static final String RECIPIENT_ID = "recipientId";
+  private static final String RECIPIENT_NAME = "recipientName";
+  private static final String LOGICAL_ADDRESS = "logicalAddress";
+  private static final Recipient RECIPIENT =
+      new Recipient(
+          LOGICAL_ADDRESS,
+          RECIPIENT_NAME,
+          RECIPIENT_ID,
+          CertificateRecipientType.HUVUDMOTTAGARE.name(),
+          CERTIFICATE_TYPE,
+          true,
+          true);
+  private static final String ENCODED_XML =
+      Base64.getEncoder()
+          .encodeToString("xmlFromCertificateService".getBytes(StandardCharsets.UTF_8));
+  private static final String EXAMPLE_CERTIFICATE_FILE_PATH =
+      "GetCertificateResponderImplTest/valid-minimal-registercertificate-v3.xml";
 
-    private String decodedXml;
-    private GetCertificateXmlResponse xmlResponse;
+  private String decodedXml;
+  private GetCertificateXmlResponse xmlResponse;
 
-    @BeforeEach
-    void setUp() throws IOException {
-        decodedXml = Resources.toString(Resources.getResource(EXAMPLE_CERTIFICATE_FILE_PATH), StandardCharsets.UTF_8);
+  @BeforeEach
+  void setUp() throws IOException {
+    decodedXml =
+        Resources.toString(
+            Resources.getResource(EXAMPLE_CERTIFICATE_FILE_PATH), StandardCharsets.UTF_8);
 
-        xmlResponse = GetCertificateXmlResponse.builder()
+    xmlResponse =
+        GetCertificateXmlResponse.builder()
             .certificateId(CERTIFICATE_ID)
             .certificateType(CERTIFICATE_TYPE)
-            .unit(
-                UnitDTO.builder()
-                    .unitId(UNIT_ID)
-                    .build()
-            )
+            .unit(UnitDTO.builder().unitId(UNIT_ID).build())
             .xml(ENCODED_XML)
-            .recipient(RecipientDTO.builder()
-                .id(RECIPIENT_ID)
-                .build())
+            .recipient(RecipientDTO.builder().id(RECIPIENT_ID).build())
             .build();
-    }
+  }
 
-    @Nested
-    class ResultOk {
+  @Nested
+  class ResultOk {
 
-        @Test
-        void shouldNotThrowIfResultCodeOk() throws RecipientUnknownException {
-            when(recipientService.getRecipient(RECIPIENT_ID)).thenReturn(RECIPIENT);
-            when(registerCertificateResponderInterface.registerCertificate(eq(LOGICAL_ADDRESS), any(RegisterCertificateType.class)))
-                .thenReturn(createResponse(ResultCodeType.OK, ""));
+    @Test
+    void shouldNotThrowIfResultCodeOk() throws RecipientUnknownException {
+      when(recipientService.getRecipient(RECIPIENT_ID)).thenReturn(RECIPIENT);
+      when(registerCertificateResponderInterface.registerCertificate(
+              eq(LOGICAL_ADDRESS), any(RegisterCertificateType.class)))
+          .thenReturn(createResponse(ResultCodeType.OK, ""));
 
-            assertDoesNotThrow(() -> certificateEventSendService.send(xmlResponse, decodedXml));
-        }
-
-        @Test
-        void shouldMonitorLogIfResultCodeOk() throws RecipientUnknownException {
-            when(recipientService.getRecipient(RECIPIENT_ID)).thenReturn(RECIPIENT);
-            when(registerCertificateResponderInterface.registerCertificate(eq(LOGICAL_ADDRESS), any(RegisterCertificateType.class)))
-                .thenReturn(createResponse(ResultCodeType.OK, ""));
-
-            certificateEventSendService.send(xmlResponse, decodedXml);
-
-            verify(monitoringLogService).logCertificateSent(xmlResponse.getCertificateId(), xmlResponse.getCertificateType(),
-                xmlResponse.getUnit().getUnitId(), xmlResponse.getRecipient().getId());
-        }
-    }
-
-    @Nested
-    class ResultInfo {
-
-        @Test
-        void shouldNotThrowIfResultCodeInfo() throws RecipientUnknownException {
-            when(recipientService.getRecipient(RECIPIENT_ID)).thenReturn(RECIPIENT);
-            when(registerCertificateResponderInterface.registerCertificate(eq(LOGICAL_ADDRESS), any(RegisterCertificateType.class)))
-                .thenReturn(createResponse(ResultCodeType.INFO, "infoText"));
-
-            assertDoesNotThrow(() -> certificateEventSendService.send(xmlResponse, decodedXml));
-        }
-
-        @Test
-        void shouldMonitorLogIfResultCodeInfo() throws RecipientUnknownException {
-            when(recipientService.getRecipient(RECIPIENT_ID)).thenReturn(RECIPIENT);
-            when(registerCertificateResponderInterface.registerCertificate(eq(LOGICAL_ADDRESS), any(RegisterCertificateType.class)))
-                .thenReturn(createResponse(ResultCodeType.INFO, "infoText"));
-
-            certificateEventSendService.send(xmlResponse, decodedXml);
-
-            verify(monitoringLogService).logCertificateSent(xmlResponse.getCertificateId(), xmlResponse.getCertificateType(),
-                xmlResponse.getUnit().getUnitId(), xmlResponse.getRecipient().getId());
-        }
-    }
-
-    @Nested
-    class ResultError {
-
-        @Test
-        void shouldThrowIllegalStateExceptionIfResultCodeError() throws RecipientUnknownException {
-            when(recipientService.getRecipient(RECIPIENT_ID)).thenReturn(RECIPIENT);
-            when(registerCertificateResponderInterface.registerCertificate(eq(LOGICAL_ADDRESS), any(RegisterCertificateType.class)))
-                .thenReturn(createResponse(ResultCodeType.ERROR, "errorText"));
-
-            assertThrows(IllegalStateException.class, () -> certificateEventSendService.send(xmlResponse, decodedXml));
-        }
-
-        @Test
-        void shouldIncludeSendCallParametersInExceptionMessageWhenResultIsError() throws RecipientUnknownException {
-            when(recipientService.getRecipient(RECIPIENT_ID)).thenReturn(RECIPIENT);
-            when(registerCertificateResponderInterface.registerCertificate(eq(LOGICAL_ADDRESS), any(RegisterCertificateType.class)))
-                .thenReturn(createResponse(ResultCodeType.ERROR, ERROR_MESSAGE));
-
-            final var e = assertThrows(IllegalStateException.class, () -> certificateEventSendService.send(xmlResponse, decodedXml));
-            assertAll(
-                () -> assertTrue(e.getMessage().contains(CERTIFICATE_ID)),
-                () -> assertTrue(e.getMessage().contains(CERTIFICATE_TYPE)),
-                () -> assertTrue(e.getMessage().contains(RECIPIENT_ID)),
-                () -> assertTrue(e.getMessage().contains(ERROR_MESSAGE))
-            );
-        }
-    }
-
-    @Nested
-    class ResultNull {
-
-        @Test
-        void shouldIncludeSendCallParametersInExceptionMessageWhenResponseIsNull() throws RecipientUnknownException {
-            when(recipientService.getRecipient(RECIPIENT_ID)).thenReturn(RECIPIENT);
-            when(registerCertificateResponderInterface.registerCertificate(eq(LOGICAL_ADDRESS), any(RegisterCertificateType.class)))
-                .thenReturn(createResponse(null));
-
-            final var e = assertThrows(IllegalStateException.class, () -> certificateEventSendService.send(xmlResponse, decodedXml));
-            assertAll(
-                () -> assertTrue(e.getMessage().contains(CERTIFICATE_ID)),
-                () -> assertTrue(e.getMessage().contains(CERTIFICATE_TYPE)),
-                () -> assertTrue(e.getMessage().contains(RECIPIENT_ID))
-            );
-        }
-
-        @Test
-        void shouldIncludeSendCallParametersInExceptionMessageWhenResultIsNull() throws RecipientUnknownException {
-            when(recipientService.getRecipient(RECIPIENT_ID)).thenReturn(RECIPIENT);
-            when(registerCertificateResponderInterface.registerCertificate(eq(LOGICAL_ADDRESS), any(RegisterCertificateType.class)))
-                .thenReturn(createResponse(null));
-
-            final var e = assertThrows(IllegalStateException.class, () -> certificateEventSendService.send(xmlResponse, decodedXml));
-            assertAll(
-                () -> assertTrue(e.getMessage().contains(CERTIFICATE_ID)),
-                () -> assertTrue(e.getMessage().contains(CERTIFICATE_TYPE)),
-                () -> assertTrue(e.getMessage().contains(RECIPIENT_ID))
-            );
-        }
+      assertDoesNotThrow(() -> certificateEventSendService.send(xmlResponse, decodedXml));
     }
 
     @Test
-    void shouldThrowIllegalStateExceptionIfRecipientUnknownException() throws RecipientUnknownException {
-        when(recipientService.getRecipient(RECIPIENT_ID)).thenThrow(RecipientUnknownException.class);
-        assertThrows(IllegalStateException.class, () -> certificateEventSendService.send(xmlResponse, decodedXml));
+    void shouldMonitorLogIfResultCodeOk() throws RecipientUnknownException {
+      when(recipientService.getRecipient(RECIPIENT_ID)).thenReturn(RECIPIENT);
+      when(registerCertificateResponderInterface.registerCertificate(
+              eq(LOGICAL_ADDRESS), any(RegisterCertificateType.class)))
+          .thenReturn(createResponse(ResultCodeType.OK, ""));
+
+      certificateEventSendService.send(xmlResponse, decodedXml);
+
+      verify(monitoringLogService)
+          .logCertificateSent(
+              xmlResponse.getCertificateId(),
+              xmlResponse.getCertificateType(),
+              xmlResponse.getUnit().getUnitId(),
+              xmlResponse.getRecipient().getId());
+    }
+  }
+
+  @Nested
+  class ResultInfo {
+
+    @Test
+    void shouldNotThrowIfResultCodeInfo() throws RecipientUnknownException {
+      when(recipientService.getRecipient(RECIPIENT_ID)).thenReturn(RECIPIENT);
+      when(registerCertificateResponderInterface.registerCertificate(
+              eq(LOGICAL_ADDRESS), any(RegisterCertificateType.class)))
+          .thenReturn(createResponse(ResultCodeType.INFO, "infoText"));
+
+      assertDoesNotThrow(() -> certificateEventSendService.send(xmlResponse, decodedXml));
     }
 
     @Test
-    void shouldThrowIllegalStateExceptionIfSoapFault() throws RecipientUnknownException {
-        when(recipientService.getRecipient(RECIPIENT_ID)).thenReturn(RECIPIENT);
-        when(registerCertificateResponderInterface.registerCertificate(eq(LOGICAL_ADDRESS), any(RegisterCertificateType.class)))
-            .thenThrow(SOAPFaultException.class);
-        assertThrows(IllegalStateException.class, () -> certificateEventSendService.send(xmlResponse, decodedXml));
+    void shouldMonitorLogIfResultCodeInfo() throws RecipientUnknownException {
+      when(recipientService.getRecipient(RECIPIENT_ID)).thenReturn(RECIPIENT);
+      when(registerCertificateResponderInterface.registerCertificate(
+              eq(LOGICAL_ADDRESS), any(RegisterCertificateType.class)))
+          .thenReturn(createResponse(ResultCodeType.INFO, "infoText"));
+
+      certificateEventSendService.send(xmlResponse, decodedXml);
+
+      verify(monitoringLogService)
+          .logCertificateSent(
+              xmlResponse.getCertificateId(),
+              xmlResponse.getCertificateType(),
+              xmlResponse.getUnit().getUnitId(),
+              xmlResponse.getRecipient().getId());
+    }
+  }
+
+  @Nested
+  class ResultError {
+
+    @Test
+    void shouldThrowIllegalStateExceptionIfResultCodeError() throws RecipientUnknownException {
+      when(recipientService.getRecipient(RECIPIENT_ID)).thenReturn(RECIPIENT);
+      when(registerCertificateResponderInterface.registerCertificate(
+              eq(LOGICAL_ADDRESS), any(RegisterCertificateType.class)))
+          .thenReturn(createResponse(ResultCodeType.ERROR, "errorText"));
+
+      assertThrows(
+          IllegalStateException.class,
+          () -> certificateEventSendService.send(xmlResponse, decodedXml));
     }
 
-    private RegisterCertificateResponseType createResponse(ResultCodeType resultCode, String resultText) {
-        final var resultType = new ResultType();
-        resultType.setResultCode(resultCode);
-        resultType.setResultText(resultText);
-        return createResponse(resultType);
+    @Test
+    void shouldIncludeSendCallParametersInExceptionMessageWhenResultIsError()
+        throws RecipientUnknownException {
+      when(recipientService.getRecipient(RECIPIENT_ID)).thenReturn(RECIPIENT);
+      when(registerCertificateResponderInterface.registerCertificate(
+              eq(LOGICAL_ADDRESS), any(RegisterCertificateType.class)))
+          .thenReturn(createResponse(ResultCodeType.ERROR, ERROR_MESSAGE));
+
+      final var e =
+          assertThrows(
+              IllegalStateException.class,
+              () -> certificateEventSendService.send(xmlResponse, decodedXml));
+      assertAll(
+          () -> assertTrue(e.getMessage().contains(CERTIFICATE_ID)),
+          () -> assertTrue(e.getMessage().contains(CERTIFICATE_TYPE)),
+          () -> assertTrue(e.getMessage().contains(RECIPIENT_ID)),
+          () -> assertTrue(e.getMessage().contains(ERROR_MESSAGE)));
+    }
+  }
+
+  @Nested
+  class ResultNull {
+
+    @Test
+    void shouldIncludeSendCallParametersInExceptionMessageWhenResponseIsNull()
+        throws RecipientUnknownException {
+      when(recipientService.getRecipient(RECIPIENT_ID)).thenReturn(RECIPIENT);
+      when(registerCertificateResponderInterface.registerCertificate(
+              eq(LOGICAL_ADDRESS), any(RegisterCertificateType.class)))
+          .thenReturn(createResponse(null));
+
+      final var e =
+          assertThrows(
+              IllegalStateException.class,
+              () -> certificateEventSendService.send(xmlResponse, decodedXml));
+      assertAll(
+          () -> assertTrue(e.getMessage().contains(CERTIFICATE_ID)),
+          () -> assertTrue(e.getMessage().contains(CERTIFICATE_TYPE)),
+          () -> assertTrue(e.getMessage().contains(RECIPIENT_ID)));
     }
 
-    private RegisterCertificateResponseType createResponse(ResultType resultType) {
-        final var responseType = new RegisterCertificateResponseType();
-        responseType.setResult(resultType);
-        return responseType;
-    }
+    @Test
+    void shouldIncludeSendCallParametersInExceptionMessageWhenResultIsNull()
+        throws RecipientUnknownException {
+      when(recipientService.getRecipient(RECIPIENT_ID)).thenReturn(RECIPIENT);
+      when(registerCertificateResponderInterface.registerCertificate(
+              eq(LOGICAL_ADDRESS), any(RegisterCertificateType.class)))
+          .thenReturn(createResponse(null));
 
+      final var e =
+          assertThrows(
+              IllegalStateException.class,
+              () -> certificateEventSendService.send(xmlResponse, decodedXml));
+      assertAll(
+          () -> assertTrue(e.getMessage().contains(CERTIFICATE_ID)),
+          () -> assertTrue(e.getMessage().contains(CERTIFICATE_TYPE)),
+          () -> assertTrue(e.getMessage().contains(RECIPIENT_ID)));
+    }
+  }
+
+  @Test
+  void shouldThrowIllegalStateExceptionIfRecipientUnknownException()
+      throws RecipientUnknownException {
+    when(recipientService.getRecipient(RECIPIENT_ID)).thenThrow(RecipientUnknownException.class);
+    assertThrows(
+        IllegalStateException.class,
+        () -> certificateEventSendService.send(xmlResponse, decodedXml));
+  }
+
+  @Test
+  void shouldThrowIllegalStateExceptionIfSoapFault() throws RecipientUnknownException {
+    when(recipientService.getRecipient(RECIPIENT_ID)).thenReturn(RECIPIENT);
+    when(registerCertificateResponderInterface.registerCertificate(
+            eq(LOGICAL_ADDRESS), any(RegisterCertificateType.class)))
+        .thenThrow(SOAPFaultException.class);
+    assertThrows(
+        IllegalStateException.class,
+        () -> certificateEventSendService.send(xmlResponse, decodedXml));
+  }
+
+  private RegisterCertificateResponseType createResponse(
+      ResultCodeType resultCode, String resultText) {
+    final var resultType = new ResultType();
+    resultType.setResultCode(resultCode);
+    resultType.setResultText(resultText);
+    return createResponse(resultType);
+  }
+
+  private RegisterCertificateResponseType createResponse(ResultType resultType) {
+    final var responseType = new RegisterCertificateResponseType();
+    responseType.setResult(resultType);
+    return responseType;
+  }
 }

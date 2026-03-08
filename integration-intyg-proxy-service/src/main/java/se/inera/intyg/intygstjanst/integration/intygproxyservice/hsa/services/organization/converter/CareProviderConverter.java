@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -32,12 +32,12 @@ import se.inera.intyg.intygstjanst.integration.hsa.model.legacy.Vardgivare;
 @RequiredArgsConstructor
 public class CareProviderConverter {
 
-    public Vardgivare convert(Commission commission, List<Vardenhet> careUnits) {
-        final var careProvider = new Vardgivare();
-        careProvider.setId(commission.getHealthCareProviderHsaId());
-        careProvider.setNamn(commission.getHealthCareProviderName());
-        careProvider.setVardenheter(careUnits);
+  public Vardgivare convert(Commission commission, List<Vardenhet> careUnits) {
+    final var careProvider = new Vardgivare();
+    careProvider.setId(commission.getHealthCareProviderHsaId());
+    careProvider.setNamn(commission.getHealthCareProviderName());
+    careProvider.setVardenheter(careUnits);
 
-        return careProvider;
-    }
+    return careProvider;
+  }
 }

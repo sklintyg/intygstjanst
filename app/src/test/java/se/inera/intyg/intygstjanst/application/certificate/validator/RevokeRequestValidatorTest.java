@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.application.certificate.validator;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -31,51 +32,61 @@ import org.springframework.core.io.ClassPathResource;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateRequestType;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeType;
 import se.inera.intyg.common.support.validate.CertificateValidationException;
-import se.inera.intyg.intygstjanst.application.certificate.validator.RevokeRequestValidator;
 
 @ExtendWith(MockitoExtension.class)
 class RevokeRequestValidatorTest {
 
-    @Test
-    void testValidateAndCorrect() throws Exception {
-        new RevokeRequestValidator(createRequest()).validateAndCorrect();
-    }
+  @Test
+  void testValidateAndCorrect() throws Exception {
+    new RevokeRequestValidator(createRequest()).validateAndCorrect();
+  }
 
-    @Test
-    void testValidateAndCorrectVardReferensIdMissing() throws Exception {
-        RevokeType revokeRequest = createRequest();
-        revokeRequest.setVardReferensId(null);
-        assertThrows(CertificateValidationException.class, () -> new RevokeRequestValidator(revokeRequest).validateAndCorrect());
-    }
+  @Test
+  void testValidateAndCorrectVardReferensIdMissing() throws Exception {
+    RevokeType revokeRequest = createRequest();
+    revokeRequest.setVardReferensId(null);
+    assertThrows(
+        CertificateValidationException.class,
+        () -> new RevokeRequestValidator(revokeRequest).validateAndCorrect());
+  }
 
-    @Test
-    void testValidateAndCorrectAvsantTidpunktMissing() throws Exception {
-        RevokeType revokeRequest = createRequest();
-        revokeRequest.setAvsantTidpunkt(null);
-        assertThrows(CertificateValidationException.class, () -> new RevokeRequestValidator(revokeRequest).validateAndCorrect());
-    }
+  @Test
+  void testValidateAndCorrectAvsantTidpunktMissing() throws Exception {
+    RevokeType revokeRequest = createRequest();
+    revokeRequest.setAvsantTidpunkt(null);
+    assertThrows(
+        CertificateValidationException.class,
+        () -> new RevokeRequestValidator(revokeRequest).validateAndCorrect());
+  }
 
-    @Test
-    void testValidateAndCorrectLakarutlatandeError() throws Exception {
-        RevokeType revokeRequest = createRequest();
-        revokeRequest.getLakarutlatande().setPatient(null);
-        assertThrows(CertificateValidationException.class, () -> new RevokeRequestValidator(revokeRequest).validateAndCorrect());
-    }
+  @Test
+  void testValidateAndCorrectLakarutlatandeError() throws Exception {
+    RevokeType revokeRequest = createRequest();
+    revokeRequest.getLakarutlatande().setPatient(null);
+    assertThrows(
+        CertificateValidationException.class,
+        () -> new RevokeRequestValidator(revokeRequest).validateAndCorrect());
+  }
 
-    @Test
-    void testValidateAndCorrectAdressVardError() throws Exception {
-        RevokeType revokeRequest = createRequest();
-        revokeRequest.getAdressVard().setHosPersonal(null);
-        assertThrows(CertificateValidationException.class, () -> new RevokeRequestValidator(revokeRequest).validateAndCorrect());
-    }
+  @Test
+  void testValidateAndCorrectAdressVardError() throws Exception {
+    RevokeType revokeRequest = createRequest();
+    revokeRequest.getAdressVard().setHosPersonal(null);
+    assertThrows(
+        CertificateValidationException.class,
+        () -> new RevokeRequestValidator(revokeRequest).validateAndCorrect());
+  }
 
-    protected RevokeType createRequest() throws Exception {
-        JAXBContext jaxbContext = JAXBContext.newInstance(RevokeMedicalCertificateRequestType.class);
-        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-        JAXBElement<RevokeMedicalCertificateRequestType> request = unmarshaller.unmarshal(
-            new StreamSource(new ClassPathResource("revoke-medical-certificate/revoke-medical-certificate-request.xml").getInputStream()),
+  protected RevokeType createRequest() throws Exception {
+    JAXBContext jaxbContext = JAXBContext.newInstance(RevokeMedicalCertificateRequestType.class);
+    Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+    JAXBElement<RevokeMedicalCertificateRequestType> request =
+        unmarshaller.unmarshal(
+            new StreamSource(
+                new ClassPathResource(
+                        "revoke-medical-certificate/revoke-medical-certificate-request.xml")
+                    .getInputStream()),
             RevokeMedicalCertificateRequestType.class);
-        return request.getValue().getRevoke();
-    }
-
+    return request.getValue().getRevoke();
+  }
 }

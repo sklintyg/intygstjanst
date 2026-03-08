@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,7 +16,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.application.certificate.service;
+
 // CHECKSTYLE:OFF LineLength
 
 import static se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum.OK;
@@ -32,16 +34,16 @@ import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
 import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
 import se.inera.intyg.common.support.modules.support.ModuleEntryPoint;
 import se.inera.intyg.common.support.modules.support.api.exception.ModuleException;
-import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.application.exception.MissingModuleException;
 import se.inera.intyg.intygstjanst.application.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.application.exception.ServerException;
 import se.inera.intyg.intygstjanst.application.exception.SubsystemCallException;
-import se.inera.intyg.intygstjanst.infrastructure.logging.MonitoringLogService;
-import se.inera.intyg.intygstjanst.application.recipient.RecipientService;
-import se.inera.intyg.intygstjanst.infrastructure.soap.SoapIntegrationService;
 import se.inera.intyg.intygstjanst.application.recipient.CertificateType;
 import se.inera.intyg.intygstjanst.application.recipient.Recipient;
+import se.inera.intyg.intygstjanst.application.recipient.RecipientService;
+import se.inera.intyg.intygstjanst.infrastructure.logging.MonitoringLogService;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Certificate;
+import se.inera.intyg.intygstjanst.infrastructure.soap.SoapIntegrationService;
 
 // CHECKSTYLE:ON LineLength
 
@@ -51,95 +53,112 @@ import se.inera.intyg.intygstjanst.application.recipient.Recipient;
 @Service
 public class CertificateSenderService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CertificateSenderService.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(CertificateSenderService.class);
 
-    @Autowired
-    private RecipientService recipientService;
+  @Autowired private RecipientService recipientService;
 
-    @Autowired
-    private IntygModuleRegistry moduleRegistry;
+  @Autowired private IntygModuleRegistry moduleRegistry;
 
-    @Autowired
-    private MonitoringLogService monitoringLogService;
+  @Autowired private MonitoringLogService monitoringLogService;
 
-    @Autowired
-    SoapIntegrationService soapIntegrationService;
+  @Autowired SoapIntegrationService soapIntegrationService;
 
-    public void sendCertificate(Certificate certificate, String recipientId) {
-        try {
-            ModuleEntryPoint module = moduleRegistry.getModuleEntryPoint(certificate.getType());
-            CertificateType certType = new CertificateType(certificate.getType());
-            // Use target from parameter if present, otherwise use the default receiver from the module's entryPoint.
-            String logicalAddress;
+  public void sendCertificate(Certificate certificate, String recipientId) {
+    try {
+      ModuleEntryPoint module = moduleRegistry.getModuleEntryPoint(certificate.getType());
+      CertificateType certType = new CertificateType(certificate.getType());
+      // Use target from parameter if present, otherwise use the default receiver from the module's
+      // entryPoint.
+      String logicalAddress;
 
-            if (recipientId == null) {
-                logicalAddress = module.getDefaultRecipient();
+      if (recipientId == null) {
+        logicalAddress = module.getDefaultRecipient();
 
-            } else {
-                Recipient recipient = recipientService.getRecipient(recipientId);
-                // Check that the recipient is valid for certType and is active
-                if (recipientService.listRecipients(certType).contains(recipient) && recipient.isActive()) {
-                    logicalAddress = recipient.getLogicalAddress();
-                } else {
-                    LOGGER.error("Recipient {} is not available for certificate type {}", recipientId, certType.toString());
-                    throw new ServerException(
-                        String.format("Recipient %s is not available for certificate type %s", recipientId, certType.toString()));
-                }
-            }
-
-            soapIntegrationService.sendCertificateToRecipient(certificate, logicalAddress, recipientId);
-
-            monitoringLogService.logCertificateSent(certificate.getId(), certificate.getType(), certificate.getCareUnitId(), recipientId);
-
-        } catch (ModuleNotFoundException e) {
-            LOGGER.error("The module '{}' was not found - not registered in application", certificate.getType());
-            throw new MissingModuleException(String.format("The module '%s' was not found - not registered in application",
-                certificate.getType()), e);
-
-        } catch (ModuleException e) {
-            String message = String.format("Failed to send certificate '%s' of type '%s' to recipient '%s'", certificate.getId(),
-                certificate.getType(), recipientId);
-            throw new ServerException(message, e);
-
-        } catch (RecipientUnknownException e) {
-            String message = String.format("Found no matching recipient for logical adress: '%s'", recipientId);
-            LOGGER.error(e.getMessage());
-            throw new ServerException(message, e);
-        }
-    }
-
-    public void sendCertificateRevocation(Certificate certificate, String recipientId, RevokeType revokeData) {
-        RevokeMedicalCertificateRequestType request = new RevokeMedicalCertificateRequestType();
-        request.setRevoke(revokeData);
-
-        AttributedURIType logicalAddress = getLogicalAddress(recipientId);
-
-        final var sendResponse = soapIntegrationService.revokeMedicalCertificate(logicalAddress, request);
-
-        if (sendResponse.getResult().getResultCode() != OK) {
-            String message = "Failed to send question to '" + recipientId + "' when revoking certificate '" + certificate.getId()
-                + "'. Info from recipient: " + sendResponse.getResult().getInfoText();
-            LOGGER.error(message);
-            throw new SubsystemCallException(recipientId, message);
+      } else {
+        Recipient recipient = recipientService.getRecipient(recipientId);
+        // Check that the recipient is valid for certType and is active
+        if (recipientService.listRecipients(certType).contains(recipient) && recipient.isActive()) {
+          logicalAddress = recipient.getLogicalAddress();
         } else {
-            monitoringLogService.logCertificateRevokeSent(certificate.getId(), certificate.getType(), certificate.getCareUnitId(),
-                recipientId);
+          LOGGER.error(
+              "Recipient {} is not available for certificate type {}",
+              recipientId,
+              certType.toString());
+          throw new ServerException(
+              String.format(
+                  "Recipient %s is not available for certificate type %s",
+                  recipientId, certType.toString()));
         }
+      }
+
+      soapIntegrationService.sendCertificateToRecipient(certificate, logicalAddress, recipientId);
+
+      monitoringLogService.logCertificateSent(
+          certificate.getId(), certificate.getType(), certificate.getCareUnitId(), recipientId);
+
+    } catch (ModuleNotFoundException e) {
+      LOGGER.error(
+          "The module '{}' was not found - not registered in application", certificate.getType());
+      throw new MissingModuleException(
+          String.format(
+              "The module '%s' was not found - not registered in application",
+              certificate.getType()),
+          e);
+
+    } catch (ModuleException e) {
+      String message =
+          String.format(
+              "Failed to send certificate '%s' of type '%s' to recipient '%s'",
+              certificate.getId(), certificate.getType(), recipientId);
+      throw new ServerException(message, e);
+
+    } catch (RecipientUnknownException e) {
+      String message =
+          String.format("Found no matching recipient for logical adress: '%s'", recipientId);
+      LOGGER.error(e.getMessage());
+      throw new ServerException(message, e);
     }
+  }
 
-    private AttributedURIType getLogicalAddress(String recipientId) {
+  public void sendCertificateRevocation(
+      Certificate certificate, String recipientId, RevokeType revokeData) {
+    RevokeMedicalCertificateRequestType request = new RevokeMedicalCertificateRequestType();
+    request.setRevoke(revokeData);
 
-        try {
-            Recipient recipient = recipientService.getRecipient(recipientId);
+    AttributedURIType logicalAddress = getLogicalAddress(recipientId);
 
-            AttributedURIType logicalAddress = new AttributedURIType();
-            logicalAddress.setValue(recipient.getLogicalAddress());
+    final var sendResponse =
+        soapIntegrationService.revokeMedicalCertificate(logicalAddress, request);
 
-            return logicalAddress;
-
-        } catch (RecipientUnknownException rue) {
-            LOGGER.error(rue.getMessage());
-            throw new RuntimeException(rue);
-        }
+    if (sendResponse.getResult().getResultCode() != OK) {
+      String message =
+          "Failed to send question to '"
+              + recipientId
+              + "' when revoking certificate '"
+              + certificate.getId()
+              + "'. Info from recipient: "
+              + sendResponse.getResult().getInfoText();
+      LOGGER.error(message);
+      throw new SubsystemCallException(recipientId, message);
+    } else {
+      monitoringLogService.logCertificateRevokeSent(
+          certificate.getId(), certificate.getType(), certificate.getCareUnitId(), recipientId);
     }
+  }
+
+  private AttributedURIType getLogicalAddress(String recipientId) {
+
+    try {
+      Recipient recipient = recipientService.getRecipient(recipientId);
+
+      AttributedURIType logicalAddress = new AttributedURIType();
+      logicalAddress.setValue(recipient.getLogicalAddress());
+
+      return logicalAddress;
+
+    } catch (RecipientUnknownException rue) {
+      LOGGER.error(rue.getMessage());
+      throw new RuntimeException(rue);
+    }
+  }
 }

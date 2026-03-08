@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.application.certificate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -38,9 +39,9 @@ import se.inera.ifv.insuranceprocess.healthreporting.listcertificates.rivtabp20.
 import se.inera.ifv.insuranceprocess.healthreporting.listcertificatesresponder.v1.ListCertificatesRequestType;
 import se.inera.ifv.insuranceprocess.healthreporting.listcertificatesresponder.v1.ListCertificatesResponseType;
 import se.inera.intyg.common.support.model.CertificateState;
+import se.inera.intyg.intygstjanst.application.certificate.service.CertificateService;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.CertificateStateHistoryEntry;
-import se.inera.intyg.intygstjanst.application.certificate.service.CertificateService;
 import se.inera.intyg.schemas.contract.Personnummer;
 
 /**
@@ -49,103 +50,122 @@ import se.inera.intyg.schemas.contract.Personnummer;
 @ExtendWith(MockitoExtension.class)
 class ListCertificatesResponderImplTest {
 
-    @Mock
-    private CertificateService certificateService = mock(CertificateService.class);
+  @Mock private CertificateService certificateService = mock(CertificateService.class);
 
-    @InjectMocks
-    private ListCertificatesResponderInterface responder = new ListCertificatesResponderImpl();
+  @InjectMocks
+  private ListCertificatesResponderInterface responder = new ListCertificatesResponderImpl();
 
-    @Test
-    void listCertificatesWithNoCertificates() {
-        Personnummer civicRegistrationNumber = createPnr("19350108-1234");
-        List<String> certificateTypes = Collections.singletonList("fk7263");
-        LocalDate fromDate = LocalDate.of(2000, 1, 1);
-        LocalDate toDate = LocalDate.of(2020, 12, 12);
+  @Test
+  void listCertificatesWithNoCertificates() {
+    Personnummer civicRegistrationNumber = createPnr("19350108-1234");
+    List<String> certificateTypes = Collections.singletonList("fk7263");
+    LocalDate fromDate = LocalDate.of(2000, 1, 1);
+    LocalDate toDate = LocalDate.of(2020, 12, 12);
 
-        List<Certificate> result = Collections.emptyList();
+    List<Certificate> result = Collections.emptyList();
 
-        when(certificateService.listCertificatesForCitizen(civicRegistrationNumber, certificateTypes, fromDate, toDate)).thenReturn(result);
+    when(certificateService.listCertificatesForCitizen(
+            civicRegistrationNumber, certificateTypes, fromDate, toDate))
+        .thenReturn(result);
 
-        ListCertificatesRequestType parameters = createListCertificatesRequest(civicRegistrationNumber, certificateTypes, fromDate, toDate);
+    ListCertificatesRequestType parameters =
+        createListCertificatesRequest(civicRegistrationNumber, certificateTypes, fromDate, toDate);
 
-        ListCertificatesResponseType response = responder.listCertificates(null, parameters);
+    ListCertificatesResponseType response = responder.listCertificates(null, parameters);
 
-        verify(certificateService).listCertificatesForCitizen(civicRegistrationNumber, certificateTypes, fromDate, toDate);
+    verify(certificateService)
+        .listCertificatesForCitizen(civicRegistrationNumber, certificateTypes, fromDate, toDate);
 
-        assertEquals(0, response.getMeta().size());
-        assertEquals(OK, response.getResult().getResultCode());
+    assertEquals(0, response.getMeta().size());
+    assertEquals(OK, response.getResult().getResultCode());
+  }
+
+  @Test
+  void testListCertificates() {
+    Personnummer civicRegistrationNumber = createPnr("19350108-1234");
+    List<String> certificateTypes = Collections.singletonList("fk7263");
+    LocalDate fromDate = LocalDate.of(2000, 1, 1);
+    LocalDate toDate = LocalDate.of(2020, 12, 12);
+
+    Certificate deletedCertificate = new Certificate();
+    deletedCertificate.addState(
+        new CertificateStateHistoryEntry("INVANA", CertificateState.DELETED, null));
+    Certificate revokedCertificate = new Certificate();
+    revokedCertificate.addState(
+        new CertificateStateHistoryEntry("HSVARD", CertificateState.CANCELLED, null));
+    List<Certificate> result =
+        Arrays.asList(new Certificate(), deletedCertificate, revokedCertificate);
+
+    when(certificateService.listCertificatesForCitizen(
+            civicRegistrationNumber, certificateTypes, fromDate, toDate))
+        .thenReturn(result);
+
+    ListCertificatesRequestType parameters =
+        createListCertificatesRequest(civicRegistrationNumber, certificateTypes, fromDate, toDate);
+
+    ListCertificatesResponseType response = responder.listCertificates(null, parameters);
+
+    verify(certificateService)
+        .listCertificatesForCitizen(civicRegistrationNumber, certificateTypes, fromDate, toDate);
+
+    // will only return certificate which is not deleted or revoked
+    assertEquals(1, response.getMeta().size());
+    assertEquals(OK, response.getResult().getResultCode());
+  }
+
+  @Test
+  void testListCertificatesNoTypesReturnAll() {
+    Personnummer civicRegistrationNumber = createPnr("19350108-1234");
+    List<String> certificateTypes = new ArrayList<>();
+    LocalDate fromDate = LocalDate.of(2000, 1, 1);
+    LocalDate toDate = LocalDate.of(2020, 12, 12);
+
+    Certificate deletedCertificate = new Certificate();
+    deletedCertificate.addState(
+        new CertificateStateHistoryEntry("INVANA", CertificateState.DELETED, null));
+    Certificate revokedCertificate = new Certificate();
+    revokedCertificate.addState(
+        new CertificateStateHistoryEntry("HSVARD", CertificateState.CANCELLED, null));
+    List<Certificate> result =
+        Arrays.asList(new Certificate(), deletedCertificate, revokedCertificate);
+
+    when(certificateService.listCertificatesForCitizen(
+            civicRegistrationNumber, certificateTypes, fromDate, toDate))
+        .thenReturn(result);
+
+    ListCertificatesRequestType parameters =
+        createListCertificatesRequest(civicRegistrationNumber, certificateTypes, fromDate, toDate);
+
+    ListCertificatesResponseType response = responder.listCertificates(null, parameters);
+
+    verify(certificateService)
+        .listCertificatesForCitizen(civicRegistrationNumber, certificateTypes, fromDate, toDate);
+
+    // will return all three
+    assertEquals(3, response.getMeta().size());
+    assertEquals(OK, response.getResult().getResultCode());
+  }
+
+  private ListCertificatesRequestType createListCertificatesRequest(
+      Personnummer civicRegistrationNumber,
+      List<String> types,
+      LocalDate fromDate,
+      LocalDate toDate) {
+    ListCertificatesRequestType parameters = new ListCertificatesRequestType();
+    parameters.setNationalIdentityNumber(civicRegistrationNumber.getPersonnummer());
+
+    for (String type : types) {
+      parameters.getCertificateType().add(type);
     }
 
-    @Test
-    void testListCertificates() {
-        Personnummer civicRegistrationNumber = createPnr("19350108-1234");
-        List<String> certificateTypes = Collections.singletonList("fk7263");
-        LocalDate fromDate = LocalDate.of(2000, 1, 1);
-        LocalDate toDate = LocalDate.of(2020, 12, 12);
+    parameters.setFromDate(fromDate);
+    parameters.setToDate(toDate);
 
-        Certificate deletedCertificate = new Certificate();
-        deletedCertificate.addState(new CertificateStateHistoryEntry("INVANA", CertificateState.DELETED, null));
-        Certificate revokedCertificate = new Certificate();
-        revokedCertificate.addState(new CertificateStateHistoryEntry("HSVARD", CertificateState.CANCELLED, null));
-        List<Certificate> result = Arrays.asList(new Certificate(), deletedCertificate, revokedCertificate);
+    return parameters;
+  }
 
-        when(certificateService.listCertificatesForCitizen(civicRegistrationNumber, certificateTypes, fromDate, toDate)).thenReturn(result);
-
-        ListCertificatesRequestType parameters = createListCertificatesRequest(civicRegistrationNumber, certificateTypes, fromDate, toDate);
-
-        ListCertificatesResponseType response = responder.listCertificates(null, parameters);
-
-        verify(certificateService).listCertificatesForCitizen(civicRegistrationNumber, certificateTypes, fromDate, toDate);
-
-        // will only return certificate which is not deleted or revoked
-        assertEquals(1, response.getMeta().size());
-        assertEquals(OK, response.getResult().getResultCode());
-    }
-
-    @Test
-    void testListCertificatesNoTypesReturnAll() {
-        Personnummer civicRegistrationNumber = createPnr("19350108-1234");
-        List<String> certificateTypes = new ArrayList<>();
-        LocalDate fromDate = LocalDate.of(2000, 1, 1);
-        LocalDate toDate = LocalDate.of(2020, 12, 12);
-
-        Certificate deletedCertificate = new Certificate();
-        deletedCertificate.addState(new CertificateStateHistoryEntry("INVANA", CertificateState.DELETED, null));
-        Certificate revokedCertificate = new Certificate();
-        revokedCertificate.addState(new CertificateStateHistoryEntry("HSVARD", CertificateState.CANCELLED, null));
-        List<Certificate> result = Arrays.asList(new Certificate(), deletedCertificate, revokedCertificate);
-
-        when(certificateService.listCertificatesForCitizen(civicRegistrationNumber, certificateTypes, fromDate, toDate)).thenReturn(result);
-
-        ListCertificatesRequestType parameters = createListCertificatesRequest(civicRegistrationNumber, certificateTypes, fromDate, toDate);
-
-        ListCertificatesResponseType response = responder.listCertificates(null, parameters);
-
-        verify(certificateService).listCertificatesForCitizen(civicRegistrationNumber, certificateTypes, fromDate, toDate);
-
-        // will return all three
-        assertEquals(3, response.getMeta().size());
-        assertEquals(OK, response.getResult().getResultCode());
-    }
-
-    private ListCertificatesRequestType createListCertificatesRequest(Personnummer civicRegistrationNumber, List<String> types,
-        LocalDate fromDate, LocalDate toDate) {
-        ListCertificatesRequestType parameters = new ListCertificatesRequestType();
-        parameters.setNationalIdentityNumber(civicRegistrationNumber.getPersonnummer());
-
-        for (String type : types) {
-            parameters.getCertificateType().add(type);
-        }
-
-        parameters.setFromDate(fromDate);
-        parameters.setToDate(toDate);
-
-        return parameters;
-    }
-
-    private Personnummer createPnr(String pnr) {
-        return Personnummer.createPersonnummer(pnr)
-            .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer"));
-    }
-
+  private Personnummer createPnr(String pnr) {
+    return Personnummer.createPersonnummer(pnr)
+        .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer"));
+  }
 }

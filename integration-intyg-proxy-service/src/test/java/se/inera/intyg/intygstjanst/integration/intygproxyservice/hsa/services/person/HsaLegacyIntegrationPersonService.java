@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -35,23 +35,19 @@ import se.inera.intyg.intygstjanst.integration.intygproxyservice.hsa.services.em
 @RequiredArgsConstructor
 public class HsaLegacyIntegrationPersonService implements HsaPersonService {
 
-    private final GetEmployeeService getEmployeeService;
+  private final GetEmployeeService getEmployeeService;
 
-    @Override
-    public List<PersonInformation> getHsaPersonInfo(String personHsaId) {
-        try {
-            return getEmployeeService.get(
-                GetEmployeeRequestDTO.builder()
-                    .hsaId(personHsaId)
-                    .build()
-            );
-        } catch (Exception e) {
-            throw new WebServiceException(e.getMessage());
-        }
+  @Override
+  public List<PersonInformation> getHsaPersonInfo(String personHsaId) {
+    try {
+      return getEmployeeService.get(GetEmployeeRequestDTO.builder().hsaId(personHsaId).build());
+    } catch (Exception e) {
+      throw new WebServiceException(e.getMessage());
     }
+  }
 
-    @Override
-    public List<Commission> checkIfPersonHasMIUsOnUnit(String hosPersonHsaId, String unitHsaId) {
-        return null;
-    }
+  @Override
+  public List<Commission> checkIfPersonHasMIUsOnUnit(String hosPersonHsaId, String unitHsaId) {
+    return null;
+  }
 }

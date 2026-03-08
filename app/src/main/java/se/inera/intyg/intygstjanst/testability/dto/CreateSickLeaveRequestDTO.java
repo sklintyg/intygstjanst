@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -19,7 +19,6 @@
 
 package se.inera.intyg.intygstjanst.testability.dto;
 
-
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -32,19 +31,19 @@ import se.inera.intyg.common.support.common.enumerations.RelationKod;
 @Data
 public class CreateSickLeaveRequestDTO {
 
-    private String careProviderId;
-    private String patientId;
-    private int fromDays;
-    private int toDays;
-    private String careUnitId;
-    private String careUnitName;
-    private String doctorId;
-    private String relationsId;
-    private RelationKod relationKod;
-    private List<String> diagnosisCode;
-    private String occupation;
-    private List<String> workCapacity;
-    private boolean send;
-    private boolean revoked;
-    private LocalDateTime signTimestamp;
+  private String careProviderId;
+  private String patientId;
+  private int fromDays;
+  private int toDays;
+  private String careUnitId;
+  private String careUnitName;
+  private String doctorId;
+  private String relationsId;
+  private RelationKod relationKod;
+  private List<String> diagnosisCode;
+  private String occupation;
+  private List<String> workCapacity;
+  private boolean send;
+  private boolean revoked;
+  private LocalDateTime signTimestamp;
 }

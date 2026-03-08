@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.application.certificate;
 
 import lombok.RequiredArgsConstructor;
@@ -25,31 +26,35 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import se.inera.intyg.intygstjanst.application.certificate.dto.CertificateListRequest;
 import se.inera.intyg.intygstjanst.application.certificate.dto.CertificateListResponse;
+import se.inera.intyg.intygstjanst.application.certificate.service.CertificateListService;
 import se.inera.intyg.intygstjanst.infrastructure.logging.MdcLogConstants;
 import se.inera.intyg.intygstjanst.infrastructure.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.infrastructure.security.interceptor.ApiBasePath;
-import se.inera.intyg.intygstjanst.application.certificate.service.CertificateListService;
 
-/**
- * Internal REST endpoint to retrieve list of certificates.
- */
+/** Internal REST endpoint to retrieve list of certificates. */
 @RestController
 @ApiBasePath("/internalapi")
 @RequestMapping("/certificatelist")
 @RequiredArgsConstructor
 public class CertificateListController {
 
-    private final CertificateListService certificateListService;
+  private final CertificateListService certificateListService;
 
-    /**
-     * Internal REST endpoint to retrieve list of signed certificates for a doctor on the logged in unit.
-     *
-     * @param parameters Parameters of filter query including filters that user has chosen or default filters.
-     * @return Response including a list of all signed certificates and the total amount of certificates.
-     */
-    @PostMapping("/certificates/doctor")
-    @PerformanceLogging(eventAction = "list-certificates", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
-    public CertificateListResponse listCertificatesForDoctor(@RequestBody CertificateListRequest parameters) {
-        return certificateListService.listCertificatesForDoctor(parameters);
-    }
+  /**
+   * Internal REST endpoint to retrieve list of signed certificates for a doctor on the logged in
+   * unit.
+   *
+   * @param parameters Parameters of filter query including filters that user has chosen or default
+   *     filters.
+   * @return Response including a list of all signed certificates and the total amount of
+   *     certificates.
+   */
+  @PostMapping("/certificates/doctor")
+  @PerformanceLogging(
+      eventAction = "list-certificates",
+      eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
+  public CertificateListResponse listCertificatesForDoctor(
+      @RequestBody CertificateListRequest parameters) {
+    return certificateListService.listCertificatesForDoctor(parameters);
+  }
 }

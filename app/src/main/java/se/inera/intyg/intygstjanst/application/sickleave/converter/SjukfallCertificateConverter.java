@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.application.sickleave.converter;
 
 import java.time.LocalDate;
@@ -29,41 +30,44 @@ import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Sjukfall
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.SjukfallCertificateWorkCapacity;
 
 /**
- * Converts JPA entity model {@link SjukfallCertificate} to the
- * infra/sjukfall/engine {@link IntygData} format.
+ * Converts JPA entity model {@link SjukfallCertificate} to the infra/sjukfall/engine {@link
+ * IntygData} format.
  *
- * Created by eriklupander on 2017-02-17.
+ * <p>Created by eriklupander on 2017-02-17.
  */
 @Service
 public class SjukfallCertificateConverter {
 
-    public List<IntygData> convert(List<SjukfallCertificate> list) {
-        return list.stream().map(sc -> {
-            IntygData intyg = new IntygData();
-            intyg.setIntygId(intyg.getIntygId());
-            intyg.setEnkeltIntyg(false);
-            intyg.setFormagor(buildFormaga(sc.getSjukfallCertificateWorkCapacity()));
-            intyg.setDiagnosKod(DiagnosKod.create(sc.getDiagnoseCode()));
-            intyg.setLakareId(sc.getSigningDoctorId());
-            intyg.setLakareNamn(sc.getSigningDoctorName());
-            intyg.setSigneringsTidpunkt(sc.getSigningDateTime());
-            intyg.setPatientId(sc.getCivicRegistrationNumber());
-            intyg.setPatientNamn(sc.getPatientName());
-            intyg.setVardenhetId(sc.getCareUnitId());
-            intyg.setVardenhetNamn(sc.getCareUnitName());
-            return intyg;
-        }).collect(Collectors.toList());
-    }
+  public List<IntygData> convert(List<SjukfallCertificate> list) {
+    return list.stream()
+        .map(
+            sc -> {
+              IntygData intyg = new IntygData();
+              intyg.setIntygId(intyg.getIntygId());
+              intyg.setEnkeltIntyg(false);
+              intyg.setFormagor(buildFormaga(sc.getSjukfallCertificateWorkCapacity()));
+              intyg.setDiagnosKod(DiagnosKod.create(sc.getDiagnoseCode()));
+              intyg.setLakareId(sc.getSigningDoctorId());
+              intyg.setLakareNamn(sc.getSigningDoctorName());
+              intyg.setSigneringsTidpunkt(sc.getSigningDateTime());
+              intyg.setPatientId(sc.getCivicRegistrationNumber());
+              intyg.setPatientNamn(sc.getPatientName());
+              intyg.setVardenhetId(sc.getCareUnitId());
+              intyg.setVardenhetNamn(sc.getCareUnitName());
+              return intyg;
+            })
+        .collect(Collectors.toList());
+  }
 
-    private List<Formaga> buildFormaga(List<SjukfallCertificateWorkCapacity> workCapacities) {
+  private List<Formaga> buildFormaga(List<SjukfallCertificateWorkCapacity> workCapacities) {
 
-        return workCapacities.stream()
-            .map(this::buildFormaga)
-            .collect(Collectors.toList());
-    }
+    return workCapacities.stream().map(this::buildFormaga).collect(Collectors.toList());
+  }
 
-    private Formaga buildFormaga(SjukfallCertificateWorkCapacity wc) {
-        return new Formaga(LocalDate.parse(wc.getFromDate()), LocalDate.parse(wc.getToDate()), wc.getCapacityPercentage());
-    }
-
+  private Formaga buildFormaga(SjukfallCertificateWorkCapacity wc) {
+    return new Formaga(
+        LocalDate.parse(wc.getFromDate()),
+        LocalDate.parse(wc.getToDate()),
+        wc.getCapacityPercentage());
+  }
 }

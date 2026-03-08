@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.integration.hsa.model;
 
 import java.util.ArrayList;
@@ -25,21 +26,21 @@ import lombok.Data;
 @Data
 public class CredentialInformation {
 
-    protected String givenName;
-    protected String middleAndSurName;
-    protected String personHsaId;
-    protected List<String> healthCareProfessionalLicence = new ArrayList<>();
-    protected String personalPrescriptionCode;
-    protected List<String> groupPrescriptionCode = new ArrayList<>();
-    protected List<NursePrescriptionRight> nursePrescriptionRight = new ArrayList<>();
-    protected List<HsaSystemRole> hsaSystemRole = new ArrayList<>();
-    protected List<String> paTitleCode = new ArrayList<>();
-    protected Boolean protectedPerson;
-    protected List<Commission> commission = new ArrayList<>();
-    protected Boolean feignedPerson;
-    protected List<String> healthCareProfessionalLicenceCode = new ArrayList<>();
-    protected List<HCPSpecialityCodes> healthCareProfessionalLicenceSpeciality = new ArrayList<>();
-    protected List<String> occupationalCode = new ArrayList<>();
-    protected String personalIdentity;
-    protected String healthcareProfessionalLicenseIdentityNumber;
+  protected String givenName;
+  protected String middleAndSurName;
+  protected String personHsaId;
+  protected List<String> healthCareProfessionalLicence = new ArrayList<>();
+  protected String personalPrescriptionCode;
+  protected List<String> groupPrescriptionCode = new ArrayList<>();
+  protected List<NursePrescriptionRight> nursePrescriptionRight = new ArrayList<>();
+  protected List<HsaSystemRole> hsaSystemRole = new ArrayList<>();
+  protected List<String> paTitleCode = new ArrayList<>();
+  protected Boolean protectedPerson;
+  protected List<Commission> commission = new ArrayList<>();
+  protected Boolean feignedPerson;
+  protected List<String> healthCareProfessionalLicenceCode = new ArrayList<>();
+  protected List<HCPSpecialityCodes> healthCareProfessionalLicenceSpeciality = new ArrayList<>();
+  protected List<String> occupationalCode = new ArrayList<>();
+  protected String personalIdentity;
+  protected String healthcareProfessionalLicenseIdentityNumber;
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.application.sickleave.dto;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -29,40 +30,39 @@ import org.junit.jupiter.api.Test;
  */
 class DiagnosKodTest {
 
-    @Test
-    void testCleanDignosKod() {
-        assertEquals("M80-", DiagnosKod.cleanKod("M80-   "));
-        assertEquals("M80-P", DiagnosKod.cleanKod("M80-P  "));
-        assertEquals("M80", DiagnosKod.cleanKod("M80.   "));
-        assertEquals("M801", DiagnosKod.cleanKod("M80.1   "));
-        assertEquals("M8001", DiagnosKod.cleanKod("M.80.01   "));
-        assertEquals("A", DiagnosKod.cleanKod("aÅÄÖ)(/"));
-    }
+  @Test
+  void testCleanDignosKod() {
+    assertEquals("M80-", DiagnosKod.cleanKod("M80-   "));
+    assertEquals("M80-P", DiagnosKod.cleanKod("M80-P  "));
+    assertEquals("M80", DiagnosKod.cleanKod("M80.   "));
+    assertEquals("M801", DiagnosKod.cleanKod("M80.1   "));
+    assertEquals("M8001", DiagnosKod.cleanKod("M.80.01   "));
+    assertEquals("A", DiagnosKod.cleanKod("aÅÄÖ)(/"));
+  }
 
-    @Test
-    void testSplitNormalDignosKod() {
-        DiagnosKod kod = DiagnosKod.create("M123   Palindrom reumatism");
+  @Test
+  void testSplitNormalDignosKod() {
+    DiagnosKod kod = DiagnosKod.create("M123   Palindrom reumatism");
 
-        assertEquals("M123", kod.getCleanedCode());
-        assertEquals("Palindrom reumatism", kod.getName());
-    }
+    assertEquals("M123", kod.getCleanedCode());
+    assertEquals("Palindrom reumatism", kod.getName());
+  }
 
-    @Test
-    void testSplitToShortDiagnosKod() {
-        DiagnosKod kod = DiagnosKod.create("M123");
+  @Test
+  void testSplitToShortDiagnosKod() {
+    DiagnosKod kod = DiagnosKod.create("M123");
 
-        assertEquals("M123", kod.getCleanedCode());
-        assertNull(kod.getName());
-    }
+    assertEquals("M123", kod.getCleanedCode());
+    assertNull(kod.getName());
+  }
 
-    @Test
-    void testEmptyDiagnosKod() {
-        assertThrows(IllegalArgumentException.class, () -> DiagnosKod.create(""));
-    }
+  @Test
+  void testEmptyDiagnosKod() {
+    assertThrows(IllegalArgumentException.class, () -> DiagnosKod.create(""));
+  }
 
-    @Test
-    void testNullDiagnosKod() {
-        assertThrows(IllegalArgumentException.class, () -> DiagnosKod.create(null));
-    }
-
+  @Test
+  void testNullDiagnosKod() {
+    assertThrows(IllegalArgumentException.class, () -> DiagnosKod.create(null));
+  }
 }

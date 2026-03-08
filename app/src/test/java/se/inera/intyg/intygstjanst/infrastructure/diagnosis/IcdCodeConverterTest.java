@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -35,41 +35,39 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
-import se.inera.intyg.intygstjanst.infrastructure.diagnosis.IcdCodeConverter;
 
 @ExtendWith(MockitoExtension.class)
 class IcdCodeConverterTest {
 
-    private static final String LOCATION = "location";
-    @Mock
-    private ResourceLoader resourceLoader;
+  private static final String LOCATION = "location";
+  @Mock private ResourceLoader resourceLoader;
 
-    @Mock
-    private Resource resource;
+  @Mock private Resource resource;
 
-    @InjectMocks
-    private IcdCodeConverter icdCodeConverter;
+  @InjectMocks private IcdCodeConverter icdCodeConverter;
 
-    @BeforeEach
-    void setUp() {
-        when(resourceLoader.getResource(LOCATION)).thenReturn(resource);
-    }
+  @BeforeEach
+  void setUp() {
+    when(resourceLoader.getResource(LOCATION)).thenReturn(resource);
+  }
 
-    @Test
-    void shouldNotConvertLineWithColumnDescriptions() throws IOException {
-        final var tsvContent = "\"Kod\"\t\"Giltig från\"\t\"Överordnad kod\"\t\"Titel\"\t\"Latin\"\t\"Beskrivning\"\t\"Exempel\"\t\""
+  @Test
+  void shouldNotConvertLineWithColumnDescriptions() throws IOException {
+    final var tsvContent =
+        "\"Kod\"\t\"Giltig från\"\t\"Överordnad kod\"\t\"Titel\"\t\"Latin\"\t\"Beskrivning\"\t\"Exempel\"\t\""
             + "Innefattar\"\t\"Utesluter\"\t\"Anmärkning\"\t\"Kodningsinformation\"\t\"Innehåll\"\t\"Manifestation(*)/Etiologi(†)"
             + "\"\t\"Koppling Manifestation(*)/Etiologi(†)\"\t\"Ej huvuddiagnos\"\t\"Kodnivå - kodspecifikation\"";
-        final var inputStream = new ByteArrayInputStream(tsvContent.getBytes(StandardCharsets.UTF_8));
-        when(resource.getInputStream()).thenReturn(inputStream);
+    final var inputStream = new ByteArrayInputStream(tsvContent.getBytes(StandardCharsets.UTF_8));
+    when(resource.getInputStream()).thenReturn(inputStream);
 
-        final var result = icdCodeConverter.convert(LOCATION);
-        assertTrue(result.isEmpty());
-    }
+    final var result = icdCodeConverter.convert(LOCATION);
+    assertTrue(result.isEmpty());
+  }
 
-    @Test
-    void shouldNotConvertLineIfDiagnosisChapter() throws IOException {
-        final var tsvContent = "\"15\"\t\"1997-01-01\"\t\"\"\t\"Graviditet, förlossning och barnsängstid (O00-O99)"
+  @Test
+  void shouldNotConvertLineIfDiagnosisChapter() throws IOException {
+    final var tsvContent =
+        "\"15\"\t\"1997-01-01\"\t\"\"\t\"Graviditet, förlossning och barnsängstid (O00-O99)"
             + "\"\t\"Graviditas, partus et puerperium\"\t\"\"\t\"\"\t\"\"\t\"Obstetrisk tetanus (A34)\"\t\"\"\t\"\"\t\""
             + "Detta kapitel innehåller följande avsnitt:<div>O00-O08 Graviditet som avslutas med abort</div><div>O10-O16 "
             + "Ödem, proteinuri och hypertoni under graviditet, förlossning och barnsängstid</div><div>O20-O29 Andra sjukdomar"
@@ -79,91 +77,92 @@ class IcdCodeConverterTest {
             + " med barnsängstiden</div><div>O94-O99 Andra obstetriska tillstånd som ej klassificeras på annan plats</div>"
             + "\"\t\"\"\t\"\"\t\"\"\t\"Kapitelkod\"\n";
 
-        final var inputStream = new ByteArrayInputStream(tsvContent.getBytes(StandardCharsets.UTF_8));
-        when(resource.getInputStream()).thenReturn(inputStream);
+    final var inputStream = new ByteArrayInputStream(tsvContent.getBytes(StandardCharsets.UTF_8));
+    when(resource.getInputStream()).thenReturn(inputStream);
 
-        final var result = icdCodeConverter.convert(LOCATION);
-        assertTrue(result.isEmpty());
-    }
+    final var result = icdCodeConverter.convert(LOCATION);
+    assertTrue(result.isEmpty());
+  }
 
-    @Test
-    void shouldNotConvertLineIfDiagnosisGroup() throws IOException {
-        final var tsvContent = "\"A00-A09\"\t\"1997-01-01\"\t\"01\"\t\"Infektionssjukdomar utgående från mag-tarmkanalen\"\t\""
+  @Test
+  void shouldNotConvertLineIfDiagnosisGroup() throws IOException {
+    final var tsvContent =
+        "\"A00-A09\"\t\"1997-01-01\"\t\"01\"\t\"Infektionssjukdomar utgående från mag-tarmkanalen\"\t\""
             + "Morbi infectiosi origine gastrointestinali\"\t\"\"\t\"\"\t\"\"\t\"\"\t\"\"\t\"\"\t\"\"\t\"\"\t\"\"\t\"\"\t\"Avsnittskod,"
             + " kodintervall\"\n";
 
-        final var inputStream = new ByteArrayInputStream(tsvContent.getBytes(StandardCharsets.UTF_8));
-        when(resource.getInputStream()).thenReturn(inputStream);
+    final var inputStream = new ByteArrayInputStream(tsvContent.getBytes(StandardCharsets.UTF_8));
+    when(resource.getInputStream()).thenReturn(inputStream);
 
-        final var result = icdCodeConverter.convert(LOCATION);
-        assertTrue(result.isEmpty());
-    }
+    final var result = icdCodeConverter.convert(LOCATION);
+    assertTrue(result.isEmpty());
+  }
 
-    @Test
-    void shouldNotConvertInactiveDiagnosis() throws IOException {
-        final var tsvContent = "\"A02.2\"\t\"\"\t\"\"\t\"\"\t\"\"\t\"\"\t\"Salmonellaartrit (M01.3*)"
+  @Test
+  void shouldNotConvertInactiveDiagnosis() throws IOException {
+    final var tsvContent =
+        "\"A02.2\"\t\"\"\t\"\"\t\"\"\t\"\"\t\"\"\t\"Salmonellaartrit (M01.3*)"
             + "\"\t\"\"\t\"\"\t\"\"\t\"\"\t\"\"\t\"\"\t\"\"\t\"\"\t\"\"";
 
-        final var inputStream = new ByteArrayInputStream(tsvContent.getBytes(StandardCharsets.UTF_8));
-        when(resource.getInputStream()).thenReturn(inputStream);
+    final var inputStream = new ByteArrayInputStream(tsvContent.getBytes(StandardCharsets.UTF_8));
+    when(resource.getInputStream()).thenReturn(inputStream);
 
-        final var result = icdCodeConverter.convert(LOCATION);
-        assertTrue(result.isEmpty());
-    }
+    final var result = icdCodeConverter.convert(LOCATION);
+    assertTrue(result.isEmpty());
+  }
 
-    @Test
-    void shouldConvertValidDiagnosis() throws IOException {
-        final var expectedResult = Map.of("A022", "Lokaliserade salmonellainfektioner");
+  @Test
+  void shouldConvertValidDiagnosis() throws IOException {
+    final var expectedResult = Map.of("A022", "Lokaliserade salmonellainfektioner");
 
-        final var tsvContent = "\"A02.2\"\t\"1997-01-01\"\t\"A02\"\t\"Lokaliserade salmonellainfektioner"
+    final var tsvContent =
+        "\"A02.2\"\t\"1997-01-01\"\t\"A02\"\t\"Lokaliserade salmonellainfektioner"
             + "\"\t\"\"\t\"\"\t\"Renal tubulo-interstitiell sjukdom orsakad av salmonella (N16.0*)\"\t\"\""
             + "\t\"\"\t\"\"\t\"\"\t\"\"\t\"Etiologisk kod (†)\"\t\"\"\t\"\"\t\"Subkategorikod, fyrställig (fem tecken med punkt)\"";
 
-        final var inputStream = new ByteArrayInputStream(tsvContent.getBytes(StandardCharsets.UTF_8));
-        when(resource.getInputStream()).thenReturn(inputStream);
+    final var inputStream = new ByteArrayInputStream(tsvContent.getBytes(StandardCharsets.UTF_8));
+    when(resource.getInputStream()).thenReturn(inputStream);
 
-        final var result = icdCodeConverter.convert(LOCATION);
-        assertEquals(expectedResult, result);
-    }
+    final var result = icdCodeConverter.convert(LOCATION);
+    assertEquals(expectedResult, result);
+  }
 
-    @Test
-    void shouldConvertMultipleValidDiagnosis() throws IOException {
-        final var expectedResult = Map.of(
+  @Test
+  void shouldConvertMultipleValidDiagnosis() throws IOException {
+    final var expectedResult =
+        Map.of(
             "A028", "Andra specificerade salmonellainfektioner",
-            "A029", "Andra salmonellainfektioner, ospecificerade"
-        );
+            "A029", "Andra salmonellainfektioner, ospecificerade");
 
-        final var tsvContent =
-            "\"A02.8\"\t\"1997-01-01\"\t\"A02\"\t\"Andra specificerade salmonellainfektioner\"\t\"\"\t\"\"\t\"\"\t\"\"\t\"\"\t\""
-                + "\"\t\"\"\t\"\"\t\"\"\t\"\"\t\"\"\t\"Subkategorikod, fyrställig (fem tecken med punkt)\"\n"
-                + "\"A02.9\"\t\"1997-01-01\"\t\"A02\"\t\"Andra salmonellainfektioner, ospecificerade\"\t\"\"\t\"\"\t\""
-                + "Salmonellainfektion UNS\"\t\"\"\t\"\"\t\"\"\t\"\"\t\"\"\t\"\"\t\"\"\t\"\"\t\"Subkategorikod, fyrställig"
-                + " (fem tecken med punkt)\"";
+    final var tsvContent =
+        "\"A02.8\"\t\"1997-01-01\"\t\"A02\"\t\"Andra specificerade salmonellainfektioner\"\t\"\"\t\"\"\t\"\"\t\"\"\t\"\"\t\""
+            + "\"\t\"\"\t\"\"\t\"\"\t\"\"\t\"\"\t\"Subkategorikod, fyrställig (fem tecken med punkt)\"\n"
+            + "\"A02.9\"\t\"1997-01-01\"\t\"A02\"\t\"Andra salmonellainfektioner, ospecificerade\"\t\"\"\t\"\"\t\""
+            + "Salmonellainfektion UNS\"\t\"\"\t\"\"\t\"\"\t\"\"\t\"\"\t\"\"\t\"\"\t\"\"\t\"Subkategorikod, fyrställig"
+            + " (fem tecken med punkt)\"";
 
-        final var inputStream = new ByteArrayInputStream(tsvContent.getBytes(StandardCharsets.UTF_8));
-        when(resource.getInputStream()).thenReturn(inputStream);
+    final var inputStream = new ByteArrayInputStream(tsvContent.getBytes(StandardCharsets.UTF_8));
+    when(resource.getInputStream()).thenReturn(inputStream);
 
-        final var result = icdCodeConverter.convert(LOCATION);
-        assertEquals(expectedResult, result);
-    }
+    final var result = icdCodeConverter.convert(LOCATION);
+    assertEquals(expectedResult, result);
+  }
 
-    @Test
-    void shouldExcludeInvalidDiagnosis() throws IOException {
-        final var expectedResult = Map.of(
-            "A022", "Lokaliserade salmonellainfektioner"
-        );
+  @Test
+  void shouldExcludeInvalidDiagnosis() throws IOException {
+    final var expectedResult = Map.of("A022", "Lokaliserade salmonellainfektioner");
 
-        final var tsvContent =
-            "\"A02.2\"\t\"1997-01-01\"\t\"A02\"\t\"Lokaliserade salmonellainfektioner\"\t\"\"\t\"\"\t\"Renal "
-                + "tubulo-interstitiell sjukdom orsakad av salmonella (N16.0*)\"\t\"\"\t\"\"\t\"\"\t\"\"\t\"\"\t\""
-                + "Etiologisk kod (†)\"\t\"\"\t\"\"\t\"Subkategorikod, fyrställig (fem tecken med punkt)\"\n"
-                + "\"A02.2\"\t\"\"\t\"\"\t\"\"\t\"\"\t\"\"\t\"Salmonellaartrit (M01.3*)\"\t\"\"\t\"\"\t\"\"\t\""
-                + "\"\t\"\"\t\"\"\t\"\"\t\"\"\t\"\"";
+    final var tsvContent =
+        "\"A02.2\"\t\"1997-01-01\"\t\"A02\"\t\"Lokaliserade salmonellainfektioner\"\t\"\"\t\"\"\t\"Renal "
+            + "tubulo-interstitiell sjukdom orsakad av salmonella (N16.0*)\"\t\"\"\t\"\"\t\"\"\t\"\"\t\"\"\t\""
+            + "Etiologisk kod (†)\"\t\"\"\t\"\"\t\"Subkategorikod, fyrställig (fem tecken med punkt)\"\n"
+            + "\"A02.2\"\t\"\"\t\"\"\t\"\"\t\"\"\t\"\"\t\"Salmonellaartrit (M01.3*)\"\t\"\"\t\"\"\t\"\"\t\""
+            + "\"\t\"\"\t\"\"\t\"\"\t\"\"\t\"\"";
 
-        final var inputStream = new ByteArrayInputStream(tsvContent.getBytes(StandardCharsets.UTF_8));
-        when(resource.getInputStream()).thenReturn(inputStream);
+    final var inputStream = new ByteArrayInputStream(tsvContent.getBytes(StandardCharsets.UTF_8));
+    when(resource.getInputStream()).thenReturn(inputStream);
 
-        final var result = icdCodeConverter.convert(LOCATION);
-        assertEquals(expectedResult, result);
-    }
+    final var result = icdCodeConverter.convert(LOCATION);
+    assertEquals(expectedResult, result);
+  }
 }

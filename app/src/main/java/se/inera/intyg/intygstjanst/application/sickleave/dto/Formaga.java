@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.application.sickleave.dto;
 
 import java.time.LocalDate;
@@ -25,32 +26,37 @@ import java.time.LocalDate;
  */
 public class Formaga {
 
-    private LocalDate startdatum;
-    private LocalDate slutdatum;
+  private LocalDate startdatum;
+  private LocalDate slutdatum;
 
-    private int nedsattning;
+  private int nedsattning;
 
-    public Formaga(LocalDate startdatum, LocalDate slutdatum, int nedsattning) {
-        this.startdatum = startdatum;
-        this.slutdatum = slutdatum;
-        this.nedsattning = nedsattning;
-    }
+  public Formaga(LocalDate startdatum, LocalDate slutdatum, int nedsattning) {
+    this.startdatum = startdatum;
+    this.slutdatum = slutdatum;
+    this.nedsattning = nedsattning;
+  }
 
-    public LocalDate getStartdatum() {
-        return this.startdatum;
-    }
+  public LocalDate getStartdatum() {
+    return this.startdatum;
+  }
 
-    public LocalDate getSlutdatum() {
-        return this.slutdatum;
-    }
+  public LocalDate getSlutdatum() {
+    return this.slutdatum;
+  }
 
-    public int getNedsattning() {
-        return this.nedsattning;
-    }
+  public int getNedsattning() {
+    return this.nedsattning;
+  }
 
-    @Override
-    public String toString() {
-        return "Formaga [startdatum=" + startdatum + ", slutdatum=" + slutdatum + ", nedsattning=" + nedsattning + "]";
-    }
-
+  @Override
+  public String toString() {
+    return "Formaga [startdatum="
+        + startdatum
+        + ", slutdatum="
+        + slutdatum
+        + ", nedsattning="
+        + nedsattning
+        + "]";
+  }
 }

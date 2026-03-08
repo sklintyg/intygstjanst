@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -30,12 +30,9 @@ import se.inera.intyg.intygstjanst.application.sickleave.dto.PersonIdDTO.PersonI
 @Builder
 public class PersonIdDTO {
 
-    PersonIdTypeDTO type;
-    String id;
+  PersonIdTypeDTO type;
+  String id;
 
-    @JsonPOJOBuilder(withPrefix = "")
-    public static class PersonIdDTOBuilder {
-
-    }
-
+  @JsonPOJOBuilder(withPrefix = "")
+  public static class PersonIdDTOBuilder {}
 }

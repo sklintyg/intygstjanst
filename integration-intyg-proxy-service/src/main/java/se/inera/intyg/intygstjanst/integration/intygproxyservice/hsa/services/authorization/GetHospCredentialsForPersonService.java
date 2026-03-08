@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -29,21 +29,19 @@ import se.inera.intyg.intygstjanst.integration.intygproxyservice.hsa.dto.authori
 @RequiredArgsConstructor
 public class GetHospCredentialsForPersonService {
 
-    private final HsaIntygProxyServiceHospCredentialsForPersonClient credentialsForPersonClient;
+  private final HsaIntygProxyServiceHospCredentialsForPersonClient credentialsForPersonClient;
 
-    public HospCredentialsForPerson get(String personId) {
-        validateRequest(personId);
-        final var credentialsForPersonResponseDTO = credentialsForPersonClient.get(
-            GetCredentialsForPersonRequestDTO.builder()
-                .personId(personId)
-                .build()
-        );
-        return credentialsForPersonResponseDTO.getCredentials();
-    }
+  public HospCredentialsForPerson get(String personId) {
+    validateRequest(personId);
+    final var credentialsForPersonResponseDTO =
+        credentialsForPersonClient.get(
+            GetCredentialsForPersonRequestDTO.builder().personId(personId).build());
+    return credentialsForPersonResponseDTO.getCredentials();
+  }
 
-    private void validateRequest(String personId) {
-        if (personId == null || personId.isEmpty()) {
-            throw new IllegalArgumentException("Missing required parameter 'personId'");
-        }
+  private void validateRequest(String personId) {
+    if (personId == null || personId.isEmpty()) {
+      throw new IllegalArgumentException("Missing required parameter 'personId'");
     }
+  }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -34,23 +34,23 @@ import se.inera.intyg.schemas.contract.Personnummer;
 @RequiredArgsConstructor
 public class CitizenCertificatesFromCS {
 
-    private final CSIntegrationService csIntegrationService;
-    private final CitizenCertificateConverterFromCS citizenCertificateConverterFromCS;
+  private final CSIntegrationService csIntegrationService;
+  private final CitizenCertificateConverterFromCS citizenCertificateConverterFromCS;
 
-    public List<CitizenCertificateDTO> get(Personnummer personId) {
+  public List<CitizenCertificateDTO> get(Personnummer personId) {
 
-        final var citizenCertificates = csIntegrationService.getCitizenCertificates(
+    final var citizenCertificates =
+        csIntegrationService.getCitizenCertificates(
             GetCitizenCertificatesRequest.builder()
                 .personId(
                     PersonIdDTO.builder()
                         .id(personId.getOriginalPnr())
                         .type(getType(personId))
                         .build())
-                .build()
-        );
+                .build());
 
-        return citizenCertificates.stream()
-            .map(citizenCertificateConverterFromCS::convert)
-            .collect(Collectors.toList());
-    }
+    return citizenCertificates.stream()
+        .map(citizenCertificateConverterFromCS::convert)
+        .collect(Collectors.toList());
+  }
 }

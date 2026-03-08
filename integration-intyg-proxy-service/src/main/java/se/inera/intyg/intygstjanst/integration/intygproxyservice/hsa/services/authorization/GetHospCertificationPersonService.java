@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -29,21 +29,24 @@ import se.inera.intyg.intygstjanst.integration.intygproxyservice.hsa.dto.authori
 @RequiredArgsConstructor
 public class GetHospCertificationPersonService {
 
-    private final HsaIntygProxyServiceHospCertificationPersonClient hospCertificationPersonClient;
+  private final HsaIntygProxyServiceHospCertificationPersonClient hospCertificationPersonClient;
 
-    public Result get(GetHospCertificationPersonRequestDTO hospCertificationPersonRequestDTO) {
-        validateRequest(hospCertificationPersonRequestDTO);
-        final var hospCertificationPersonResponseDTO = hospCertificationPersonClient.get(hospCertificationPersonRequestDTO);
-        return hospCertificationPersonResponseDTO.getResult();
-    }
+  public Result get(GetHospCertificationPersonRequestDTO hospCertificationPersonRequestDTO) {
+    validateRequest(hospCertificationPersonRequestDTO);
+    final var hospCertificationPersonResponseDTO =
+        hospCertificationPersonClient.get(hospCertificationPersonRequestDTO);
+    return hospCertificationPersonResponseDTO.getResult();
+  }
 
-    private void validateRequest(GetHospCertificationPersonRequestDTO hospCertificationPersonRequestDTO) {
-        if (hospCertificationPersonRequestDTO.getPersonId() == null || hospCertificationPersonRequestDTO.getPersonId().isEmpty()) {
-            throw new IllegalArgumentException("Missing required parameter 'personId'");
-        }
-        if (hospCertificationPersonRequestDTO.getOperation() == null || hospCertificationPersonRequestDTO.getOperation()
-            .isEmpty()) {
-            throw new IllegalArgumentException("Missing required parameter 'operation'");
-        }
+  private void validateRequest(
+      GetHospCertificationPersonRequestDTO hospCertificationPersonRequestDTO) {
+    if (hospCertificationPersonRequestDTO.getPersonId() == null
+        || hospCertificationPersonRequestDTO.getPersonId().isEmpty()) {
+      throw new IllegalArgumentException("Missing required parameter 'personId'");
     }
+    if (hospCertificationPersonRequestDTO.getOperation() == null
+        || hospCertificationPersonRequestDTO.getOperation().isEmpty()) {
+      throw new IllegalArgumentException("Missing required parameter 'operation'");
+    }
+  }
 }

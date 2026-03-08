@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -40,255 +40,329 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import se.inera.intyg.intygstjanst.application.sickleave.converter.IntygsDataConverter;
 import se.inera.intyg.intygstjanst.application.sickleave.dto.IntygData;
 import se.inera.intyg.intygstjanst.application.sickleave.dto.IntygParametrar;
 import se.inera.intyg.intygstjanst.application.sickleave.dto.SjukfallEnhet;
-import se.inera.intyg.intygstjanst.application.sickleave.services.GetActiveSickLeaveCertificates;
-import se.inera.intyg.intygstjanst.application.sickleave.services.SjukfallEngineService;
+import se.inera.intyg.intygstjanst.infrastructure.csintegration.aggregator.ValidSickLeaveAggregator;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.SjukfallCertificateDao;
-import se.inera.intyg.intygstjanst.infrastructure.csintegration.aggregator.ValidSickLeaveAggregator;
-import se.inera.intyg.intygstjanst.application.sickleave.converter.IntygsDataConverter;
 
 @ExtendWith(MockitoExtension.class)
 class GetActiveSickLeaveCertificatesTest {
 
-    @Mock
-    private ValidSickLeaveAggregator validSickLeaveAggregator;
+  @Mock private ValidSickLeaveAggregator validSickLeaveAggregator;
 
-    @Mock
-    private SjukfallCertificateDao sjukfallCertificateDao;
+  @Mock private SjukfallCertificateDao sjukfallCertificateDao;
 
-    @Mock
-    private IntygsDataConverter intygDataConverter;
+  @Mock private IntygsDataConverter intygDataConverter;
 
-    @Mock
-    private SjukfallEngineService sjukfallEngineService;
+  @Mock private SjukfallEngineService sjukfallEngineService;
 
-    @InjectMocks
-    private GetActiveSickLeaveCertificates getActiveSickLeaveCertificates;
+  @InjectMocks private GetActiveSickLeaveCertificates getActiveSickLeaveCertificates;
 
-    private static final String CARE_PROVIDER_ID = "CareProviderId";
-    private static final List<String> UNIT_IDS = List.of("UnitId1", "UnitId2");
-    private static final List<String> DOCTOR_IDS = List.of("DoctorId1", "DoctorId2");
-    private static final Integer MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED = 3;
+  private static final String CARE_PROVIDER_ID = "CareProviderId";
+  private static final List<String> UNIT_IDS = List.of("UnitId1", "UnitId2");
+  private static final List<String> DOCTOR_IDS = List.of("DoctorId1", "DoctorId2");
+  private static final Integer MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED = 3;
 
-    @Nested
-    class CareProviderIdTest {
+  @Nested
+  class CareProviderIdTest {
 
-        @Test
-        void shallIncludeCareProviderIdWhenQueryActiveSjukfallCertificate() {
-            final var careProviderIdCaptor = ArgumentCaptor.forClass(String.class);
-            getActiveSickLeaveCertificates.get(CARE_PROVIDER_ID, UNIT_IDS, DOCTOR_IDS, MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED);
-            verify(sjukfallCertificateDao).findActiveSjukfallCertificate(careProviderIdCaptor.capture(), anyList(), anyList(),
-                any(LocalDate.class), any(LocalDate.class));
-            assertEquals(CARE_PROVIDER_ID, careProviderIdCaptor.getValue());
-        }
-
-        @Test
-        void shallThrowExceptionIfCareProviderIdIsNull() {
-            assertThrows(IllegalArgumentException.class,
-                () -> getActiveSickLeaveCertificates.get(null, UNIT_IDS, DOCTOR_IDS, MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED)
-            );
-        }
-
-        @Test
-        void shallThrowExceptionIfCareProviderIdIsEmpty() {
-            assertThrows(IllegalArgumentException.class,
-                () -> getActiveSickLeaveCertificates.get(" ", UNIT_IDS, DOCTOR_IDS, MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED)
-            );
-        }
-    }
-
-    @Nested
-    class UnitIdsTest {
-
-        @Test
-        void shallIncludeUnitIdsWhenQueryActiveSjukfallCertificate() {
-            final var unitIdsCaptor = ArgumentCaptor.forClass(List.class);
-            getActiveSickLeaveCertificates.get(CARE_PROVIDER_ID, UNIT_IDS, DOCTOR_IDS, MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED);
-            verify(sjukfallCertificateDao).findActiveSjukfallCertificate(anyString(), unitIdsCaptor.capture(), anyList(),
-                any(LocalDate.class), any(LocalDate.class));
-            assertEquals(UNIT_IDS, unitIdsCaptor.getValue());
-        }
-
-        @Test
-        void shallThrowExceptionIfUnitIdsIsNull() {
-            assertThrows(IllegalArgumentException.class,
-                () -> getActiveSickLeaveCertificates.get(CARE_PROVIDER_ID, null, DOCTOR_IDS, MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED)
-            );
-        }
-
-        @Test
-        void shallThrowExceptionIfUnitIdsIsEmpty() {
-            assertThrows(IllegalArgumentException.class,
-                () -> getActiveSickLeaveCertificates.get(CARE_PROVIDER_ID, Collections.emptyList(), DOCTOR_IDS,
-                    MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED)
-            );
-        }
-
-        @Test
-        void shallThrowExceptionIfUnitIdsEmptyValues() {
-            assertThrows(IllegalArgumentException.class,
-                () -> getActiveSickLeaveCertificates.get(CARE_PROVIDER_ID, List.of("UnitId1", " "), DOCTOR_IDS,
-                    MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED)
-            );
-        }
-
-        @Test
-        void shallThrowExceptionIfUnitIdsNullValues() {
-            assertThrows(IllegalArgumentException.class,
-                () -> getActiveSickLeaveCertificates.get(CARE_PROVIDER_ID, Arrays.asList("UnitId1", null), DOCTOR_IDS,
-                    MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED)
-            );
-        }
-    }
-
-    @Nested
-    class DoctorIdsTest {
-
-        @Test
-        void shallIncludeDoctorIdsWhenQueryActiveSjukfallCertificate() {
-            final var doctorIdsCaptor = ArgumentCaptor.forClass(List.class);
-            getActiveSickLeaveCertificates.get(CARE_PROVIDER_ID, UNIT_IDS, DOCTOR_IDS, MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED);
-            verify(sjukfallCertificateDao).findActiveSjukfallCertificate(anyString(), anyList(), doctorIdsCaptor.capture(),
-                any(LocalDate.class), any(LocalDate.class));
-            assertEquals(DOCTOR_IDS, doctorIdsCaptor.getValue());
-        }
-
-        @Test
-        void shallAllowEmptyDoctorIdsWhenQueryActiveSjukfallCertificate() {
-            final var doctorIdsCaptor = ArgumentCaptor.forClass(List.class);
-            getActiveSickLeaveCertificates.get(CARE_PROVIDER_ID, UNIT_IDS, Collections.emptyList(), MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED);
-            verify(sjukfallCertificateDao).findActiveSjukfallCertificate(anyString(), anyList(), doctorIdsCaptor.capture(),
-                any(LocalDate.class), any(LocalDate.class));
-            assertEquals(Collections.emptyList(), doctorIdsCaptor.getValue());
-        }
-
-        @Test
-        void shallAllowNullDoctorIdsWhenQueryActiveSjukfallCertificate() {
-            final var doctorIdsCaptor = ArgumentCaptor.forClass(List.class);
-            getActiveSickLeaveCertificates.get(CARE_PROVIDER_ID, UNIT_IDS, null, MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED);
-            verify(sjukfallCertificateDao).findActiveSjukfallCertificate(anyString(), anyList(), doctorIdsCaptor.capture(),
-                any(LocalDate.class), any(LocalDate.class));
-            assertEquals(null, doctorIdsCaptor.getValue());
-        }
-
-        @Test
-        void shallThrowExceptionIfDoctorIdsEmptyValues() {
-            assertThrows(IllegalArgumentException.class,
-                () -> getActiveSickLeaveCertificates.get(CARE_PROVIDER_ID, UNIT_IDS, List.of("DoctorId1", " "),
-                    MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED)
-            );
-        }
-
-        @Test
-        void shallThrowExceptionIfDoctorIdsNullValues() {
-            assertThrows(IllegalArgumentException.class,
-                () -> getActiveSickLeaveCertificates.get(CARE_PROVIDER_ID, UNIT_IDS, Arrays.asList("UnitId1", null),
-                    MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED)
-            );
-        }
-    }
-
-    @Nested
-    class MaxDaysSinceSickLeaveCompleted {
-
-        @Test
-        void shallIncludeMaxDaysSinceSickLeaveCompletedWhenQueryActiveSjukfallCertificate() {
-            final var expectedRecentlyClosed = LocalDate.now().minusDays(MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED);
-            final var recentlyClosedCapture = ArgumentCaptor.forClass(LocalDate.class);
-            getActiveSickLeaveCertificates.get(CARE_PROVIDER_ID, UNIT_IDS, DOCTOR_IDS, MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED);
-            verify(sjukfallCertificateDao).findActiveSjukfallCertificate(anyString(), anyList(), anyList(),
-                any(LocalDate.class), recentlyClosedCapture.capture());
-            assertEquals(expectedRecentlyClosed, recentlyClosedCapture.getValue());
-        }
-
-        @Test
-        void shallIgnoreMaxDaysSinceSickLeaveCompletedIfZeroWhenQueryActiveSjukfallCertificate() {
-            final var recentlyClosedCapture = ArgumentCaptor.forClass(LocalDate.class);
-            getActiveSickLeaveCertificates.get(CARE_PROVIDER_ID, UNIT_IDS, DOCTOR_IDS, 0);
-            verify(sjukfallCertificateDao).findActiveSjukfallCertificate(anyString(), anyList(), anyList(), any(LocalDate.class),
-                recentlyClosedCapture.capture());
-            assertNull(recentlyClosedCapture.getValue());
-        }
-
-        @Test
-        void shallIgnoreMaxDaysSinceSickLeaveCompletedIfNegativeWhenQueryActiveSjukfallCertificate() {
-            final var recentlyClosedCapture = ArgumentCaptor.forClass(LocalDate.class);
-            getActiveSickLeaveCertificates.get(CARE_PROVIDER_ID, UNIT_IDS, DOCTOR_IDS, -3);
-            verify(sjukfallCertificateDao).findActiveSjukfallCertificate(anyString(), anyList(), anyList(), any(LocalDate.class),
-                recentlyClosedCapture.capture());
-            assertNull(recentlyClosedCapture.getValue());
-        }
-
-        @Test
-        void shallIncludeMaxDaysSinceSickLeaveCompletedWhenCalculatingSickLeaves() {
-            final var intygParametrarCapture = ArgumentCaptor.forClass(IntygParametrar.class);
-            getActiveSickLeaveCertificates.get(CARE_PROVIDER_ID, UNIT_IDS, DOCTOR_IDS, MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED);
-            verify(sjukfallEngineService).beraknaSjukfallForEnhet(anyList(), intygParametrarCapture.capture());
-            assertEquals(MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED, intygParametrarCapture.getValue().getMaxAntalDagarSedanSjukfallAvslut());
-        }
-    }
-
-    @Nested
-    class TodayDate {
-
-        @Test
-        void shallIncludeTodayDateWhenQueryActiveSjukfallCertificate() {
-            final var expectedTodayDate = LocalDate.now();
-            final var todayDateCapture = ArgumentCaptor.forClass(LocalDate.class);
-            getActiveSickLeaveCertificates.get(CARE_PROVIDER_ID, UNIT_IDS, DOCTOR_IDS, MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED);
-            verify(sjukfallCertificateDao).findActiveSjukfallCertificate(anyString(), anyList(), anyList(),
-                todayDateCapture.capture(), any(LocalDate.class));
-            assertEquals(expectedTodayDate, todayDateCapture.getValue());
-        }
-
-        @Test
-        void shallIncludeTodayDateWhenCalculatingSickLeaves() {
-            final var expectedTodayDate = LocalDate.now();
-            final var intygParametrarCapture = ArgumentCaptor.forClass(IntygParametrar.class);
-            getActiveSickLeaveCertificates.get(CARE_PROVIDER_ID, UNIT_IDS, DOCTOR_IDS, MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED);
-            verify(sjukfallEngineService).beraknaSjukfallForEnhet(anyList(), intygParametrarCapture.capture());
-            assertEquals(expectedTodayDate, intygParametrarCapture.getValue().getAktivtDatum());
-        }
+    @Test
+    void shallIncludeCareProviderIdWhenQueryActiveSjukfallCertificate() {
+      final var careProviderIdCaptor = ArgumentCaptor.forClass(String.class);
+      getActiveSickLeaveCertificates.get(
+          CARE_PROVIDER_ID, UNIT_IDS, DOCTOR_IDS, MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED);
+      verify(sjukfallCertificateDao)
+          .findActiveSjukfallCertificate(
+              careProviderIdCaptor.capture(),
+              anyList(),
+              anyList(),
+              any(LocalDate.class),
+              any(LocalDate.class));
+      assertEquals(CARE_PROVIDER_ID, careProviderIdCaptor.getValue());
     }
 
     @Test
-    void shallOnlyReturnIntygDataThatAreActive() {
-        final var expectedIntygData = new IntygData();
-        expectedIntygData.setIntygId("EXPECTED_ID");
-        final var expectedIntygDataList = List.of(expectedIntygData);
+    void shallThrowExceptionIfCareProviderIdIsNull() {
+      assertThrows(
+          IllegalArgumentException.class,
+          () ->
+              getActiveSickLeaveCertificates.get(
+                  null, UNIT_IDS, DOCTOR_IDS, MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED));
+    }
 
-        final var sjukfallCertificateList = List.of(
+    @Test
+    void shallThrowExceptionIfCareProviderIdIsEmpty() {
+      assertThrows(
+          IllegalArgumentException.class,
+          () ->
+              getActiveSickLeaveCertificates.get(
+                  " ", UNIT_IDS, DOCTOR_IDS, MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED));
+    }
+  }
+
+  @Nested
+  class UnitIdsTest {
+
+    @Test
+    void shallIncludeUnitIdsWhenQueryActiveSjukfallCertificate() {
+      final var unitIdsCaptor = ArgumentCaptor.forClass(List.class);
+      getActiveSickLeaveCertificates.get(
+          CARE_PROVIDER_ID, UNIT_IDS, DOCTOR_IDS, MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED);
+      verify(sjukfallCertificateDao)
+          .findActiveSjukfallCertificate(
+              anyString(),
+              unitIdsCaptor.capture(),
+              anyList(),
+              any(LocalDate.class),
+              any(LocalDate.class));
+      assertEquals(UNIT_IDS, unitIdsCaptor.getValue());
+    }
+
+    @Test
+    void shallThrowExceptionIfUnitIdsIsNull() {
+      assertThrows(
+          IllegalArgumentException.class,
+          () ->
+              getActiveSickLeaveCertificates.get(
+                  CARE_PROVIDER_ID, null, DOCTOR_IDS, MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED));
+    }
+
+    @Test
+    void shallThrowExceptionIfUnitIdsIsEmpty() {
+      assertThrows(
+          IllegalArgumentException.class,
+          () ->
+              getActiveSickLeaveCertificates.get(
+                  CARE_PROVIDER_ID,
+                  Collections.emptyList(),
+                  DOCTOR_IDS,
+                  MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED));
+    }
+
+    @Test
+    void shallThrowExceptionIfUnitIdsEmptyValues() {
+      assertThrows(
+          IllegalArgumentException.class,
+          () ->
+              getActiveSickLeaveCertificates.get(
+                  CARE_PROVIDER_ID,
+                  List.of("UnitId1", " "),
+                  DOCTOR_IDS,
+                  MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED));
+    }
+
+    @Test
+    void shallThrowExceptionIfUnitIdsNullValues() {
+      assertThrows(
+          IllegalArgumentException.class,
+          () ->
+              getActiveSickLeaveCertificates.get(
+                  CARE_PROVIDER_ID,
+                  Arrays.asList("UnitId1", null),
+                  DOCTOR_IDS,
+                  MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED));
+    }
+  }
+
+  @Nested
+  class DoctorIdsTest {
+
+    @Test
+    void shallIncludeDoctorIdsWhenQueryActiveSjukfallCertificate() {
+      final var doctorIdsCaptor = ArgumentCaptor.forClass(List.class);
+      getActiveSickLeaveCertificates.get(
+          CARE_PROVIDER_ID, UNIT_IDS, DOCTOR_IDS, MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED);
+      verify(sjukfallCertificateDao)
+          .findActiveSjukfallCertificate(
+              anyString(),
+              anyList(),
+              doctorIdsCaptor.capture(),
+              any(LocalDate.class),
+              any(LocalDate.class));
+      assertEquals(DOCTOR_IDS, doctorIdsCaptor.getValue());
+    }
+
+    @Test
+    void shallAllowEmptyDoctorIdsWhenQueryActiveSjukfallCertificate() {
+      final var doctorIdsCaptor = ArgumentCaptor.forClass(List.class);
+      getActiveSickLeaveCertificates.get(
+          CARE_PROVIDER_ID, UNIT_IDS, Collections.emptyList(), MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED);
+      verify(sjukfallCertificateDao)
+          .findActiveSjukfallCertificate(
+              anyString(),
+              anyList(),
+              doctorIdsCaptor.capture(),
+              any(LocalDate.class),
+              any(LocalDate.class));
+      assertEquals(Collections.emptyList(), doctorIdsCaptor.getValue());
+    }
+
+    @Test
+    void shallAllowNullDoctorIdsWhenQueryActiveSjukfallCertificate() {
+      final var doctorIdsCaptor = ArgumentCaptor.forClass(List.class);
+      getActiveSickLeaveCertificates.get(
+          CARE_PROVIDER_ID, UNIT_IDS, null, MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED);
+      verify(sjukfallCertificateDao)
+          .findActiveSjukfallCertificate(
+              anyString(),
+              anyList(),
+              doctorIdsCaptor.capture(),
+              any(LocalDate.class),
+              any(LocalDate.class));
+      assertEquals(null, doctorIdsCaptor.getValue());
+    }
+
+    @Test
+    void shallThrowExceptionIfDoctorIdsEmptyValues() {
+      assertThrows(
+          IllegalArgumentException.class,
+          () ->
+              getActiveSickLeaveCertificates.get(
+                  CARE_PROVIDER_ID,
+                  UNIT_IDS,
+                  List.of("DoctorId1", " "),
+                  MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED));
+    }
+
+    @Test
+    void shallThrowExceptionIfDoctorIdsNullValues() {
+      assertThrows(
+          IllegalArgumentException.class,
+          () ->
+              getActiveSickLeaveCertificates.get(
+                  CARE_PROVIDER_ID,
+                  UNIT_IDS,
+                  Arrays.asList("UnitId1", null),
+                  MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED));
+    }
+  }
+
+  @Nested
+  class MaxDaysSinceSickLeaveCompleted {
+
+    @Test
+    void shallIncludeMaxDaysSinceSickLeaveCompletedWhenQueryActiveSjukfallCertificate() {
+      final var expectedRecentlyClosed =
+          LocalDate.now().minusDays(MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED);
+      final var recentlyClosedCapture = ArgumentCaptor.forClass(LocalDate.class);
+      getActiveSickLeaveCertificates.get(
+          CARE_PROVIDER_ID, UNIT_IDS, DOCTOR_IDS, MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED);
+      verify(sjukfallCertificateDao)
+          .findActiveSjukfallCertificate(
+              anyString(),
+              anyList(),
+              anyList(),
+              any(LocalDate.class),
+              recentlyClosedCapture.capture());
+      assertEquals(expectedRecentlyClosed, recentlyClosedCapture.getValue());
+    }
+
+    @Test
+    void shallIgnoreMaxDaysSinceSickLeaveCompletedIfZeroWhenQueryActiveSjukfallCertificate() {
+      final var recentlyClosedCapture = ArgumentCaptor.forClass(LocalDate.class);
+      getActiveSickLeaveCertificates.get(CARE_PROVIDER_ID, UNIT_IDS, DOCTOR_IDS, 0);
+      verify(sjukfallCertificateDao)
+          .findActiveSjukfallCertificate(
+              anyString(),
+              anyList(),
+              anyList(),
+              any(LocalDate.class),
+              recentlyClosedCapture.capture());
+      assertNull(recentlyClosedCapture.getValue());
+    }
+
+    @Test
+    void shallIgnoreMaxDaysSinceSickLeaveCompletedIfNegativeWhenQueryActiveSjukfallCertificate() {
+      final var recentlyClosedCapture = ArgumentCaptor.forClass(LocalDate.class);
+      getActiveSickLeaveCertificates.get(CARE_PROVIDER_ID, UNIT_IDS, DOCTOR_IDS, -3);
+      verify(sjukfallCertificateDao)
+          .findActiveSjukfallCertificate(
+              anyString(),
+              anyList(),
+              anyList(),
+              any(LocalDate.class),
+              recentlyClosedCapture.capture());
+      assertNull(recentlyClosedCapture.getValue());
+    }
+
+    @Test
+    void shallIncludeMaxDaysSinceSickLeaveCompletedWhenCalculatingSickLeaves() {
+      final var intygParametrarCapture = ArgumentCaptor.forClass(IntygParametrar.class);
+      getActiveSickLeaveCertificates.get(
+          CARE_PROVIDER_ID, UNIT_IDS, DOCTOR_IDS, MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED);
+      verify(sjukfallEngineService)
+          .beraknaSjukfallForEnhet(anyList(), intygParametrarCapture.capture());
+      assertEquals(
+          MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED,
+          intygParametrarCapture.getValue().getMaxAntalDagarSedanSjukfallAvslut());
+    }
+  }
+
+  @Nested
+  class TodayDate {
+
+    @Test
+    void shallIncludeTodayDateWhenQueryActiveSjukfallCertificate() {
+      final var expectedTodayDate = LocalDate.now();
+      final var todayDateCapture = ArgumentCaptor.forClass(LocalDate.class);
+      getActiveSickLeaveCertificates.get(
+          CARE_PROVIDER_ID, UNIT_IDS, DOCTOR_IDS, MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED);
+      verify(sjukfallCertificateDao)
+          .findActiveSjukfallCertificate(
+              anyString(), anyList(), anyList(), todayDateCapture.capture(), any(LocalDate.class));
+      assertEquals(expectedTodayDate, todayDateCapture.getValue());
+    }
+
+    @Test
+    void shallIncludeTodayDateWhenCalculatingSickLeaves() {
+      final var expectedTodayDate = LocalDate.now();
+      final var intygParametrarCapture = ArgumentCaptor.forClass(IntygParametrar.class);
+      getActiveSickLeaveCertificates.get(
+          CARE_PROVIDER_ID, UNIT_IDS, DOCTOR_IDS, MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED);
+      verify(sjukfallEngineService)
+          .beraknaSjukfallForEnhet(anyList(), intygParametrarCapture.capture());
+      assertEquals(expectedTodayDate, intygParametrarCapture.getValue().getAktivtDatum());
+    }
+  }
+
+  @Test
+  void shallOnlyReturnIntygDataThatAreActive() {
+    final var expectedIntygData = new IntygData();
+    expectedIntygData.setIntygId("EXPECTED_ID");
+    final var expectedIntygDataList = List.of(expectedIntygData);
+
+    final var sjukfallCertificateList =
+        List.of(
             new SjukfallCertificate("EXPECTED_ID"),
             new SjukfallCertificate("INTYG_DATA_ONE"),
-            new SjukfallCertificate("INTYG_DATA_TWO")
-        );
-        doReturn(sjukfallCertificateList)
-            .when(sjukfallCertificateDao)
-            .findActiveSjukfallCertificate(anyString(), anyList(), anyList(), any(LocalDate.class), any(LocalDate.class));
-        doReturn(sjukfallCertificateList).when(validSickLeaveAggregator).get(sjukfallCertificateList);
+            new SjukfallCertificate("INTYG_DATA_TWO"));
+    doReturn(sjukfallCertificateList)
+        .when(sjukfallCertificateDao)
+        .findActiveSjukfallCertificate(
+            anyString(), anyList(), anyList(), any(LocalDate.class), any(LocalDate.class));
+    doReturn(sjukfallCertificateList).when(validSickLeaveAggregator).get(sjukfallCertificateList);
 
-        final var intygDataOne = new IntygData();
-        intygDataOne.setIntygId("INTYG_DATA_ONE");
-        final var intygDataTwo = new IntygData();
-        intygDataOne.setIntygId("INTYG_DATA_TWO");
-        final var intygDataList = List.of(expectedIntygData, intygDataOne, intygDataTwo);
-        doReturn(intygDataList)
-            .when(intygDataConverter)
-            .convert(sjukfallCertificateList);
+    final var intygDataOne = new IntygData();
+    intygDataOne.setIntygId("INTYG_DATA_ONE");
+    final var intygDataTwo = new IntygData();
+    intygDataOne.setIntygId("INTYG_DATA_TWO");
+    final var intygDataList = List.of(expectedIntygData, intygDataOne, intygDataTwo);
+    doReturn(intygDataList).when(intygDataConverter).convert(sjukfallCertificateList);
 
-        final var sjukfallEnhet = new SjukfallEnhet();
-        sjukfallEnhet.setAktivIntygsId("EXPECTED_ID");
-        final var sjukfallEnhetList = List.of(sjukfallEnhet);
-        doReturn(sjukfallEnhetList)
-            .when(sjukfallEngineService)
-            .beraknaSjukfallForEnhet(eq(intygDataList), any(IntygParametrar.class));
+    final var sjukfallEnhet = new SjukfallEnhet();
+    sjukfallEnhet.setAktivIntygsId("EXPECTED_ID");
+    final var sjukfallEnhetList = List.of(sjukfallEnhet);
+    doReturn(sjukfallEnhetList)
+        .when(sjukfallEngineService)
+        .beraknaSjukfallForEnhet(eq(intygDataList), any(IntygParametrar.class));
 
-        final var actualIntygDataList = getActiveSickLeaveCertificates.get(CARE_PROVIDER_ID, UNIT_IDS, DOCTOR_IDS,
-            MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED);
+    final var actualIntygDataList =
+        getActiveSickLeaveCertificates.get(
+            CARE_PROVIDER_ID, UNIT_IDS, DOCTOR_IDS, MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED);
 
-        assertEquals(expectedIntygDataList, actualIntygDataList);
-    }
+    assertEquals(expectedIntygDataList, actualIntygDataList);
+  }
 }

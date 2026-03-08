@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.integration.hsa.model.legacy;
 
 import java.util.List;
@@ -23,21 +24,19 @@ import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-/**
- * Composite class encapsulating response data from GetAuthorizationsForPerson.
- */
+/** Composite class encapsulating response data from GetAuthorizationsForPerson. */
 @AllArgsConstructor
 @Getter
 public class UserAuthorizationInfo {
 
-    private UserCredentials userCredentials;
-    private List<Vardgivare> vardgivare;
+  private UserCredentials userCredentials;
+  private List<Vardgivare> vardgivare;
 
-    /**
-     * Maps a careUnitId to the name of the actual commission the user has on that care unit. Used for PDL-logging.
-     *
-     * See {@link se.riv.infrastructure.directory.v1.CommissionType#commissionName}
-     */
-    private Map<String, String> commissionNamePerCareUnit;
-
+  /**
+   * Maps a careUnitId to the name of the actual commission the user has on that care unit. Used for
+   * PDL-logging.
+   *
+   * <p>See {@link se.riv.infrastructure.directory.v1.CommissionType#commissionName}
+   */
+  private Map<String, String> commissionNamePerCareUnit;
 }

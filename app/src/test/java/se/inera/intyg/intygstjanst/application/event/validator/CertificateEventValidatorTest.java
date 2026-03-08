@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -24,45 +24,46 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import se.inera.intyg.intygstjanst.application.event.validator.CertificateEventValidator;
 
 class CertificateEventValidatorTest {
 
-    private static final String CERTIFICATE_ID = "certificateId";
-    private static final String MESSAGE_ID = "messageId";
-    private static final String EVENT_TYPE = "eventType";
-    private static final String EVENT_SIGNED = "certificate-signed";
-    private static final String EVENT_MESSAGE_SENT = "message-sent";
+  private static final String CERTIFICATE_ID = "certificateId";
+  private static final String MESSAGE_ID = "messageId";
+  private static final String EVENT_TYPE = "eventType";
+  private static final String EVENT_SIGNED = "certificate-signed";
+  private static final String EVENT_MESSAGE_SENT = "message-sent";
 
-    private CertificateEventValidator certificateStateMassageValidator;
+  private CertificateEventValidator certificateStateMassageValidator;
 
-    @BeforeEach
-    void setup() {
-        certificateStateMassageValidator = new CertificateEventValidator();
-    }
+  @BeforeEach
+  void setup() {
+    certificateStateMassageValidator = new CertificateEventValidator();
+  }
 
-    @Test
-    void shouldReturnTrueIfRequiredPropertiesForEventMessageSent() {
-        assertTrue(certificateStateMassageValidator.validate(EVENT_MESSAGE_SENT, CERTIFICATE_ID, MESSAGE_ID));
-    }
+  @Test
+  void shouldReturnTrueIfRequiredPropertiesForEventMessageSent() {
+    assertTrue(
+        certificateStateMassageValidator.validate(EVENT_MESSAGE_SENT, CERTIFICATE_ID, MESSAGE_ID));
+  }
 
-    @Test
-    void shouldReturnTrueIfRequiredPropertiesAndNotEventMessageSent() {
-        assertTrue(certificateStateMassageValidator.validate(EVENT_SIGNED, CERTIFICATE_ID, null));
-    }
+  @Test
+  void shouldReturnTrueIfRequiredPropertiesAndNotEventMessageSent() {
+    assertTrue(certificateStateMassageValidator.validate(EVENT_SIGNED, CERTIFICATE_ID, null));
+  }
 
-    @Test
-    void shouldReturnFalseIfMissingMessageIdForEventMessageSent() {
-        assertFalse(certificateStateMassageValidator.validate(EVENT_MESSAGE_SENT, CERTIFICATE_ID, null));
-    }
+  @Test
+  void shouldReturnFalseIfMissingMessageIdForEventMessageSent() {
+    assertFalse(
+        certificateStateMassageValidator.validate(EVENT_MESSAGE_SENT, CERTIFICATE_ID, null));
+  }
 
-    @Test
-    void shouldReturnFalseIfMissingEventType() {
-        assertFalse(certificateStateMassageValidator.validate(null, CERTIFICATE_ID, MESSAGE_ID));
-    }
+  @Test
+  void shouldReturnFalseIfMissingEventType() {
+    assertFalse(certificateStateMassageValidator.validate(null, CERTIFICATE_ID, MESSAGE_ID));
+  }
 
-    @Test
-    void shouldReturnFalseIfMissingCertificateId() {
-        assertFalse(certificateStateMassageValidator.validate(EVENT_SIGNED, null, MESSAGE_ID));
-    }
+  @Test
+  void shouldReturnFalseIfMissingCertificateId() {
+    assertFalse(certificateStateMassageValidator.validate(EVENT_SIGNED, null, MESSAGE_ID));
+  }
 }

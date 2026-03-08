@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao;
 
 import jakarta.persistence.EntityManager;
@@ -34,54 +35,61 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 public class ApprovedReceiverDao {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ApprovedReceiverDao.class);
+  private static final Logger LOG = LoggerFactory.getLogger(ApprovedReceiverDao.class);
 
-    @PersistenceContext
-    private EntityManager entityManager;
+  @PersistenceContext private EntityManager entityManager;
 
-    public List<ApprovedReceiver> getApprovedReceiverIdsForCertificate(String intygsId) {
-        return entityManager.createQuery("SELECT ar FROM ApprovedReceiver ar WHERE ar.certificateId = :intygsId", ApprovedReceiver.class)
-            .setParameter("intygsId", intygsId)
-            .getResultList();
+  public List<ApprovedReceiver> getApprovedReceiverIdsForCertificate(String intygsId) {
+    return entityManager
+        .createQuery(
+            "SELECT ar FROM ApprovedReceiver ar WHERE ar.certificateId = :intygsId",
+            ApprovedReceiver.class)
+        .setParameter("intygsId", intygsId)
+        .getResultList();
+  }
+
+  public void clearApprovedReceiversForCertificate(String intygsId) {
+    List<ApprovedReceiver> resultList = getApprovedReceivers(intygsId);
+    removeApprovedReceivers(resultList);
+  }
+
+  private void removeApprovedReceivers(List<ApprovedReceiver> resultList) {
+    for (ApprovedReceiver ar : resultList) {
+      entityManager.remove(ar);
     }
+  }
 
-    public void clearApprovedReceiversForCertificate(String intygsId) {
-        List<ApprovedReceiver> resultList = getApprovedReceivers(intygsId);
-        removeApprovedReceivers(resultList);
-    }
+  private List<ApprovedReceiver> getApprovedReceivers(String intygsId) {
+    return entityManager
+        .createQuery(
+            "SELECT ar FROM ApprovedReceiver ar WHERE ar.certificateId = :intygsId",
+            ApprovedReceiver.class)
+        .setParameter("intygsId", intygsId)
+        .getResultList();
+  }
 
-    private void removeApprovedReceivers(List<ApprovedReceiver> resultList) {
-        for (ApprovedReceiver ar : resultList) {
-            entityManager.remove(ar);
-        }
-    }
+  public void store(ApprovedReceiver approvedReceiver) {
+    entityManager.persist(approvedReceiver);
+  }
 
-    private List<ApprovedReceiver> getApprovedReceivers(String intygsId) {
-        return entityManager
-            .createQuery("SELECT ar FROM ApprovedReceiver ar WHERE ar.certificateId = :intygsId", ApprovedReceiver.class)
-            .setParameter("intygsId", intygsId)
-            .getResultList();
+  public void eraseTestCertificates(List<String> ids) {
+    for (var id : ids) {
+      clearApprovedReceiversForCertificate(id);
     }
+  }
 
-    public void store(ApprovedReceiver approvedReceiver) {
-        entityManager.persist(approvedReceiver);
+  @Transactional
+  public void eraseApprovedReceivers(List<String> certificateIds, String careProviderId) {
+    for (var certificateId : certificateIds) {
+      final var approvedReceivers = getApprovedReceivers(certificateId);
+      if (!approvedReceivers.isEmpty()) {
+        removeApprovedReceivers(approvedReceivers);
+        LOG.debug(
+            "Successfully erased {} approved receivers for certificate id {} from care provider {}.",
+            approvedReceivers.size(),
+            certificateId,
+            careProviderId);
+      }
     }
-
-    public void eraseTestCertificates(List<String> ids) {
-        for (var id : ids) {
-            clearApprovedReceiversForCertificate(id);
-        }
-    }
-
-    @Transactional
-    public void eraseApprovedReceivers(List<String> certificateIds, String careProviderId) {
-        for (var certificateId : certificateIds) {
-            final var approvedReceivers = getApprovedReceivers(certificateId);
-            if (!approvedReceivers.isEmpty()) {
-                removeApprovedReceivers(approvedReceivers);
-                LOG.debug("Successfully erased {} approved receivers for certificate id {} from care provider {}.",
-                    approvedReceivers.size(), certificateId, careProviderId);
-            }
-        }
-    }
+  }
 }

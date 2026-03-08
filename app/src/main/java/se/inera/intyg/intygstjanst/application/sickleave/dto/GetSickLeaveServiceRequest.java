@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -28,19 +28,19 @@ import lombok.Value;
 @Builder
 public class GetSickLeaveServiceRequest {
 
-    String unitId;
-    String careUnitId;
-    List<String> doctorIds;
-    int maxCertificateGap;
-    int maxDaysSinceSickLeaveCompleted;
-    List<SickLeaveLengthInterval> sickLeaveLengthIntervals;
-    List<DiagnosKapitel> diagnosisChapters;
-    Integer fromPatientAge;
-    Integer toPatientAge;
-    String protectedPersonFilterId;
-    LocalDate fromSickLeaveEndDate;
-    LocalDate toSickLeaveEndDate;
-    List<String> rekoStatusTypeIds;
-    List<String> occupationTypeIds;
-    String textSearch;
+  String unitId;
+  String careUnitId;
+  List<String> doctorIds;
+  int maxCertificateGap;
+  int maxDaysSinceSickLeaveCompleted;
+  List<SickLeaveLengthInterval> sickLeaveLengthIntervals;
+  List<DiagnosKapitel> diagnosisChapters;
+  Integer fromPatientAge;
+  Integer toPatientAge;
+  String protectedPersonFilterId;
+  LocalDate fromSickLeaveEndDate;
+  LocalDate toSickLeaveEndDate;
+  List<String> rekoStatusTypeIds;
+  List<String> occupationTypeIds;
+  String textSearch;
 }

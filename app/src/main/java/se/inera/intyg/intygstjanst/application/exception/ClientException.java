@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,25 +16,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.application.exception;
 
 public class ClientException extends Exception {
 
-    private static final long serialVersionUID = -239449104469100203L;
+  private static final long serialVersionUID = -239449104469100203L;
 
-    public ClientException() {
-        super();
-    }
+  public ClientException() {
+    super();
+  }
 
-    public ClientException(String message, Throwable cause) {
-        super(message, cause);
-    }
+  public ClientException(String message, Throwable cause) {
+    super(message, cause);
+  }
 
-    public ClientException(String message) {
-        super(message);
-    }
+  public ClientException(String message) {
+    super(message);
+  }
 
-    public ClientException(Throwable cause) {
-        super(cause);
-    }
+  public ClientException(Throwable cause) {
+    super(cause);
+  }
 }

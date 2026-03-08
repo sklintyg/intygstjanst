@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -28,12 +28,13 @@ import se.inera.intyg.intygstjanst.integration.hsa.model.Commission;
 @Component
 public class CommissionNameMapConverter {
 
-    public Map<String, String> convert(List<Commission> commissions) {
-        return commissions.stream()
-            .distinct()
-            .collect(Collectors.toMap(
+  public Map<String, String> convert(List<Commission> commissions) {
+    return commissions.stream()
+        .distinct()
+        .collect(
+            Collectors.toMap(
                 Commission::getHealthCareUnitHsaId,
                 Commission::getCommissionName,
                 (existingValue, newValue) -> newValue));
-    }
+  }
 }

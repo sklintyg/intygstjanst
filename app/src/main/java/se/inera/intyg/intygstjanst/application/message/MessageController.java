@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.application.message;
 
 import java.util.List;
@@ -25,25 +26,25 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import se.inera.intyg.intygstjanst.application.message.dto.MessageFromIT;
-import se.inera.intyg.intygstjanst.infrastructure.security.interceptor.ApiBasePath;
+import se.inera.intyg.intygstjanst.application.message.service.MessageService;
 import se.inera.intyg.intygstjanst.infrastructure.logging.MdcLogConstants;
 import se.inera.intyg.intygstjanst.infrastructure.logging.PerformanceLogging;
-import se.inera.intyg.intygstjanst.application.message.service.MessageService;
+import se.inera.intyg.intygstjanst.infrastructure.security.interceptor.ApiBasePath;
 
-/**
- * Internal REST endpoint to retrieve messages on certificates
- */
+/** Internal REST endpoint to retrieve messages on certificates */
 @RestController
 @ApiBasePath("/internalapi")
 @RequestMapping("/message")
 @RequiredArgsConstructor
 public class MessageController {
 
-    private final MessageService messageService;
+  private final MessageService messageService;
 
-    @GetMapping("/{certificateId}")
-    @PerformanceLogging(eventAction = "retrieve-messages", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
-    public List<MessageFromIT> findMessagesByCertificateId(@PathVariable String certificateId) {
-        return messageService.findMessagesByCertificateId(certificateId);
-    }
+  @GetMapping("/{certificateId}")
+  @PerformanceLogging(
+      eventAction = "retrieve-messages",
+      eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
+  public List<MessageFromIT> findMessagesByCertificateId(@PathVariable String certificateId) {
+    return messageService.findMessagesByCertificateId(certificateId);
+  }
 }

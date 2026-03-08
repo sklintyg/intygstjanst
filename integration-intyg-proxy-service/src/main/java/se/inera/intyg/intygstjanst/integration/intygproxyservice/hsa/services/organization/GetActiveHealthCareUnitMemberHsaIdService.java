@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -35,35 +35,38 @@ import se.inera.intyg.intygstjanst.integration.intygproxyservice.hsa.dto.organiz
 @RequiredArgsConstructor
 public class GetActiveHealthCareUnitMemberHsaIdService {
 
-    private final GetHealthCareUnitMembersService getHealthCareUnitMembersService;
+  private final GetHealthCareUnitMembersService getHealthCareUnitMembersService;
 
-    public List<String> get(GetHealthCareUnitMembersRequestDTO getHealthCareUnitMembersRequest) {
-        final var healthCareUnitMembers = getHealthCareUnitMembersService.get(getHealthCareUnitMembersRequest);
-        if (responseIsNullOrEmpty(healthCareUnitMembers)) {
-            return Collections.emptyList();
-        }
-        return healthCareUnitMembers.getHealthCareUnitMember().stream()
-            .filter(removeInactiveCareUnitMembers())
-            .map(HealthCareUnitMember::getHealthCareUnitMemberHsaId)
-            .distinct()
-            .collect(Collectors.toList());
+  public List<String> get(GetHealthCareUnitMembersRequestDTO getHealthCareUnitMembersRequest) {
+    final var healthCareUnitMembers =
+        getHealthCareUnitMembersService.get(getHealthCareUnitMembersRequest);
+    if (responseIsNullOrEmpty(healthCareUnitMembers)) {
+      return Collections.emptyList();
     }
+    return healthCareUnitMembers.getHealthCareUnitMember().stream()
+        .filter(removeInactiveCareUnitMembers())
+        .map(HealthCareUnitMember::getHealthCareUnitMemberHsaId)
+        .distinct()
+        .collect(Collectors.toList());
+  }
 
-    private static Predicate<HealthCareUnitMember> removeInactiveCareUnitMembers() {
-        return member -> isNullOrAfterToday(member.getHealthCareUnitMemberStartDate()) && isNullOrBeforeToday(
-            member.getHealthCareUnitMemberEndDate());
-    }
+  private static Predicate<HealthCareUnitMember> removeInactiveCareUnitMembers() {
+    return member ->
+        isNullOrAfterToday(member.getHealthCareUnitMemberStartDate())
+            && isNullOrBeforeToday(member.getHealthCareUnitMemberEndDate());
+  }
 
-    private static boolean isNullOrBeforeToday(LocalDateTime date) {
-        return date == null || !date.isBefore(LocalDateTime.now(ZoneId.systemDefault()));
-    }
+  private static boolean isNullOrBeforeToday(LocalDateTime date) {
+    return date == null || !date.isBefore(LocalDateTime.now(ZoneId.systemDefault()));
+  }
 
-    private static boolean isNullOrAfterToday(LocalDateTime date) {
-        return date == null || !date.isAfter(LocalDateTime.now(ZoneId.systemDefault()));
-    }
+  private static boolean isNullOrAfterToday(LocalDateTime date) {
+    return date == null || !date.isAfter(LocalDateTime.now(ZoneId.systemDefault()));
+  }
 
-    private static boolean responseIsNullOrEmpty(HealthCareUnitMembers healthCareUnitMembers) {
-        return healthCareUnitMembers == null || healthCareUnitMembers.getHealthCareUnitMember() == null
-            || healthCareUnitMembers.getHealthCareUnitMember().isEmpty();
-    }
+  private static boolean responseIsNullOrEmpty(HealthCareUnitMembers healthCareUnitMembers) {
+    return healthCareUnitMembers == null
+        || healthCareUnitMembers.getHealthCareUnitMember() == null
+        || healthCareUnitMembers.getHealthCareUnitMember().isEmpty();
+  }
 }

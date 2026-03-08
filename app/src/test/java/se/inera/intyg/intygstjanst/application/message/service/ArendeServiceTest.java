@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.application.message.service;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -31,37 +32,37 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ClassPathResource;
-import se.inera.intyg.intygstjanst.application.message.service.ArendeService;
+import se.inera.intyg.intygstjanst.application.message.converter.ArendeConverter;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Arende;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.ArendeRepository;
-import se.inera.intyg.intygstjanst.application.message.converter.ArendeConverter;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.SendMessageToCareType;
 
 @ExtendWith(MockitoExtension.class)
 class ArendeServiceTest {
 
-    private static final String SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML = "SendMessageToCareTest/sendmessagetocare.xml";
+  private static final String SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML =
+      "SendMessageToCareTest/sendmessagetocare.xml";
 
-    @InjectMocks
-    private ArendeService service;
+  @InjectMocks private ArendeService service;
 
-    @Mock
-    private ArendeRepository repository;
+  @Mock private ArendeRepository repository;
 
-    @Test
-    void testProcessIncomingSendMessageToCare() throws Exception {
-        Arende message = loadFromFile(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML);
-        service.processIncomingMessage(message);
-        verify(repository, times(1)).save(any(Arende.class));
-    }
+  @Test
+  void testProcessIncomingSendMessageToCare() throws Exception {
+    Arende message = loadFromFile(SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML);
+    service.processIncomingMessage(message);
+    verify(repository, times(1)).save(any(Arende.class));
+  }
 
-    private Arende loadFromFile(String fileName) throws Exception {
-        JAXBContext jaxbContext = JAXBContext.newInstance(SendMessageToCareType.class);
-        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-        SendMessageToCareType sendMessageToCareType = unmarshaller.unmarshal(
-            new StreamSource(new ClassPathResource(fileName).getInputStream()),
-            SendMessageToCareType.class).getValue();
-        return ArendeConverter.convertSendMessageToCare(sendMessageToCareType);
-    }
-
+  private Arende loadFromFile(String fileName) throws Exception {
+    JAXBContext jaxbContext = JAXBContext.newInstance(SendMessageToCareType.class);
+    Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+    SendMessageToCareType sendMessageToCareType =
+        unmarshaller
+            .unmarshal(
+                new StreamSource(new ClassPathResource(fileName).getInputStream()),
+                SendMessageToCareType.class)
+            .getValue();
+    return ArendeConverter.convertSendMessageToCare(sendMessageToCareType);
+  }
 }

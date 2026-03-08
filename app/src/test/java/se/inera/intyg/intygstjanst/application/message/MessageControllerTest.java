@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.application.message;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,27 +35,35 @@ import se.inera.intyg.intygstjanst.application.message.service.MessageService;
 @ExtendWith(MockitoExtension.class)
 class MessageControllerTest {
 
-    @Mock
-    private MessageService messageService;
+  @Mock private MessageService messageService;
 
-    @InjectMocks
-    private MessageController messageController;
+  @InjectMocks private MessageController messageController;
 
-    @Test
-    void testFindMessagesByCertificateIdSuccessful() {
-        final var certificateId = "certificateId";
+  @Test
+  void testFindMessagesByCertificateIdSuccessful() {
+    final var certificateId = "certificateId";
 
-        final var messagesFromITs = List.of(
-            MessageFromIT.create(certificateId, "messageId1", "messageContent1", "subject1",
-                "logicalAddress1", LocalDateTime.now()),
-            MessageFromIT.create(certificateId, "messageId2", "messageContent2", "subject2",
-                "logicalAddress2", LocalDateTime.now())
-        );
+    final var messagesFromITs =
+        List.of(
+            MessageFromIT.create(
+                certificateId,
+                "messageId1",
+                "messageContent1",
+                "subject1",
+                "logicalAddress1",
+                LocalDateTime.now()),
+            MessageFromIT.create(
+                certificateId,
+                "messageId2",
+                "messageContent2",
+                "subject2",
+                "logicalAddress2",
+                LocalDateTime.now()));
 
-        doReturn(messagesFromITs).when(messageService).findMessagesByCertificateId(certificateId);
+    doReturn(messagesFromITs).when(messageService).findMessagesByCertificateId(certificateId);
 
-        final var actualResponse = messageController.findMessagesByCertificateId(certificateId);
+    final var actualResponse = messageController.findMessagesByCertificateId(certificateId);
 
-        assertEquals(messagesFromITs, actualResponse);
-    }
+    assertEquals(messagesFromITs, actualResponse);
+  }
 }

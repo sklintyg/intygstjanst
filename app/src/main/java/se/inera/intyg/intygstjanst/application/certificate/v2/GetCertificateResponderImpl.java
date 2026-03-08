@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.application.certificate.v2;
 
 import jakarta.xml.bind.JAXB;
@@ -33,11 +34,11 @@ import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.common.support.modules.support.api.ModuleContainerApi;
+import se.inera.intyg.intygstjanst.application.certificate.service.CertificateService;
+import se.inera.intyg.intygstjanst.application.certificate.util.CertificateStateFilterUtil;
+import se.inera.intyg.intygstjanst.application.exception.ServerException;
 import se.inera.intyg.intygstjanst.infrastructure.logging.MdcLogConstants;
 import se.inera.intyg.intygstjanst.infrastructure.logging.PerformanceLogging;
-import se.inera.intyg.intygstjanst.application.exception.ServerException;
-import se.inera.intyg.intygstjanst.application.certificate.util.CertificateStateFilterUtil;
-import se.inera.intyg.intygstjanst.application.certificate.service.CertificateService;
 import se.riv.clinicalprocess.healthcond.certificate.getCertificate.v2.GetCertificateResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.getCertificate.v2.GetCertificateResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.getCertificate.v2.GetCertificateType;
@@ -49,82 +50,104 @@ import se.riv.clinicalprocess.healthcond.certificate.v3.Intyg;
 @SchemaValidation
 public class GetCertificateResponderImpl implements GetCertificateResponderInterface {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(GetCertificateResponderImpl.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(GetCertificateResponderImpl.class);
 
-    @Autowired
-    private ModuleContainerApi moduleContainer;
+  @Autowired private ModuleContainerApi moduleContainer;
 
-    @Autowired
-    private IntygModuleRegistry moduleRegistry;
+  @Autowired private IntygModuleRegistry moduleRegistry;
 
-    @Autowired
-    private CertificateService certificateService;
+  @Autowired private CertificateService certificateService;
 
-    @Override
+  @Override
+  @PerformanceLogging(
+      eventAction = "retrieve-certificate",
+      eventType = MdcLogConstants.EVENT_TYPE_ACCESSED,
+      isActive = false)
+  public GetCertificateResponseType getCertificate(
+      String logicalAddress, GetCertificateType request) {
 
-    @PerformanceLogging(eventAction = "retrieve-certificate", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED, isActive = false)
-    public GetCertificateResponseType getCertificate(String logicalAddress, GetCertificateType request) {
+    final String certificateId = request.getIntygsId().getExtension();
+    final Part part = request.getPart();
 
-        final String certificateId = request.getIntygsId().getExtension();
-        final Part part = request.getPart();
+    try {
+      if (isInvalidPartForTestCertificate(certificateId, part.getCode())) {
+        LOGGER.error(
+            "Failed to retrieve certificate: '{}' because it is flagged as test certificate and part is set as: {} ",
+            certificateId,
+            part.getCode());
+        throw new ServerException(
+            "Failed to retrieve certificate: "
+                + certificateId
+                + " because it is flagged as test certificate and part is set as: "
+                + part.getCode());
+      }
 
-        try {
-            if (isInvalidPartForTestCertificate(certificateId, part.getCode())) {
-                LOGGER.error("Failed to retrieve certificate: '{}' because it is flagged as test certificate and part is set as: {} ",
-                    certificateId, part.getCode());
-                throw new ServerException("Failed to retrieve certificate: " + certificateId
-                    + " because it is flagged as test certificate and part is set as: " + part.getCode());
-            }
-
-            CertificateHolder certificate = moduleContainer.getCertificate(certificateId, null, false);
-            if (certificate.isDeletedByCareGiver()) {
-                throw new ServerException("Certificate with id " + certificateId + " is deleted from intygstjansten");
-            } else {
-                GetCertificateResponseType response = new GetCertificateResponseType();
-                response.setIntyg(convertCertificate(certificate, request.getPart().getCode()));
-                moduleContainer.logCertificateRetrieved(certificate.getId(), certificate.getType(), certificate.getCareUnitId(),
-                    request.getPart().getCode());
-                return response;
-            }
-        } catch (InvalidCertificateException e) {
-            throw new ServerException("Certificate with id " + certificateId + " is invalid or does not exist");
-        }
+      CertificateHolder certificate = moduleContainer.getCertificate(certificateId, null, false);
+      if (certificate.isDeletedByCareGiver()) {
+        throw new ServerException(
+            "Certificate with id " + certificateId + " is deleted from intygstjansten");
+      } else {
+        GetCertificateResponseType response = new GetCertificateResponseType();
+        response.setIntyg(convertCertificate(certificate, request.getPart().getCode()));
+        moduleContainer.logCertificateRetrieved(
+            certificate.getId(),
+            certificate.getType(),
+            certificate.getCareUnitId(),
+            request.getPart().getCode());
+        return response;
+      }
+    } catch (InvalidCertificateException e) {
+      throw new ServerException(
+          "Certificate with id " + certificateId + " is invalid or does not exist");
     }
+  }
 
-    /**
-     * Validate if the certificate is a test certificate and the part asking for the certificate is a receiver of certificates.
-     *
-     * @param certificateId the certificates to validate.
-     * @param partCode the part code.
-     * @return true if the part isn't allowed to retrieve test certificates
-     */
-    private boolean isInvalidPartForTestCertificate(String certificateId, String partCode) throws InvalidCertificateException {
-        return certificateService.isTestCertificate(certificateId) && !"HSVARD".equalsIgnoreCase(partCode);
+  /**
+   * Validate if the certificate is a test certificate and the part asking for the certificate is a
+   * receiver of certificates.
+   *
+   * @param certificateId the certificates to validate.
+   * @param partCode the part code.
+   * @return true if the part isn't allowed to retrieve test certificates
+   */
+  private boolean isInvalidPartForTestCertificate(String certificateId, String partCode)
+      throws InvalidCertificateException {
+    return certificateService.isTestCertificate(certificateId)
+        && !"HSVARD".equalsIgnoreCase(partCode);
+  }
+
+  protected Intyg convertCertificate(CertificateHolder certificateHolder, String part) {
+    try {
+      RegisterCertificateType jaxbObject =
+          JAXB.unmarshal(
+              new StringReader(certificateHolder.getOriginalCertificate()),
+              RegisterCertificateType.class);
+      Intyg intyg = jaxbObject.getIntyg();
+
+      // If OriginalCertificate is not a RegisterCertificateType, try to convert it
+      if (intyg == null) {
+        ModuleApi moduleApi =
+            moduleRegistry.getModuleApi(
+                certificateHolder.getType(), certificateHolder.getTypeVersion());
+        Utlatande utlatande =
+            moduleApi.getUtlatandeFromXml(certificateHolder.getOriginalCertificate());
+        intyg = moduleApi.getIntygFromUtlatande(utlatande);
+      }
+
+      intyg
+          .getStatus()
+          .addAll(
+              CertificateStateHolderConverter.toIntygsStatusType(
+                  certificateHolder.getCertificateStates().stream()
+                      .filter(ch -> CertificateStateFilterUtil.filter(ch, part))
+                      .collect(Collectors.toList())));
+      return intyg;
+
+    } catch (Exception e) {
+      LOGGER.error(
+          "Error converting certificate in convertCertificate with id: {}",
+          certificateHolder.getId());
+      throw new RuntimeException(e);
     }
-
-    protected Intyg convertCertificate(CertificateHolder certificateHolder, String part) {
-        try {
-            RegisterCertificateType jaxbObject =
-                JAXB.unmarshal(new StringReader(certificateHolder.getOriginalCertificate()), RegisterCertificateType.class);
-            Intyg intyg = jaxbObject.getIntyg();
-
-            // If OriginalCertificate is not a RegisterCertificateType, try to convert it
-            if (intyg == null) {
-                ModuleApi moduleApi = moduleRegistry.getModuleApi(certificateHolder.getType(), certificateHolder.getTypeVersion());
-                Utlatande utlatande = moduleApi.getUtlatandeFromXml(certificateHolder.getOriginalCertificate());
-                intyg = moduleApi.getIntygFromUtlatande(utlatande);
-            }
-
-            intyg.getStatus()
-                .addAll(CertificateStateHolderConverter.toIntygsStatusType(certificateHolder.getCertificateStates().stream()
-                    .filter(ch -> CertificateStateFilterUtil.filter(ch, part))
-                    .collect(Collectors.toList())));
-            return intyg;
-
-        } catch (Exception e) {
-            LOGGER.error("Error converting certificate in convertCertificate with id: {}", certificateHolder.getId());
-            throw new RuntimeException(e);
-        }
-    }
-
+  }
 }

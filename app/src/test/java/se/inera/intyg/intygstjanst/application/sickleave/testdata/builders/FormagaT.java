@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,47 +16,44 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.application.sickleave.testdata.builders;
 
 import java.time.LocalDate;
 import se.inera.intyg.intygstjanst.application.sickleave.dto.Formaga;
 
-/**
- * Created by Magnus Ekstrand on 2016-02-10.
- */
+/** Created by Magnus Ekstrand on 2016-02-10. */
 public final class FormagaT {
 
-    public FormagaT() {
+  public FormagaT() {}
+
+  public static class FormagaBuilder implements Builder<Formaga> {
+
+    private LocalDate startdatum;
+    private LocalDate slutdatum;
+    private int nedsattning;
+
+    public FormagaBuilder() {}
+
+    public FormagaBuilder startdatum(LocalDate startdatum) {
+      this.startdatum = startdatum;
+      return this;
     }
 
-    public static class FormagaBuilder implements Builder<Formaga> {
-
-        private LocalDate startdatum;
-        private LocalDate slutdatum;
-        private int nedsattning;
-
-        public FormagaBuilder() {
-        }
-
-        public FormagaBuilder startdatum(LocalDate startdatum) {
-            this.startdatum = startdatum;
-            return this;
-        }
-
-        public FormagaBuilder slutdatum(LocalDate slutdatum) {
-            this.slutdatum = slutdatum;
-            return this;
-        }
-
-        public FormagaBuilder nedsattning(int nedsattning) {
-            this.nedsattning = nedsattning;
-            return this;
-        }
-
-        @Override
-        public Formaga build() {
-            Formaga formaga = new Formaga(startdatum, slutdatum, nedsattning);
-            return formaga;
-        }
+    public FormagaBuilder slutdatum(LocalDate slutdatum) {
+      this.slutdatum = slutdatum;
+      return this;
     }
+
+    public FormagaBuilder nedsattning(int nedsattning) {
+      this.nedsattning = nedsattning;
+      return this;
+    }
+
+    @Override
+    public Formaga build() {
+      Formaga formaga = new Formaga(startdatum, slutdatum, nedsattning);
+      return formaga;
+    }
+  }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.application.certificate;
 
 import static se.inera.intyg.intygstjanst.infrastructure.logging.LogMarkers.VALIDATION;
@@ -43,12 +44,12 @@ import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.common.support.modules.support.api.ModuleContainerApi;
 import se.inera.intyg.common.support.modules.support.api.dto.AdditionalMetaData;
+import se.inera.intyg.intygstjanst.application.certificate.converter.CertificateHolderConverter;
+import se.inera.intyg.intygstjanst.infrastructure.logging.MdcLogConstants;
+import se.inera.intyg.intygstjanst.infrastructure.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.integration.pu.model.PersonSvar;
 import se.inera.intyg.intygstjanst.integration.pu.model.PersonSvar.Status;
 import se.inera.intyg.intygstjanst.integration.pu.services.PUService;
-import se.inera.intyg.intygstjanst.infrastructure.logging.MdcLogConstants;
-import se.inera.intyg.intygstjanst.infrastructure.logging.PerformanceLogging;
-import se.inera.intyg.intygstjanst.application.certificate.converter.CertificateHolderConverter;
 import se.inera.intyg.schemas.contract.Personnummer;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.ObjectFactory;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.RegisterCertificateResponderInterface;
@@ -63,183 +64,218 @@ import se.riv.clinicalprocess.healthcond.certificate.v3.ErrorIdType;
 @SchemaValidation
 public class RegisterCertificateResponderImpl implements RegisterCertificateResponderInterface {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RegisterCertificateResponderImpl.class);
+  private static final Logger LOGGER =
+      LoggerFactory.getLogger(RegisterCertificateResponderImpl.class);
 
-    private ObjectFactory objectFactory = new ObjectFactory();
-    private JAXBContext jaxbContext;
-    @Autowired
-    private CertificateHolderConverter certificateHolderConverter;
+  private ObjectFactory objectFactory = new ObjectFactory();
+  private JAXBContext jaxbContext;
+  @Autowired private CertificateHolderConverter certificateHolderConverter;
 
-    @Autowired
-    private ModuleContainerApi moduleContainer;
+  @Autowired private ModuleContainerApi moduleContainer;
 
-    @Autowired
-    private IntygModuleRegistry moduleRegistry;
+  @Autowired private IntygModuleRegistry moduleRegistry;
 
-    @Autowired
-    private IntygTextsService textsService;
+  @Autowired private IntygTextsService textsService;
 
-    @Autowired
-    private PUService puService;
+  @Autowired private PUService puService;
 
-    public RegisterCertificateResponderImpl() {
-        try {
-            jaxbContext = JAXBContext.newInstance(
-                RegisterCertificateType.class,
-                DatePeriodType.class,
-                SignatureType.class,
-                XPathType.class,
-                PartialDateType.class,
-                PQType.class
-            );
-        } catch (JAXBException e) {
-            throw new RuntimeException("Failed to initialize JAXBContext", e);
-        }
+  public RegisterCertificateResponderImpl() {
+    try {
+      jaxbContext =
+          JAXBContext.newInstance(
+              RegisterCertificateType.class,
+              DatePeriodType.class,
+              SignatureType.class,
+              XPathType.class,
+              PartialDateType.class,
+              PQType.class);
+    } catch (JAXBException e) {
+      throw new RuntimeException("Failed to initialize JAXBContext", e);
     }
+  }
 
-    @Override
-    @PerformanceLogging(eventAction = "register-certificate", eventType = MdcLogConstants.EVENT_TYPE_CREATION)
-    public RegisterCertificateResponseType registerCertificate(String logicalAddress, RegisterCertificateType registerCertificate) {
-        try {
-            final String intygsTyp = getIntygsTyp(registerCertificate);
-            final String version = registerCertificate.getIntyg().getVersion();
+  @Override
+  @PerformanceLogging(
+      eventAction = "register-certificate",
+      eventType = MdcLogConstants.EVENT_TYPE_CREATION)
+  public RegisterCertificateResponseType registerCertificate(
+      String logicalAddress, RegisterCertificateType registerCertificate) {
+    try {
+      final String intygsTyp = getIntygsTyp(registerCertificate);
+      final String version = registerCertificate.getIntyg().getVersion();
 
-            // Major version validation
-            ModuleApi api = moduleRegistry.getModuleApi(intygsTyp, version);
+      // Major version validation
+      ModuleApi api = moduleRegistry.getModuleApi(intygsTyp, version);
 
-            // Minor version validation
-            if (!textsService.isVersionSupported(intygsTyp, version)) {
-                return makeInvalidCertificateVersionResult(registerCertificate);
-            }
+      // Minor version validation
+      if (!textsService.isVersionSupported(intygsTyp, version)) {
+        return makeInvalidCertificateVersionResult(registerCertificate);
+      }
 
-            final Optional<RegisterCertificateResponseType> validatePersonError =
-                validatePersonInPU(registerCertificate.getIntyg().getPatient().getPersonId().getExtension());
-            if (validatePersonError.isPresent()) {
-                return validatePersonError.get();
-            }
+      final Optional<RegisterCertificateResponseType> validatePersonError =
+          validatePersonInPU(
+              registerCertificate.getIntyg().getPatient().getPersonId().getExtension());
+      if (validatePersonError.isPresent()) {
+        return validatePersonError.get();
+      }
 
-            final var xml = xmlToString(registerCertificate);
-            final var validationResponse = api.validateXml(xml);
-            final var additionalInfo = api.getAdditionalInfo(registerCertificate.getIntyg());
-            final var additionalMetaData = api.getAdditionalMetaData(registerCertificate.getIntyg()).orElse(null);
+      final var xml = xmlToString(registerCertificate);
+      final var validationResponse = api.validateXml(xml);
+      final var additionalInfo = api.getAdditionalInfo(registerCertificate.getIntyg());
+      final var additionalMetaData =
+          api.getAdditionalMetaData(registerCertificate.getIntyg()).orElse(null);
 
-            if (!validationResponse.hasErrorMessages()) {
-                return storeIntyg(registerCertificate, intygsTyp, xml, additionalInfo, additionalMetaData);
-            } else {
-                String validationErrors = String.join(";", validationResponse.getValidationErrors());
-                return makeValidationErrorResult(validationErrors);
-            }
-        } catch (CertificateAlreadyExistsException e) {
-            return makeCertificateAlreadyExistsResult(registerCertificate);
-        } catch (ModuleNotFoundException e) {
-            return makeInvalidCertificateVersionResult(registerCertificate);
-        } catch (InvalidCertificateException e) {
-            return makeInvalidCertificateResult(registerCertificate);
-        } catch (JAXBException e) {
-            LOGGER.error("JAXB error in Webservice: ", e);
-            throw new RuntimeException(e);
-        } catch (UnsupportedOperationException e) {
-            LOGGER.error("This webservice is not valid for the current certificate type {}", registerCertificate.getIntyg());
-            throw e;
-        } catch (Exception e) {
-            LOGGER.error("Unrecoverable exception in registerCertificate: ", e);
-            throw new RuntimeException(e);
-        }
+      if (!validationResponse.hasErrorMessages()) {
+        return storeIntyg(registerCertificate, intygsTyp, xml, additionalInfo, additionalMetaData);
+      } else {
+        String validationErrors = String.join(";", validationResponse.getValidationErrors());
+        return makeValidationErrorResult(validationErrors);
+      }
+    } catch (CertificateAlreadyExistsException e) {
+      return makeCertificateAlreadyExistsResult(registerCertificate);
+    } catch (ModuleNotFoundException e) {
+      return makeInvalidCertificateVersionResult(registerCertificate);
+    } catch (InvalidCertificateException e) {
+      return makeInvalidCertificateResult(registerCertificate);
+    } catch (JAXBException e) {
+      LOGGER.error("JAXB error in Webservice: ", e);
+      throw new RuntimeException(e);
+    } catch (UnsupportedOperationException e) {
+      LOGGER.error(
+          "This webservice is not valid for the current certificate type {}",
+          registerCertificate.getIntyg());
+      throw e;
+    } catch (Exception e) {
+      LOGGER.error("Unrecoverable exception in registerCertificate: ", e);
+      throw new RuntimeException(e);
     }
+  }
 
-    private RegisterCertificateResponseType storeIntyg(
-        final RegisterCertificateType registerCertificate,
-        final String intygsTyp,
-        final String xml, final String additionalInfo, AdditionalMetaData additionalMetaData)
-        throws CertificateAlreadyExistsException, InvalidCertificateException {
-        RegisterCertificateResponseType response = new RegisterCertificateResponseType();
-        CertificateHolder certificateHolder = certificateHolderConverter.convert(registerCertificate.getIntyg(), intygsTyp, xml,
-            additionalInfo,
-            additionalMetaData);
-        moduleContainer.certificateReceived(certificateHolder);
-        response.setResult(ResultTypeUtil.okResult());
-        return response;
-    }
+  private RegisterCertificateResponseType storeIntyg(
+      final RegisterCertificateType registerCertificate,
+      final String intygsTyp,
+      final String xml,
+      final String additionalInfo,
+      AdditionalMetaData additionalMetaData)
+      throws CertificateAlreadyExistsException, InvalidCertificateException {
+    RegisterCertificateResponseType response = new RegisterCertificateResponseType();
+    CertificateHolder certificateHolder =
+        certificateHolderConverter.convert(
+            registerCertificate.getIntyg(), intygsTyp, xml, additionalInfo, additionalMetaData);
+    moduleContainer.certificateReceived(certificateHolder);
+    response.setResult(ResultTypeUtil.okResult());
+    return response;
+  }
 
-    private RegisterCertificateResponseType makeValidationErrorResult(String errorString) {
-        RegisterCertificateResponseType response = new RegisterCertificateResponseType();
-        response.setResult(ResultTypeUtil.errorResult(ErrorIdType.VALIDATION_ERROR, errorString));
-        LOGGER.error(VALIDATION, errorString);
-        return response;
-    }
+  private RegisterCertificateResponseType makeValidationErrorResult(String errorString) {
+    RegisterCertificateResponseType response = new RegisterCertificateResponseType();
+    response.setResult(ResultTypeUtil.errorResult(ErrorIdType.VALIDATION_ERROR, errorString));
+    LOGGER.error(VALIDATION, errorString);
+    return response;
+  }
 
-    private RegisterCertificateResponseType makeCertificateAlreadyExistsResult(RegisterCertificateType registerCertificate) {
-        RegisterCertificateResponseType response = new RegisterCertificateResponseType();
-        // NOTE: Do NOT change this string as we are dependent on comparing this in FkParentModuleApi
-        response.setResult(ResultTypeUtil.infoResult("Certificate already exists"));
-        String certificateId = registerCertificate.getIntyg().getIntygsId().getExtension();
-        String issuedBy = registerCertificate.getIntyg().getSkapadAv().getEnhet().getEnhetsId().getExtension();
-        LOGGER.warn(VALIDATION, "Validation warning for intyg " + certificateId + " issued by " + issuedBy
+  private RegisterCertificateResponseType makeCertificateAlreadyExistsResult(
+      RegisterCertificateType registerCertificate) {
+    RegisterCertificateResponseType response = new RegisterCertificateResponseType();
+    // NOTE: Do NOT change this string as we are dependent on comparing this in FkParentModuleApi
+    response.setResult(ResultTypeUtil.infoResult("Certificate already exists"));
+    String certificateId = registerCertificate.getIntyg().getIntygsId().getExtension();
+    String issuedBy =
+        registerCertificate.getIntyg().getSkapadAv().getEnhet().getEnhetsId().getExtension();
+    LOGGER.warn(
+        VALIDATION,
+        "Validation warning for intyg "
+            + certificateId
+            + " issued by "
+            + issuedBy
             + ": Certificate already exists - ignored.");
-        return response;
-    }
+    return response;
+  }
 
-    private RegisterCertificateResponseType makeInvalidCertificateResult(RegisterCertificateType registerCertificate) {
-        RegisterCertificateResponseType response = new RegisterCertificateResponseType();
-        response.setResult(ResultTypeUtil.errorResult(ErrorIdType.VALIDATION_ERROR, "Certificate already exists"));
-        String certificateId = registerCertificate.getIntyg().getIntygsId().getExtension();
-        String issuedBy = registerCertificate.getIntyg().getSkapadAv().getEnhet().getEnhetsId().getExtension();
-        LOGGER.error(VALIDATION, "Failed to create Certificate with id " + certificateId + " issued by " + issuedBy
+  private RegisterCertificateResponseType makeInvalidCertificateResult(
+      RegisterCertificateType registerCertificate) {
+    RegisterCertificateResponseType response = new RegisterCertificateResponseType();
+    response.setResult(
+        ResultTypeUtil.errorResult(ErrorIdType.VALIDATION_ERROR, "Certificate already exists"));
+    String certificateId = registerCertificate.getIntyg().getIntygsId().getExtension();
+    String issuedBy =
+        registerCertificate.getIntyg().getSkapadAv().getEnhet().getEnhetsId().getExtension();
+    LOGGER.error(
+        VALIDATION,
+        "Failed to create Certificate with id "
+            + certificateId
+            + " issued by "
+            + issuedBy
             + ": Certificate ID already exists for another person.");
-        return response;
+    return response;
+  }
+
+  private RegisterCertificateResponseType makeInvalidCertificateVersionResult(
+      final RegisterCertificateType registerCertificate) {
+    RegisterCertificateResponseType response = new RegisterCertificateResponseType();
+
+    final String version = registerCertificate.getIntyg().getVersion();
+    final String typ = registerCertificate.getIntyg().getTyp().getCode();
+    final String message =
+        MessageFormat.format(
+            "Certificate with type: {0} does not support version: {1}", typ, version);
+
+    response.setResult(ResultTypeUtil.errorResult(ErrorIdType.VALIDATION_ERROR, message));
+
+    final String certificateId = registerCertificate.getIntyg().getIntygsId().getExtension();
+    final String issuedBy =
+        registerCertificate.getIntyg().getSkapadAv().getEnhet().getEnhetsId().getExtension();
+    final String logMessage =
+        MessageFormat.format(
+            "Failed to create Certificate with id {0} issued by {1} : "
+                + "Certificate type {2} does not support version: {3}",
+            certificateId, issuedBy, typ, version);
+    LOGGER.error(VALIDATION, logMessage);
+    return response;
+  }
+
+  private Optional<RegisterCertificateResponseType> validatePersonInPU(
+      String socialSecurityNumber) {
+    final Optional<Personnummer> personnummer =
+        Personnummer.createPersonnummer(socialSecurityNumber);
+    if (personnummer.isPresent()) {
+      final PersonSvar personSvar = puService.getPerson(personnummer.get());
+      if (personSvar.getStatus().equals(Status.NOT_FOUND)) {
+        LOGGER.error("Patient not found in PU Service. Returning a Logical error");
+        return Optional.of(
+            makeValidationErrorResult(
+                "No person exists in PU Service with the social security number"));
+      } else if (personSvar.getStatus().equals(Status.ERROR)) {
+        LOGGER.error("Error when calling PU Service. Returning a Technical error");
+        return Optional.of(
+            makeTechnicalErrorResult(
+                "Error calling PU Service to validate social security number"));
+      } else {
+        LOGGER.info("The patient is found in PU Service");
+        return Optional.empty();
+      }
+    } else {
+      LOGGER.error("Patients social security number is not correct. Returning a Logical error");
+      return Optional.of(
+          makeValidationErrorResult("Social security number is not of correct format."));
     }
+  }
 
-    private RegisterCertificateResponseType makeInvalidCertificateVersionResult(final RegisterCertificateType registerCertificate) {
-        RegisterCertificateResponseType response = new RegisterCertificateResponseType();
+  private RegisterCertificateResponseType makeTechnicalErrorResult(String errorString) {
+    RegisterCertificateResponseType response = new RegisterCertificateResponseType();
+    response.setResult(ResultTypeUtil.errorResult(ErrorIdType.TECHNICAL_ERROR, errorString));
+    return response;
+  }
 
-        final String version = registerCertificate.getIntyg().getVersion();
-        final String typ = registerCertificate.getIntyg().getTyp().getCode();
-        final String message = MessageFormat.format("Certificate with type: {0} does not support version: {1}", typ, version);
+  private String xmlToString(RegisterCertificateType registerCertificate) throws JAXBException {
+    StringWriter stringWriter = new StringWriter();
+    JAXBElement<RegisterCertificateType> requestElement =
+        objectFactory.createRegisterCertificate(registerCertificate);
+    jaxbContext.createMarshaller().marshal(requestElement, stringWriter);
+    return stringWriter.toString();
+  }
 
-        response.setResult(ResultTypeUtil.errorResult(ErrorIdType.VALIDATION_ERROR, message));
-
-        final String certificateId = registerCertificate.getIntyg().getIntygsId().getExtension();
-        final String issuedBy = registerCertificate.getIntyg().getSkapadAv().getEnhet().getEnhetsId().getExtension();
-        final String logMessage = MessageFormat.format("Failed to create Certificate with id {0} issued by {1} : "
-            + "Certificate type {2} does not support version: {3}", certificateId, issuedBy, typ, version);
-        LOGGER.error(VALIDATION, logMessage);
-        return response;
-    }
-
-    private Optional<RegisterCertificateResponseType> validatePersonInPU(String socialSecurityNumber) {
-        final Optional<Personnummer> personnummer = Personnummer.createPersonnummer(socialSecurityNumber);
-        if (personnummer.isPresent()) {
-            final PersonSvar personSvar = puService.getPerson(personnummer.get());
-            if (personSvar.getStatus().equals(Status.NOT_FOUND)) {
-                LOGGER.error("Patient not found in PU Service. Returning a Logical error");
-                return Optional.of(makeValidationErrorResult("No person exists in PU Service with the social security number"));
-            } else if (personSvar.getStatus().equals(Status.ERROR)) {
-                LOGGER.error("Error when calling PU Service. Returning a Technical error");
-                return Optional.of(makeTechnicalErrorResult("Error calling PU Service to validate social security number"));
-            } else {
-                LOGGER.info("The patient is found in PU Service");
-                return Optional.empty();
-            }
-        } else {
-            LOGGER.error("Patients social security number is not correct. Returning a Logical error");
-            return Optional.of(makeValidationErrorResult("Social security number is not of correct format."));
-        }
-    }
-
-    private RegisterCertificateResponseType makeTechnicalErrorResult(String errorString) {
-        RegisterCertificateResponseType response = new RegisterCertificateResponseType();
-        response.setResult(ResultTypeUtil.errorResult(ErrorIdType.TECHNICAL_ERROR, errorString));
-        return response;
-    }
-
-    private String xmlToString(RegisterCertificateType registerCertificate) throws JAXBException {
-        StringWriter stringWriter = new StringWriter();
-        JAXBElement<RegisterCertificateType> requestElement = objectFactory.createRegisterCertificate(registerCertificate);
-        jaxbContext.createMarshaller().marshal(requestElement, stringWriter);
-        return stringWriter.toString();
-    }
-
-    private String getIntygsTyp(RegisterCertificateType certificateType) {
-        return moduleRegistry.getModuleIdFromExternalId(certificateType.getIntyg().getTyp().getCode());
-    }
+  private String getIntygsTyp(RegisterCertificateType certificateType) {
+    return moduleRegistry.getModuleIdFromExternalId(certificateType.getIntyg().getTyp().getCode());
+  }
 }

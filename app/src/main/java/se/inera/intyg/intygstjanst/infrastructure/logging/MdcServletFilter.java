@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.infrastructure.logging;
 
 import static se.inera.intyg.intygstjanst.infrastructure.logging.MdcLogConstants.SESSION_ID_KEY;
@@ -38,32 +39,31 @@ import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 @Component
 public class MdcServletFilter implements Filter {
 
-    @Autowired
-    private MdcHelper mdcHelper;
+  @Autowired private MdcHelper mdcHelper;
 
-    @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-        throws IOException, ServletException {
-        try {
-            if (request instanceof HttpServletRequest http) {
-                MDC.put(SESSION_ID_KEY, mdcHelper.sessionId(http));
-                MDC.put(TRACE_ID_KEY, mdcHelper.traceId(http));
-                MDC.put(SPAN_ID_KEY, mdcHelper.spanId());
-            }
-            chain.doFilter(request, response);
-        } finally {
-            MDC.clear();
-        }
+  @Override
+  public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+      throws IOException, ServletException {
+    try {
+      if (request instanceof HttpServletRequest http) {
+        MDC.put(SESSION_ID_KEY, mdcHelper.sessionId(http));
+        MDC.put(TRACE_ID_KEY, mdcHelper.traceId(http));
+        MDC.put(SPAN_ID_KEY, mdcHelper.spanId());
+      }
+      chain.doFilter(request, response);
+    } finally {
+      MDC.clear();
     }
+  }
 
-    @Override
-    public void init(FilterConfig filterConfig) {
-        // When running under Spring Boot, this filter is a Spring-managed bean and @Autowired
-        // already injected mdcHelper. The manual autowiring is only needed under WAR (web.xml),
-        // where the filter is instantiated by the servlet container outside of Spring's control.
-        if (mdcHelper == null) {
-            SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this,
-                filterConfig.getServletContext());
-        }
+  @Override
+  public void init(FilterConfig filterConfig) {
+    // When running under Spring Boot, this filter is a Spring-managed bean and @Autowired
+    // already injected mdcHelper. The manual autowiring is only needed under WAR (web.xml),
+    // where the filter is instantiated by the servlet container outside of Spring's control.
+    if (mdcHelper == null) {
+      SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(
+          this, filterConfig.getServletContext());
     }
+  }
 }

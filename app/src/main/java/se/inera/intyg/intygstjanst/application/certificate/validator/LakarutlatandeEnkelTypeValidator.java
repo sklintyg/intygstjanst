@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.application.certificate.validator;
 
 import java.util.List;
@@ -28,37 +29,37 @@ import se.inera.intyg.common.fk7263.schemas.insuranceprocess.healthreporting.val
  */
 public class LakarutlatandeEnkelTypeValidator {
 
-    private LakarutlatandeEnkelType lakarutlatandeEnkelType;
-    private List<String> validationErrors = null;
+  private LakarutlatandeEnkelType lakarutlatandeEnkelType;
+  private List<String> validationErrors = null;
 
-    public LakarutlatandeEnkelTypeValidator(LakarutlatandeEnkelType lakarutlatande, List<String> validationErrors) {
-        this.lakarutlatandeEnkelType = lakarutlatande;
-        this.validationErrors = validationErrors;
+  public LakarutlatandeEnkelTypeValidator(
+      LakarutlatandeEnkelType lakarutlatande, List<String> validationErrors) {
+    this.lakarutlatandeEnkelType = lakarutlatande;
+    this.validationErrors = validationErrors;
+  }
+
+  public void validateAndCorrect() {
+
+    if (lakarutlatandeEnkelType.getLakarutlatandeId() == null
+        || lakarutlatandeEnkelType.getLakarutlatandeId().isEmpty()) {
+      validationErrors.add("No Lakarutlatande Id found!");
     }
 
-    public void validateAndCorrect() {
-
-        if (lakarutlatandeEnkelType.getLakarutlatandeId() == null || lakarutlatandeEnkelType.getLakarutlatandeId().isEmpty()) {
-            validationErrors.add("No Lakarutlatande Id found!");
-        }
-
-        if (lakarutlatandeEnkelType.getSigneringsTidpunkt() == null) {
-            validationErrors.add("No signeringstidpunkt found!");
-        }
-
-        validateAndCorrectPatient();
+    if (lakarutlatandeEnkelType.getSigneringsTidpunkt() == null) {
+      validationErrors.add("No signeringstidpunkt found!");
     }
 
-    private void validateAndCorrectPatient() {
-        PatientType patient = lakarutlatandeEnkelType.getPatient();
+    validateAndCorrectPatient();
+  }
 
-        // As per INTYG-4086, name is intentionally left out.
-        // if (patient.getFullstandigtNamn() == null || patient.getFullstandigtNamn().isEmpty()) {
-        // validationErrors.add("No Patient fullstandigtNamn elements found or set!");
-        if (!PatientValidator.validateAndCorrect(patient).isEmpty()) {
-            validationErrors.addAll(PatientValidator.validateAndCorrect(patient));
-        }
+  private void validateAndCorrectPatient() {
+    PatientType patient = lakarutlatandeEnkelType.getPatient();
 
+    // As per INTYG-4086, name is intentionally left out.
+    // if (patient.getFullstandigtNamn() == null || patient.getFullstandigtNamn().isEmpty()) {
+    // validationErrors.add("No Patient fullstandigtNamn elements found or set!");
+    if (!PatientValidator.validateAndCorrect(patient).isEmpty()) {
+      validationErrors.addAll(PatientValidator.validateAndCorrect(patient));
     }
-
+  }
 }

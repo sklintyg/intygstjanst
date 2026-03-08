@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.application.certificate.service;
 
 import java.util.Arrays;
@@ -38,91 +39,115 @@ import se.inera.intyg.schemas.contract.Personnummer;
 @Service
 public class CertificateListService {
 
-    private final CertificateDao certificateDao;
+  private final CertificateDao certificateDao;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CertificateListService.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(CertificateListService.class);
 
-    @Autowired
-    public CertificateListService(CertificateDao certificateDao) {
-        this.certificateDao = certificateDao;
-    }
+  @Autowired
+  public CertificateListService(CertificateDao certificateDao) {
+    this.certificateDao = certificateDao;
+  }
 
-    public CertificateListResponse listCertificatesForDoctor(CertificateListRequest parameters) {
-        CertificateListResponse certificateListResponse = new CertificateListResponse();
+  public CertificateListResponse listCertificatesForDoctor(CertificateListRequest parameters) {
+    CertificateListResponse certificateListResponse = new CertificateListResponse();
 
-        var civicRegistrationNumber = parameters.getCivicRegistrationNumber() == null
-            || parameters.getCivicRegistrationNumber().isEmpty() ? null
+    var civicRegistrationNumber =
+        parameters.getCivicRegistrationNumber() == null
+                || parameters.getCivicRegistrationNumber().isEmpty()
+            ? null
             : Personnummer.createPersonnummer(parameters.getCivicRegistrationNumber()).get();
 
-        var certificates = certificateDao.findCertificates(civicRegistrationNumber, parameters.getUnitIds(), parameters.getFromDate(),
-            parameters.getToDate(), parameters.getOrderBy(), parameters.isOrderAscending(), parameters.getTypes(), parameters.getHsaId());
-        LOGGER.debug(String.format("Getting signed certificates for units (%s)", Arrays.toString(parameters.getUnitIds())));
-        var certificateTypes = certificateDao.getCertificateTypes();
+    var certificates =
+        certificateDao.findCertificates(
+            civicRegistrationNumber,
+            parameters.getUnitIds(),
+            parameters.getFromDate(),
+            parameters.getToDate(),
+            parameters.getOrderBy(),
+            parameters.isOrderAscending(),
+            parameters.getTypes(),
+            parameters.getHsaId());
+    LOGGER.debug(
+        String.format(
+            "Getting signed certificates for units (%s)",
+            Arrays.toString(parameters.getUnitIds())));
+    var certificateTypes = certificateDao.getCertificateTypes();
 
-        var certificateList = certificates.stream()
+    var certificateList =
+        certificates.stream()
             .filter(cert -> !cert.isRevoked())
             .map(this::convertToCertificateListEntry)
             .map(c -> addCertificateTypeName(c, certificateTypes))
             .collect(Collectors.toList());
 
-        sortList(certificateList, parameters.getOrderBy(), parameters.isOrderAscending());
-        certificateListResponse.setTotalCount(certificateList.size());
-        certificateListResponse.setCertificates(getSubList(certificateList, parameters.getStartFrom(),
+    sortList(certificateList, parameters.getOrderBy(), parameters.isOrderAscending());
+    certificateListResponse.setTotalCount(certificateList.size());
+    certificateListResponse.setCertificates(
+        getSubList(
+            certificateList,
+            parameters.getStartFrom(),
             parameters.getPageSize() >= 0 ? parameters.getPageSize() : certificateList.size()));
-        return certificateListResponse;
-    }
+    return certificateListResponse;
+  }
 
-    private void sortList(List<CertificateListEntry> certificates, String orderBy, boolean ascending) {
-        Comparator<CertificateListEntry> comparator = null;
-        if (orderBy != null) {
-            switch (orderBy) {
-                case "type":
-                    comparator = Comparator.comparing(CertificateListEntry::getCertificateTypeName);
-                    break;
-                case "status":
-                    comparator = (c1, c2) -> Boolean.compare(c2.isSent(), c1.isSent());
-                    break;
-                default:
-                    break;
-            }
-        }
-        if (comparator != null) {
-            if (!ascending) {
-                comparator = comparator.reversed();
-            }
-            certificates.sort(comparator);
-        }
+  private void sortList(
+      List<CertificateListEntry> certificates, String orderBy, boolean ascending) {
+    Comparator<CertificateListEntry> comparator = null;
+    if (orderBy != null) {
+      switch (orderBy) {
+        case "type":
+          comparator = Comparator.comparing(CertificateListEntry::getCertificateTypeName);
+          break;
+        case "status":
+          comparator = (c1, c2) -> Boolean.compare(c2.isSent(), c1.isSent());
+          break;
+        default:
+          break;
+      }
     }
+    if (comparator != null) {
+      if (!ascending) {
+        comparator = comparator.reversed();
+      }
+      certificates.sort(comparator);
+    }
+  }
 
-    private CertificateListEntry convertToCertificateListEntry(Certificate certificate) {
-        CertificateListEntry certificateListEntry = new CertificateListEntry();
-        certificateListEntry.setCivicRegistrationNumber(certificate.getCivicRegistrationNumber().getPersonnummer());
-        certificateListEntry.setSignedDate(certificate.getSignedDate());
-        certificateListEntry.setCertificateType(certificate.getType());
-        certificateListEntry.setCertificateId(certificate.getId());
-        certificateListEntry.setCertificateTypeVersion(certificate.getTypeVersion());
-        certificateListEntry.setSent(isCertificateSent(certificate));
-        return certificateListEntry;
-    }
+  private CertificateListEntry convertToCertificateListEntry(Certificate certificate) {
+    CertificateListEntry certificateListEntry = new CertificateListEntry();
+    certificateListEntry.setCivicRegistrationNumber(
+        certificate.getCivicRegistrationNumber().getPersonnummer());
+    certificateListEntry.setSignedDate(certificate.getSignedDate());
+    certificateListEntry.setCertificateType(certificate.getType());
+    certificateListEntry.setCertificateId(certificate.getId());
+    certificateListEntry.setCertificateTypeVersion(certificate.getTypeVersion());
+    certificateListEntry.setSent(isCertificateSent(certificate));
+    return certificateListEntry;
+  }
 
-    private boolean isCertificateSent(Certificate certificate) {
-        return certificate.getStates().stream().anyMatch(state -> state.getState().equals(CertificateState.SENT));
-    }
+  private boolean isCertificateSent(Certificate certificate) {
+    return certificate.getStates().stream()
+        .anyMatch(state -> state.getState().equals(CertificateState.SENT));
+  }
 
-    private CertificateListEntry addCertificateTypeName(CertificateListEntry certificateListEntry,
-        List<CertificateType> certificateTypes) {
-        certificateListEntry.setCertificateTypeName(
-            certificateTypes.stream().filter(ct -> ct.getId().equals(certificateListEntry.getCertificateType()))
-                .map(CertificateType::getName).findFirst().orElse(certificateListEntry.getCertificateType()));
-        return certificateListEntry;
-    }
+  private CertificateListEntry addCertificateTypeName(
+      CertificateListEntry certificateListEntry, List<CertificateType> certificateTypes) {
+    certificateListEntry.setCertificateTypeName(
+        certificateTypes.stream()
+            .filter(ct -> ct.getId().equals(certificateListEntry.getCertificateType()))
+            .map(CertificateType::getName)
+            .findFirst()
+            .orElse(certificateListEntry.getCertificateType()));
+    return certificateListEntry;
+  }
 
-    private List<CertificateListEntry> getSubList(List<CertificateListEntry> certificates, int startFrom, int pageSize) {
-        if (pageSize > certificates.size()) {
-            return certificates;
-        } else {
-            int endPoint = Math.min(certificates.size(), startFrom + pageSize);
-            return certificates.subList(startFrom, endPoint);
-        }
+  private List<CertificateListEntry> getSubList(
+      List<CertificateListEntry> certificates, int startFrom, int pageSize) {
+    if (pageSize > certificates.size()) {
+      return certificates;
+    } else {
+      int endPoint = Math.min(certificates.size(), startFrom + pageSize);
+      return certificates.subList(startFrom, endPoint);
     }
+  }
 }

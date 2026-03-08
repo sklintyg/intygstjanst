@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -23,25 +23,28 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
-import se.inera.intyg.intygstjanst.application.exception.RecipientUnknownException;
-import se.inera.intyg.intygstjanst.application.exception.TestCertificateException;
+import se.inera.intyg.intygstjanst.application.certificate.dto.SendCertificateRequestDTO;
 import se.inera.intyg.intygstjanst.application.certificate.service.CertificateService.SendStatus;
 import se.inera.intyg.intygstjanst.application.certificate.service.SendCertificateService;
-import se.inera.intyg.intygstjanst.application.certificate.dto.SendCertificateRequestDTO;
+import se.inera.intyg.intygstjanst.application.exception.RecipientUnknownException;
+import se.inera.intyg.intygstjanst.application.exception.TestCertificateException;
 
 @Service
 @RequiredArgsConstructor
 public class CitizenSendCertificateAggregator implements SendCertificateService {
 
-    private final SendCertificateService sendCertificateServiceImpl;
-    private final SendCertificateService citizenSendCertificateFromCS;
+  private final SendCertificateService sendCertificateServiceImpl;
+  private final SendCertificateService citizenSendCertificateFromCS;
 
-    @Override
-    public SendStatus send(SendCertificateRequestDTO request)
-        throws InvalidCertificateException, TestCertificateException, CertificateRevokedException, RecipientUnknownException {
+  @Override
+  public SendStatus send(SendCertificateRequestDTO request)
+      throws InvalidCertificateException,
+          TestCertificateException,
+          CertificateRevokedException,
+          RecipientUnknownException {
 
-        final var responseFromCS = citizenSendCertificateFromCS.send(request);
+    final var responseFromCS = citizenSendCertificateFromCS.send(request);
 
-        return responseFromCS != null ? responseFromCS : sendCertificateServiceImpl.send(request);
-    }
+    return responseFromCS != null ? responseFromCS : sendCertificateServiceImpl.send(request);
+  }
 }

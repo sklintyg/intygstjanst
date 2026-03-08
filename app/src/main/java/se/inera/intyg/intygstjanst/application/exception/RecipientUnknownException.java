@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,13 +16,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.application.exception;
 
 public class RecipientUnknownException extends ClientException {
 
-    private static final long serialVersionUID = -2850911343263575085L;
+  private static final long serialVersionUID = -2850911343263575085L;
 
-    public RecipientUnknownException(String message) {
-        super(message);
-    }
+  public RecipientUnknownException(String message) {
+    super(message);
+  }
 }

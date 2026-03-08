@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -34,175 +34,161 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import se.inera.intyg.intygstjanst.application.citizen.dto.CitizenCertificateSendRequestDTO;
-import se.inera.intyg.intygstjanst.application.citizen.dto.CitizenCertificatesRequestDTO;
-import se.inera.intyg.intygstjanst.application.citizen.service.ListCitizenCertificatesService;
-import se.inera.intyg.intygstjanst.application.certificate.service.SendCertificateService;
 import se.inera.intyg.intygstjanst.application.certificate.dto.SendCertificateRequestDTO;
+import se.inera.intyg.intygstjanst.application.certificate.service.SendCertificateService;
 import se.inera.intyg.intygstjanst.application.citizen.dto.CitizenCertificateDTO;
+import se.inera.intyg.intygstjanst.application.citizen.dto.CitizenCertificateSendRequestDTO;
 import se.inera.intyg.intygstjanst.application.citizen.dto.CitizenCertificateStatusTypeDTO;
+import se.inera.intyg.intygstjanst.application.citizen.dto.CitizenCertificatesRequestDTO;
 import se.inera.intyg.intygstjanst.application.citizen.dto.ListCitizenCertificatesRequest;
+import se.inera.intyg.intygstjanst.application.citizen.service.ListCitizenCertificatesService;
 import se.inera.intyg.schemas.contract.Personnummer;
 
 @ExtendWith(MockitoExtension.class)
 class CitizenCertificateControllerTest {
 
-    @Mock
-    private ListCitizenCertificatesService listCitizenCertificatesService;
-    @Mock
-    private SendCertificateService sendCertificateService;
-    @InjectMocks
-    private CitizenCertificateController citizenCertificateController;
+  @Mock private ListCitizenCertificatesService listCitizenCertificatesService;
+  @Mock private SendCertificateService sendCertificateService;
+  @InjectMocks private CitizenCertificateController citizenCertificateController;
 
-    @Nested
-    class ListCitizenCertificates {
+  @Nested
+  class ListCitizenCertificates {
 
-        private final CitizenCertificatesRequestDTO request = CitizenCertificatesRequestDTO
-            .builder()
+    private final CitizenCertificatesRequestDTO request =
+        CitizenCertificatesRequestDTO.builder()
             .patientId("191212121212")
             .certificateTypes(List.of("Lisjp", "Ag7804"))
-            .statuses(List.of(CitizenCertificateStatusTypeDTO.NOT_SENT, CitizenCertificateStatusTypeDTO.SENT))
+            .statuses(
+                List.of(
+                    CitizenCertificateStatusTypeDTO.NOT_SENT, CitizenCertificateStatusTypeDTO.SENT))
             .units(List.of("UNIT_1"))
             .years(List.of("2020"))
             .build();
 
-        @Nested
-        class Request {
+    @Nested
+    class Request {
 
-            @Test
-            void shouldSetPatientId() {
-                citizenCertificateController.getCitizenCertificates(request);
+      @Test
+      void shouldSetPatientId() {
+        citizenCertificateController.getCitizenCertificates(request);
 
-                final var captor = ArgumentCaptor.forClass(
-                    ListCitizenCertificatesRequest.class
-                );
+        final var captor = ArgumentCaptor.forClass(ListCitizenCertificatesRequest.class);
 
-                verify(listCitizenCertificatesService).get(captor.capture());
+        verify(listCitizenCertificatesService).get(captor.capture());
 
-                assertEquals(request.getPatientId(), captor.getValue().getPersonnummer().getOriginalPnr());
-            }
+        assertEquals(request.getPatientId(), captor.getValue().getPersonnummer().getOriginalPnr());
+      }
 
-            @Test
-            void shouldSetCertificateTypes() {
-                citizenCertificateController.getCitizenCertificates(request);
+      @Test
+      void shouldSetCertificateTypes() {
+        citizenCertificateController.getCitizenCertificates(request);
 
-                final var captor = ArgumentCaptor.forClass(
-                    ListCitizenCertificatesRequest.class
-                );
+        final var captor = ArgumentCaptor.forClass(ListCitizenCertificatesRequest.class);
 
-                verify(listCitizenCertificatesService).get(captor.capture());
+        verify(listCitizenCertificatesService).get(captor.capture());
 
-                assertEquals(request.getCertificateTypes(), captor.getValue().getCertificateTypes());
-            }
+        assertEquals(request.getCertificateTypes(), captor.getValue().getCertificateTypes());
+      }
 
-            @Test
-            void shouldSetStatuses() {
-                citizenCertificateController.getCitizenCertificates(request);
+      @Test
+      void shouldSetStatuses() {
+        citizenCertificateController.getCitizenCertificates(request);
 
-                final var captor = ArgumentCaptor.forClass(
-                    ListCitizenCertificatesRequest.class
-                );
+        final var captor = ArgumentCaptor.forClass(ListCitizenCertificatesRequest.class);
 
-                verify(listCitizenCertificatesService).get(captor.capture());
+        verify(listCitizenCertificatesService).get(captor.capture());
 
-                assertEquals(request.getStatuses(), captor.getValue().getStatuses());
-            }
+        assertEquals(request.getStatuses(), captor.getValue().getStatuses());
+      }
 
-            @Test
-            void shouldSetUnits() {
-                citizenCertificateController.getCitizenCertificates(request);
+      @Test
+      void shouldSetUnits() {
+        citizenCertificateController.getCitizenCertificates(request);
 
-                final var captor = ArgumentCaptor.forClass(
-                    ListCitizenCertificatesRequest.class
-                );
+        final var captor = ArgumentCaptor.forClass(ListCitizenCertificatesRequest.class);
 
-                verify(listCitizenCertificatesService).get(captor.capture());
+        verify(listCitizenCertificatesService).get(captor.capture());
 
-                assertEquals(request.getUnits(), captor.getValue().getUnits());
-            }
+        assertEquals(request.getUnits(), captor.getValue().getUnits());
+      }
 
-            @Test
-            void shouldSetYears() {
-                citizenCertificateController.getCitizenCertificates(request);
+      @Test
+      void shouldSetYears() {
+        citizenCertificateController.getCitizenCertificates(request);
 
-                final var captor = ArgumentCaptor.forClass(
-                    ListCitizenCertificatesRequest.class
-                );
+        final var captor = ArgumentCaptor.forClass(ListCitizenCertificatesRequest.class);
 
-                verify(listCitizenCertificatesService).get(captor.capture());
+        verify(listCitizenCertificatesService).get(captor.capture());
 
-                assertEquals(request.getYears(), captor.getValue().getYears());
-            }
-        }
-
-        @Nested
-        class Response {
-
-            CitizenCertificateDTO expectedCertificate = CitizenCertificateDTO.builder().build();
-            List<CitizenCertificateDTO> expectedContent = List.of(expectedCertificate);
-
-            @BeforeEach
-            void setup() {
-                Mockito
-                    .when(listCitizenCertificatesService.get(any()))
-                    .thenReturn(expectedContent);
-            }
-
-            @Test
-            void shouldReturnContent() {
-                final var response = citizenCertificateController.getCitizenCertificates(request);
-
-                assertEquals(expectedContent, response.getContent());
-                assertEquals(expectedContent.size(), response.getContent().size());
-                assertEquals(expectedContent.getFirst(), response.getContent().getFirst());
-            }
-        }
+        assertEquals(request.getYears(), captor.getValue().getYears());
+      }
     }
 
     @Nested
-    class SendCertificate {
+    class Response {
 
-        private final CitizenCertificateSendRequestDTO request = CitizenCertificateSendRequestDTO
-            .builder()
+      CitizenCertificateDTO expectedCertificate = CitizenCertificateDTO.builder().build();
+      List<CitizenCertificateDTO> expectedContent = List.of(expectedCertificate);
+
+      @BeforeEach
+      void setup() {
+        Mockito.when(listCitizenCertificatesService.get(any())).thenReturn(expectedContent);
+      }
+
+      @Test
+      void shouldReturnContent() {
+        final var response = citizenCertificateController.getCitizenCertificates(request);
+
+        assertEquals(expectedContent, response.getContent());
+        assertEquals(expectedContent.size(), response.getContent().size());
+        assertEquals(expectedContent.getFirst(), response.getContent().getFirst());
+      }
+    }
+  }
+
+  @Nested
+  class SendCertificate {
+
+    private final CitizenCertificateSendRequestDTO request =
+        CitizenCertificateSendRequestDTO.builder()
             .certificateId("certificateId")
             .patientId("191212121212")
             .recipient("recipient")
             .build();
 
-        @SneakyThrows
-        @Test
-        void shouldSendCertificateId() {
-            citizenCertificateController.sendCitizenCertificate(request);
+    @SneakyThrows
+    @Test
+    void shouldSendCertificateId() {
+      citizenCertificateController.sendCitizenCertificate(request);
 
-            final var captor = ArgumentCaptor.forClass(SendCertificateRequestDTO.class);
+      final var captor = ArgumentCaptor.forClass(SendCertificateRequestDTO.class);
 
-            verify(sendCertificateService).send(captor.capture());
-            assertEquals(request.getCertificateId(), captor.getValue().getCertificateId());
-        }
-
-        @SneakyThrows
-        @Test
-        void shouldSendRecipient() {
-            citizenCertificateController.sendCitizenCertificate(request);
-
-            final var captor = ArgumentCaptor.forClass(SendCertificateRequestDTO.class);
-
-            verify(sendCertificateService).send(captor.capture());
-            assertEquals(request.getRecipient(), captor.getValue().getRecipientId());
-        }
-
-        @SneakyThrows
-        @Test
-        void shouldSendPatientId() {
-            citizenCertificateController.sendCitizenCertificate(request);
-
-            final var captor = ArgumentCaptor.forClass(SendCertificateRequestDTO.class);
-
-            verify(sendCertificateService).send(captor.capture());
-            assertEquals(
-                Personnummer.createPersonnummer(request.getPatientId()).orElseThrow(),
-                captor.getValue().getPatientId()
-            );
-        }
+      verify(sendCertificateService).send(captor.capture());
+      assertEquals(request.getCertificateId(), captor.getValue().getCertificateId());
     }
+
+    @SneakyThrows
+    @Test
+    void shouldSendRecipient() {
+      citizenCertificateController.sendCitizenCertificate(request);
+
+      final var captor = ArgumentCaptor.forClass(SendCertificateRequestDTO.class);
+
+      verify(sendCertificateService).send(captor.capture());
+      assertEquals(request.getRecipient(), captor.getValue().getRecipientId());
+    }
+
+    @SneakyThrows
+    @Test
+    void shouldSendPatientId() {
+      citizenCertificateController.sendCitizenCertificate(request);
+
+      final var captor = ArgumentCaptor.forClass(SendCertificateRequestDTO.class);
+
+      verify(sendCertificateService).send(captor.capture());
+      assertEquals(
+          Personnummer.createPersonnummer(request.getPatientId()).orElseThrow(),
+          captor.getValue().getPatientId());
+    }
+  }
 }

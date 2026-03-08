@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -33,19 +33,17 @@ import se.inera.intyg.intygstjanst.application.citizen.repository.model.CitizenC
 @Builder
 public class CitizenCertificate {
 
-    String id;
-    String type;
-    String typeVersion;
-    String unitName;
-    String unitId;
-    String issuerName;
-    String additionalInfo;
-    LocalDateTime issued;
-    LocalDateTime sentDate;
-    List<CitizenCertificateRelationDTO> relations;
+  String id;
+  String type;
+  String typeVersion;
+  String unitName;
+  String unitId;
+  String issuerName;
+  String additionalInfo;
+  LocalDateTime issued;
+  LocalDateTime sentDate;
+  List<CitizenCertificateRelationDTO> relations;
 
-    @JsonPOJOBuilder(withPrefix = "")
-    public static class CitizenCertificateBuilder {
-
-    }
+  @JsonPOJOBuilder(withPrefix = "")
+  public static class CitizenCertificateBuilder {}
 }

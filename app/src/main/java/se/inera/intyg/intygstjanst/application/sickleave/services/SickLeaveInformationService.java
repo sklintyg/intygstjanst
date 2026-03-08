@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -25,7 +25,7 @@ import se.inera.intyg.intygstjanst.application.sickleave.dto.SjukfallEnhet;
 
 public interface SickLeaveInformationService {
 
-    void updateAndDecorateDoctorName(List<SjukfallEnhet> sickLeaves);
+  void updateAndDecorateDoctorName(List<SjukfallEnhet> sickLeaves);
 
-    Lakare getEmployee(String doctorId);
+  Lakare getEmployee(String doctorId);
 }

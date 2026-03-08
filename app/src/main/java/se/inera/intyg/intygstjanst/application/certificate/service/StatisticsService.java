@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.application.certificate.service;
 
 import static java.lang.invoke.MethodHandles.lookup;
@@ -35,126 +36,133 @@ import se.inera.intyg.intygstjanst.infrastructure.logging.MonitoringLogService;
 @RequiredArgsConstructor
 public class StatisticsService {
 
-    private static final String ACTION = "action";
-    private static final String CREATED = "created";
-    private static final String REVOKED = "revoked";
-    private static final String SENT = "sent";
-    private static final String MESSAGE_SENT = "message-sent";
+  private static final String ACTION = "action";
+  private static final String CREATED = "created";
+  private static final String REVOKED = "revoked";
+  private static final String SENT = "sent";
+  private static final String MESSAGE_SENT = "message-sent";
 
-    private static final String MESSAGE_ID = "message-id";
-    private static final String CERTIFICATE_ID = "certificate-id";
-    private static final String CERTIFICATE_TYPE = "certificate-type";
-    private static final String CERTIFICATE_RECIPIENT = "certificate-recipient";
+  private static final String MESSAGE_ID = "message-id";
+  private static final String CERTIFICATE_ID = "certificate-id";
+  private static final String CERTIFICATE_TYPE = "certificate-type";
+  private static final String CERTIFICATE_RECIPIENT = "certificate-recipient";
 
-    private static final Logger LOG = LoggerFactory.getLogger(lookup().getClass());
+  private static final Logger LOG = LoggerFactory.getLogger(lookup().getClass());
 
-    private final JmsTemplate jmsTemplate;
-    private final MonitoringLogService monitoringLogService;
-    private final AppProperties appProperties;
+  private final JmsTemplate jmsTemplate;
+  private final MonitoringLogService monitoringLogService;
+  private final AppProperties appProperties;
 
-    public boolean created(String certificateXml, String certificateId, String certificateType, String careUnitId) {
-        boolean rc = true;
-        if (appProperties.jms().statisticsEnabled()) {
-            rc = sendIntygDataPointToStatistik(CREATED, certificateXml, certificateId, certificateType);
-            if (rc) {
-                monitoringLogService.logStatisticsCreated(certificateId, certificateType, careUnitId);
+  public boolean created(
+      String certificateXml, String certificateId, String certificateType, String careUnitId) {
+    boolean rc = true;
+    if (appProperties.jms().statisticsEnabled()) {
+      rc = sendIntygDataPointToStatistik(CREATED, certificateXml, certificateId, certificateType);
+      if (rc) {
+        monitoringLogService.logStatisticsCreated(certificateId, certificateType, careUnitId);
+      }
+    }
+    return rc;
+  }
+
+  public boolean revoked(
+      String certificateXml, String certificateId, String certificateType, String careUnitId) {
+    boolean rc = true;
+    if (appProperties.jms().statisticsEnabled()) {
+      rc = sendIntygDataPointToStatistik(REVOKED, certificateXml, certificateId, certificateType);
+      if (rc) {
+        monitoringLogService.logStatisticsRevoked(certificateId, certificateType, careUnitId);
+      }
+    }
+    return rc;
+  }
+
+  public boolean sent(
+      final String certificateId,
+      final String certificateType,
+      final String careUnitId,
+      final String recipientId) {
+
+    boolean rc = true;
+    if (appProperties.jms().statisticsEnabled()) {
+      rc = sendIntygDataPointToStatistik(SENT, null, certificateId, certificateType, recipientId);
+    }
+    if (rc) {
+      monitoringLogService.logStatisticsSent(
+          certificateId, certificateType, careUnitId, recipientId);
+    }
+    return rc;
+  }
+
+  public boolean messageSent(String xml, String messageId, String topic) {
+    boolean rc = true;
+    if (appProperties.jms().statisticsEnabled()) {
+      rc = sendFkMessageDataPointToStatistik(MESSAGE_SENT, xml, messageId);
+    }
+    if (rc) {
+      monitoringLogService.logStatisticsMessageSent(messageId, topic);
+    }
+    return rc;
+  }
+
+  private boolean sendIntygDataPointToStatistik(
+      final String actionType,
+      final String certificateXml,
+      final String certificateId,
+      final String certificateType) {
+
+    return sendIntygDataPointToStatistik(
+        actionType, certificateXml, certificateId, certificateType, null);
+  }
+
+  private boolean sendIntygDataPointToStatistik(
+      final String actionType,
+      final String certificateXml,
+      final String certificateId,
+      final String certificateType,
+      final String certificateRecipientId) {
+
+    try {
+      return send(
+          session -> {
+            TextMessage message = session.createTextMessage(certificateXml);
+            message.setStringProperty(ACTION, actionType);
+            message.setStringProperty(CERTIFICATE_ID, certificateId);
+            message.setStringProperty(CERTIFICATE_TYPE, certificateType);
+            if (certificateRecipientId != null) {
+              message.setStringProperty(CERTIFICATE_RECIPIENT, certificateRecipientId);
             }
-        }
-        return rc;
+            return message;
+          });
+    } catch (JmsException e) {
+      LOG.error(
+          "Failure sending '{}' type with certificate id '{}'to statistics",
+          actionType,
+          certificateId,
+          e);
+      return false;
     }
+  }
 
-    public boolean revoked(String certificateXml, String certificateId, String certificateType, String careUnitId) {
-        boolean rc = true;
-        if (appProperties.jms().statisticsEnabled()) {
-            rc = sendIntygDataPointToStatistik(REVOKED, certificateXml, certificateId, certificateType);
-            if (rc) {
-                monitoringLogService.logStatisticsRevoked(certificateId, certificateType, careUnitId);
-            }
-        }
-        return rc;
+  private boolean sendFkMessageDataPointToStatistik(
+      String actionType, String messageXml, String messageId) {
+    try {
+      return send(
+          session -> {
+            final TextMessage message = session.createTextMessage(messageXml);
+            message.setStringProperty(ACTION, actionType);
+            message.setStringProperty(MESSAGE_ID, messageId);
+            return message;
+          });
+    } catch (JmsException e) {
+      LOG.error(
+          "Failure sending '{}' type with message id '{}'to statistics", actionType, messageId, e);
+      return false;
     }
+  }
 
-    public boolean sent(
-        final String certificateId,
-        final String certificateType,
-        final String careUnitId,
-        final String recipientId) {
-
-        boolean rc = true;
-        if (appProperties.jms().statisticsEnabled()) {
-            rc = sendIntygDataPointToStatistik(SENT, null, certificateId, certificateType, recipientId);
-        }
-        if (rc) {
-            monitoringLogService.logStatisticsSent(certificateId, certificateType, careUnitId, recipientId);
-        }
-        return rc;
-    }
-
-    public boolean messageSent(String xml, String messageId, String topic) {
-        boolean rc = true;
-        if (appProperties.jms().statisticsEnabled()) {
-            rc = sendFkMessageDataPointToStatistik(MESSAGE_SENT, xml, messageId);
-        }
-        if (rc) {
-            monitoringLogService.logStatisticsMessageSent(messageId, topic);
-        }
-        return rc;
-    }
-
-    private boolean sendIntygDataPointToStatistik(
-        final String actionType,
-        final String certificateXml,
-        final String certificateId,
-        final String certificateType) {
-
-        return sendIntygDataPointToStatistik(
-            actionType,
-            certificateXml,
-            certificateId,
-            certificateType,
-            null);
-    }
-
-    private boolean sendIntygDataPointToStatistik(
-        final String actionType,
-        final String certificateXml,
-        final String certificateId,
-        final String certificateType,
-        final String certificateRecipientId) {
-
-        try {
-            return send(session -> {
-                TextMessage message = session.createTextMessage(certificateXml);
-                message.setStringProperty(ACTION, actionType);
-                message.setStringProperty(CERTIFICATE_ID, certificateId);
-                message.setStringProperty(CERTIFICATE_TYPE, certificateType);
-                if (certificateRecipientId != null) {
-                    message.setStringProperty(CERTIFICATE_RECIPIENT, certificateRecipientId);
-                }
-                return message;
-            });
-        } catch (JmsException e) {
-            LOG.error("Failure sending '{}' type with certificate id '{}'to statistics", actionType, certificateId, e);
-            return false;
-        }
-    }
-
-    private boolean sendFkMessageDataPointToStatistik(String actionType, String messageXml, String messageId) {
-        try {
-            return send(session -> {
-                final TextMessage message = session.createTextMessage(messageXml);
-                message.setStringProperty(ACTION, actionType);
-                message.setStringProperty(MESSAGE_ID, messageId);
-                return message;
-            });
-        } catch (JmsException e) {
-            LOG.error("Failure sending '{}' type with message id '{}'to statistics", actionType, messageId, e);
-            return false;
-        }
-    }
-
-    boolean send(final MessageCreator messageCreator) {
-        jmsTemplate.send(appProperties.jms().statisticsQueue(), messageCreator);
-        return true;
-    }
+  boolean send(final MessageCreator messageCreator) {
+    jmsTemplate.send(appProperties.jms().statisticsQueue(), messageCreator);
+    return true;
+  }
 }

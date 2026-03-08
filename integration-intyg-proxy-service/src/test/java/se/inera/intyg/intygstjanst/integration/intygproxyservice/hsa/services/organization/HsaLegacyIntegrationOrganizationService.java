@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -40,80 +40,65 @@ import se.inera.intyg.intygstjanst.integration.intygproxyservice.hsa.services.au
 @RequiredArgsConstructor
 public class HsaLegacyIntegrationOrganizationService implements HsaOrganizationsService {
 
-    private final GetActiveHealthCareUnitMemberHsaIdService getActiveHealthCareUnitMemberHsaIdService;
-    private final GetHealthCareUnitService getHealthCareUnitService;
-    private final GetUnitService getUnitService;
-    private final GetCredentialInformationForPersonService getCredentialInformationForPersonService;
-    private final GetUserAuthorizationInfoService getUserAuthorizationInfoService;
-    private final GetCareUnitService getCareUnitService;
+  private final GetActiveHealthCareUnitMemberHsaIdService getActiveHealthCareUnitMemberHsaIdService;
+  private final GetHealthCareUnitService getHealthCareUnitService;
+  private final GetUnitService getUnitService;
+  private final GetCredentialInformationForPersonService getCredentialInformationForPersonService;
+  private final GetUserAuthorizationInfoService getUserAuthorizationInfoService;
+  private final GetCareUnitService getCareUnitService;
 
-    @Override
-    public UserAuthorizationInfo getAuthorizedEnheterForHosPerson(String hosPersonHsaId) {
-        final var credentialInformation = getCredentialInformationForPersonService.get(
-            GetCredentialInformationRequestDTO.builder()
-                .personHsaId(hosPersonHsaId)
-                .build()
-        );
+  @Override
+  public UserAuthorizationInfo getAuthorizedEnheterForHosPerson(String hosPersonHsaId) {
+    final var credentialInformation =
+        getCredentialInformationForPersonService.get(
+            GetCredentialInformationRequestDTO.builder().personHsaId(hosPersonHsaId).build());
 
-        return getUserAuthorizationInfoService.get(credentialInformation);
+    return getUserAuthorizationInfoService.get(credentialInformation);
+  }
+
+  @Override
+  public String getVardgivareOfVardenhet(String vardenhetHsaId) {
+    final var healthCareUnit =
+        getHealthCareUnitService.get(
+            GetHealthCareUnitRequestDTO.builder().hsaId(vardenhetHsaId).build());
+    return healthCareUnit.getHealthCareProviderHsaId();
+  }
+
+  @Override
+  public Vardenhet getVardenhet(String vardenhetHsaId) {
+    return getCareUnitService.get(vardenhetHsaId);
+  }
+
+  @Override
+  public Vardgivare getVardgivareInfo(String vardgivareHsaId) {
+    final var unit = getUnitService.get(GetUnitRequestDTO.builder().hsaId(vardgivareHsaId).build());
+
+    if (unit == null) {
+      throw new WebServiceException("Could not get unit for unitHsaId " + vardgivareHsaId);
     }
 
-    @Override
-    public String getVardgivareOfVardenhet(String vardenhetHsaId) {
-        final var healthCareUnit = getHealthCareUnitService.get(
-            GetHealthCareUnitRequestDTO.builder()
-                .hsaId(vardenhetHsaId)
-                .build()
-        );
-        return healthCareUnit.getHealthCareProviderHsaId();
+    return new Vardgivare(unit.getUnitHsaId(), unit.getUnitName());
+  }
+
+  @Override
+  public List<String> getHsaIdForAktivaUnderenheter(String vardEnhetHsaId) {
+    return getActiveHealthCareUnitMemberHsaIdService.get(
+        GetHealthCareUnitMembersRequestDTO.builder().hsaId(vardEnhetHsaId).build());
+  }
+
+  @Override
+  public String getParentUnit(String hsaId) throws HsaServiceCallException {
+    try {
+      final var unit =
+          getHealthCareUnitService.get(GetHealthCareUnitRequestDTO.builder().hsaId(hsaId).build());
+
+      if (unit == null) {
+        throw new HsaServiceCallException(
+            String.format("Unable to find unit with hsaId '%s'", hsaId));
+      }
+      return unit.getHealthCareUnitHsaId();
+    } catch (Exception exception) {
+      throw new HsaServiceCallException(exception);
     }
-
-    @Override
-    public Vardenhet getVardenhet(String vardenhetHsaId) {
-        return getCareUnitService.get(vardenhetHsaId);
-    }
-
-    @Override
-    public Vardgivare getVardgivareInfo(String vardgivareHsaId) {
-        final var unit = getUnitService.get(
-            GetUnitRequestDTO.builder()
-                .hsaId(vardgivareHsaId)
-                .build()
-        );
-
-        if (unit == null) {
-            throw new WebServiceException("Could not get unit for unitHsaId " + vardgivareHsaId);
-        }
-
-        return new Vardgivare(unit.getUnitHsaId(), unit.getUnitName());
-    }
-
-    @Override
-    public List<String> getHsaIdForAktivaUnderenheter(String vardEnhetHsaId) {
-        return getActiveHealthCareUnitMemberHsaIdService.get(
-            GetHealthCareUnitMembersRequestDTO.builder()
-                .hsaId(vardEnhetHsaId)
-                .build()
-        );
-    }
-
-    @Override
-    public String getParentUnit(String hsaId) throws HsaServiceCallException {
-        try {
-            final var unit = getHealthCareUnitService.get(
-                GetHealthCareUnitRequestDTO.builder()
-                    .hsaId(hsaId)
-                    .build()
-            );
-
-            if (unit == null) {
-                throw new HsaServiceCallException(
-                    String.format("Unable to find unit with hsaId '%s'", hsaId)
-                );
-            }
-            return unit.getHealthCareUnitHsaId();
-        } catch (Exception exception) {
-            throw new HsaServiceCallException(exception);
-        }
-    }
+  }
 }

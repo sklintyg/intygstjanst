@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -19,23 +19,22 @@
 
 package se.inera.intyg.intygstjanst.application.reko.dto;
 
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateRekoStatusRequestDTO {
 
-    String patientId;
-    String statusId;
-    String careProviderId;
-    String careUnitId;
-    String unitId;
-    String staffId;
-    String staffName;
-    LocalDateTime sickLeaveTimestamp;
+  String patientId;
+  String statusId;
+  String careProviderId;
+  String careUnitId;
+  String unitId;
+  String staffId;
+  String staffName;
+  LocalDateTime sickLeaveTimestamp;
 }

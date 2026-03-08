@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.integration.hsa.model.legacy;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -26,10 +27,10 @@ import java.util.List;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
 public interface SelectableVardenhet extends Serializable {
 
-    String getId();
+  String getId();
 
-    String getNamn();
+  String getNamn();
 
-    @JsonIgnore
-    List<String> getHsaIds();
+  @JsonIgnore
+  List<String> getHsaIds();
 }

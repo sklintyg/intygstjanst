@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -25,74 +25,68 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Repository;
 import se.inera.intyg.common.db.support.DbModuleEntryPoint;
 import se.inera.intyg.common.doi.support.DoiModuleEntryPoint;
+import se.inera.intyg.intygstjanst.application.citizen.repository.model.CitizenCertificate;
+import se.inera.intyg.intygstjanst.application.citizen.repository.model.CitizenCertificateConverter;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.CertificateDao;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.RelationDao;
-import se.inera.intyg.intygstjanst.application.citizen.repository.model.CitizenCertificate;
-import se.inera.intyg.intygstjanst.application.citizen.repository.model.CitizenCertificateConverter;
 
 @Repository
 public class CitizenCertificatesRepository {
 
-    private static final List<String> certificateTypesToExclude = List.of(
-        DbModuleEntryPoint.MODULE_ID,
-        DoiModuleEntryPoint.MODULE_ID
-    );
+  private static final List<String> certificateTypesToExclude =
+      List.of(DbModuleEntryPoint.MODULE_ID, DoiModuleEntryPoint.MODULE_ID);
 
-    private final RelationDao relationDao;
-    private final CitizenCertificateConverter citizenCertificateConverter;
-    private final CertificateDao certificateDao;
+  private final RelationDao relationDao;
+  private final CitizenCertificateConverter citizenCertificateConverter;
+  private final CertificateDao certificateDao;
 
-    public CitizenCertificatesRepository(RelationDao relationDao,
-        CitizenCertificateConverter citizenCertificateConverter,
-        CertificateDao certificateDao) {
-        this.relationDao = relationDao;
-        this.citizenCertificateConverter = citizenCertificateConverter;
-        this.certificateDao = certificateDao;
+  public CitizenCertificatesRepository(
+      RelationDao relationDao,
+      CitizenCertificateConverter citizenCertificateConverter,
+      CertificateDao certificateDao) {
+    this.relationDao = relationDao;
+    this.citizenCertificateConverter = citizenCertificateConverter;
+    this.certificateDao = certificateDao;
+  }
+
+  public List<CitizenCertificate> getCertificatesForPatient(String patientId) {
+
+    final var certificates = certificateDao.findCertificatesForPatient(patientId);
+
+    if (certificates.isEmpty()) {
+      return Collections.emptyList();
     }
 
-    public List<CitizenCertificate> getCertificatesForPatient(String patientId) {
+    final var relations =
+        relationDao.getRelations(
+            getCertificateIds(certificates), getRevokedCertificateIds(certificates));
 
-        final var certificates = certificateDao.findCertificatesForPatient(patientId);
+    return certificates.stream()
+        .filter(certificate -> !certificate.getCertificateMetaData().isRevoked())
+        .filter(certificate -> isCertificateTypeIncluded(certificate.getType()))
+        .map(
+            certificate ->
+                citizenCertificateConverter.convert(
+                    certificate, relations.get(certificate.getId())))
+        .collect(Collectors.toList());
+  }
 
-        if (certificates.isEmpty()) {
-            return Collections.emptyList();
-        }
+  private boolean isCertificateTypeIncluded(String type) {
+    return !certificateTypesToExclude.contains(type);
+  }
 
-        final var relations = relationDao.getRelations(
-            getCertificateIds(certificates),
-            getRevokedCertificateIds(certificates)
-        );
+  private List<String> getCertificateIds(List<Certificate> certificates) {
+    return certificates.stream()
+        .filter(certificate -> !certificate.getCertificateMetaData().isRevoked())
+        .map(Certificate::getId)
+        .collect(Collectors.toList());
+  }
 
-        return certificates
-            .stream()
-            .filter(certificate -> !certificate.getCertificateMetaData().isRevoked())
-            .filter(certificate -> isCertificateTypeIncluded(certificate.getType()))
-            .map(certificate -> citizenCertificateConverter.convert(
-                    certificate,
-                    relations.get(certificate.getId())
-                )
-            )
-            .collect(Collectors.toList());
-    }
-
-    private boolean isCertificateTypeIncluded(String type) {
-        return !certificateTypesToExclude.contains(type);
-    }
-
-    private List<String> getCertificateIds(List<Certificate> certificates) {
-        return certificates
-            .stream()
-            .filter(certificate -> !certificate.getCertificateMetaData().isRevoked())
-            .map(Certificate::getId)
-            .collect(Collectors.toList());
-    }
-
-    private List<String> getRevokedCertificateIds(List<Certificate> certificates) {
-        return certificates
-            .stream()
-            .filter(certificate -> certificate.getCertificateMetaData().isRevoked())
-            .map(Certificate::getId)
-            .collect(Collectors.toList());
-    }
+  private List<String> getRevokedCertificateIds(List<Certificate> certificates) {
+    return certificates.stream()
+        .filter(certificate -> certificate.getCertificateMetaData().isRevoked())
+        .map(Certificate::getId)
+        .collect(Collectors.toList());
+  }
 }

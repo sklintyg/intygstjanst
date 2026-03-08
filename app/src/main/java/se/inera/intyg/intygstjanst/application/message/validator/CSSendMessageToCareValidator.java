@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -25,8 +25,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.common.support.facade.model.CertificateStatus;
 import se.inera.intyg.common.support.facade.model.metadata.CertificateMetadata;
-import se.inera.intyg.intygstjanst.infrastructure.csintegration.CSIntegrationService;
 import se.inera.intyg.intygstjanst.application.message.validator.SendMessageToCareValidator.ErrorCode;
+import se.inera.intyg.intygstjanst.infrastructure.csintegration.CSIntegrationService;
 import se.inera.intyg.schemas.contract.Personnummer;
 
 @Service
@@ -34,49 +34,55 @@ import se.inera.intyg.schemas.contract.Personnummer;
 @RequiredArgsConstructor
 public class CSSendMessageToCareValidator {
 
-    private final CSIntegrationService csIntegrationService;
+  private final CSIntegrationService csIntegrationService;
 
-    public void validate(String certificateId, String patientId, List<String> validationErrors) {
-        final var certificateExists = csIntegrationService.certificateExists(certificateId);
+  public void validate(String certificateId, String patientId, List<String> validationErrors) {
+    final var certificateExists = csIntegrationService.certificateExists(certificateId);
 
-        validateCertificateExists(certificateExists, validationErrors);
+    validateCertificateExists(certificateExists, validationErrors);
 
-        if (Boolean.TRUE.equals(certificateExists)) {
-            final var certificateMetadata = csIntegrationService.getCertificateMetadata(certificateId);
-            validatePatientId(certificateMetadata, patientId, validationErrors);
-            validateRevoked(certificateMetadata, validationErrors);
-            validateTestCertificate(certificateMetadata, validationErrors);
-        }
+    if (Boolean.TRUE.equals(certificateExists)) {
+      final var certificateMetadata = csIntegrationService.getCertificateMetadata(certificateId);
+      validatePatientId(certificateMetadata, patientId, validationErrors);
+      validateRevoked(certificateMetadata, validationErrors);
+      validateTestCertificate(certificateMetadata, validationErrors);
     }
+  }
 
-    private void validateCertificateExists(boolean certificateExists, List<String> validationErrors) {
-        if (Boolean.FALSE.equals(certificateExists)) {
-            validationErrors.add(ErrorCode.CERTIFICATE_NOT_FOUND_ERROR.toString());
-        }
+  private void validateCertificateExists(boolean certificateExists, List<String> validationErrors) {
+    if (Boolean.FALSE.equals(certificateExists)) {
+      validationErrors.add(ErrorCode.CERTIFICATE_NOT_FOUND_ERROR.toString());
     }
+  }
 
-    private void validatePatientId(CertificateMetadata certificateMetadata, String patientId, List<String> validationErrors) {
-        final var patientIdFromMessage = Personnummer.createPersonnummer(patientId);
-        final var patientIdFromCertificate = Personnummer.createPersonnummer(certificateMetadata.getPatient().getPersonId().getId());
+  private void validatePatientId(
+      CertificateMetadata certificateMetadata, String patientId, List<String> validationErrors) {
+    final var patientIdFromMessage = Personnummer.createPersonnummer(patientId);
+    final var patientIdFromCertificate =
+        Personnummer.createPersonnummer(certificateMetadata.getPatient().getPersonId().getId());
 
-        if (patientIdFromMessage.isEmpty() || patientIdFromCertificate.isEmpty()
-            || !patientIdFromMessage.get().equals(patientIdFromCertificate.get())) {
-            validationErrors.add(ErrorCode.CIVIC_REGISTRATION_NUMBER_INCONSISTENCY_ERROR.toString());
-        }
+    if (patientIdFromMessage.isEmpty()
+        || patientIdFromCertificate.isEmpty()
+        || !patientIdFromMessage.get().equals(patientIdFromCertificate.get())) {
+      validationErrors.add(ErrorCode.CIVIC_REGISTRATION_NUMBER_INCONSISTENCY_ERROR.toString());
     }
+  }
 
-    private void validateRevoked(CertificateMetadata certificateMetadata, List<String> validationErrors) {
-        if (certificateMetadata.getStatus() == CertificateStatus.REVOKED) {
-            validationErrors.add(ErrorCode.CERTIFICATE_REVOKED_ERROR.toString());
-            validationErrors.add(" The supplied certificate is revoked. Messages cannot be sent for revoked certificates.");
-        }
+  private void validateRevoked(
+      CertificateMetadata certificateMetadata, List<String> validationErrors) {
+    if (certificateMetadata.getStatus() == CertificateStatus.REVOKED) {
+      validationErrors.add(ErrorCode.CERTIFICATE_REVOKED_ERROR.toString());
+      validationErrors.add(
+          " The supplied certificate is revoked. Messages cannot be sent for revoked certificates.");
     }
+  }
 
-    private void validateTestCertificate(CertificateMetadata certificateMetadata, List<String> validationErrors) {
-        if (Boolean.TRUE.equals(certificateMetadata.isTestCertificate())) {
-            validationErrors.add(ErrorCode.TEST_CERTIFICATE.toString());
-            validationErrors.add(" The supplied certificate is invalid. Messages cannot be sent for test certificates.");
-        }
+  private void validateTestCertificate(
+      CertificateMetadata certificateMetadata, List<String> validationErrors) {
+    if (Boolean.TRUE.equals(certificateMetadata.isTestCertificate())) {
+      validationErrors.add(ErrorCode.TEST_CERTIFICATE.toString());
+      validationErrors.add(
+          " The supplied certificate is invalid. Messages cannot be sent for test certificates.");
     }
-
+  }
 }

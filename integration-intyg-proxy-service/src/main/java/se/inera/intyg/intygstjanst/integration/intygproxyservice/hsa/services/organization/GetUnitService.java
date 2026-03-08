@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -35,26 +35,29 @@ import se.inera.intyg.intygstjanst.integration.intygproxyservice.hsa.dto.organiz
 @RequiredArgsConstructor
 public class GetUnitService {
 
-    private final HsaIntygProxyServiceUnitClient hsaIntygProxyServiceUnitClient;
+  private final HsaIntygProxyServiceUnitClient hsaIntygProxyServiceUnitClient;
 
-    @Cacheable(cacheNames = UNIT_CACHE_NAME, key = "#getUnitRequestDTO.hsaId", unless = "#result == null")
-    public Unit get(GetUnitRequestDTO getUnitRequestDTO) {
-        validateRequest(getUnitRequestDTO);
-        final var getUnitResponseDTO = hsaIntygProxyServiceUnitClient.getUnit(getUnitRequestDTO);
-        if (invalidResponseOrNoUnitFound(getUnitResponseDTO)) {
-            log.warn("No unit was found with hsaId '{}', returning null", getUnitRequestDTO.getHsaId());
-            return null;
-        }
-        return getUnitResponseDTO.getUnit();
+  @Cacheable(
+      cacheNames = UNIT_CACHE_NAME,
+      key = "#getUnitRequestDTO.hsaId",
+      unless = "#result == null")
+  public Unit get(GetUnitRequestDTO getUnitRequestDTO) {
+    validateRequest(getUnitRequestDTO);
+    final var getUnitResponseDTO = hsaIntygProxyServiceUnitClient.getUnit(getUnitRequestDTO);
+    if (invalidResponseOrNoUnitFound(getUnitResponseDTO)) {
+      log.warn("No unit was found with hsaId '{}', returning null", getUnitRequestDTO.getHsaId());
+      return null;
     }
+    return getUnitResponseDTO.getUnit();
+  }
 
-    private void validateRequest(GetUnitRequestDTO getUnitRequestDTO) {
-        if (getUnitRequestDTO.getHsaId() == null || getUnitRequestDTO.getHsaId().isEmpty()) {
-            throw new IllegalArgumentException("hsaId is a required field");
-        }
+  private void validateRequest(GetUnitRequestDTO getUnitRequestDTO) {
+    if (getUnitRequestDTO.getHsaId() == null || getUnitRequestDTO.getHsaId().isEmpty()) {
+      throw new IllegalArgumentException("hsaId is a required field");
     }
+  }
 
-    private boolean invalidResponseOrNoUnitFound(GetUnitResponseDTO getUnitResponseDTO) {
-        return getUnitResponseDTO == null || getUnitResponseDTO.getUnit() == null;
-    }
+  private boolean invalidResponseOrNoUnitFound(GetUnitResponseDTO getUnitResponseDTO) {
+    return getUnitResponseDTO == null || getUnitResponseDTO.getUnit() == null;
+  }
 }

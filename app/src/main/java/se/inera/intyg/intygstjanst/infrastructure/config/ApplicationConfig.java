@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,8 +16,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package se.inera.intyg.intygstjanst.infrastructure.config;
 
+package se.inera.intyg.intygstjanst.infrastructure.config;
 
 import org.apache.cxf.Bus;
 import org.apache.cxf.bus.spring.SpringBus;
@@ -32,20 +32,20 @@ import se.inera.intyg.common.support.modules.support.ApplicationOrigin;
 @EnableAspectJAutoProxy
 public class ApplicationConfig {
 
-    @Bean(name = Bus.DEFAULT_BUS_ID)
-    public SpringBus springBus() {
-        return new SpringBus();
-    }
+  @Bean(name = Bus.DEFAULT_BUS_ID)
+  public SpringBus springBus() {
+    return new SpringBus();
+  }
 
-    @Bean
-    public PathMatchingResourcePatternResolver pathMatchingResourcePatternResolver() {
-        return new PathMatchingResourcePatternResolver();
-    }
+  @Bean
+  public PathMatchingResourcePatternResolver pathMatchingResourcePatternResolver() {
+    return new PathMatchingResourcePatternResolver();
+  }
 
-    @Bean
-    public IntygModuleRegistryImpl moduleRegistry() {
-        final var registry = new IntygModuleRegistryImpl();
-        registry.setOrigin(ApplicationOrigin.INTYGSTJANST);
-        return registry;
-    }
+  @Bean
+  public IntygModuleRegistryImpl moduleRegistry() {
+    final var registry = new IntygModuleRegistryImpl();
+    registry.setOrigin(ApplicationOrigin.INTYGSTJANST);
+    return registry;
+  }
 }

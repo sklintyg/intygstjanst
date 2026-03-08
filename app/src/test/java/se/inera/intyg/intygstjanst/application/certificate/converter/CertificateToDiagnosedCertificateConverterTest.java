@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.application.certificate.converter;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,7 +35,6 @@ import se.inera.intyg.common.luse.v1.model.internal.LuseUtlatandeV1;
 import se.inera.intyg.common.support.model.common.internal.GrundData;
 import se.inera.intyg.common.support.model.common.internal.HoSPersonal;
 import se.inera.intyg.common.support.model.common.internal.Patient;
-import se.inera.intyg.intygstjanst.application.certificate.converter.CertificateToDiagnosedCertificateConverter;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.OriginalCertificate;
 import se.inera.intyg.schemas.contract.Personnummer;
@@ -42,152 +42,158 @@ import se.inera.intyg.schemas.contract.Personnummer;
 @ExtendWith(MockitoExtension.class)
 class CertificateToDiagnosedCertificateConverterTest {
 
-    private static final String CERT_ID = "cert-123";
-    private static final LocalDateTime CERT_SIGNING_DATETIME = LocalDateTime.parse("2016-02-01T15:00:00");
-    private static final String NAME = "Tolvan Tolvansson";
-    private static final String PERSONNUMMER = "19121212-1212";
-    private static final String DOC_NAME = "Doc Name";
-    private static final String CERT_TYPE_LUAEFS = "luaefs";
-    private static final String CERT_TYPE_LUSE = "luse";
-    private static final String CERT_TYPE_LUAENA = "luaena";
+  private static final String CERT_ID = "cert-123";
+  private static final LocalDateTime CERT_SIGNING_DATETIME =
+      LocalDateTime.parse("2016-02-01T15:00:00");
+  private static final String NAME = "Tolvan Tolvansson";
+  private static final String PERSONNUMMER = "19121212-1212";
+  private static final String DOC_NAME = "Doc Name";
+  private static final String CERT_TYPE_LUAEFS = "luaefs";
+  private static final String CERT_TYPE_LUSE = "luse";
+  private static final String CERT_TYPE_LUAENA = "luaena";
 
-    private static final String DOC_ID = "doc-1";
-    private static final String CARE_UNIT_ID = "enhet-1";
-    private static final String CARE_UNIT_NAME = "Enhet1";
-    private static final String CARE_GIVER_ID = "vardgivare-1";
-    private static final String DIAGNOSE_CODE = "diag-1";
-    private static final String DIAGNOSE_CODE_2 = "diag-2";
+  private static final String DOC_ID = "doc-1";
+  private static final String CARE_UNIT_ID = "enhet-1";
+  private static final String CARE_UNIT_NAME = "Enhet1";
+  private static final String CARE_GIVER_ID = "vardgivare-1";
+  private static final String DIAGNOSE_CODE = "diag-1";
+  private static final String DIAGNOSE_CODE_2 = "diag-2";
 
-    private final Personnummer pNr = Personnummer.createPersonnummer(PERSONNUMMER).get();
+  private final Personnummer pNr = Personnummer.createPersonnummer(PERSONNUMMER).get();
 
-    @Test
-    void convertLuaefs() {
-        Certificate certificate = buildCertificate(CERT_TYPE_LUAEFS);
-        LuaefsUtlatandeV1 statement = buildLuaefsStatement();
+  @Test
+  void convertLuaefs() {
+    Certificate certificate = buildCertificate(CERT_TYPE_LUAEFS);
+    LuaefsUtlatandeV1 statement = buildLuaefsStatement();
 
-        var diagnosedCertificate = (new CertificateToDiagnosedCertificateConverter()).convertLuaefs(certificate, statement);
+    var diagnosedCertificate =
+        (new CertificateToDiagnosedCertificateConverter()).convertLuaefs(certificate, statement);
 
-        assertEquals(CERT_ID, diagnosedCertificate.getCertificateId());
-        assertEquals(CERT_TYPE_LUAEFS, diagnosedCertificate.getCertificateType());
+    assertEquals(CERT_ID, diagnosedCertificate.getCertificateId());
+    assertEquals(CERT_TYPE_LUAEFS, diagnosedCertificate.getCertificateType());
 
-        assertEquals(CERT_SIGNING_DATETIME, diagnosedCertificate.getSigningDateTime());
+    assertEquals(CERT_SIGNING_DATETIME, diagnosedCertificate.getSigningDateTime());
 
-        assertEquals(CARE_GIVER_ID, diagnosedCertificate.getCareProviderId());
-        assertEquals(CARE_UNIT_ID, diagnosedCertificate.getCareUnitId());
-        assertEquals(CARE_UNIT_NAME, diagnosedCertificate.getCareUnitName());
+    assertEquals(CARE_GIVER_ID, diagnosedCertificate.getCareProviderId());
+    assertEquals(CARE_UNIT_ID, diagnosedCertificate.getCareUnitId());
+    assertEquals(CARE_UNIT_NAME, diagnosedCertificate.getCareUnitName());
 
-        assertEquals(DOC_ID, diagnosedCertificate.getPersonalHsaId());
-        assertEquals(DOC_NAME, diagnosedCertificate.getPersonalFullName());
-        assertEquals(PERSONNUMMER, diagnosedCertificate.getPersonId());
+    assertEquals(DOC_ID, diagnosedCertificate.getPersonalHsaId());
+    assertEquals(DOC_NAME, diagnosedCertificate.getPersonalFullName());
+    assertEquals(PERSONNUMMER, diagnosedCertificate.getPersonId());
 
-        assertEquals(DIAGNOSE_CODE, diagnosedCertificate.getDiagnoseCode());
-        assertEquals(DIAGNOSE_CODE_2, diagnosedCertificate.getSecondaryDiagnoseCodes().get(0));
-    }
+    assertEquals(DIAGNOSE_CODE, diagnosedCertificate.getDiagnoseCode());
+    assertEquals(DIAGNOSE_CODE_2, diagnosedCertificate.getSecondaryDiagnoseCodes().get(0));
+  }
 
-    @Test
-    void convertLuaena() {
-        Certificate certificate = buildCertificate(CERT_TYPE_LUAENA);
-        LuaenaUtlatandeV1 statement = buildLuaenaStatement();
+  @Test
+  void convertLuaena() {
+    Certificate certificate = buildCertificate(CERT_TYPE_LUAENA);
+    LuaenaUtlatandeV1 statement = buildLuaenaStatement();
 
-        var diagnosedCertificate = (new CertificateToDiagnosedCertificateConverter()).convertLuaena(certificate, statement);
+    var diagnosedCertificate =
+        (new CertificateToDiagnosedCertificateConverter()).convertLuaena(certificate, statement);
 
-        assertEquals(CERT_ID, diagnosedCertificate.getCertificateId());
-        assertEquals(CERT_TYPE_LUAENA, diagnosedCertificate.getCertificateType());
+    assertEquals(CERT_ID, diagnosedCertificate.getCertificateId());
+    assertEquals(CERT_TYPE_LUAENA, diagnosedCertificate.getCertificateType());
 
-        assertEquals(CERT_SIGNING_DATETIME, diagnosedCertificate.getSigningDateTime());
+    assertEquals(CERT_SIGNING_DATETIME, diagnosedCertificate.getSigningDateTime());
 
-        assertEquals(CARE_GIVER_ID, diagnosedCertificate.getCareProviderId());
-        assertEquals(CARE_UNIT_ID, diagnosedCertificate.getCareUnitId());
-        assertEquals(CARE_UNIT_NAME, diagnosedCertificate.getCareUnitName());
+    assertEquals(CARE_GIVER_ID, diagnosedCertificate.getCareProviderId());
+    assertEquals(CARE_UNIT_ID, diagnosedCertificate.getCareUnitId());
+    assertEquals(CARE_UNIT_NAME, diagnosedCertificate.getCareUnitName());
 
-        assertEquals(DOC_ID, diagnosedCertificate.getPersonalHsaId());
-        assertEquals(DOC_NAME, diagnosedCertificate.getPersonalFullName());
-        assertEquals(PERSONNUMMER, diagnosedCertificate.getPersonId());
+    assertEquals(DOC_ID, diagnosedCertificate.getPersonalHsaId());
+    assertEquals(DOC_NAME, diagnosedCertificate.getPersonalFullName());
+    assertEquals(PERSONNUMMER, diagnosedCertificate.getPersonId());
 
-        assertEquals(DIAGNOSE_CODE, diagnosedCertificate.getDiagnoseCode());
-        assertEquals(DIAGNOSE_CODE_2, diagnosedCertificate.getSecondaryDiagnoseCodes().get(0));
-    }
+    assertEquals(DIAGNOSE_CODE, diagnosedCertificate.getDiagnoseCode());
+    assertEquals(DIAGNOSE_CODE_2, diagnosedCertificate.getSecondaryDiagnoseCodes().get(0));
+  }
 
-    @Test
-    void convertLuse() {
-        Certificate certificate = buildCertificate(CERT_TYPE_LUSE);
-        LuseUtlatandeV1 statement = buildLuseStatement();
+  @Test
+  void convertLuse() {
+    Certificate certificate = buildCertificate(CERT_TYPE_LUSE);
+    LuseUtlatandeV1 statement = buildLuseStatement();
 
-        var diagnosedCertificate = (new CertificateToDiagnosedCertificateConverter()).convertLuse(certificate, statement);
+    var diagnosedCertificate =
+        (new CertificateToDiagnosedCertificateConverter()).convertLuse(certificate, statement);
 
-        assertEquals(CERT_ID, diagnosedCertificate.getCertificateId());
-        assertEquals(CERT_TYPE_LUSE, diagnosedCertificate.getCertificateType());
+    assertEquals(CERT_ID, diagnosedCertificate.getCertificateId());
+    assertEquals(CERT_TYPE_LUSE, diagnosedCertificate.getCertificateType());
 
-        assertEquals(CERT_SIGNING_DATETIME, diagnosedCertificate.getSigningDateTime());
+    assertEquals(CERT_SIGNING_DATETIME, diagnosedCertificate.getSigningDateTime());
 
-        assertEquals(CARE_GIVER_ID, diagnosedCertificate.getCareProviderId());
-        assertEquals(CARE_UNIT_ID, diagnosedCertificate.getCareUnitId());
-        assertEquals(CARE_UNIT_NAME, diagnosedCertificate.getCareUnitName());
+    assertEquals(CARE_GIVER_ID, diagnosedCertificate.getCareProviderId());
+    assertEquals(CARE_UNIT_ID, diagnosedCertificate.getCareUnitId());
+    assertEquals(CARE_UNIT_NAME, diagnosedCertificate.getCareUnitName());
 
-        assertEquals(DOC_ID, diagnosedCertificate.getPersonalHsaId());
-        assertEquals(DOC_NAME, diagnosedCertificate.getPersonalFullName());
-        assertEquals(PERSONNUMMER, diagnosedCertificate.getPersonId());
+    assertEquals(DOC_ID, diagnosedCertificate.getPersonalHsaId());
+    assertEquals(DOC_NAME, diagnosedCertificate.getPersonalFullName());
+    assertEquals(PERSONNUMMER, diagnosedCertificate.getPersonId());
 
-        assertEquals(DIAGNOSE_CODE, diagnosedCertificate.getDiagnoseCode());
-        assertEquals(DIAGNOSE_CODE_2, diagnosedCertificate.getSecondaryDiagnoseCodes().get(0));
-    }
+    assertEquals(DIAGNOSE_CODE, diagnosedCertificate.getDiagnoseCode());
+    assertEquals(DIAGNOSE_CODE_2, diagnosedCertificate.getSecondaryDiagnoseCodes().get(0));
+  }
 
-    private LuaefsUtlatandeV1 buildLuaefsStatement() {
-        var statement = mock(LuaefsUtlatandeV1.class);
-        when(statement.getDiagnoser()).thenReturn(getDiagnoses());
-        when(statement.getGrundData()).thenReturn(getBasicData());
-        return statement;
-    }
+  private LuaefsUtlatandeV1 buildLuaefsStatement() {
+    var statement = mock(LuaefsUtlatandeV1.class);
+    when(statement.getDiagnoser()).thenReturn(getDiagnoses());
+    when(statement.getGrundData()).thenReturn(getBasicData());
+    return statement;
+  }
 
-    private LuaenaUtlatandeV1 buildLuaenaStatement() {
-        var statement = mock(LuaenaUtlatandeV1.class);
-        when(statement.getDiagnoser()).thenReturn(getDiagnoses());
-        when(statement.getGrundData()).thenReturn(getBasicData());
-        return statement;
-    }
+  private LuaenaUtlatandeV1 buildLuaenaStatement() {
+    var statement = mock(LuaenaUtlatandeV1.class);
+    when(statement.getDiagnoser()).thenReturn(getDiagnoses());
+    when(statement.getGrundData()).thenReturn(getBasicData());
+    return statement;
+  }
 
-    private LuseUtlatandeV1 buildLuseStatement() {
-        var statement = mock(LuseUtlatandeV1.class);
-        when(statement.getDiagnoser()).thenReturn(getDiagnoses());
-        when(statement.getGrundData()).thenReturn(getBasicData());
-        return statement;
-    }
+  private LuseUtlatandeV1 buildLuseStatement() {
+    var statement = mock(LuseUtlatandeV1.class);
+    when(statement.getDiagnoser()).thenReturn(getDiagnoses());
+    when(statement.getGrundData()).thenReturn(getBasicData());
+    return statement;
+  }
 
-    private ImmutableList<Diagnos> getDiagnoses() {
-        return ImmutableList
-            .copyOf(java.util.List.of(Diagnos.create(DIAGNOSE_CODE, null, null, null),
-                Diagnos.create(DIAGNOSE_CODE_2, null, null, null)));
-    }
+  private ImmutableList<Diagnos> getDiagnoses() {
+    return ImmutableList.copyOf(
+        java.util.List.of(
+            Diagnos.create(DIAGNOSE_CODE, null, null, null),
+            Diagnos.create(DIAGNOSE_CODE_2, null, null, null)));
+  }
 
-    private GrundData getBasicData() {
-        var basicData = new GrundData();
+  private GrundData getBasicData() {
+    var basicData = new GrundData();
 
-        var patient = new Patient();
-        patient.setFullstandigtNamn(NAME);
-        patient.setPersonId(pNr);
+    var patient = new Patient();
+    patient.setFullstandigtNamn(NAME);
+    patient.setPersonId(pNr);
 
-        basicData.setPatient(patient);
-        basicData.setSigneringsdatum(CERT_SIGNING_DATETIME);
+    basicData.setPatient(patient);
+    basicData.setSigneringsdatum(CERT_SIGNING_DATETIME);
 
-        var hoSPersonal = new HoSPersonal();
-        hoSPersonal.setPersonId(DOC_ID);
-        hoSPersonal.setFullstandigtNamn(DOC_NAME);
-        basicData.setSkapadAv(hoSPersonal);
+    var hoSPersonal = new HoSPersonal();
+    hoSPersonal.setPersonId(DOC_ID);
+    hoSPersonal.setFullstandigtNamn(DOC_NAME);
+    basicData.setSkapadAv(hoSPersonal);
 
-        return basicData;
-    }
+    return basicData;
+  }
 
-    private Certificate buildCertificate(String type) {
-        var certificate = new Certificate(CERT_ID);
-        certificate.setType(type);
-        certificate.setTypeVersion("1.0");
-        certificate.setSignedDate(CERT_SIGNING_DATETIME);
-        certificate.setSigningDoctorName(DOC_NAME);
-        certificate.setCivicRegistrationNumber(pNr);
-        certificate.setCareGiverId(CARE_GIVER_ID);
-        certificate.setCareUnitId(CARE_UNIT_ID);
-        certificate.setCareUnitName(CARE_UNIT_NAME);
-        certificate.setOriginalCertificate(new OriginalCertificate(LocalDateTime.now(), "XML", certificate));
-        return certificate;
-    }
+  private Certificate buildCertificate(String type) {
+    var certificate = new Certificate(CERT_ID);
+    certificate.setType(type);
+    certificate.setTypeVersion("1.0");
+    certificate.setSignedDate(CERT_SIGNING_DATETIME);
+    certificate.setSigningDoctorName(DOC_NAME);
+    certificate.setCivicRegistrationNumber(pNr);
+    certificate.setCareGiverId(CARE_GIVER_ID);
+    certificate.setCareUnitId(CARE_UNIT_ID);
+    certificate.setCareUnitName(CARE_UNIT_NAME);
+    certificate.setOriginalCertificate(
+        new OriginalCertificate(LocalDateTime.now(), "XML", certificate));
+    return certificate;
+  }
 }

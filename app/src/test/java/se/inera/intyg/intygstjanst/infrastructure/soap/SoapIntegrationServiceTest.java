@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -40,7 +40,6 @@ import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.common.support.modules.support.api.exception.ModuleException;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.OriginalCertificate;
-import se.inera.intyg.intygstjanst.infrastructure.soap.SoapIntegrationService;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateType;
@@ -54,88 +53,86 @@ import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.S
 @ExtendWith(MockitoExtension.class)
 class SoapIntegrationServiceTest {
 
-    private static final String LOGICAL_ADDRESS = "123";
-    private static final String RECIPIENT_ID = "id";
-    @Mock
-    private IntygModuleRegistry moduleRegistry;
+  private static final String LOGICAL_ADDRESS = "123";
+  private static final String RECIPIENT_ID = "id";
+  @Mock private IntygModuleRegistry moduleRegistry;
 
-    @Mock
-    private RevokeCertificateResponderInterface revokeCertificateResponderInterface;
+  @Mock private RevokeCertificateResponderInterface revokeCertificateResponderInterface;
 
-    @Mock
-    private SendMessageToRecipientResponderInterface sendMessageToRecipientResponder;
+  @Mock private SendMessageToRecipientResponderInterface sendMessageToRecipientResponder;
 
-    @Mock
-    private RevokeMedicalCertificateResponderInterface revokeMedicalCertificateResponderInterface;
+  @Mock
+  private RevokeMedicalCertificateResponderInterface revokeMedicalCertificateResponderInterface;
 
-    @Mock
-    private SendMessageToCareResponderInterface sendMessageToCareResponder;
+  @Mock private SendMessageToCareResponderInterface sendMessageToCareResponder;
 
+  @InjectMocks SoapIntegrationService soapIntegrationService;
 
-    @InjectMocks
-    SoapIntegrationService soapIntegrationService;
+  @Test
+  void shouldSendCertificateToRecipient() throws ModuleNotFoundException, ModuleException {
+    final var certificate = new Certificate();
+    final var originalCertificate = new OriginalCertificate();
+    originalCertificate.setDocument("document");
+    certificate.setOriginalCertificate(originalCertificate);
+    certificate.setType("type");
+    certificate.setTypeVersion("version");
 
-    @Test
-    void shouldSendCertificateToRecipient() throws ModuleNotFoundException, ModuleException {
-        final var certificate = new Certificate();
-        final var originalCertificate = new OriginalCertificate();
-        originalCertificate.setDocument("document");
-        certificate.setOriginalCertificate(originalCertificate);
-        certificate.setType("type");
-        certificate.setTypeVersion("version");
+    final var moduleApi = mock(ModuleApi.class);
 
-        final var moduleApi = mock(ModuleApi.class);
+    when(moduleRegistry.getModuleApi(certificate.getType(), certificate.getTypeVersion()))
+        .thenReturn(moduleApi);
 
-        when(moduleRegistry.getModuleApi(certificate.getType(), certificate.getTypeVersion()))
-            .thenReturn(moduleApi);
+    soapIntegrationService.sendCertificateToRecipient(certificate, LOGICAL_ADDRESS, RECIPIENT_ID);
 
-        soapIntegrationService.sendCertificateToRecipient(certificate, LOGICAL_ADDRESS, RECIPIENT_ID);
+    verify(moduleApi, times(1))
+        .sendCertificateToRecipient(
+            certificate.getOriginalCertificate().getDocument(), LOGICAL_ADDRESS, RECIPIENT_ID);
+  }
 
-        verify(moduleApi, times(1)).sendCertificateToRecipient
-            (certificate.getOriginalCertificate().getDocument(), LOGICAL_ADDRESS, RECIPIENT_ID);
-    }
+  @Test
+  void shouldRevokeCertificate() {
+    final var expected = new RevokeCertificateResponseType();
+    final var request = new RevokeCertificateType();
 
-    @Test
-    void shouldRevokeCertificate() {
-        final var expected = new RevokeCertificateResponseType();
-        final var request = new RevokeCertificateType();
+    when(revokeCertificateResponderInterface.revokeCertificate(LOGICAL_ADDRESS, request))
+        .thenReturn(expected);
 
-        when(revokeCertificateResponderInterface.revokeCertificate(LOGICAL_ADDRESS, request))
-            .thenReturn(expected);
+    assertEquals(expected, soapIntegrationService.revokeCertificate(LOGICAL_ADDRESS, request));
+  }
 
-        assertEquals(expected, soapIntegrationService.revokeCertificate(LOGICAL_ADDRESS, request));
-    }
+  @Test
+  void shouldRevokeMedicalCertificate() {
+    final var expected = new RevokeMedicalCertificateResponseType();
+    final var request = new RevokeMedicalCertificateRequestType();
 
-    @Test
-    void shouldRevokeMedicalCertificate() {
-        final var expected = new RevokeMedicalCertificateResponseType();
-        final var request = new RevokeMedicalCertificateRequestType();
+    when(revokeMedicalCertificateResponderInterface.revokeMedicalCertificate(
+            new AttributedURIType(), request))
+        .thenReturn(expected);
 
-        when(revokeMedicalCertificateResponderInterface.revokeMedicalCertificate(new AttributedURIType(), request))
-            .thenReturn(expected);
+    assertEquals(
+        expected,
+        soapIntegrationService.revokeMedicalCertificate(new AttributedURIType(), request));
+  }
 
-        assertEquals(expected, soapIntegrationService.revokeMedicalCertificate(new AttributedURIType(), request));
-    }
+  @Test
+  void shouldSendMessageToRecipient() {
+    final var expected = new SendMessageToRecipientResponseType();
+    final var request = new SendMessageToRecipientType();
 
-    @Test
-    void shouldSendMessageToRecipient() {
-        final var expected = new SendMessageToRecipientResponseType();
-        final var request = new SendMessageToRecipientType();
+    when(sendMessageToRecipientResponder.sendMessageToRecipient(LOGICAL_ADDRESS, request))
+        .thenReturn(expected);
 
-        when(sendMessageToRecipientResponder.sendMessageToRecipient(LOGICAL_ADDRESS, request))
-            .thenReturn(expected);
+    assertEquals(expected, soapIntegrationService.sendMessageToRecipient(LOGICAL_ADDRESS, request));
+  }
 
-        assertEquals(expected, soapIntegrationService.sendMessageToRecipient(LOGICAL_ADDRESS, request));
-    }
+  @Test
+  void shouldSendMessageToCare() {
+    final var expected = new SendMessageToCareResponseType();
+    final var request = new SendMessageToCareType();
 
-    @Test
-    void shouldSendMessageToCare() {
-        final var expected = new SendMessageToCareResponseType();
-        final var request = new SendMessageToCareType();
+    when(sendMessageToCareResponder.sendMessageToCare(LOGICAL_ADDRESS, request))
+        .thenReturn(expected);
 
-        when(sendMessageToCareResponder.sendMessageToCare(LOGICAL_ADDRESS, request))
-            .thenReturn(expected);
-
-        assertEquals(expected, soapIntegrationService.sendMessageToCare(LOGICAL_ADDRESS, request));
-    }
+    assertEquals(expected, soapIntegrationService.sendMessageToCare(LOGICAL_ADDRESS, request));
+  }
 }

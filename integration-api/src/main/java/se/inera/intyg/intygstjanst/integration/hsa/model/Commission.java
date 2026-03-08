@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.integration.hsa.model;
 
 import java.time.LocalDateTime;
@@ -26,32 +27,32 @@ import lombok.Data;
 @Data
 public class Commission {
 
-    protected String commissionPurpose;
-    protected String healthCareUnitHsaId;
-    protected String healthCareUnitName;
-    protected String healthCareProviderHsaId;
-    protected String healthCareProviderName;
-    protected LocalDateTime healthCareUnitStartDate;
-    protected LocalDateTime healthCareUnitEndDate;
+  protected String commissionPurpose;
+  protected String healthCareUnitHsaId;
+  protected String healthCareUnitName;
+  protected String healthCareProviderHsaId;
+  protected String healthCareProviderName;
+  protected LocalDateTime healthCareUnitStartDate;
+  protected LocalDateTime healthCareUnitEndDate;
 
-    protected String commissionName;
-    protected String commissionHsaId;
-    protected List<CommissionRight> commissionRight = new ArrayList<>();
-    protected String healthCareProviderOrgNo;
-    protected LocalDateTime healthCareProviderStartDate;
-    protected LocalDateTime healthCareProviderEndDate;
-    protected Boolean feignedHealthCareProvider;
-    protected Boolean feignedHealthCareUnit;
-    protected Boolean feignedCommission;
-    protected Boolean archivedHealthCareProvider;
-    protected Boolean archivedHealthCareUnit;
-    protected String pharmacyIdentifier;
+  protected String commissionName;
+  protected String commissionHsaId;
+  protected List<CommissionRight> commissionRight = new ArrayList<>();
+  protected String healthCareProviderOrgNo;
+  protected LocalDateTime healthCareProviderStartDate;
+  protected LocalDateTime healthCareProviderEndDate;
+  protected Boolean feignedHealthCareProvider;
+  protected Boolean feignedHealthCareUnit;
+  protected Boolean feignedCommission;
+  protected Boolean archivedHealthCareProvider;
+  protected Boolean archivedHealthCareUnit;
+  protected String pharmacyIdentifier;
 
-    @Data
-    public static class CommissionRight {
+  @Data
+  public static class CommissionRight {
 
-        protected String activity;
-        protected String informationClass;
-        protected String scope;
-    }
+    protected String activity;
+    protected String informationClass;
+    protected String scope;
+  }
 }

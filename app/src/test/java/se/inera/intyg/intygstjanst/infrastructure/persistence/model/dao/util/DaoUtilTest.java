@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.util;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -26,28 +27,28 @@ import se.inera.intyg.schemas.contract.Personnummer;
 
 class DaoUtilTest {
 
-    @Test
-    void testWithDash() {
-        Personnummer pnr = createPnr("19121212-1212");
-        String expected = "19121212-1212";
-        assertEquals(expected, DaoUtil.formatPnrForPersistence(pnr));
-    }
+  @Test
+  void testWithDash() {
+    Personnummer pnr = createPnr("19121212-1212");
+    String expected = "19121212-1212";
+    assertEquals(expected, DaoUtil.formatPnrForPersistence(pnr));
+  }
 
-    @Test
-    void testWithoutDash() {
-        Personnummer pnr = createPnr("191212121212");
-        String expected = "19121212-1212";
-        assertEquals(expected, DaoUtil.formatPnrForPersistence(pnr));
-    }
+  @Test
+  void testWithoutDash() {
+    Personnummer pnr = createPnr("191212121212");
+    String expected = "19121212-1212";
+    assertEquals(expected, DaoUtil.formatPnrForPersistence(pnr));
+  }
 
-    @Test
-    void testWith6Digits() {
-        Personnummer pnr = createPnr("1212121212");
-        String expected = "20121212-1212";
-        assertEquals(expected, DaoUtil.formatPnrForPersistence(pnr));
-    }
+  @Test
+  void testWith6Digits() {
+    Personnummer pnr = createPnr("1212121212");
+    String expected = "20121212-1212";
+    assertEquals(expected, DaoUtil.formatPnrForPersistence(pnr));
+  }
 
-    private Personnummer createPnr(String pnr) {
-        return Personnummer.createPersonnummer(pnr).get();
-    }
+  private Personnummer createPnr(String pnr) {
+    return Personnummer.createPersonnummer(pnr).get();
+  }
 }

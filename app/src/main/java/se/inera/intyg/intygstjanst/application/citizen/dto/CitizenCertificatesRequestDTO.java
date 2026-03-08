@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -19,13 +19,12 @@
 
 package se.inera.intyg.intygstjanst.application.citizen.dto;
 
+import java.util.Collections;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.Collections;
-import java.util.List;
 
 @Data
 @Builder
@@ -33,13 +32,9 @@ import java.util.List;
 @AllArgsConstructor
 public class CitizenCertificatesRequestDTO {
 
-    private String patientId;
-    @Builder.Default
-    private List<CitizenCertificateStatusTypeDTO> statuses = Collections.emptyList();
-    @Builder.Default
-    private List<String> units = Collections.emptyList();
-    @Builder.Default
-    private List<String> certificateTypes = Collections.emptyList();
-    @Builder.Default
-    private List<String> years = Collections.emptyList();
+  private String patientId;
+  @Builder.Default private List<CitizenCertificateStatusTypeDTO> statuses = Collections.emptyList();
+  @Builder.Default private List<String> units = Collections.emptyList();
+  @Builder.Default private List<String> certificateTypes = Collections.emptyList();
+  @Builder.Default private List<String> years = Collections.emptyList();
 }

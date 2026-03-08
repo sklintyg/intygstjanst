@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -25,49 +25,47 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
-import se.inera.intyg.intygstjanst.application.sickleave.services.ResolvePatientGenderServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
 class ResolvePatientGenderServiceImplTest {
 
-    @InjectMocks
-    private ResolvePatientGenderServiceImpl calculatePatientGenderService;
-    private static final String MALE = "Man";
-    private static final String MALE_PATIENT_ID = "191212121212";
-    private static final String FEMALE = "Kvinna";
-    private static final String UKNOWN = "Okänd";
-    private static final String FEMALE_PATIENT_ID = "194404044444";
-    private static final String UKNOWN_PATIENT_ID_EMPTY = "";
-    private static final String UKNOWN_PATIENT_ID_NULL = null;
-    private static final String INVALID_PATIENT_ID = "invalidPatientId";
+  @InjectMocks private ResolvePatientGenderServiceImpl calculatePatientGenderService;
+  private static final String MALE = "Man";
+  private static final String MALE_PATIENT_ID = "191212121212";
+  private static final String FEMALE = "Kvinna";
+  private static final String UKNOWN = "Okänd";
+  private static final String FEMALE_PATIENT_ID = "194404044444";
+  private static final String UKNOWN_PATIENT_ID_EMPTY = "";
+  private static final String UKNOWN_PATIENT_ID_NULL = null;
+  private static final String INVALID_PATIENT_ID = "invalidPatientId";
 
-    @Test
-    void shouldReturnMale() {
-        final var result = calculatePatientGenderService.get(MALE_PATIENT_ID);
-        assertEquals(MALE, result);
-    }
+  @Test
+  void shouldReturnMale() {
+    final var result = calculatePatientGenderService.get(MALE_PATIENT_ID);
+    assertEquals(MALE, result);
+  }
 
-    @Test
-    void shouldReturnFemale() {
-        final var result = calculatePatientGenderService.get(FEMALE_PATIENT_ID);
-        assertEquals(FEMALE, result);
-    }
+  @Test
+  void shouldReturnFemale() {
+    final var result = calculatePatientGenderService.get(FEMALE_PATIENT_ID);
+    assertEquals(FEMALE, result);
+  }
 
-    @Test
-    void shouldReturnUnknown() {
-        final var result = calculatePatientGenderService.get(INVALID_PATIENT_ID);
-        assertEquals(UKNOWN, result);
-    }
+  @Test
+  void shouldReturnUnknown() {
+    final var result = calculatePatientGenderService.get(INVALID_PATIENT_ID);
+    assertEquals(UKNOWN, result);
+  }
 
-    @Test
-    void shouldReturnUknownIfPatientIdIsEmpty() {
-        final var result = calculatePatientGenderService.get(UKNOWN_PATIENT_ID_EMPTY);
-        assertEquals(UKNOWN, result);
-    }
+  @Test
+  void shouldReturnUknownIfPatientIdIsEmpty() {
+    final var result = calculatePatientGenderService.get(UKNOWN_PATIENT_ID_EMPTY);
+    assertEquals(UKNOWN, result);
+  }
 
-    @Test
-    void shouldReturnUknownIfPatientIdIsNull() {
-        final var result = calculatePatientGenderService.get(UKNOWN_PATIENT_ID_NULL);
-        assertEquals(UKNOWN, result);
-    }
+  @Test
+  void shouldReturnUknownIfPatientIdIsNull() {
+    final var result = calculatePatientGenderService.get(UKNOWN_PATIENT_ID_NULL);
+    assertEquals(UKNOWN, result);
+  }
 }

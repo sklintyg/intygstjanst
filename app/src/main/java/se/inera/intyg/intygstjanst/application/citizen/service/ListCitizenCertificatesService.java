@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -23,58 +23,61 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.springframework.stereotype.Service;
-import se.inera.intyg.intygstjanst.infrastructure.csintegration.CitizenCertificatesFromCS;
-import se.inera.intyg.intygstjanst.infrastructure.logging.MonitoringLogService;
 import se.inera.intyg.intygstjanst.application.citizen.dto.CitizenCertificateDTO;
 import se.inera.intyg.intygstjanst.application.citizen.dto.ListCitizenCertificatesRequest;
 import se.inera.intyg.intygstjanst.application.citizen.repository.CitizenCertificatesRepository;
 import se.inera.intyg.intygstjanst.application.citizen.repository.model.CitizenCertificate;
+import se.inera.intyg.intygstjanst.infrastructure.csintegration.CitizenCertificatesFromCS;
+import se.inera.intyg.intygstjanst.infrastructure.logging.MonitoringLogService;
 
 @Service
 public class ListCitizenCertificatesService {
 
-    private final CitizenCertificatesRepository citizenCertificatesRepository;
-    private final CitizenCertificateDTOConverter citizenCertificateDTOConverter;
-    private final CitizenCertificatesFromCS citizenCertificatesFromCS;
-    private final CitizenCertificateFilterService citizenCertificateFilterService;
-    private final CitizenCertificateTextService citizenCertificateTextService;
-    private final MonitoringLogService monitoringLogService;
+  private final CitizenCertificatesRepository citizenCertificatesRepository;
+  private final CitizenCertificateDTOConverter citizenCertificateDTOConverter;
+  private final CitizenCertificatesFromCS citizenCertificatesFromCS;
+  private final CitizenCertificateFilterService citizenCertificateFilterService;
+  private final CitizenCertificateTextService citizenCertificateTextService;
+  private final MonitoringLogService monitoringLogService;
 
-    public ListCitizenCertificatesService(CitizenCertificatesRepository citizenCertificatesRepository,
-        CitizenCertificateDTOConverter citizenCertificateDTOConverter, CitizenCertificatesFromCS citizenCertificatesFromCS,
-        CitizenCertificateFilterService citizenCertificateFilterService,
-        CitizenCertificateTextService citizenCertificateTextService,
-        MonitoringLogService monitoringLogService) {
-        this.citizenCertificatesRepository = citizenCertificatesRepository;
-        this.citizenCertificateDTOConverter = citizenCertificateDTOConverter;
-        this.citizenCertificatesFromCS = citizenCertificatesFromCS;
-        this.citizenCertificateFilterService = citizenCertificateFilterService;
-        this.citizenCertificateTextService = citizenCertificateTextService;
-        this.monitoringLogService = monitoringLogService;
-    }
+  public ListCitizenCertificatesService(
+      CitizenCertificatesRepository citizenCertificatesRepository,
+      CitizenCertificateDTOConverter citizenCertificateDTOConverter,
+      CitizenCertificatesFromCS citizenCertificatesFromCS,
+      CitizenCertificateFilterService citizenCertificateFilterService,
+      CitizenCertificateTextService citizenCertificateTextService,
+      MonitoringLogService monitoringLogService) {
+    this.citizenCertificatesRepository = citizenCertificatesRepository;
+    this.citizenCertificateDTOConverter = citizenCertificateDTOConverter;
+    this.citizenCertificatesFromCS = citizenCertificatesFromCS;
+    this.citizenCertificateFilterService = citizenCertificateFilterService;
+    this.citizenCertificateTextService = citizenCertificateTextService;
+    this.monitoringLogService = monitoringLogService;
+  }
 
-    public List<CitizenCertificateDTO> get(ListCitizenCertificatesRequest request) {
+  public List<CitizenCertificateDTO> get(ListCitizenCertificatesRequest request) {
 
-        final var certificates = citizenCertificatesRepository
-            .getCertificatesForPatient(request.getPersonnummer().getPersonnummerWithDash());
+    final var certificates =
+        citizenCertificatesRepository.getCertificatesForPatient(
+            request.getPersonnummer().getPersonnummerWithDash());
 
-        final var citizenCertificates = Stream.concat(
+    final var citizenCertificates =
+        Stream.concat(
             citizenCertificatesFromCS.get(request.getPersonnummer()).stream(),
-            certificates.stream().map(this::getCitizenCertificateDTO)
-        );
+            certificates.stream().map(this::getCitizenCertificateDTO));
 
-        monitoringLogService.logCertificateListedByCitizen(request.getPersonnummer());
+    monitoringLogService.logCertificateListedByCitizen(request.getPersonnummer());
 
-        return citizenCertificates
-            .filter(certificate -> citizenCertificateFilterService.filter(certificate, request))
-            .collect(Collectors.toList());
-    }
+    return citizenCertificates
+        .filter(certificate -> citizenCertificateFilterService.filter(certificate, request))
+        .collect(Collectors.toList());
+  }
 
-    private CitizenCertificateDTO getCitizenCertificateDTO(CitizenCertificate certificate) {
-        return citizenCertificateDTOConverter.convert(
-            certificate,
-            citizenCertificateTextService.getTypeName(certificate.getType()),
-            citizenCertificateTextService.getAdditionalInfoLabel(certificate.getType(), certificate.getTypeVersion())
-        );
-    }
+  private CitizenCertificateDTO getCitizenCertificateDTO(CitizenCertificate certificate) {
+    return citizenCertificateDTOConverter.convert(
+        certificate,
+        citizenCertificateTextService.getTypeName(certificate.getType()),
+        citizenCertificateTextService.getAdditionalInfoLabel(
+            certificate.getType(), certificate.getTypeVersion()));
+  }
 }

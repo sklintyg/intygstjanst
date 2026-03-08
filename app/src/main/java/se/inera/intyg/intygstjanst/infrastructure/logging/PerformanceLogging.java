@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.infrastructure.logging;
 
 import static se.inera.intyg.intygstjanst.infrastructure.logging.MdcLogConstants.EVENT_CATEGORY_API;
@@ -29,12 +30,11 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface PerformanceLogging {
 
-    String eventType();
+  String eventType();
 
-    String eventAction();
+  String eventAction();
 
-    String eventCategory() default EVENT_CATEGORY_API;
+  String eventCategory() default EVENT_CATEGORY_API;
 
-    boolean isActive() default true;
-
+  boolean isActive() default true;
 }

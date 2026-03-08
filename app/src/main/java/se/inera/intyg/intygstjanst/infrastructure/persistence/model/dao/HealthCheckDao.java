@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao;
 
 import jakarta.persistence.EntityManager;
@@ -29,24 +30,21 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class HealthCheckDao {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(HealthCheckDao.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(HealthCheckDao.class);
 
-    private static final String CURR_TIME_SQL = "SELECT CURRENT_TIME()";
+  private static final String CURR_TIME_SQL = "SELECT CURRENT_TIME()";
 
-    @PersistenceContext
-    private EntityManager entityManager;
+  @PersistenceContext private EntityManager entityManager;
 
-    public boolean checkTimeFromDb() {
-        Time timestamp;
-        try {
-            Query query = entityManager.createNativeQuery(CURR_TIME_SQL);
-            timestamp = (Time) query.getSingleResult();
-        } catch (Exception e) {
-            LOGGER.error("checkTimeFromDb failed with exception: " + e.getMessage());
-            return false;
-        }
-        return timestamp != null;
-
+  public boolean checkTimeFromDb() {
+    Time timestamp;
+    try {
+      Query query = entityManager.createNativeQuery(CURR_TIME_SQL);
+      timestamp = (Time) query.getSingleResult();
+    } catch (Exception e) {
+      LOGGER.error("checkTimeFromDb failed with exception: " + e.getMessage());
+      return false;
     }
-
+    return timestamp != null;
+  }
 }

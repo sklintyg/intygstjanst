@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -35,226 +35,212 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
-import se.inera.intyg.intygstjanst.application.citizen.service.ListCitizenCertificatesService;
-import se.inera.intyg.intygstjanst.infrastructure.csintegration.CitizenCertificatesFromCS;
-import se.inera.intyg.intygstjanst.application.citizen.service.CitizenCertificateDTOConverter;
-import se.inera.intyg.intygstjanst.application.citizen.service.CitizenCertificateFilterService;
-import se.inera.intyg.intygstjanst.application.citizen.service.CitizenCertificateTextService;
-import se.inera.intyg.intygstjanst.infrastructure.logging.MonitoringLogService;
 import se.inera.intyg.intygstjanst.application.citizen.dto.CitizenCertificateDTO;
 import se.inera.intyg.intygstjanst.application.citizen.dto.CitizenCertificateStatusTypeDTO;
 import se.inera.intyg.intygstjanst.application.citizen.dto.ListCitizenCertificatesRequest;
 import se.inera.intyg.intygstjanst.application.citizen.repository.CitizenCertificatesRepository;
 import se.inera.intyg.intygstjanst.application.citizen.repository.model.CitizenCertificate;
+import se.inera.intyg.intygstjanst.infrastructure.csintegration.CitizenCertificatesFromCS;
+import se.inera.intyg.intygstjanst.infrastructure.logging.MonitoringLogService;
 import se.inera.intyg.schemas.contract.Personnummer;
 
 @ExtendWith(MockitoExtension.class)
 class ListCitizenCertificatesServiceTest {
 
-    private static final String PATIENT_ID = "191212121212";
-    private static final String PATIENT_ID_WITH_DASH = "19121212-1212";
-    private static final Personnummer PATIENT_ID_AS_PERSONNUMMER = Personnummer.createPersonnummer(PATIENT_ID).orElseThrow();
-    private static final List<String> UNITS = List.of("Unit 1", "Unit 2");
-    private static final List<String> CERTIFICATE_TYPES = List.of("lisjp", "ag7804");
-    private static final List<String> YEARS = List.of("2020", "2021");
-    private static final String TYPE_NAME = "Type name";
-    private static final String ADDITIONAL_INFO_LABEL = "Additional info label";
-    private static final String TYPE_ID = "Type id";
-    private static final String TYPE_VERSION = "Type version";
-    private static final List<CitizenCertificateStatusTypeDTO> STATUSES = List.of(
-        CitizenCertificateStatusTypeDTO.SENT, CitizenCertificateStatusTypeDTO.NOT_SENT);
-    private static final ListCitizenCertificatesRequest REQUEST = ListCitizenCertificatesRequest
-        .builder()
-        .certificateTypes(CERTIFICATE_TYPES)
-        .personnummer(PATIENT_ID_AS_PERSONNUMMER)
-        .years(YEARS)
-        .units(UNITS)
-        .statuses(STATUSES)
-        .build();
-    private static final List<CitizenCertificate> REPO_RESPONSE = List.of(CitizenCertificate
-        .builder()
-        .type(TYPE_ID)
-        .typeVersion(TYPE_VERSION)
-        .build()
-    );
-    private static final CitizenCertificateDTO CITIZEN_CERTIFICATE_DTO = CitizenCertificateDTO.builder().build();
+  private static final String PATIENT_ID = "191212121212";
+  private static final String PATIENT_ID_WITH_DASH = "19121212-1212";
+  private static final Personnummer PATIENT_ID_AS_PERSONNUMMER =
+      Personnummer.createPersonnummer(PATIENT_ID).orElseThrow();
+  private static final List<String> UNITS = List.of("Unit 1", "Unit 2");
+  private static final List<String> CERTIFICATE_TYPES = List.of("lisjp", "ag7804");
+  private static final List<String> YEARS = List.of("2020", "2021");
+  private static final String TYPE_NAME = "Type name";
+  private static final String ADDITIONAL_INFO_LABEL = "Additional info label";
+  private static final String TYPE_ID = "Type id";
+  private static final String TYPE_VERSION = "Type version";
+  private static final List<CitizenCertificateStatusTypeDTO> STATUSES =
+      List.of(CitizenCertificateStatusTypeDTO.SENT, CitizenCertificateStatusTypeDTO.NOT_SENT);
+  private static final ListCitizenCertificatesRequest REQUEST =
+      ListCitizenCertificatesRequest.builder()
+          .certificateTypes(CERTIFICATE_TYPES)
+          .personnummer(PATIENT_ID_AS_PERSONNUMMER)
+          .years(YEARS)
+          .units(UNITS)
+          .statuses(STATUSES)
+          .build();
+  private static final List<CitizenCertificate> REPO_RESPONSE =
+      List.of(CitizenCertificate.builder().type(TYPE_ID).typeVersion(TYPE_VERSION).build());
+  private static final CitizenCertificateDTO CITIZEN_CERTIFICATE_DTO =
+      CitizenCertificateDTO.builder().build();
 
-    @Mock
-    CitizenCertificatesRepository citizenCertificatesRepository;
-    @Mock
-    CitizenCertificateTextService citizenCertificateTextService;
-    @Mock
-    CitizenCertificatesFromCS citizenCertificatesFromCS;
-    @Mock
-    CitizenCertificateDTOConverter citizenCertificateDTOConverter;
-    @Mock
-    CitizenCertificateFilterService citizenCertificateFilterService;
-    @Mock
-    MonitoringLogService monitoringLogService;
+  @Mock CitizenCertificatesRepository citizenCertificatesRepository;
+  @Mock CitizenCertificateTextService citizenCertificateTextService;
+  @Mock CitizenCertificatesFromCS citizenCertificatesFromCS;
+  @Mock CitizenCertificateDTOConverter citizenCertificateDTOConverter;
+  @Mock CitizenCertificateFilterService citizenCertificateFilterService;
+  @Mock MonitoringLogService monitoringLogService;
 
-    @InjectMocks
-    ListCitizenCertificatesService listCitizenCertificatesService;
+  @InjectMocks ListCitizenCertificatesService listCitizenCertificatesService;
 
-    @Nested
-    class RepositoryRequest {
+  @Nested
+  class RepositoryRequest {
 
-        @Test
-        void shouldSetPatientId() {
-            listCitizenCertificatesService.get(REQUEST);
+    @Test
+    void shouldSetPatientId() {
+      listCitizenCertificatesService.get(REQUEST);
 
-            final var captor = ArgumentCaptor.forClass(String.class);
+      final var captor = ArgumentCaptor.forClass(String.class);
 
-            verify(citizenCertificatesRepository)
-                .getCertificatesForPatient(captor.capture());
+      verify(citizenCertificatesRepository).getCertificatesForPatient(captor.capture());
 
-            assertEquals(PATIENT_ID_WITH_DASH, captor.getValue());
-        }
+      assertEquals(PATIENT_ID_WITH_DASH, captor.getValue());
+    }
+  }
+
+  @Nested
+  class Response {
+
+    @BeforeEach
+    void setup() throws ModuleNotFoundException {
+      when(citizenCertificateTextService.getAdditionalInfoLabel(any(), any()))
+          .thenReturn(ADDITIONAL_INFO_LABEL);
+      when(citizenCertificateTextService.getTypeName(any())).thenReturn(TYPE_NAME);
+
+      when(citizenCertificateDTOConverter.convert(any(), any(), any()))
+          .thenReturn(CITIZEN_CERTIFICATE_DTO);
+
+      when(citizenCertificatesRepository.getCertificatesForPatient(any()))
+          .thenReturn(REPO_RESPONSE);
+    }
+
+    @Test
+    void shouldLogWithPatientId() {
+      listCitizenCertificatesService.get(REQUEST);
+
+      final var captor = ArgumentCaptor.forClass(Personnummer.class);
+
+      verify(monitoringLogService).logCertificateListedByCitizen(captor.capture());
+
+      assertEquals(PATIENT_ID, captor.getValue().getOriginalPnr());
     }
 
     @Nested
-    class Response {
+    class TextService {
 
-        @BeforeEach
-        void setup() throws ModuleNotFoundException {
-            when(citizenCertificateTextService.getAdditionalInfoLabel(any(), any())).thenReturn(ADDITIONAL_INFO_LABEL);
-            when(citizenCertificateTextService.getTypeName(any())).thenReturn(TYPE_NAME);
+      @Test
+      void shouldSendTypeToGetTypeName() {
+        listCitizenCertificatesService.get(REQUEST);
 
-            when(citizenCertificateDTOConverter.convert(any(), any(), any())).thenReturn(CITIZEN_CERTIFICATE_DTO);
+        final var captor = ArgumentCaptor.forClass(String.class);
 
-            when(citizenCertificatesRepository.getCertificatesForPatient(any()))
-                .thenReturn(REPO_RESPONSE);
-        }
+        verify(citizenCertificateTextService).getTypeName(captor.capture());
 
-        @Test
-        void shouldLogWithPatientId() {
-            listCitizenCertificatesService.get(REQUEST);
+        assertEquals(TYPE_ID, captor.getValue());
+      }
 
-            final var captor = ArgumentCaptor.forClass(Personnummer.class);
+      @Test
+      void shouldSendTypeToGetAdditionalInfoLabel() {
+        listCitizenCertificatesService.get(REQUEST);
 
-            verify(monitoringLogService).logCertificateListedByCitizen(captor.capture());
+        final var captor = ArgumentCaptor.forClass(String.class);
 
-            assertEquals(PATIENT_ID, captor.getValue().getOriginalPnr());
-        }
+        verify(citizenCertificateTextService).getAdditionalInfoLabel(captor.capture(), anyString());
 
-        @Nested
-        class TextService {
+        assertEquals(TYPE_ID, captor.getValue());
+      }
 
-            @Test
-            void shouldSendTypeToGetTypeName() {
-                listCitizenCertificatesService.get(REQUEST);
+      @Test
+      void shouldSendTypeVersionToGetAdditionalInfoLabel() {
+        listCitizenCertificatesService.get(REQUEST);
 
-                final var captor = ArgumentCaptor.forClass(String.class);
+        final var captor = ArgumentCaptor.forClass(String.class);
 
-                verify(citizenCertificateTextService).getTypeName(captor.capture());
+        verify(citizenCertificateTextService).getAdditionalInfoLabel(anyString(), captor.capture());
 
-                assertEquals(TYPE_ID, captor.getValue());
-            }
-
-            @Test
-            void shouldSendTypeToGetAdditionalInfoLabel() {
-                listCitizenCertificatesService.get(REQUEST);
-
-                final var captor = ArgumentCaptor.forClass(String.class);
-
-                verify(citizenCertificateTextService).getAdditionalInfoLabel(captor.capture(), anyString());
-
-                assertEquals(TYPE_ID, captor.getValue());
-            }
-
-            @Test
-            void shouldSendTypeVersionToGetAdditionalInfoLabel() {
-                listCitizenCertificatesService.get(REQUEST);
-
-                final var captor = ArgumentCaptor.forClass(String.class);
-
-                verify(citizenCertificateTextService).getAdditionalInfoLabel(anyString(), captor.capture());
-
-                assertEquals(TYPE_VERSION, captor.getValue());
-            }
-        }
-
-        @Nested
-        class Converter {
-
-            @Test
-            void shouldSendTypeNameToConverter() {
-                listCitizenCertificatesService.get(REQUEST);
-
-                final var captor = ArgumentCaptor.forClass(String.class);
-
-                verify(citizenCertificateDTOConverter).convert(any(), captor.capture(), any());
-
-                assertEquals(TYPE_NAME, captor.getValue());
-            }
-
-            @Test
-            void shouldSendAdditionalInfoLabelToConverter() {
-                listCitizenCertificatesService.get(REQUEST);
-
-                final var captor = ArgumentCaptor.forClass(String.class);
-
-                verify(citizenCertificateDTOConverter).convert(any(), any(), captor.capture());
-
-                assertEquals(ADDITIONAL_INFO_LABEL, captor.getValue());
-            }
-
-            @Test
-            void shouldSendCitizenCertificateToConverter() {
-                listCitizenCertificatesService.get(REQUEST);
-
-                final var captor = ArgumentCaptor.forClass(CitizenCertificate.class);
-
-                verify(citizenCertificateDTOConverter).convert(captor.capture(), any(), any());
-
-                assertEquals(REPO_RESPONSE.get(0), captor.getValue());
-            }
-        }
-
-        @Nested
-        class Filter {
-
-            @Test
-            void shouldSendCertificateReturnedFromConverterToFilter() {
-                listCitizenCertificatesService.get(REQUEST);
-
-                final var captor = ArgumentCaptor.forClass(CitizenCertificateDTO.class);
-
-                verify(citizenCertificateFilterService).filter(captor.capture(), any());
-
-                assertEquals(CITIZEN_CERTIFICATE_DTO, captor.getValue());
-            }
-
-            @Test
-            void shouldSendFilterRequestToFilter() {
-                listCitizenCertificatesService.get(REQUEST);
-
-                final var captor = ArgumentCaptor.forClass(ListCitizenCertificatesRequest.class);
-
-                verify(citizenCertificateFilterService).filter(any(), captor.capture());
-
-                assertEquals(REQUEST, captor.getValue());
-            }
-        }
-
-
-        @Test
-        void shouldReturnResponseIfNotFilteredOut() {
-            when(citizenCertificateFilterService.filter(any(), any())).thenReturn(true);
-
-            final var actualResponse = listCitizenCertificatesService.get(REQUEST);
-
-            assertEquals(1, actualResponse.size());
-            assertEquals(CITIZEN_CERTIFICATE_DTO, actualResponse.get(0));
-        }
-
-        @Test
-        void shouldReturnEmptyListIfEverythingIsFilteredOut() {
-            when(citizenCertificateFilterService.filter(any(), any())).thenReturn(false);
-
-            final var actualResponse = listCitizenCertificatesService.get(REQUEST);
-
-            assertEquals(0, actualResponse.size());
-        }
+        assertEquals(TYPE_VERSION, captor.getValue());
+      }
     }
 
+    @Nested
+    class Converter {
+
+      @Test
+      void shouldSendTypeNameToConverter() {
+        listCitizenCertificatesService.get(REQUEST);
+
+        final var captor = ArgumentCaptor.forClass(String.class);
+
+        verify(citizenCertificateDTOConverter).convert(any(), captor.capture(), any());
+
+        assertEquals(TYPE_NAME, captor.getValue());
+      }
+
+      @Test
+      void shouldSendAdditionalInfoLabelToConverter() {
+        listCitizenCertificatesService.get(REQUEST);
+
+        final var captor = ArgumentCaptor.forClass(String.class);
+
+        verify(citizenCertificateDTOConverter).convert(any(), any(), captor.capture());
+
+        assertEquals(ADDITIONAL_INFO_LABEL, captor.getValue());
+      }
+
+      @Test
+      void shouldSendCitizenCertificateToConverter() {
+        listCitizenCertificatesService.get(REQUEST);
+
+        final var captor = ArgumentCaptor.forClass(CitizenCertificate.class);
+
+        verify(citizenCertificateDTOConverter).convert(captor.capture(), any(), any());
+
+        assertEquals(REPO_RESPONSE.get(0), captor.getValue());
+      }
+    }
+
+    @Nested
+    class Filter {
+
+      @Test
+      void shouldSendCertificateReturnedFromConverterToFilter() {
+        listCitizenCertificatesService.get(REQUEST);
+
+        final var captor = ArgumentCaptor.forClass(CitizenCertificateDTO.class);
+
+        verify(citizenCertificateFilterService).filter(captor.capture(), any());
+
+        assertEquals(CITIZEN_CERTIFICATE_DTO, captor.getValue());
+      }
+
+      @Test
+      void shouldSendFilterRequestToFilter() {
+        listCitizenCertificatesService.get(REQUEST);
+
+        final var captor = ArgumentCaptor.forClass(ListCitizenCertificatesRequest.class);
+
+        verify(citizenCertificateFilterService).filter(any(), captor.capture());
+
+        assertEquals(REQUEST, captor.getValue());
+      }
+    }
+
+    @Test
+    void shouldReturnResponseIfNotFilteredOut() {
+      when(citizenCertificateFilterService.filter(any(), any())).thenReturn(true);
+
+      final var actualResponse = listCitizenCertificatesService.get(REQUEST);
+
+      assertEquals(1, actualResponse.size());
+      assertEquals(CITIZEN_CERTIFICATE_DTO, actualResponse.get(0));
+    }
+
+    @Test
+    void shouldReturnEmptyListIfEverythingIsFilteredOut() {
+      when(citizenCertificateFilterService.filter(any(), any())).thenReturn(false);
+
+      final var actualResponse = listCitizenCertificatesService.get(REQUEST);
+
+      assertEquals(0, actualResponse.size());
+    }
+  }
 }

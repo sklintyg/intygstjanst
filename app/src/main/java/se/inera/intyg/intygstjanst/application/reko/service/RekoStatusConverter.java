@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -20,32 +20,29 @@
 package se.inera.intyg.intygstjanst.application.reko.service;
 
 import org.springframework.stereotype.Component;
+import se.inera.intyg.intygstjanst.application.reko.dto.RekoStatusType;
 import se.inera.intyg.intygstjanst.application.sickleave.dto.RekoStatusDTO;
 import se.inera.intyg.intygstjanst.application.sickleave.dto.RekoStatusTypeDTO;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Reko;
-import se.inera.intyg.intygstjanst.application.reko.dto.RekoStatusType;
 
 @Component
 public class RekoStatusConverter {
 
-    public RekoStatusDTO convert(Reko rekoStatus) {
-        final var convertedRekoStatus = new RekoStatusDTO();
-        convertedRekoStatus.setStatus(
-            new RekoStatusTypeDTO(
-                rekoStatus.getStatus(),
-                RekoStatusType.fromId(rekoStatus.getStatus()).getName()
-            )
-        );
-        convertedRekoStatus.setRegistrationTimestamp(rekoStatus.getRegistrationTimestamp());
-        convertedRekoStatus.setPatientId(rekoStatus.getPatientId());
-        convertedRekoStatus.setCareProviderId(rekoStatus.getCareProviderId());
-        convertedRekoStatus.setCareUnitId(rekoStatus.getCareUnitId());
-        convertedRekoStatus.setUnitId(rekoStatus.getUnitId());
-        convertedRekoStatus.setPatientId(rekoStatus.getPatientId());
-        convertedRekoStatus.setStaffId(rekoStatus.getStaffId());
-        convertedRekoStatus.setStaffName(rekoStatus.getStaffName());
-        convertedRekoStatus.setSickLeaveTimestamp(rekoStatus.getSickLeaveTimestamp());
+  public RekoStatusDTO convert(Reko rekoStatus) {
+    final var convertedRekoStatus = new RekoStatusDTO();
+    convertedRekoStatus.setStatus(
+        new RekoStatusTypeDTO(
+            rekoStatus.getStatus(), RekoStatusType.fromId(rekoStatus.getStatus()).getName()));
+    convertedRekoStatus.setRegistrationTimestamp(rekoStatus.getRegistrationTimestamp());
+    convertedRekoStatus.setPatientId(rekoStatus.getPatientId());
+    convertedRekoStatus.setCareProviderId(rekoStatus.getCareProviderId());
+    convertedRekoStatus.setCareUnitId(rekoStatus.getCareUnitId());
+    convertedRekoStatus.setUnitId(rekoStatus.getUnitId());
+    convertedRekoStatus.setPatientId(rekoStatus.getPatientId());
+    convertedRekoStatus.setStaffId(rekoStatus.getStaffId());
+    convertedRekoStatus.setStaffName(rekoStatus.getStaffName());
+    convertedRekoStatus.setSickLeaveTimestamp(rekoStatus.getSickLeaveTimestamp());
 
-        return convertedRekoStatus;
-    }
+    return convertedRekoStatus;
+  }
 }

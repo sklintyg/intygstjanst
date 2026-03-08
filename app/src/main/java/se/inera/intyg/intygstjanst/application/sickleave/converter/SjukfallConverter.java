@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.application.sickleave.converter;
 
 import java.util.List;
@@ -32,68 +33,76 @@ import se.riv.clinicalprocess.healthcond.certificate.types.v3.HsaId;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.PersonId;
 
 /**
- * Converts the output format from infra/sjukfall/engine {@link SjukfallEnhet} to
- * our rivta published service contract format {@link Sjukfall}.
+ * Converts the output format from infra/sjukfall/engine {@link SjukfallEnhet} to our rivta
+ * published service contract format {@link Sjukfall}.
  *
- * Created by eriklupander on 2017-02-17.
+ * <p>Created by eriklupander on 2017-02-17.
  */
 @Service
 public class SjukfallConverter {
 
-    private static final String KODVERK_SAMORDNINGSNUMMER = "1.2.752.129.2.1.3.3";
-    private static final String KODVERK_PERSONNUMMER = "1.2.752.129.2.1.3.1";
-    private static final String KODVERK_HSAID = "1.2.752.129.2.1.4.1";
+  private static final String KODVERK_SAMORDNINGSNUMMER = "1.2.752.129.2.1.3.3";
+  private static final String KODVERK_PERSONNUMMER = "1.2.752.129.2.1.3.1";
+  private static final String KODVERK_HSAID = "1.2.752.129.2.1.4.1";
 
-    public List<Sjukfall> toSjukfall(List<SjukfallEnhet> sjukfallList) {
-        return sjukfallList.stream().map(sf -> {
-            se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.Sjukfall sjukfall =
-                new se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.Sjukfall();
-            se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.Diagnoskod diagnoskod =
-                new se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.Diagnoskod();
+  public List<Sjukfall> toSjukfall(List<SjukfallEnhet> sjukfallList) {
+    return sjukfallList.stream()
+        .map(
+            sf -> {
+              se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.Sjukfall
+                  sjukfall =
+                      new se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1
+                          .Sjukfall();
+              se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.Diagnoskod
+                  diagnoskod =
+                      new se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1
+                          .Diagnoskod();
 
-            diagnoskod.setCode(sf.getDiagnosKod().getCleanedCode());
-            sjukfall.setDiagnoskod(diagnoskod);
+              diagnoskod.setCode(sf.getDiagnosKod().getCleanedCode());
+              sjukfall.setDiagnoskod(diagnoskod);
 
-            HsaId enhetId = new HsaId();
-            enhetId.setExtension(sf.getVardenhet().getId());
-            enhetId.setRoot(KODVERK_HSAID);
-            sjukfall.setEnhetsId(enhetId);
+              HsaId enhetId = new HsaId();
+              enhetId.setExtension(sf.getVardenhet().getId());
+              enhetId.setRoot(KODVERK_HSAID);
+              sjukfall.setEnhetsId(enhetId);
 
-            Optional<Personnummer> pnr = Personnummer.createPersonnummer(sf.getPatient().getId());
-            sjukfall.setPersonId(buildPersonId(pnr));
-            sjukfall.setPatientFullstandigtNamn(sf.getPatient().getNamn());
+              Optional<Personnummer> pnr = Personnummer.createPersonnummer(sf.getPatient().getId());
+              sjukfall.setPersonId(buildPersonId(pnr));
+              sjukfall.setPatientFullstandigtNamn(sf.getPatient().getNamn());
 
-            HsaId lakareHsaId = new HsaId();
-            lakareHsaId.setRoot(KODVERK_HSAID);
-            lakareHsaId.setExtension(sf.getLakare().getId());
-            sjukfall.setPersonalId(lakareHsaId);
+              HsaId lakareHsaId = new HsaId();
+              lakareHsaId.setRoot(KODVERK_HSAID);
+              lakareHsaId.setExtension(sf.getLakare().getId());
+              sjukfall.setPersonalId(lakareHsaId);
 
-            sjukfall.setStartdatum(sf.getStart());
-            sjukfall.setSlutdatum(sf.getSlut());
+              sjukfall.setStartdatum(sf.getStart());
+              sjukfall.setSlutdatum(sf.getSlut());
 
-            sjukfall.setAntalIntyg(sf.getIntyg());
-            sjukfall.setSjukskrivningslangd(sf.getDagar());
+              sjukfall.setAntalIntyg(sf.getIntyg());
+              sjukfall.setSjukskrivningslangd(sf.getDagar());
 
-            Sjukskrivningsgrad sjukskrivningsGrad = new Sjukskrivningsgrad();
-            sjukskrivningsGrad.setAktivGrad(sf.getAktivGrad());
+              Sjukskrivningsgrad sjukskrivningsGrad = new Sjukskrivningsgrad();
+              sjukskrivningsGrad.setAktivGrad(sf.getAktivGrad());
 
-            Sjukskrivningsgrader grader = new Sjukskrivningsgrader();
-            grader.getGrad().addAll(sf.getGrader());
-            sjukskrivningsGrad.setGrader(grader);
-            sjukfall.setSjukskrivningsgrad(sjukskrivningsGrad);
+              Sjukskrivningsgrader grader = new Sjukskrivningsgrader();
+              grader.getGrad().addAll(sf.getGrader());
+              sjukskrivningsGrad.setGrader(grader);
+              sjukfall.setSjukskrivningsgrad(sjukskrivningsGrad);
 
-            return sjukfall;
-        }).collect(Collectors.toList());
-    }
+              return sjukfall;
+            })
+        .collect(Collectors.toList());
+  }
 
-    private PersonId buildPersonId(Optional<Personnummer> personnummer) {
-        PersonId personId = new PersonId();
-        personId.setRoot(SamordningsnummerValidator.isSamordningsNummer(personnummer)
+  private PersonId buildPersonId(Optional<Personnummer> personnummer) {
+    PersonId personId = new PersonId();
+    personId.setRoot(
+        SamordningsnummerValidator.isSamordningsNummer(personnummer)
             ? KODVERK_SAMORDNINGSNUMMER
             : KODVERK_PERSONNUMMER);
 
-        personnummer.ifPresent(pnr -> personId.setExtension(pnr.getPersonnummer()));
+    personnummer.ifPresent(pnr -> personId.setExtension(pnr.getPersonnummer()));
 
-        return personId;
-    }
+    return personId;
+  }
 }

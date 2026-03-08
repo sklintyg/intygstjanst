@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -19,34 +19,32 @@
 
 package se.inera.intyg.intygstjanst.application.reko.service;
 
-import org.springframework.stereotype.Component;
-import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Reko;
-
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.stereotype.Component;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Reko;
 
 @Component
 public class RekoStatusFilter {
 
-    public Optional<Reko> filter(List<Reko> rekoStatuses, String patientId, LocalDate endDate, LocalDate startDate) {
-        return rekoStatuses
-            .stream()
-            .filter(status -> status.getPatientId().equals(patientId))
-            .filter(status -> equalsOrAfterStartDate(startDate, status))
-            .filter(status -> beforeEndDate(endDate, status)
-            ).max(Comparator.comparing(Reko::getRegistrationTimestamp));
-    }
+  public Optional<Reko> filter(
+      List<Reko> rekoStatuses, String patientId, LocalDate endDate, LocalDate startDate) {
+    return rekoStatuses.stream()
+        .filter(status -> status.getPatientId().equals(patientId))
+        .filter(status -> equalsOrAfterStartDate(startDate, status))
+        .filter(status -> beforeEndDate(endDate, status))
+        .max(Comparator.comparing(Reko::getRegistrationTimestamp));
+  }
 
+  private static boolean beforeEndDate(LocalDate endDate, Reko status) {
+    return status.getSickLeaveTimestamp().isBefore(endDate.plusDays(1).atStartOfDay());
+  }
 
-    private static boolean beforeEndDate(LocalDate endDate, Reko status) {
-        return status.getSickLeaveTimestamp().isBefore(endDate.plusDays(1).atStartOfDay());
-    }
-
-    private static boolean equalsOrAfterStartDate(LocalDate startDate, Reko status) {
-        final var sickLeaveStartLocalDatetime = startDate.atStartOfDay();
-        return status.getSickLeaveTimestamp().isAfter(sickLeaveStartLocalDatetime)
-            || sickLeaveStartLocalDatetime.equals(status.getSickLeaveTimestamp());
-    }
+  private static boolean equalsOrAfterStartDate(LocalDate startDate, Reko status) {
+    final var sickLeaveStartLocalDatetime = startDate.atStartOfDay();
+    return status.getSickLeaveTimestamp().isAfter(sickLeaveStartLocalDatetime)
+        || sickLeaveStartLocalDatetime.equals(status.getSickLeaveTimestamp());
+  }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -38,58 +38,50 @@ import se.inera.intyg.intygstjanst.integration.intygproxyservice.hsa.dto.organiz
 @RequiredArgsConstructor
 public class HsaIntegrationOrganizationService implements HsatkOrganizationService {
 
-    private final GetUnitService getUnitService;
+  private final GetUnitService getUnitService;
 
-    private final GetHealthCareUnitService getHealthCareUnitService;
+  private final GetHealthCareUnitService getHealthCareUnitService;
 
-    private final GetHealthCareUnitMembersService getHealthCareUnitMembersService;
+  private final GetHealthCareUnitMembersService getHealthCareUnitMembersService;
 
-    private final GetHealthCareProviderService getHealthCareProviderService;
+  private final GetHealthCareProviderService getHealthCareProviderService;
 
-    @Override
-    public List<HealthCareProvider> getHealthCareProvider(String healthCareProviderHsaId, String healthCareProviderOrgNo) {
-        return getHealthCareProviderService.get(
-            GetHealthCareProviderRequestDTO.builder()
-                .hsaId(healthCareProviderHsaId)
-                .organizationNumber(healthCareProviderOrgNo)
-                .build()
-        );
+  @Override
+  public List<HealthCareProvider> getHealthCareProvider(
+      String healthCareProviderHsaId, String healthCareProviderOrgNo) {
+    return getHealthCareProviderService.get(
+        GetHealthCareProviderRequestDTO.builder()
+            .hsaId(healthCareProviderHsaId)
+            .organizationNumber(healthCareProviderOrgNo)
+            .build());
+  }
+
+  @Override
+  public HealthCareUnit getHealthCareUnit(String healthCareUnitMemberHsaId) {
+    final var healthCareUnit =
+        getHealthCareUnitService.get(
+            GetHealthCareUnitRequestDTO.builder().hsaId(healthCareUnitMemberHsaId).build());
+    if (healthCareUnit.getHealthCareUnitHsaId() == null) {
+      log.warn("Failed to get HealthCareUnit from HSA with hsaId: {}", healthCareUnitMemberHsaId);
+      return null;
     }
+    return healthCareUnit;
+  }
 
-    @Override
-    public HealthCareUnit getHealthCareUnit(String healthCareUnitMemberHsaId) {
-        final var healthCareUnit = getHealthCareUnitService.get(
-            GetHealthCareUnitRequestDTO.builder()
-                .hsaId(healthCareUnitMemberHsaId)
-                .build()
-        );
-        if (healthCareUnit.getHealthCareUnitHsaId() == null) {
-            log.warn("Failed to get HealthCareUnit from HSA with hsaId: {}", healthCareUnitMemberHsaId);
-            return null;
-        }
-        return healthCareUnit;
+  @Override
+  public HealthCareUnitMembers getHealthCareUnitMembers(String healthCareUnitHsaId) {
+    final var healthCareUnitMembers =
+        getHealthCareUnitMembersService.get(
+            GetHealthCareUnitMembersRequestDTO.builder().hsaId(healthCareUnitHsaId).build());
+
+    if (healthCareUnitMembers.getHealthCareUnitHsaId() == null) {
+      log.warn("Unable to find healthCareUnitMembers with hsaId '{}'", healthCareUnitHsaId);
     }
+    return healthCareUnitMembers;
+  }
 
-    @Override
-    public HealthCareUnitMembers getHealthCareUnitMembers(String healthCareUnitHsaId) {
-        final var healthCareUnitMembers = getHealthCareUnitMembersService.get(
-            GetHealthCareUnitMembersRequestDTO.builder()
-                .hsaId(healthCareUnitHsaId)
-                .build()
-        );
-
-        if (healthCareUnitMembers.getHealthCareUnitHsaId() == null) {
-            log.warn("Unable to find healthCareUnitMembers with hsaId '{}'", healthCareUnitHsaId);
-        }
-        return healthCareUnitMembers;
-    }
-
-    @Override
-    public Unit getUnit(String unitHsaId, String profile) {
-        return getUnitService.get(
-            GetUnitRequestDTO.builder()
-                .hsaId(unitHsaId)
-                .build()
-        );
-    }
+  @Override
+  public Unit getUnit(String unitHsaId, String profile) {
+    return getUnitService.get(GetUnitRequestDTO.builder().hsaId(unitHsaId).build());
+  }
 }

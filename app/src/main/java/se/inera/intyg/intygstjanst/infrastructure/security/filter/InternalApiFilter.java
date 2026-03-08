@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.infrastructure.security.filter;
 
 import jakarta.servlet.FilterChain;
@@ -34,28 +35,28 @@ import se.inera.intyg.intygstjanst.infrastructure.config.properties.AppPropertie
 @RequiredArgsConstructor
 public class InternalApiFilter extends OncePerRequestFilter {
 
-    private static final int FORBIDDEN = 403;
+  private static final int FORBIDDEN = 403;
 
-    private final AppProperties appProperties;
+  private final AppProperties appProperties;
 
-    @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-        throws ServletException, IOException {
+  @Override
+  protected void doFilterInternal(
+      HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+      throws ServletException, IOException {
 
-        final var localPort = request.getLocalPort();
-        if (localPort == appProperties.server().internalPort()) {
-            filterChain.doFilter(request, response);
-        } else {
-            final String path = getRequestPath(request);
-            log.warn("Request was BLOCKED on port={} path={}", localPort, path);
-            response.sendError(FORBIDDEN);
-        }
+    final var localPort = request.getLocalPort();
+    if (localPort == appProperties.server().internalPort()) {
+      filterChain.doFilter(request, response);
+    } else {
+      final String path = getRequestPath(request);
+      log.warn("Request was BLOCKED on port={} path={}", localPort, path);
+      response.sendError(FORBIDDEN);
     }
+  }
 
-    private String getRequestPath(HttpServletRequest request) {
-        final String contextPath = request.getContextPath();
-        final String uri = request.getRequestURI();
-        return contextPath.isEmpty() ? uri : uri.substring(contextPath.length());
-    }
+  private String getRequestPath(HttpServletRequest request) {
+    final String contextPath = request.getContextPath();
+    final String uri = request.getRequestURI();
+    return contextPath.isEmpty() ? uri : uri.substring(contextPath.length());
+  }
 }
-

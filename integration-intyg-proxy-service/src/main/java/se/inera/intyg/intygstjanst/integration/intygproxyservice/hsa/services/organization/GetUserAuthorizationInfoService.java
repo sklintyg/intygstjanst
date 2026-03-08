@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -35,30 +35,32 @@ import se.inera.intyg.intygstjanst.integration.intygproxyservice.hsa.services.or
 @RequiredArgsConstructor
 public class GetUserAuthorizationInfoService {
 
-    private static final String VARD_OCH_BEHANDLING = "Vård och behandling";
+  private static final String VARD_OCH_BEHANDLING = "Vård och behandling";
 
-    private final GetCareProviderListService getCareProviderListService;
-    private final UserCredentialListConverter userCredentialListConverter;
-    private final CommissionNameMapConverter commissionNameMapConverter;
+  private final GetCareProviderListService getCareProviderListService;
+  private final UserCredentialListConverter userCredentialListConverter;
+  private final CommissionNameMapConverter commissionNameMapConverter;
 
-    public UserAuthorizationInfo get(List<CredentialInformation> credentialInformation) {
-        final var commissionList = credentialInformation.stream()
+  public UserAuthorizationInfo get(List<CredentialInformation> credentialInformation) {
+    final var commissionList =
+        credentialInformation.stream()
             .flatMap(information -> information.getCommission().stream())
             .filter(GetUserAuthorizationInfoService::isCommissionActive)
             .filter(GetUserAuthorizationInfoService::hasCorrectPurpose)
             .collect(Collectors.toList());
 
-        final var userCredentials = userCredentialListConverter.convert(credentialInformation);
-        final var commissionNameMap = commissionNameMapConverter.convert(commissionList);
-        final var careProviderList = getCareProviderListService.get(commissionList);
-        return new UserAuthorizationInfo(userCredentials, careProviderList, commissionNameMap);
-    }
+    final var userCredentials = userCredentialListConverter.convert(credentialInformation);
+    final var commissionNameMap = commissionNameMapConverter.convert(commissionList);
+    final var careProviderList = getCareProviderListService.get(commissionList);
+    return new UserAuthorizationInfo(userCredentials, careProviderList, commissionNameMap);
+  }
 
-    private static boolean isCommissionActive(Commission commission) {
-        return isActive(commission.getHealthCareProviderStartDate(), commission.getHealthCareProviderEndDate());
-    }
+  private static boolean isCommissionActive(Commission commission) {
+    return isActive(
+        commission.getHealthCareProviderStartDate(), commission.getHealthCareProviderEndDate());
+  }
 
-    private static boolean hasCorrectPurpose(Commission commission) {
-        return VARD_OCH_BEHANDLING.equalsIgnoreCase(commission.getCommissionPurpose());
-    }
+  private static boolean hasCorrectPurpose(Commission commission) {
+    return VARD_OCH_BEHANDLING.equalsIgnoreCase(commission.getCommissionPurpose());
+  }
 }

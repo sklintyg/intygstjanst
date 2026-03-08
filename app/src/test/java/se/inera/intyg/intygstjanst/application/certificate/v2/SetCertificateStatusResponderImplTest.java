@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.application.certificate.v2;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,12 +35,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.common.support.model.CertificateState;
-import se.inera.intyg.intygstjanst.application.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.application.certificate.service.CertificateService;
-import se.inera.intyg.intygstjanst.infrastructure.logging.MonitoringLogService;
-import se.inera.intyg.intygstjanst.application.recipient.RecipientService;
+import se.inera.intyg.intygstjanst.application.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.application.recipient.Recipient;
 import se.inera.intyg.intygstjanst.application.recipient.RecipientBuilder;
+import se.inera.intyg.intygstjanst.application.recipient.RecipientService;
+import se.inera.intyg.intygstjanst.infrastructure.logging.MonitoringLogService;
 import se.riv.clinicalprocess.healthcond.certificate.setCertificateStatus.v2.SetCertificateStatusResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.setCertificateStatus.v2.SetCertificateStatusResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.setCertificateStatus.v2.SetCertificateStatusType;
@@ -51,81 +52,85 @@ import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
 @ExtendWith(MockitoExtension.class)
 class SetCertificateStatusResponderImplTest {
 
-    private static final Recipient FKASSA =
-        new RecipientBuilder()
-            .setLogicalAddress("FKORG")
-            .setName("Föräkringskassa")
-            .setId("FKASSA")
-            .setCertificateTypes("fk7263")
-            .setActive(true)
-            .setTrusted(true)
-            .build();
+  private static final Recipient FKASSA =
+      new RecipientBuilder()
+          .setLogicalAddress("FKORG")
+          .setName("Föräkringskassa")
+          .setId("FKASSA")
+          .setCertificateTypes("fk7263")
+          .setActive(true)
+          .setTrusted(true)
+          .build();
 
-    @Mock
-    private CertificateService certificateService;
+  @Mock private CertificateService certificateService;
 
-    @Mock
-    private MonitoringLogService monitoringLogService;
+  @Mock private MonitoringLogService monitoringLogService;
 
-    @Mock
-    private RecipientService recipientService;
+  @Mock private RecipientService recipientService;
 
-    @InjectMocks
-    private SetCertificateStatusResponderInterface responder = new SetCertificateStatusResponderImpl();
+  @InjectMocks
+  private SetCertificateStatusResponderInterface responder =
+      new SetCertificateStatusResponderImpl();
 
-    @BeforeEach
-    void setupRecipientService() throws RecipientUnknownException {
-        lenient().when(recipientService.getRecipient(eq("FKASSA"))).thenReturn(FKASSA);
-        lenient().when(recipientService.getRecipient(eq("part"))).thenThrow(new RecipientUnknownException("Unknown"));
-    }
+  @BeforeEach
+  void setupRecipientService() throws RecipientUnknownException {
+    lenient().when(recipientService.getRecipient(eq("FKASSA"))).thenReturn(FKASSA);
+    lenient()
+        .when(recipientService.getRecipient(eq("part")))
+        .thenThrow(new RecipientUnknownException("Unknown"));
+  }
 
-    @Test
-    void setCertificateStatusTest() throws Exception {
-        final String intygId = "intygId";
-        final LocalDateTime timestamp = LocalDateTime.now();
-        SetCertificateStatusType request = createRequest(intygId, "FKASSA", "SENTTO", timestamp);
-        SetCertificateStatusResponseType response = responder.setCertificateStatus(null, request);
-        assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
+  @Test
+  void setCertificateStatusTest() throws Exception {
+    final String intygId = "intygId";
+    final LocalDateTime timestamp = LocalDateTime.now();
+    SetCertificateStatusType request = createRequest(intygId, "FKASSA", "SENTTO", timestamp);
+    SetCertificateStatusResponseType response = responder.setCertificateStatus(null, request);
+    assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
 
-        verify(certificateService).setCertificateState(intygId, "FKASSA", CertificateState.SENT, timestamp);
-        verify(monitoringLogService).logCertificateStatusChanged(intygId, "SENT");
-    }
+    verify(certificateService)
+        .setCertificateState(intygId, "FKASSA", CertificateState.SENT, timestamp);
+    verify(monitoringLogService).logCertificateStatusChanged(intygId, "SENT");
+  }
 
-    @Test
-    void setCertificateStatusIllegalRecipientTest() throws Exception {
-        final String intygId = "intygId";
-        final LocalDateTime timestamp = LocalDateTime.now();
-        SetCertificateStatusType request = createRequest(intygId, "part", "SENTTO", timestamp);
-        SetCertificateStatusResponseType response = responder.setCertificateStatus(null, request);
-        assertEquals(ResultCodeType.ERROR, response.getResult().getResultCode());
+  @Test
+  void setCertificateStatusIllegalRecipientTest() throws Exception {
+    final String intygId = "intygId";
+    final LocalDateTime timestamp = LocalDateTime.now();
+    SetCertificateStatusType request = createRequest(intygId, "part", "SENTTO", timestamp);
+    SetCertificateStatusResponseType response = responder.setCertificateStatus(null, request);
+    assertEquals(ResultCodeType.ERROR, response.getResult().getResultCode());
 
-        verify(certificateService, never()).setCertificateState(anyString(), anyString(), any(CertificateState.class),
-            any(LocalDateTime.class));
-        verify(monitoringLogService, never()).logCertificateStatusChanged(anyString(), anyString());
-    }
+    verify(certificateService, never())
+        .setCertificateState(
+            anyString(), anyString(), any(CertificateState.class), any(LocalDateTime.class));
+    verify(monitoringLogService, never()).logCertificateStatusChanged(anyString(), anyString());
+  }
 
-    @Test
-    void setCertificateStatusIllegalStatusTest() throws Exception {
-        final String intygId = "intygId";
-        final LocalDateTime timestamp = LocalDateTime.now();
-        SetCertificateStatusType request = createRequest(intygId, "FKASSA", "SENT", timestamp);
-        SetCertificateStatusResponseType response = responder.setCertificateStatus(null, request);
-        assertEquals(ResultCodeType.ERROR, response.getResult().getResultCode());
+  @Test
+  void setCertificateStatusIllegalStatusTest() throws Exception {
+    final String intygId = "intygId";
+    final LocalDateTime timestamp = LocalDateTime.now();
+    SetCertificateStatusType request = createRequest(intygId, "FKASSA", "SENT", timestamp);
+    SetCertificateStatusResponseType response = responder.setCertificateStatus(null, request);
+    assertEquals(ResultCodeType.ERROR, response.getResult().getResultCode());
 
-        verify(certificateService, never()).setCertificateState(anyString(), anyString(), any(CertificateState.class),
-            any(LocalDateTime.class));
-        verify(monitoringLogService, never()).logCertificateStatusChanged(anyString(), anyString());
-    }
+    verify(certificateService, never())
+        .setCertificateState(
+            anyString(), anyString(), any(CertificateState.class), any(LocalDateTime.class));
+    verify(monitoringLogService, never()).logCertificateStatusChanged(anyString(), anyString());
+  }
 
-    private SetCertificateStatusType createRequest(String intygId, String part, String status, LocalDateTime timestamp) {
-        SetCertificateStatusType parameters = new SetCertificateStatusType();
-        parameters.setIntygsId(new IntygId());
-        parameters.getIntygsId().setExtension(intygId);
-        parameters.setPart(new Part());
-        parameters.getPart().setCode(part);
-        parameters.setStatus(new Statuskod());
-        parameters.getStatus().setCode(status);
-        parameters.setTidpunkt(timestamp);
-        return parameters;
-    }
+  private SetCertificateStatusType createRequest(
+      String intygId, String part, String status, LocalDateTime timestamp) {
+    SetCertificateStatusType parameters = new SetCertificateStatusType();
+    parameters.setIntygsId(new IntygId());
+    parameters.getIntygsId().setExtension(intygId);
+    parameters.setPart(new Part());
+    parameters.getPart().setCode(part);
+    parameters.setStatus(new Statuskod());
+    parameters.getStatus().setCode(status);
+    parameters.setTidpunkt(timestamp);
+    return parameters;
+  }
 }

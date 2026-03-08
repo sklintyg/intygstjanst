@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -22,26 +22,30 @@ package se.inera.intyg.intygstjanst.testability.service;
 import org.springframework.stereotype.Component;
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
+import se.inera.intyg.intygstjanst.application.certificate.service.CertificateService;
 import se.inera.intyg.intygstjanst.application.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.application.exception.TestCertificateException;
-import se.inera.intyg.intygstjanst.application.certificate.service.CertificateService;
 import se.inera.intyg.schemas.contract.Personnummer;
 
 @Component
 public class TestabilitySendCertificate {
 
-    private final CertificateService certificateService;
-    private static final String RECIPIENT_ID = "FKASSA";
+  private final CertificateService certificateService;
+  private static final String RECIPIENT_ID = "FKASSA";
 
-    public TestabilitySendCertificate(CertificateService certificateService) {
-        this.certificateService = certificateService;
-    }
+  public TestabilitySendCertificate(CertificateService certificateService) {
+    this.certificateService = certificateService;
+  }
 
-    public void sendCertificate(String patientId, String certificateId) {
-        try {
-            certificateService.sendCertificate(Personnummer.createPersonnummer(patientId).orElse(null), certificateId, RECIPIENT_ID);
-        } catch (TestCertificateException | InvalidCertificateException | RecipientUnknownException | CertificateRevokedException e) {
-            throw new RuntimeException(e);
-        }
+  public void sendCertificate(String patientId, String certificateId) {
+    try {
+      certificateService.sendCertificate(
+          Personnummer.createPersonnummer(patientId).orElse(null), certificateId, RECIPIENT_ID);
+    } catch (TestCertificateException
+        | InvalidCertificateException
+        | RecipientUnknownException
+        | CertificateRevokedException e) {
+      throw new RuntimeException(e);
     }
+  }
 }

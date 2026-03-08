@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.application.sickleave.dto;
 
 import java.util.Objects;
@@ -25,46 +26,43 @@ import java.util.Objects;
  */
 public class Vardenhet {
 
-    private String id;
-    private String namn;
+  private String id;
+  private String namn;
 
-    public static Vardenhet create(String vardenhetId, String vardenhetNamn) {
-        final var vardenhet = new Vardenhet();
-        vardenhet.id = vardenhetId;
-        vardenhet.namn = vardenhetNamn;
-        return vardenhet;
-    }
+  public static Vardenhet create(String vardenhetId, String vardenhetNamn) {
+    final var vardenhet = new Vardenhet();
+    vardenhet.id = vardenhetId;
+    vardenhet.namn = vardenhetNamn;
+    return vardenhet;
+  }
 
-    public String getId() {
-        return this.id;
-    }
+  public String getId() {
+    return this.id;
+  }
 
-    public String getNamn() {
-        return this.namn;
-    }
+  public String getNamn() {
+    return this.namn;
+  }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        final Vardenhet vardenhet = (Vardenhet) o;
-        return Objects.equals(id, vardenhet.id) && Objects.equals(namn, vardenhet.namn);
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
     }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    final Vardenhet vardenhet = (Vardenhet) o;
+    return Objects.equals(id, vardenhet.id) && Objects.equals(namn, vardenhet.namn);
+  }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, namn);
-    }
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, namn);
+  }
 
-    @Override
-    public String toString() {
-        return "Vardenhet{"
-            + "id='" + id + '\''
-            + ", namn='" + namn + '\''
-            + '}';
-    }
+  @Override
+  public String toString() {
+    return "Vardenhet{" + "id='" + id + '\'' + ", namn='" + namn + '\'' + '}';
+  }
 }

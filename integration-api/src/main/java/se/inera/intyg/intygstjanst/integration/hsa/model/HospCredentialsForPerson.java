@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.integration.hsa.model;
 
 import java.util.ArrayList;
@@ -25,21 +26,21 @@ import lombok.Data;
 @Data
 public class HospCredentialsForPerson {
 
-    private String personalIdentityNumber;
-    private List<HealthCareProfessionalLicence> healthCareProfessionalLicence = new ArrayList<>();
-    private String personalPrescriptionCode;
-    private List<HCPSpecialityCodes> healthCareProfessionalLicenceSpeciality = new ArrayList<>();
-    private List<NursePrescriptionRight> nursePrescriptionRight = new ArrayList<>();
-    private String healthcareProfessionalLicenseIdentityNumber;
-    private List<String> educationCode = new ArrayList<>();
-    private List<Restriction> restrictions = new ArrayList<>();
-    private Boolean feignedPerson;
+  private String personalIdentityNumber;
+  private List<HealthCareProfessionalLicence> healthCareProfessionalLicence = new ArrayList<>();
+  private String personalPrescriptionCode;
+  private List<HCPSpecialityCodes> healthCareProfessionalLicenceSpeciality = new ArrayList<>();
+  private List<NursePrescriptionRight> nursePrescriptionRight = new ArrayList<>();
+  private String healthcareProfessionalLicenseIdentityNumber;
+  private List<String> educationCode = new ArrayList<>();
+  private List<Restriction> restrictions = new ArrayList<>();
+  private Boolean feignedPerson;
 
-    @Data
-    public static class Restriction {
+  @Data
+  public static class Restriction {
 
-        private String healthCareProfessionalLicenceCode;
-        private String restrictionCode;
-        private String restrictionName;
-    }
+    private String healthCareProfessionalLicenceCode;
+    private String restrictionCode;
+    private String restrictionName;
+  }
 }

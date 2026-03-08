@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.application.message.validator;
 
 import com.google.common.base.Strings;
@@ -26,11 +27,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.model.CertificateState;
+import se.inera.intyg.intygstjanst.application.certificate.service.CertificateService;
+import se.inera.intyg.intygstjanst.application.message.validator.SendMessageToCareValidator.Amneskod;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Arende;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.ArendeRepository;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Certificate;
-import se.inera.intyg.intygstjanst.application.message.validator.SendMessageToCareValidator.Amneskod;
-import se.inera.intyg.intygstjanst.application.certificate.service.CertificateService;
 import se.inera.intyg.schemas.contract.Personnummer;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientType;
 
@@ -38,96 +39,108 @@ import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.S
 @RequiredArgsConstructor
 public class SendMessageToRecipientValidator {
 
-    private final CertificateService certificateService;
-    private final ArendeRepository messageRepository;
+  private final CertificateService certificateService;
+  private final ArendeRepository messageRepository;
 
-    public List<String> validate(SendMessageToRecipientType message) throws InvalidCertificateException {
-        final var validationErrors = new ArrayList<String>();
+  public List<String> validate(SendMessageToRecipientType message)
+      throws InvalidCertificateException {
+    final var validationErrors = new ArrayList<String>();
 
-        final var amne = validateAmneskod(message, validationErrors);
-        validateSistaDatumForSvar(message, validationErrors);
-        validateMeddelandeId(message, validationErrors);
-        validatePaminnelseMeddelandeId(message, amne, validationErrors);
-        validateSvarPa(message, validationErrors);
-        validateCertificate(message, validationErrors);
-        return validationErrors;
+    final var amne = validateAmneskod(message, validationErrors);
+    validateSistaDatumForSvar(message, validationErrors);
+    validateMeddelandeId(message, validationErrors);
+    validatePaminnelseMeddelandeId(message, amne, validationErrors);
+    validateSvarPa(message, validationErrors);
+    validateCertificate(message, validationErrors);
+    return validationErrors;
+  }
+
+  public void csValidate(SendMessageToRecipientType message, List<String> validationErrors) {
+    final var amne = validateAmneskod(message, validationErrors);
+    validateSistaDatumForSvar(message, validationErrors);
+    validateMeddelandeId(message, validationErrors);
+    validatePaminnelseMeddelandeId(message, amne, validationErrors);
+    validateSvarPa(message, validationErrors);
+  }
+
+  private Amneskod validateAmneskod(
+      SendMessageToRecipientType message, List<String> validationErrors) {
+    try {
+      return Amneskod.valueOf(message.getAmne().getCode());
+    } catch (Exception e) {
+      validationErrors.add("Invalid amneskod");
+      return null;
+    }
+  }
+
+  private void validatePaminnelseMeddelandeId(
+      SendMessageToRecipientType message, Amneskod amne, List<String> validationErrors) {
+    boolean isPaminnelse = Amneskod.PAMINN.equals(amne);
+    boolean paminnelseMeddelandeIdPresent =
+        !Strings.isNullOrEmpty(message.getPaminnelseMeddelandeId());
+    if (paminnelseMeddelandeIdPresent && !isPaminnelse) {
+      validationErrors.add("paminnelseMeddelandeId should only be present if amne is PAMINN");
+    } else if (isPaminnelse && !paminnelseMeddelandeIdPresent) {
+      validationErrors.add("PAMINN should define paminnelseMeddelandeId");
+    } else if (paminnelseMeddelandeIdPresent) {
+      Arende res = messageRepository.findByMeddelandeId(message.getPaminnelseMeddelandeId());
+      if (res == null) {
+        validationErrors.add("Paminnelse Meddelande does not exist");
+      }
+    }
+  }
+
+  private void validateSistaDatumForSvar(
+      SendMessageToRecipientType message, List<String> validationErrors) {
+    if (message.getSistaDatumForSvar() != null && !messageIsQuestion(message)) {
+      validationErrors.add("SistaDatumForSvar is only valid on Questions");
+    }
+  }
+
+  private void validateMeddelandeId(
+      SendMessageToRecipientType message, List<String> validationErrors) {
+    Arende res = messageRepository.findByMeddelandeId(message.getMeddelandeId());
+    if (res != null) {
+      validationErrors.add("MeddelandeId is not globally unique");
+    }
+  }
+
+  private void validateSvarPa(SendMessageToRecipientType message, List<String> validationErrors) {
+    if (message.getSvarPa() != null) {
+      String svarPaMeddelandeId = message.getSvarPa().getMeddelandeId();
+      Arende res = messageRepository.findByMeddelandeId(svarPaMeddelandeId);
+      if (res == null) {
+        validationErrors.add("SvarPa Meddelande does not exist");
+      } else if (message.getAmne().getCode() != null
+          && !message.getAmne().getCode().equals(res.getAmne())) {
+        validationErrors.add("Svar amne is not consistent with question");
+      }
+    }
+  }
+
+  private void validateCertificate(
+      SendMessageToRecipientType message, List<String> validationErrors)
+      throws InvalidCertificateException {
+    Optional<Personnummer> messageCRN =
+        Personnummer.createPersonnummer(message.getPatientPersonId().getExtension());
+    Certificate certificate =
+        certificateService.getCertificateForCare(message.getIntygsId().getExtension());
+    if (!(messageCRN.isPresent()
+        && messageCRN.get().equals(certificate.getCivicRegistrationNumber()))) {
+      validationErrors.add("PatientPersonId is not consistent with certificate");
     }
 
-    public void csValidate(SendMessageToRecipientType message, List<String> validationErrors) {
-        final var amne = validateAmneskod(message, validationErrors);
-        validateSistaDatumForSvar(message, validationErrors);
-        validateMeddelandeId(message, validationErrors);
-        validatePaminnelseMeddelandeId(message, amne, validationErrors);
-        validateSvarPa(message, validationErrors);
+    if (isCertificateNotSent(certificate)) {
+      validationErrors.add("Certificate is not sent to recipient");
     }
+  }
 
-    private Amneskod validateAmneskod(SendMessageToRecipientType message, List<String> validationErrors) {
-        try {
-            return Amneskod.valueOf(message.getAmne().getCode());
-        } catch (Exception e) {
-            validationErrors.add("Invalid amneskod");
-            return null;
-        }
-    }
+  private static boolean isCertificateNotSent(Certificate certificate) {
+    return certificate.getStates().stream()
+        .noneMatch(state -> state.getState() == CertificateState.SENT);
+  }
 
-    private void validatePaminnelseMeddelandeId(SendMessageToRecipientType message, Amneskod amne, List<String> validationErrors) {
-        boolean isPaminnelse = Amneskod.PAMINN.equals(amne);
-        boolean paminnelseMeddelandeIdPresent = !Strings.isNullOrEmpty(message.getPaminnelseMeddelandeId());
-        if (paminnelseMeddelandeIdPresent && !isPaminnelse) {
-            validationErrors.add("paminnelseMeddelandeId should only be present if amne is PAMINN");
-        } else if (isPaminnelse && !paminnelseMeddelandeIdPresent) {
-            validationErrors.add("PAMINN should define paminnelseMeddelandeId");
-        } else if (paminnelseMeddelandeIdPresent) {
-            Arende res = messageRepository.findByMeddelandeId(message.getPaminnelseMeddelandeId());
-            if (res == null) {
-                validationErrors.add("Paminnelse Meddelande does not exist");
-            }
-        }
-    }
-
-    private void validateSistaDatumForSvar(SendMessageToRecipientType message, List<String> validationErrors) {
-        if (message.getSistaDatumForSvar() != null && !messageIsQuestion(message)) {
-            validationErrors.add("SistaDatumForSvar is only valid on Questions");
-        }
-    }
-
-    private void validateMeddelandeId(SendMessageToRecipientType message, List<String> validationErrors) {
-        Arende res = messageRepository.findByMeddelandeId(message.getMeddelandeId());
-        if (res != null) {
-            validationErrors.add("MeddelandeId is not globally unique");
-        }
-    }
-
-    private void validateSvarPa(SendMessageToRecipientType message, List<String> validationErrors) {
-        if (message.getSvarPa() != null) {
-            String svarPaMeddelandeId = message.getSvarPa().getMeddelandeId();
-            Arende res = messageRepository.findByMeddelandeId(svarPaMeddelandeId);
-            if (res == null) {
-                validationErrors.add("SvarPa Meddelande does not exist");
-            } else if (message.getAmne().getCode() != null && !message.getAmne().getCode().equals(res.getAmne())) {
-                validationErrors.add("Svar amne is not consistent with question");
-            }
-        }
-    }
-
-    private void validateCertificate(SendMessageToRecipientType message, List<String> validationErrors) throws InvalidCertificateException {
-        Optional<Personnummer> messageCRN = Personnummer.createPersonnummer(message.getPatientPersonId().getExtension());
-        Certificate certificate = certificateService.getCertificateForCare(message.getIntygsId().getExtension());
-        if (!(messageCRN.isPresent() && messageCRN.get().equals(certificate.getCivicRegistrationNumber()))) {
-            validationErrors.add("PatientPersonId is not consistent with certificate");
-        }
-
-        if (isCertificateNotSent(certificate)) {
-            validationErrors.add("Certificate is not sent to recipient");
-        }
-    }
-
-    private static boolean isCertificateNotSent(Certificate certificate) {
-        return certificate.getStates().stream().noneMatch(state -> state.getState() == CertificateState.SENT);
-    }
-
-    private boolean messageIsQuestion(SendMessageToRecipientType message) {
-        return message.getSvarPa() == null && message.getPaminnelseMeddelandeId() == null;
-    }
-
+  private boolean messageIsQuestion(SendMessageToRecipientType message) {
+    return message.getSvarPa() == null && message.getPaminnelseMeddelandeId() == null;
+  }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -19,118 +19,114 @@
 
 package se.inera.intyg.intygstjanst.application.reko.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
-import se.inera.intyg.intygstjanst.application.reko.service.RekoStatusConverter;
-import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Reko;
 import se.inera.intyg.intygstjanst.application.reko.dto.RekoStatusType;
-
-import java.time.LocalDateTime;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Reko;
 
 @ExtendWith(MockitoExtension.class)
 public class RekoStatusConverterTest {
 
-    private static final String PATIENT_ID = "PATIENT_ID";
-    private static final String CARE_PROVIDER = "CARE_PROVIDER_ID";
-    private static final String CARE_UNIT_ID = "CARE_UNIT_ID";
-    private static final String UNIT_ID = "UNIT_ID";
-    private static final String STAFF_ID = "STAFF_ID";
-    private static final String STAFF_NAME = "STAFF_NAME";
-    private static final LocalDateTime SICKLEAVE_TIMESTAMP = LocalDateTime.now();
-    private static final LocalDateTime REGISTRATION_TIMESTAMP = LocalDateTime.now();
-    private static final RekoStatusType STATUS = RekoStatusType.REKO_3;
+  private static final String PATIENT_ID = "PATIENT_ID";
+  private static final String CARE_PROVIDER = "CARE_PROVIDER_ID";
+  private static final String CARE_UNIT_ID = "CARE_UNIT_ID";
+  private static final String UNIT_ID = "UNIT_ID";
+  private static final String STAFF_ID = "STAFF_ID";
+  private static final String STAFF_NAME = "STAFF_NAME";
+  private static final LocalDateTime SICKLEAVE_TIMESTAMP = LocalDateTime.now();
+  private static final LocalDateTime REGISTRATION_TIMESTAMP = LocalDateTime.now();
+  private static final RekoStatusType STATUS = RekoStatusType.REKO_3;
 
+  private Reko originalReko = new Reko();
 
-    private Reko originalReko = new Reko();
+  @BeforeEach
+  void setup() {
+    originalReko.setPatientId(PATIENT_ID);
+    originalReko.setStatus(STATUS.toString());
+    originalReko.setRegistrationTimestamp(REGISTRATION_TIMESTAMP);
+    originalReko.setCareProviderId(CARE_PROVIDER);
+    originalReko.setCareUnitId(CARE_UNIT_ID);
+    originalReko.setUnitId(UNIT_ID);
+    originalReko.setStaffId(STAFF_ID);
+    originalReko.setStaffName(STAFF_NAME);
+    originalReko.setSickLeaveTimestamp(SICKLEAVE_TIMESTAMP);
+  }
 
-    @BeforeEach
-    void setup() {
-        originalReko.setPatientId(PATIENT_ID);
-        originalReko.setStatus(STATUS.toString());
-        originalReko.setRegistrationTimestamp(REGISTRATION_TIMESTAMP);
-        originalReko.setCareProviderId(CARE_PROVIDER);
-        originalReko.setCareUnitId(CARE_UNIT_ID);
-        originalReko.setUnitId(UNIT_ID);
-        originalReko.setStaffId(STAFF_ID);
-        originalReko.setStaffName(STAFF_NAME);
-        originalReko.setSickLeaveTimestamp(SICKLEAVE_TIMESTAMP);
-    }
+  @InjectMocks RekoStatusConverter rekoStatusConverter;
 
-    @InjectMocks
-    RekoStatusConverter rekoStatusConverter;
+  @Test
+  void shouldConvertPatientId() {
+    final var response = rekoStatusConverter.convert(originalReko);
 
-    @Test
-    void shouldConvertPatientId() {
-        final var response = rekoStatusConverter.convert(originalReko);
+    assertEquals(PATIENT_ID, response.getPatientId());
+  }
 
-        assertEquals(PATIENT_ID, response.getPatientId());
-    }
+  @Test
+  void shouldConvertCareProviderId() {
+    final var response = rekoStatusConverter.convert(originalReko);
 
-    @Test
-    void shouldConvertCareProviderId() {
-        final var response = rekoStatusConverter.convert(originalReko);
+    assertEquals(CARE_PROVIDER, response.getCareProviderId());
+  }
 
-        assertEquals(CARE_PROVIDER, response.getCareProviderId());
-    }
+  @Test
+  void shouldConvertCareUnitId() {
+    final var response = rekoStatusConverter.convert(originalReko);
 
-    @Test
-    void shouldConvertCareUnitId() {
-        final var response = rekoStatusConverter.convert(originalReko);
+    assertEquals(CARE_UNIT_ID, response.getCareUnitId());
+  }
 
-        assertEquals(CARE_UNIT_ID, response.getCareUnitId());
-    }
+  @Test
+  void shouldConvertUnitId() {
+    final var response = rekoStatusConverter.convert(originalReko);
 
-    @Test
-    void shouldConvertUnitId() {
-        final var response = rekoStatusConverter.convert(originalReko);
+    assertEquals(UNIT_ID, response.getUnitId());
+  }
 
-        assertEquals(UNIT_ID, response.getUnitId());
-    }
+  @Test
+  void shouldConvertStaffId() {
+    final var response = rekoStatusConverter.convert(originalReko);
 
-    @Test
-    void shouldConvertStaffId() {
-        final var response = rekoStatusConverter.convert(originalReko);
+    assertEquals(STAFF_ID, response.getStaffId());
+  }
 
-        assertEquals(STAFF_ID, response.getStaffId());
-    }
+  @Test
+  void shouldConvertStaffName() {
+    final var response = rekoStatusConverter.convert(originalReko);
 
-    @Test
-    void shouldConvertStaffName() {
-        final var response = rekoStatusConverter.convert(originalReko);
+    assertEquals(STAFF_NAME, response.getStaffName());
+  }
 
-        assertEquals(STAFF_NAME, response.getStaffName());
-    }
+  @Test
+  void shouldConvertSickLeaveTimestamp() {
+    final var response = rekoStatusConverter.convert(originalReko);
 
-    @Test
-    void shouldConvertSickLeaveTimestamp() {
-        final var response = rekoStatusConverter.convert(originalReko);
+    assertEquals(SICKLEAVE_TIMESTAMP, response.getSickLeaveTimestamp());
+  }
 
-        assertEquals(SICKLEAVE_TIMESTAMP, response.getSickLeaveTimestamp());
-    }
+  @Test
+  void shouldConvertRegistrationTimestamp() {
+    final var response = rekoStatusConverter.convert(originalReko);
 
-    @Test
-    void shouldConvertRegistrationTimestamp() {
-        final var response = rekoStatusConverter.convert(originalReko);
+    assertEquals(REGISTRATION_TIMESTAMP, response.getRegistrationTimestamp());
+  }
 
-        assertEquals(REGISTRATION_TIMESTAMP, response.getRegistrationTimestamp());
-    }
+  @Test
+  void shouldConvertStatusId() {
+    final var response = rekoStatusConverter.convert(originalReko);
 
-    @Test
-    void shouldConvertStatusId() {
-        final var response = rekoStatusConverter.convert(originalReko);
+    assertEquals(STATUS.toString(), response.getStatus().getId());
+  }
 
-        assertEquals(STATUS.toString(), response.getStatus().getId());
-    }
+  @Test
+  void shouldConvertStatusName() {
+    final var response = rekoStatusConverter.convert(originalReko);
 
-    @Test
-    void shouldConvertStatusName() {
-        final var response = rekoStatusConverter.convert(originalReko);
-
-        assertEquals(STATUS.getName(), response.getStatus().getName());
-    }
+    assertEquals(STATUS.getName(), response.getStatus().getName());
+  }
 }

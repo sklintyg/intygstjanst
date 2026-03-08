@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -39,71 +39,72 @@ import se.inera.intyg.schemas.contract.Personnummer;
 @ExtendWith(MockitoExtension.class)
 class CitizenCertificatesFromCSTest {
 
+  private static final Personnummer PERSONAL_IDENTITY_NUMBER =
+      Personnummer.createPersonnummer("191212121212").orElseThrow();
+  private static final Personnummer COORDINATION_NUMBER =
+      Personnummer.createPersonnummer("191212721212").orElseThrow();
+  @Mock private CSIntegrationService csIntegrationService;
+  @Mock private CitizenCertificateConverterFromCS citizenCertificateConverterFromCS;
+  @InjectMocks private CitizenCertificatesFromCS citizenCertificatesFromCS;
 
-    private static final Personnummer PERSONAL_IDENTITY_NUMBER = Personnummer.createPersonnummer("191212121212").orElseThrow();
-    private static final Personnummer COORDINATION_NUMBER = Personnummer.createPersonnummer("191212721212").orElseThrow();
-    @Mock
-    private CSIntegrationService csIntegrationService;
-    @Mock
-    private CitizenCertificateConverterFromCS citizenCertificateConverterFromCS;
-    @InjectMocks
-    private CitizenCertificatesFromCS citizenCertificatesFromCS;
+  @Test
+  void shallReturnEmptyListIfResponseFromCSIsEmpty() {
+    final var expectedResult = Collections.emptyList();
 
-    @Test
-    void shallReturnEmptyListIfResponseFromCSIsEmpty() {
-        final var expectedResult = Collections.emptyList();
-
-        doReturn(Collections.emptyList()).when(csIntegrationService).getCitizenCertificates(
+    doReturn(Collections.emptyList())
+        .when(csIntegrationService)
+        .getCitizenCertificates(
             GetCitizenCertificatesRequest.builder()
                 .personId(
                     PersonIdDTO.builder()
                         .id(PERSONAL_IDENTITY_NUMBER.getOriginalPnr())
                         .type(PersonIdTypeDTO.PERSONAL_IDENTITY_NUMBER)
                         .build())
-                .build()
-        );
+                .build());
 
-        final var actualResult = citizenCertificatesFromCS.get(PERSONAL_IDENTITY_NUMBER);
-        assertEquals(expectedResult, actualResult);
-    }
+    final var actualResult = citizenCertificatesFromCS.get(PERSONAL_IDENTITY_NUMBER);
+    assertEquals(expectedResult, actualResult);
+  }
 
-    @Test
-    void shallReturnEmptyListForRequestWithCoordinationNumberIfResponseFromCSIsEmpty() {
-        final var expectedResult = Collections.emptyList();
+  @Test
+  void shallReturnEmptyListForRequestWithCoordinationNumberIfResponseFromCSIsEmpty() {
+    final var expectedResult = Collections.emptyList();
 
-        doReturn(Collections.emptyList()).when(csIntegrationService).getCitizenCertificates(
+    doReturn(Collections.emptyList())
+        .when(csIntegrationService)
+        .getCitizenCertificates(
             GetCitizenCertificatesRequest.builder()
                 .personId(
                     PersonIdDTO.builder()
                         .id(COORDINATION_NUMBER.getOriginalPnr())
                         .type(PersonIdTypeDTO.COORDINATION_NUMBER)
                         .build())
-                .build()
-        );
+                .build());
 
-        final var actualResult = citizenCertificatesFromCS.get(COORDINATION_NUMBER);
-        assertEquals(expectedResult, actualResult);
-    }
+    final var actualResult = citizenCertificatesFromCS.get(COORDINATION_NUMBER);
+    assertEquals(expectedResult, actualResult);
+  }
 
-    @Test
-    void shallReturnListOfCitizenCertificateDTOs() {
-        final var citizenCertificateDTO = CitizenCertificateDTO.builder().build();
-        final var expectedResult = List.of(citizenCertificateDTO);
-        final var certificate = new Certificate();
-        final var responseFromCS = List.of(certificate);
+  @Test
+  void shallReturnListOfCitizenCertificateDTOs() {
+    final var citizenCertificateDTO = CitizenCertificateDTO.builder().build();
+    final var expectedResult = List.of(citizenCertificateDTO);
+    final var certificate = new Certificate();
+    final var responseFromCS = List.of(certificate);
 
-        doReturn(responseFromCS).when(csIntegrationService).getCitizenCertificates(
+    doReturn(responseFromCS)
+        .when(csIntegrationService)
+        .getCitizenCertificates(
             GetCitizenCertificatesRequest.builder()
                 .personId(
                     PersonIdDTO.builder()
                         .id(PERSONAL_IDENTITY_NUMBER.getOriginalPnr())
                         .type(PersonIdTypeDTO.PERSONAL_IDENTITY_NUMBER)
                         .build())
-                .build()
-        );
-        doReturn(citizenCertificateDTO).when(citizenCertificateConverterFromCS).convert(certificate);
+                .build());
+    doReturn(citizenCertificateDTO).when(citizenCertificateConverterFromCS).convert(certificate);
 
-        final var actualResult = citizenCertificatesFromCS.get(PERSONAL_IDENTITY_NUMBER);
-        assertEquals(expectedResult, actualResult);
-    }
+    final var actualResult = citizenCertificatesFromCS.get(PERSONAL_IDENTITY_NUMBER);
+    assertEquals(expectedResult, actualResult);
+  }
 }

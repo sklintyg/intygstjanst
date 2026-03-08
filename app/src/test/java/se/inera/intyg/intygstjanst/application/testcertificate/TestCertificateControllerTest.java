@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.application.testcertificate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,50 +37,50 @@ import se.inera.intyg.intygstjanst.application.testcertificate.service.TestCerti
 @ExtendWith(MockitoExtension.class)
 class TestCertificateControllerTest {
 
-    @Mock
-    private TestCertificateService testCertificateService;
+  @Mock private TestCertificateService testCertificateService;
 
-    @InjectMocks
-    private TestCertificateController testCertificateController;
+  @InjectMocks private TestCertificateController testCertificateController;
 
-    @Test
-    void testEraseTestCertificateSuccessful() {
-        final var testCertificateEraseRequest = new TestCertificateEraseRequest();
-        testCertificateEraseRequest.setFrom(null);
-        testCertificateEraseRequest.setTo(LocalDateTime.now());
+  @Test
+  void testEraseTestCertificateSuccessful() {
+    final var testCertificateEraseRequest = new TestCertificateEraseRequest();
+    testCertificateEraseRequest.setFrom(null);
+    testCertificateEraseRequest.setTo(LocalDateTime.now());
 
-        final var expected = TestCertificateEraseResult.create(0, 0);
+    final var expected = TestCertificateEraseResult.create(0, 0);
 
-        doReturn(expected).when(testCertificateService).eraseTestCertificates(any(), any());
+    doReturn(expected).when(testCertificateService).eraseTestCertificates(any(), any());
 
-        final var actual = testCertificateController.eraseTestCertificates(testCertificateEraseRequest);
+    final var actual = testCertificateController.eraseTestCertificates(testCertificateEraseRequest);
 
-        assertEquals(expected, actual);
-    }
+    assertEquals(expected, actual);
+  }
 
-    @Test
-    void testEraseTestCertificateMissingToDate() {
-        final var testCertificateEraseRequest = new TestCertificateEraseRequest();
-        testCertificateEraseRequest.setFrom(null);
-        testCertificateEraseRequest.setTo(null);
+  @Test
+  void testEraseTestCertificateMissingToDate() {
+    final var testCertificateEraseRequest = new TestCertificateEraseRequest();
+    testCertificateEraseRequest.setFrom(null);
+    testCertificateEraseRequest.setTo(null);
 
-        final var ex = assertThrows(IllegalArgumentException.class,
-            () -> testCertificateController.eraseTestCertificates(testCertificateEraseRequest)
-        );
+    final var ex =
+        assertThrows(
+            IllegalArgumentException.class,
+            () -> testCertificateController.eraseTestCertificates(testCertificateEraseRequest));
 
-        assertEquals("Missing date to", ex.getMessage());
-    }
+    assertEquals("Missing date to", ex.getMessage());
+  }
 
-    @Test
-    void testEraseTestCertificateIncorrectDateRange() {
-        final var testCertificateEraseRequest = new TestCertificateEraseRequest();
-        testCertificateEraseRequest.setFrom(LocalDateTime.now());
-        testCertificateEraseRequest.setTo(testCertificateEraseRequest.getFrom().minusDays(1));
+  @Test
+  void testEraseTestCertificateIncorrectDateRange() {
+    final var testCertificateEraseRequest = new TestCertificateEraseRequest();
+    testCertificateEraseRequest.setFrom(LocalDateTime.now());
+    testCertificateEraseRequest.setTo(testCertificateEraseRequest.getFrom().minusDays(1));
 
-        final var ex = assertThrows(IllegalArgumentException.class,
-            () -> testCertificateController.eraseTestCertificates(testCertificateEraseRequest)
-        );
+    final var ex =
+        assertThrows(
+            IllegalArgumentException.class,
+            () -> testCertificateController.eraseTestCertificates(testCertificateEraseRequest));
 
-        assertEquals("From date is after to date", ex.getMessage());
-    }
+    assertEquals("From date is after to date", ex.getMessage());
+  }
 }

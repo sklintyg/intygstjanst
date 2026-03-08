@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.application.certificate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -37,7 +38,6 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-import se.inera.intyg.intygstjanst.infrastructure.config.properties.AppProperties;
 import se.inera.ifv.insuranceprocess.certificate.v1.StatusType;
 import se.inera.ifv.insuranceprocess.healthreporting.setcertificatestatus.rivtabp20.v1.SetCertificateStatusResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.setcertificatestatusresponder.v1.SetCertificateStatusRequestType;
@@ -45,13 +45,14 @@ import se.inera.ifv.insuranceprocess.healthreporting.setcertificatestatusrespond
 import se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.model.CertificateState;
-import se.inera.intyg.intygstjanst.infrastructure.logging.HashUtility;
-import se.inera.intyg.intygstjanst.application.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.application.certificate.service.CertificateService;
-import se.inera.intyg.intygstjanst.infrastructure.logging.MonitoringLogService;
-import se.inera.intyg.intygstjanst.application.recipient.RecipientService;
+import se.inera.intyg.intygstjanst.application.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.application.recipient.CertificateRecipientType;
 import se.inera.intyg.intygstjanst.application.recipient.Recipient;
+import se.inera.intyg.intygstjanst.application.recipient.RecipientService;
+import se.inera.intyg.intygstjanst.infrastructure.config.properties.AppProperties;
+import se.inera.intyg.intygstjanst.infrastructure.logging.HashUtility;
+import se.inera.intyg.intygstjanst.infrastructure.logging.MonitoringLogService;
 import se.inera.intyg.schemas.contract.Personnummer;
 
 /**
@@ -61,125 +62,153 @@ import se.inera.intyg.schemas.contract.Personnummer;
 @MockitoSettings(strictness = Strictness.LENIENT)
 class SetCertificateStatusResponderImplTest {
 
-    private static final String CERTIFICATE_ID = "no5";
-    private static final String RECIPIENT_FKASSA = "FKASSA";
-    private static final String RECIPIENT_UNKNOWN = "UNKNOWN";
+  private static final String CERTIFICATE_ID = "no5";
+  private static final String RECIPIENT_FKASSA = "FKASSA";
+  private static final String RECIPIENT_UNKNOWN = "UNKNOWN";
 
-    @Mock
-    private CertificateService certificateService;
+  @Mock private CertificateService certificateService;
 
-    @Mock
-    private MonitoringLogService monitoringLogService;
+  @Mock private MonitoringLogService monitoringLogService;
 
-    @Mock
-    private RecipientService recipientService;
+  @Mock private RecipientService recipientService;
 
-    @Spy
-    private HashUtility hashUtility = new HashUtility(
-        new AppProperties(null, null, null, null, null, null,
-            new AppProperties.Security("salt"), null));
+  @Spy
+  private HashUtility hashUtility =
+      new HashUtility(
+          new AppProperties(
+              null, null, null, null, null, null, new AppProperties.Security("salt"), null));
 
-    @InjectMocks
-    private SetCertificateStatusResponderInterface responder = new SetCertificateStatusResponderImpl();
+  @InjectMocks
+  private SetCertificateStatusResponderInterface responder =
+      new SetCertificateStatusResponderImpl();
 
-    @BeforeEach
-    void init() throws RecipientUnknownException {
-        // no field injection needed — hashUtility initialized with salt directly
-        Recipient recipient = new Recipient("logicalAddress", "name", RECIPIENT_FKASSA, CertificateRecipientType.HUVUDMOTTAGARE.name(),
-            "fk7263", true, true);
-        when(recipientService.getPrimaryRecipientFkassa()).thenReturn(recipient);
-        when(recipientService.getRecipient(RECIPIENT_FKASSA)).thenReturn(recipient);
-        when(recipientService.getRecipient(RECIPIENT_UNKNOWN)).thenThrow(new RecipientUnknownException(""));
-    }
+  @BeforeEach
+  void init() throws RecipientUnknownException {
+    // no field injection needed — hashUtility initialized with salt directly
+    Recipient recipient =
+        new Recipient(
+            "logicalAddress",
+            "name",
+            RECIPIENT_FKASSA,
+            CertificateRecipientType.HUVUDMOTTAGARE.name(),
+            "fk7263",
+            true,
+            true);
+    when(recipientService.getPrimaryRecipientFkassa()).thenReturn(recipient);
+    when(recipientService.getRecipient(RECIPIENT_FKASSA)).thenReturn(recipient);
+    when(recipientService.getRecipient(RECIPIENT_UNKNOWN))
+        .thenThrow(new RecipientUnknownException(""));
+  }
 
-    @Test
-    void testSetCertificateStatus() throws Exception {
+  @Test
+  void testSetCertificateStatus() throws Exception {
 
-        LocalDateTime timestamp = LocalDateTime.of(2013, 4, 26, 12, 0, 0);
+    LocalDateTime timestamp = LocalDateTime.of(2013, 4, 26, 12, 0, 0);
 
-        SetCertificateStatusRequestType request = new SetCertificateStatusRequestType();
-        request.setCertificateId(CERTIFICATE_ID);
-        request.setNationalIdentityNumber("19001122-3344");
-        request.setStatus(StatusType.CANCELLED);
-        request.setTarget(RECIPIENT_FKASSA);
-        request.setTimestamp(timestamp);
+    SetCertificateStatusRequestType request = new SetCertificateStatusRequestType();
+    request.setCertificateId(CERTIFICATE_ID);
+    request.setNationalIdentityNumber("19001122-3344");
+    request.setStatus(StatusType.CANCELLED);
+    request.setTarget(RECIPIENT_FKASSA);
+    request.setTimestamp(timestamp);
 
-        SetCertificateStatusResponseType res = responder.setCertificateStatus(null, request);
-        assertNotNull(res);
-        assertEquals(ResultCodeEnum.OK, res.getResult().getResultCode());
+    SetCertificateStatusResponseType res = responder.setCertificateStatus(null, request);
+    assertNotNull(res);
+    assertEquals(ResultCodeEnum.OK, res.getResult().getResultCode());
 
-        verify(certificateService).setCertificateState(createPnr("19001122-3344"), CERTIFICATE_ID, RECIPIENT_FKASSA,
-            CertificateState.CANCELLED, timestamp);
-        verify(monitoringLogService).logCertificateStatusChanged(CERTIFICATE_ID, "CANCELLED");
-    }
+    verify(certificateService)
+        .setCertificateState(
+            createPnr("19001122-3344"),
+            CERTIFICATE_ID,
+            RECIPIENT_FKASSA,
+            CertificateState.CANCELLED,
+            timestamp);
+    verify(monitoringLogService).logCertificateStatusChanged(CERTIFICATE_ID, "CANCELLED");
+  }
 
-    @Test
-    void testSetCertificateStatusLegacyTarget() throws Exception {
+  @Test
+  void testSetCertificateStatusLegacyTarget() throws Exception {
 
-        LocalDateTime timestamp = LocalDateTime.of(2013, 4, 26, 12, 0, 0);
+    LocalDateTime timestamp = LocalDateTime.of(2013, 4, 26, 12, 0, 0);
 
-        SetCertificateStatusRequestType request = new SetCertificateStatusRequestType();
-        request.setCertificateId(CERTIFICATE_ID);
-        request.setNationalIdentityNumber("19001122-3344");
-        request.setStatus(StatusType.CANCELLED);
-        request.setTarget("FK");
-        request.setTimestamp(timestamp);
+    SetCertificateStatusRequestType request = new SetCertificateStatusRequestType();
+    request.setCertificateId(CERTIFICATE_ID);
+    request.setNationalIdentityNumber("19001122-3344");
+    request.setStatus(StatusType.CANCELLED);
+    request.setTarget("FK");
+    request.setTimestamp(timestamp);
 
-        SetCertificateStatusResponseType res = responder.setCertificateStatus(null, request);
-        assertNotNull(res);
-        assertEquals(ResultCodeEnum.OK, res.getResult().getResultCode());
+    SetCertificateStatusResponseType res = responder.setCertificateStatus(null, request);
+    assertNotNull(res);
+    assertEquals(ResultCodeEnum.OK, res.getResult().getResultCode());
 
-        verify(certificateService).setCertificateState(createPnr("19001122-3344"), CERTIFICATE_ID, RECIPIENT_FKASSA,
-            CertificateState.CANCELLED, timestamp);
-        verify(monitoringLogService).logCertificateStatusChanged(CERTIFICATE_ID, "CANCELLED");
-        verify(recipientService).getPrimaryRecipientFkassa();
-    }
+    verify(certificateService)
+        .setCertificateState(
+            createPnr("19001122-3344"),
+            CERTIFICATE_ID,
+            RECIPIENT_FKASSA,
+            CertificateState.CANCELLED,
+            timestamp);
+    verify(monitoringLogService).logCertificateStatusChanged(CERTIFICATE_ID, "CANCELLED");
+    verify(recipientService).getPrimaryRecipientFkassa();
+  }
 
-    @Test
-    void testSetCertificateStatusUnexpectedTarget() {
-        LocalDateTime timestamp = LocalDateTime.of(2013, 4, 26, 12, 0, 0);
+  @Test
+  void testSetCertificateStatusUnexpectedTarget() {
+    LocalDateTime timestamp = LocalDateTime.of(2013, 4, 26, 12, 0, 0);
 
-        SetCertificateStatusRequestType request = new SetCertificateStatusRequestType();
-        request.setCertificateId(CERTIFICATE_ID);
-        request.setNationalIdentityNumber("19001122-3344");
-        request.setStatus(StatusType.CANCELLED);
-        request.setTarget(RECIPIENT_UNKNOWN);
-        request.setTimestamp(timestamp);
+    SetCertificateStatusRequestType request = new SetCertificateStatusRequestType();
+    request.setCertificateId(CERTIFICATE_ID);
+    request.setNationalIdentityNumber("19001122-3344");
+    request.setStatus(StatusType.CANCELLED);
+    request.setTarget(RECIPIENT_UNKNOWN);
+    request.setTimestamp(timestamp);
 
-        SetCertificateStatusResponseType res = responder.setCertificateStatus(null, request);
+    SetCertificateStatusResponseType res = responder.setCertificateStatus(null, request);
 
-        assertNotNull(res);
-        assertEquals(ResultCodeEnum.ERROR, res.getResult().getResultCode());
+    assertNotNull(res);
+    assertEquals(ResultCodeEnum.ERROR, res.getResult().getResultCode());
 
-        verifyNoInteractions(certificateService);
-        verifyNoInteractions(monitoringLogService);
-    }
+    verifyNoInteractions(certificateService);
+    verifyNoInteractions(monitoringLogService);
+  }
 
-    @Test
-    void testSetCertificateStatusInvalidCertificate() throws Exception {
-        final var timestamp = LocalDateTime.of(2013, 4, 26, 12, 0, 0);
-        final var pnr = "19001122-3344";
-        doThrow(new InvalidCertificateException(CERTIFICATE_ID, hashUtility.hash(createPnr(pnr).getPersonnummer())))
-            .when(certificateService).setCertificateState(createPnr(pnr),
-                CERTIFICATE_ID, RECIPIENT_FKASSA, CertificateState.CANCELLED, timestamp);
+  @Test
+  void testSetCertificateStatusInvalidCertificate() throws Exception {
+    final var timestamp = LocalDateTime.of(2013, 4, 26, 12, 0, 0);
+    final var pnr = "19001122-3344";
+    doThrow(
+            new InvalidCertificateException(
+                CERTIFICATE_ID, hashUtility.hash(createPnr(pnr).getPersonnummer())))
+        .when(certificateService)
+        .setCertificateState(
+            createPnr(pnr),
+            CERTIFICATE_ID,
+            RECIPIENT_FKASSA,
+            CertificateState.CANCELLED,
+            timestamp);
 
-        SetCertificateStatusRequestType request = new SetCertificateStatusRequestType();
-        request.setCertificateId(CERTIFICATE_ID);
-        request.setNationalIdentityNumber(pnr);
-        request.setStatus(StatusType.CANCELLED);
-        request.setTarget(RECIPIENT_FKASSA);
-        request.setTimestamp(timestamp);
+    SetCertificateStatusRequestType request = new SetCertificateStatusRequestType();
+    request.setCertificateId(CERTIFICATE_ID);
+    request.setNationalIdentityNumber(pnr);
+    request.setStatus(StatusType.CANCELLED);
+    request.setTarget(RECIPIENT_FKASSA);
+    request.setTimestamp(timestamp);
 
-        responder.setCertificateStatus(null, request);
+    responder.setCertificateStatus(null, request);
 
-        verify(certificateService).setCertificateState(createPnr(pnr), CERTIFICATE_ID, RECIPIENT_FKASSA,
-            CertificateState.CANCELLED, timestamp);
-        verify(monitoringLogService, never()).logCertificateStatusChanged(anyString(), anyString());
-    }
+    verify(certificateService)
+        .setCertificateState(
+            createPnr(pnr),
+            CERTIFICATE_ID,
+            RECIPIENT_FKASSA,
+            CertificateState.CANCELLED,
+            timestamp);
+    verify(monitoringLogService, never()).logCertificateStatusChanged(anyString(), anyString());
+  }
 
-    private Personnummer createPnr(String pnr) {
-        return Personnummer.createPersonnummer(pnr)
-            .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer"));
-    }
-
+  private Personnummer createPnr(String pnr) {
+    return Personnummer.createPersonnummer(pnr)
+        .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer"));
+  }
 }

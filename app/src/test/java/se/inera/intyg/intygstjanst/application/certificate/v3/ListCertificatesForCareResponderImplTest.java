@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.application.certificate.v3;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -47,10 +48,10 @@ import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
 import se.inera.intyg.common.support.modules.support.ModuleEntryPoint;
 import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.common.support.modules.support.api.exception.ModuleException;
-import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Certificate;
-import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.CertificateStateHistoryEntry;
 import se.inera.intyg.intygstjanst.application.certificate.service.CertificateService;
 import se.inera.intyg.intygstjanst.infrastructure.logging.MonitoringLogService;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Certificate;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.CertificateStateHistoryEntry;
 import se.inera.intyg.schemas.contract.Personnummer;
 import se.riv.clinicalprocess.healthcond.certificate.listcertificatesforcare.v3.ListCertificatesForCareResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.listcertificatesforcare.v3.ListCertificatesForCareResponseType;
@@ -63,188 +64,205 @@ import se.riv.clinicalprocess.healthcond.certificate.v3.IntygsStatus;
 @ExtendWith(MockitoExtension.class)
 class ListCertificatesForCareResponderImplTest {
 
-    private static final String FKASSA_RECIPIENT_ID = "FKASSA";
-    private static final String OTHER_RECIPIENT_ID = "someotherId";
-    private static final String INTYG_TYPE_VERSION = "1.0";
+  private static final String FKASSA_RECIPIENT_ID = "FKASSA";
+  private static final String OTHER_RECIPIENT_ID = "someotherId";
+  private static final String INTYG_TYPE_VERSION = "1.0";
 
-    @Mock
-    private CertificateService certificateService;
+  @Mock private CertificateService certificateService;
 
-    @Mock
-    private MonitoringLogService monitoringLogService;
+  @Mock private MonitoringLogService monitoringLogService;
 
-    @Mock
-    private IntygModuleRegistryImpl moduleRegistry;
+  @Mock private IntygModuleRegistryImpl moduleRegistry;
 
-    @Mock
-    private ModuleEntryPoint moduleEntryPoint;
+  @Mock private ModuleEntryPoint moduleEntryPoint;
 
-    @Mock
-    private ModuleApi moduleApi;
+  @Mock private ModuleApi moduleApi;
 
-    @InjectMocks
-    private ListCertificatesForCareResponderInterface responder = new ListCertificatesForCareResponderImpl();
+  @InjectMocks
+  private ListCertificatesForCareResponderInterface responder =
+      new ListCertificatesForCareResponderImpl();
 
-    @BeforeEach
-    void setup() throws ModuleNotFoundException, ModuleException {
+  @BeforeEach
+  void setup() throws ModuleNotFoundException, ModuleException {
 
-        lenient().when(moduleRegistry.getModuleApi(or(isNull(), anyString()), or(isNull(), anyString()))).thenReturn(moduleApi);
+    lenient()
+        .when(moduleRegistry.getModuleApi(or(isNull(), anyString()), or(isNull(), anyString())))
+        .thenReturn(moduleApi);
 
-        lenient().when(moduleApi.getUtlatandeFromXml(or(isNull(), anyString()))).thenReturn(mock(Utlatande.class));
+    lenient()
+        .when(moduleApi.getUtlatandeFromXml(or(isNull(), anyString())))
+        .thenReturn(mock(Utlatande.class));
 
-        lenient().when(moduleApi.getIntygFromUtlatande(or(isNull(), any(Utlatande.class)))).thenReturn(new Intyg());
-    }
+    lenient()
+        .when(moduleApi.getIntygFromUtlatande(or(isNull(), any(Utlatande.class))))
+        .thenReturn(new Intyg());
+  }
 
-    @Test
-    void listCertificatesWithNoCertificates() {
-        Personnummer civicRegistrationNumber = createPnr("19350108-1234");
-        List<String> careUnit = Collections.singletonList("enhet");
-        List<Certificate> result = Collections.emptyList();
+  @Test
+  void listCertificatesWithNoCertificates() {
+    Personnummer civicRegistrationNumber = createPnr("19350108-1234");
+    List<String> careUnit = Collections.singletonList("enhet");
+    List<Certificate> result = Collections.emptyList();
 
-        when(certificateService.listCertificatesForCare(civicRegistrationNumber, careUnit)).thenReturn(result);
+    when(certificateService.listCertificatesForCare(civicRegistrationNumber, careUnit))
+        .thenReturn(result);
 
-        ListCertificatesForCareType parameters = createListCertificatesRequest(civicRegistrationNumber, createHsaId("vardgivare"),
-            createHsaId("enhet"));
+    ListCertificatesForCareType parameters =
+        createListCertificatesRequest(
+            civicRegistrationNumber, createHsaId("vardgivare"), createHsaId("enhet"));
 
-        ListCertificatesForCareResponseType response = responder.listCertificatesForCare(null, parameters);
+    ListCertificatesForCareResponseType response =
+        responder.listCertificatesForCare(null, parameters);
 
-        verify(certificateService).listCertificatesForCare(civicRegistrationNumber, careUnit);
+    verify(certificateService).listCertificatesForCare(civicRegistrationNumber, careUnit);
 
-        assertEquals(0, response.getIntygsLista().getIntyg().size());
-    }
+    assertEquals(0, response.getIntygsLista().getIntyg().size());
+  }
 
-    @Test
-    void listCertificates() {
-        Personnummer civicRegistrationNumber = createPnr("19350108-1234");
-        List<String> careUnit = Collections.singletonList("enhet");
+  @Test
+  void listCertificates() {
+    Personnummer civicRegistrationNumber = createPnr("19350108-1234");
+    List<String> careUnit = Collections.singletonList("enhet");
 
-        Certificate certificate1 = new Certificate();
-        certificate1.setTypeVersion(INTYG_TYPE_VERSION);
-        certificate1.setDeletedByCareGiver(Boolean.FALSE);
-        Certificate certificate2 = new Certificate();
-        certificate2.setTypeVersion(INTYG_TYPE_VERSION);
-        certificate2.setDeletedByCareGiver(Boolean.FALSE);
+    Certificate certificate1 = new Certificate();
+    certificate1.setTypeVersion(INTYG_TYPE_VERSION);
+    certificate1.setDeletedByCareGiver(Boolean.FALSE);
+    Certificate certificate2 = new Certificate();
+    certificate2.setTypeVersion(INTYG_TYPE_VERSION);
+    certificate2.setDeletedByCareGiver(Boolean.FALSE);
 
-        List<Certificate> result = Arrays.asList(certificate1, certificate2);
+    List<Certificate> result = Arrays.asList(certificate1, certificate2);
 
-        when(certificateService.listCertificatesForCare(civicRegistrationNumber, careUnit)).thenReturn(result);
+    when(certificateService.listCertificatesForCare(civicRegistrationNumber, careUnit))
+        .thenReturn(result);
 
-        ListCertificatesForCareType parameters = createListCertificatesRequest(civicRegistrationNumber, createHsaId("vardgivare"),
-            createHsaId("enhet"));
+    ListCertificatesForCareType parameters =
+        createListCertificatesRequest(
+            civicRegistrationNumber, createHsaId("vardgivare"), createHsaId("enhet"));
 
-        ListCertificatesForCareResponseType response = responder.listCertificatesForCare(null, parameters);
+    ListCertificatesForCareResponseType response =
+        responder.listCertificatesForCare(null, parameters);
 
-        verify(certificateService).listCertificatesForCare(civicRegistrationNumber, careUnit);
+    verify(certificateService).listCertificatesForCare(civicRegistrationNumber, careUnit);
 
-        assertEquals(2, response.getIntygsLista().getIntyg().size());
-    }
+    assertEquals(2, response.getIntygsLista().getIntyg().size());
+  }
 
-    @Test
-    void listCertificatesDoesNotListCertificatesDeletedByCaregiver() throws Exception {
-        Personnummer civicRegistrationNumber = createPnr("19350108-1234");
-        List<String> careUnit = Collections.singletonList("enhet");
+  @Test
+  void listCertificatesDoesNotListCertificatesDeletedByCaregiver() throws Exception {
+    Personnummer civicRegistrationNumber = createPnr("19350108-1234");
+    List<String> careUnit = Collections.singletonList("enhet");
 
-        Certificate certificate = new Certificate();
-        certificate.setTypeVersion(INTYG_TYPE_VERSION);
-        certificate.setDeletedByCareGiver(Boolean.TRUE);
-        Certificate certificate2 = new Certificate();
-        certificate2.setTypeVersion(INTYG_TYPE_VERSION);
-        certificate2.setDeletedByCareGiver(Boolean.FALSE);
+    Certificate certificate = new Certificate();
+    certificate.setTypeVersion(INTYG_TYPE_VERSION);
+    certificate.setDeletedByCareGiver(Boolean.TRUE);
+    Certificate certificate2 = new Certificate();
+    certificate2.setTypeVersion(INTYG_TYPE_VERSION);
+    certificate2.setDeletedByCareGiver(Boolean.FALSE);
 
-        List<Certificate> result = Arrays.asList(certificate, certificate2);
+    List<Certificate> result = Arrays.asList(certificate, certificate2);
 
-        when(certificateService.listCertificatesForCare(civicRegistrationNumber, careUnit)).thenReturn(result);
+    when(certificateService.listCertificatesForCare(civicRegistrationNumber, careUnit))
+        .thenReturn(result);
 
-        ListCertificatesForCareType parameters = createListCertificatesRequest(civicRegistrationNumber, createHsaId("vardgivare"),
-            createHsaId("enhet"));
+    ListCertificatesForCareType parameters =
+        createListCertificatesRequest(
+            civicRegistrationNumber, createHsaId("vardgivare"), createHsaId("enhet"));
 
-        ListCertificatesForCareResponseType response = responder.listCertificatesForCare(null, parameters);
+    ListCertificatesForCareResponseType response =
+        responder.listCertificatesForCare(null, parameters);
 
-        verify(certificateService).listCertificatesForCare(civicRegistrationNumber, careUnit);
-        verify(moduleApi).getIntygFromUtlatande(any(Utlatande.class));
-        verify(moduleApi).getUtlatandeFromXml(or(isNull(), anyString()));
+    verify(certificateService).listCertificatesForCare(civicRegistrationNumber, careUnit);
+    verify(moduleApi).getIntygFromUtlatande(any(Utlatande.class));
+    verify(moduleApi).getUtlatandeFromXml(or(isNull(), anyString()));
 
-        // We only return Intyg that are not deletedByCaregiver
-        assertEquals(1, response.getIntygsLista().getIntyg().size());
-    }
+    // We only return Intyg that are not deletedByCaregiver
+    assertEquals(1, response.getIntygsLista().getIntyg().size());
+  }
 
-    @Test
-    void statusesAreFilteredForCare() {
-        // Given
-        List<String> careUnit = Collections.singletonList("enhet");
-        LocalDateTime firstStatusSaved = LocalDateTime.of(2017, 4, 7, 15, 15);
-        LocalDateTime[] timestamps = {
-            firstStatusSaved,
-            firstStatusSaved.plusHours(1),
-            firstStatusSaved.plusHours(2),
-            firstStatusSaved.plusHours(3),
-            firstStatusSaved.plusHours(4),
-            firstStatusSaved.plusHours(5),
-        };
-        Personnummer pnr = createPnr("19121212-1212");
+  @Test
+  void statusesAreFilteredForCare() {
+    // Given
+    List<String> careUnit = Collections.singletonList("enhet");
+    LocalDateTime firstStatusSaved = LocalDateTime.of(2017, 4, 7, 15, 15);
+    LocalDateTime[] timestamps = {
+      firstStatusSaved,
+      firstStatusSaved.plusHours(1),
+      firstStatusSaved.plusHours(2),
+      firstStatusSaved.plusHours(3),
+      firstStatusSaved.plusHours(4),
+      firstStatusSaved.plusHours(5),
+    };
+    Personnummer pnr = createPnr("19121212-1212");
 
-        Certificate certificate = new Certificate();
-        certificate.setStates(Arrays.asList(
-            new CertificateStateHistoryEntry(FKASSA_RECIPIENT_ID, CertificateState.SENT, timestamps[0]),
-            new CertificateStateHistoryEntry(OTHER_RECIPIENT_ID, CertificateState.SENT, timestamps[1]),
-            new CertificateStateHistoryEntry(OTHER_RECIPIENT_ID, CertificateState.DELETED, timestamps[3]),
-            new CertificateStateHistoryEntry(OTHER_RECIPIENT_ID, CertificateState.RESTORED, timestamps[4]),
-            new CertificateStateHistoryEntry(OTHER_RECIPIENT_ID, CertificateState.CANCELLED, timestamps[5])));
-        List<Certificate> result = List.of(certificate);
+    Certificate certificate = new Certificate();
+    certificate.setStates(
+        Arrays.asList(
+            new CertificateStateHistoryEntry(
+                FKASSA_RECIPIENT_ID, CertificateState.SENT, timestamps[0]),
+            new CertificateStateHistoryEntry(
+                OTHER_RECIPIENT_ID, CertificateState.SENT, timestamps[1]),
+            new CertificateStateHistoryEntry(
+                OTHER_RECIPIENT_ID, CertificateState.DELETED, timestamps[3]),
+            new CertificateStateHistoryEntry(
+                OTHER_RECIPIENT_ID, CertificateState.RESTORED, timestamps[4]),
+            new CertificateStateHistoryEntry(
+                OTHER_RECIPIENT_ID, CertificateState.CANCELLED, timestamps[5])));
+    List<Certificate> result = List.of(certificate);
 
-        when(certificateService.listCertificatesForCare(pnr, careUnit)).thenReturn(result);
+    when(certificateService.listCertificatesForCare(pnr, careUnit)).thenReturn(result);
 
-        ListCertificatesForCareType parameters = createListCertificatesRequest(pnr, createHsaId("vardgivare"),
-            createHsaId("enhet"));
+    ListCertificatesForCareType parameters =
+        createListCertificatesRequest(pnr, createHsaId("vardgivare"), createHsaId("enhet"));
 
-        ListCertificatesForCareResponseType response = responder.listCertificatesForCare(null, parameters);
+    ListCertificatesForCareResponseType response =
+        responder.listCertificatesForCare(null, parameters);
 
-        // Then
-        assertEquals(1, response.getIntygsLista().getIntyg().size());
-        assertEquals(3, response.getIntygsLista().getIntyg().getFirst().getStatus().size());
+    // Then
+    assertEquals(1, response.getIntygsLista().getIntyg().size());
+    assertEquals(3, response.getIntygsLista().getIntyg().getFirst().getStatus().size());
 
-        IntygsStatus status = response.getIntygsLista().getIntyg().getFirst().getStatus().getFirst();
-        assertEquals(OTHER_RECIPIENT_ID, status.getPart().getCode());
-        assertNotNull(status.getPart().getCodeSystem());
-        assertEquals(timestamps[5], status.getTidpunkt());
-        assertEquals(StatusKod.CANCEL.name(), status.getStatus().getCode());
-        assertNotNull(status.getStatus().getCodeSystem());
+    IntygsStatus status = response.getIntygsLista().getIntyg().getFirst().getStatus().getFirst();
+    assertEquals(OTHER_RECIPIENT_ID, status.getPart().getCode());
+    assertNotNull(status.getPart().getCodeSystem());
+    assertEquals(timestamps[5], status.getTidpunkt());
+    assertEquals(StatusKod.CANCEL.name(), status.getStatus().getCode());
+    assertNotNull(status.getStatus().getCodeSystem());
 
-        status = response.getIntygsLista().getIntyg().getFirst().getStatus().get(1);
-        assertEquals(OTHER_RECIPIENT_ID, status.getPart().getCode());
-        assertNotNull(status.getPart().getCodeSystem());
-        assertEquals(timestamps[1], status.getTidpunkt());
-        assertEquals(StatusKod.SENTTO.name(), status.getStatus().getCode());
-        assertNotNull(status.getStatus().getCodeSystem());
+    status = response.getIntygsLista().getIntyg().getFirst().getStatus().get(1);
+    assertEquals(OTHER_RECIPIENT_ID, status.getPart().getCode());
+    assertNotNull(status.getPart().getCodeSystem());
+    assertEquals(timestamps[1], status.getTidpunkt());
+    assertEquals(StatusKod.SENTTO.name(), status.getStatus().getCode());
+    assertNotNull(status.getStatus().getCodeSystem());
 
-        status = response.getIntygsLista().getIntyg().getFirst().getStatus().get(2);
-        assertEquals(FKASSA_RECIPIENT_ID, status.getPart().getCode());
-        assertNotNull(status.getPart().getCodeSystem());
-        assertEquals(timestamps[0], status.getTidpunkt());
-        assertEquals(StatusKod.SENTTO.name(), status.getStatus().getCode());
-        assertNotNull(status.getStatus().getCodeSystem());
-    }
+    status = response.getIntygsLista().getIntyg().getFirst().getStatus().get(2);
+    assertEquals(FKASSA_RECIPIENT_ID, status.getPart().getCode());
+    assertNotNull(status.getPart().getCodeSystem());
+    assertEquals(timestamps[0], status.getTidpunkt());
+    assertEquals(StatusKod.SENTTO.name(), status.getStatus().getCode());
+    assertNotNull(status.getStatus().getCodeSystem());
+  }
 
-    private HsaId createHsaId(String id) {
-        HsaId hsaId = new HsaId();
-        hsaId.setExtension(id);
-        hsaId.setRoot("root");
-        return hsaId;
-    }
+  private HsaId createHsaId(String id) {
+    HsaId hsaId = new HsaId();
+    hsaId.setExtension(id);
+    hsaId.setRoot("root");
+    return hsaId;
+  }
 
-    private ListCertificatesForCareType createListCertificatesRequest(Personnummer civicRegistrationNumber, HsaId vardgivarId,
-        HsaId enhet) {
-        ListCertificatesForCareType parameters = new ListCertificatesForCareType();
-        parameters.setPersonId(new PersonId());
-        parameters.getPersonId().setExtension(civicRegistrationNumber.getPersonnummer());
-        parameters.setVardgivarId(vardgivarId);
-        parameters.getEnhetsId().add(enhet);
-        return parameters;
-    }
+  private ListCertificatesForCareType createListCertificatesRequest(
+      Personnummer civicRegistrationNumber, HsaId vardgivarId, HsaId enhet) {
+    ListCertificatesForCareType parameters = new ListCertificatesForCareType();
+    parameters.setPersonId(new PersonId());
+    parameters.getPersonId().setExtension(civicRegistrationNumber.getPersonnummer());
+    parameters.setVardgivarId(vardgivarId);
+    parameters.getEnhetsId().add(enhet);
+    return parameters;
+  }
 
-    private Personnummer createPnr(String pnr) {
-        return Personnummer.createPersonnummer(pnr)
-            .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer"));
-    }
-
+  private Personnummer createPnr(String pnr) {
+    return Personnummer.createPersonnummer(pnr)
+        .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer"));
+  }
 }

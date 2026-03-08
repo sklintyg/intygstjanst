@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -34,40 +34,36 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
-import se.inera.intyg.intygstjanst.infrastructure.diagnosis.DiagnosisDescriptionService;
-import se.inera.intyg.intygstjanst.infrastructure.diagnosis.DiagnosisDescriptionProvider;
 
 @ExtendWith(MockitoExtension.class)
 class DiagnosisDescriptionServiceTest {
 
+  @Mock private DiagnosisDescriptionProvider diagnosisDescriptionProvider;
+  @InjectMocks private DiagnosisDescriptionService diagnosisDescriptionService;
+  private static final String B45 = "B45";
+  private static final String B45_EXPECTED_RESULT = "Kryptokockos";
 
-    @Mock
-    private DiagnosisDescriptionProvider diagnosisDescriptionProvider;
-    @InjectMocks
-    private DiagnosisDescriptionService diagnosisDescriptionService;
-    private static final String B45 = "B45";
-    private static final String B45_EXPECTED_RESULT = "Kryptokockos";
+  @BeforeEach
+  void setUp()
+      throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    MockitoAnnotations.openMocks(this);
+    when(diagnosisDescriptionProvider.getDiagnosisDescription()).thenReturn(getDescriptions());
 
-    @BeforeEach
-    void setUp() throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        MockitoAnnotations.openMocks(this);
-        when(diagnosisDescriptionProvider.getDiagnosisDescription()).thenReturn(getDescriptions());
+    Method postConstruct =
+        DiagnosisDescriptionService.class.getDeclaredMethod("init", (Class<?>[]) null);
+    postConstruct.setAccessible(true);
+    postConstruct.invoke(diagnosisDescriptionService);
+  }
 
-        Method postConstruct = DiagnosisDescriptionService.class.getDeclaredMethod("init", (Class<?>[]) null);
-        postConstruct.setAccessible(true);
-        postConstruct.invoke(diagnosisDescriptionService);
-    }
+  @Test
+  void shouldReturnDescriptionForCode() {
+    final var result = diagnosisDescriptionService.getDiagnosisDescriptionFromSickLeave(B45);
+    assertEquals(B45_EXPECTED_RESULT, result);
+  }
 
-    @Test
-    void shouldReturnDescriptionForCode() {
-        final var result = diagnosisDescriptionService.getDiagnosisDescriptionFromSickLeave(B45);
-        assertEquals(B45_EXPECTED_RESULT, result);
-    }
-
-
-    private Map<String, String> getDescriptions() {
-        final var descriptionMap = new HashMap<String, String>();
-        descriptionMap.put("B45", "Kryptokockos");
-        return descriptionMap;
-    }
+  private Map<String, String> getDescriptions() {
+    final var descriptionMap = new HashMap<String, String>();
+    descriptionMap.put("B45", "Kryptokockos");
+    return descriptionMap;
+  }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.application.message.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,11 +27,9 @@ import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.ArendeRe
 @Service
 public class ArendeService {
 
-    @Autowired
-    private ArendeRepository arendeRepository;
+  @Autowired private ArendeRepository arendeRepository;
 
-    public Arende processIncomingMessage(Arende message) {
-        return arendeRepository.save(message);
-    }
-
+  public Arende processIncomingMessage(Arende message) {
+    return arendeRepository.save(message);
+  }
 }

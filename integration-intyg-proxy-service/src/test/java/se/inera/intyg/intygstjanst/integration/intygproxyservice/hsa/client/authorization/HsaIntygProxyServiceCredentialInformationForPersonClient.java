@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -37,26 +37,27 @@ import se.inera.intyg.intygstjanst.integration.intygproxyservice.hsa.dto.authori
 @Service
 public class HsaIntygProxyServiceCredentialInformationForPersonClient {
 
-    private final RestClient ipsRestClient;
-    private final IntygProxyServiceProperties properties;
+  private final RestClient ipsRestClient;
+  private final IntygProxyServiceProperties properties;
 
-    @Autowired
-    public HsaIntygProxyServiceCredentialInformationForPersonClient(
-        @Qualifier("hsaIntygProxyServiceRestClient") RestClient ipsRestClient,
-        IntygProxyServiceProperties properties) {
-        this.ipsRestClient = ipsRestClient;
-        this.properties = properties;
-    }
+  @Autowired
+  public HsaIntygProxyServiceCredentialInformationForPersonClient(
+      @Qualifier("hsaIntygProxyServiceRestClient") RestClient ipsRestClient,
+      IntygProxyServiceProperties properties) {
+    this.ipsRestClient = ipsRestClient;
+    this.properties = properties;
+  }
 
-    public GetCredentialInformationResponseDTO get(GetCredentialInformationRequestDTO getCredentialInformationRequestDTO) {
-        return ipsRestClient
-            .post()
-            .uri(properties.hsa().credentialInformationEndpoint())
-            .body(getCredentialInformationRequestDTO)
-            .header(LOG_TRACE_ID_HEADER, MDC.get(TRACE_ID_KEY))
-            .header(LOG_SESSION_ID_HEADER, MDC.get(SESSION_ID_KEY))
-            .contentType(MediaType.APPLICATION_JSON)
-            .retrieve()
-            .body(GetCredentialInformationResponseDTO.class);
-    }
+  public GetCredentialInformationResponseDTO get(
+      GetCredentialInformationRequestDTO getCredentialInformationRequestDTO) {
+    return ipsRestClient
+        .post()
+        .uri(properties.hsa().credentialInformationEndpoint())
+        .body(getCredentialInformationRequestDTO)
+        .header(LOG_TRACE_ID_HEADER, MDC.get(TRACE_ID_KEY))
+        .header(LOG_SESSION_ID_HEADER, MDC.get(SESSION_ID_KEY))
+        .contentType(MediaType.APPLICATION_JSON)
+        .retrieve()
+        .body(GetCredentialInformationResponseDTO.class);
+  }
 }

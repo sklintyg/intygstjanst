@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.application.recipient;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,16 +28,15 @@ import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Approved
 @Service
 public class ReceiverService {
 
-    @Autowired
-    private ApprovedReceiverDao approvedReceiverDao;
+  @Autowired private ApprovedReceiverDao approvedReceiverDao;
 
-    @Transactional
-    public void registerApprovedReceiver(ApprovedReceiver approvedReceiver) {
-        approvedReceiverDao.store(approvedReceiver);
-    }
+  @Transactional
+  public void registerApprovedReceiver(ApprovedReceiver approvedReceiver) {
+    approvedReceiverDao.store(approvedReceiver);
+  }
 
-    @Transactional
-    public void clearApprovedReceiversForCertificate(String intygsId) {
-        approvedReceiverDao.clearApprovedReceiversForCertificate(intygsId);
-    }
+  @Transactional
+  public void clearApprovedReceiversForCertificate(String intygsId) {
+    approvedReceiverDao.clearApprovedReceiversForCertificate(intygsId);
+  }
 }

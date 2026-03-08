@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -36,33 +36,41 @@ import se.inera.intyg.intygstjanst.integration.intygproxyservice.hsa.dto.organiz
 @RequiredArgsConstructor
 public class GetHealthCareProviderService {
 
-    private final HsaIntygProxyServiceHealthCareProviderClient hsaIntygProxyServiceHealthCareProviderClient;
+  private final HsaIntygProxyServiceHealthCareProviderClient
+      hsaIntygProxyServiceHealthCareProviderClient;
 
-    @Cacheable(cacheNames = HEALTH_CARE_PROVIDER_CACHE_NAME, key = "#request.hsaId", unless = "#result == null")
-    public List<HealthCareProvider> get(GetHealthCareProviderRequestDTO request) {
-        validateRequest(request);
-        final var response = hsaIntygProxyServiceHealthCareProviderClient.get(request);
-        if (response == null || response.getHealthCareProviders() == null || response.getHealthCareProviders().isEmpty()) {
-            log.warn("No health care providers were found for hsaId '{}' or organizationNumber '{}', returning empty list",
-                request.getHsaId(),
-                request.getOrganizationNumber()
-            );
-            return Collections.emptyList();
-        }
-        return response.getHealthCareProviders();
+  @Cacheable(
+      cacheNames = HEALTH_CARE_PROVIDER_CACHE_NAME,
+      key = "#request.hsaId",
+      unless = "#result == null")
+  public List<HealthCareProvider> get(GetHealthCareProviderRequestDTO request) {
+    validateRequest(request);
+    final var response = hsaIntygProxyServiceHealthCareProviderClient.get(request);
+    if (response == null
+        || response.getHealthCareProviders() == null
+        || response.getHealthCareProviders().isEmpty()) {
+      log.warn(
+          "No health care providers were found for hsaId '{}' or organizationNumber '{}', returning empty list",
+          request.getHsaId(),
+          request.getOrganizationNumber());
+      return Collections.emptyList();
+    }
+    return response.getHealthCareProviders();
+  }
+
+  private void validateRequest(GetHealthCareProviderRequestDTO request) {
+    if (isParameterDefined(request.getHsaId())
+        && isParameterDefined(request.getOrganizationNumber())) {
+      throw new IllegalArgumentException("Both hsaId and organizationNumber cannot be defined");
     }
 
-    private void validateRequest(GetHealthCareProviderRequestDTO request) {
-        if (isParameterDefined(request.getHsaId()) && isParameterDefined(request.getOrganizationNumber())) {
-            throw new IllegalArgumentException("Both hsaId and organizationNumber cannot be defined");
-        }
-
-        if (!isParameterDefined(request.getHsaId()) && !isParameterDefined(request.getOrganizationNumber())) {
-            throw new IllegalArgumentException("One of hsaId or organizationNumber has to be defined");
-        }
+    if (!isParameterDefined(request.getHsaId())
+        && !isParameterDefined(request.getOrganizationNumber())) {
+      throw new IllegalArgumentException("One of hsaId or organizationNumber has to be defined");
     }
+  }
 
-    private boolean isParameterDefined(String value) {
-        return value != null && !value.isEmpty();
-    }
+  private boolean isParameterDefined(String value) {
+    return value != null && !value.isEmpty();
+  }
 }

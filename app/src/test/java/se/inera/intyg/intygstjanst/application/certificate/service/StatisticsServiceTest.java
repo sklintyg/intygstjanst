@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.application.certificate.service;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -46,190 +47,191 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.jms.JmsException;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
-import se.inera.intyg.intygstjanst.application.certificate.service.StatisticsService;
 import se.inera.intyg.intygstjanst.infrastructure.config.properties.AppProperties;
+import se.inera.intyg.intygstjanst.infrastructure.logging.MonitoringLogService;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.OriginalCertificate;
-import se.inera.intyg.intygstjanst.infrastructure.logging.MonitoringLogService;
 
 @ExtendWith(MockitoExtension.class)
 class StatisticsServiceTest {
 
-    private static final AppProperties.Jms JMS_DISABLED =
-        new AppProperties.Jms("certificate.queue", "internal.queue", "event.queue", false);
-    private static final AppProperties.Jms JMS_ENABLED =
-        new AppProperties.Jms("certificate.queue", "internal.queue", "event.queue", true);
+  private static final AppProperties.Jms JMS_DISABLED =
+      new AppProperties.Jms("certificate.queue", "internal.queue", "event.queue", false);
+  private static final AppProperties.Jms JMS_ENABLED =
+      new AppProperties.Jms("certificate.queue", "internal.queue", "event.queue", true);
 
-    @Mock
-    private JmsTemplate template;
+  @Mock private JmsTemplate template;
 
-    @Mock
-    private MonitoringLogService monitoringLogService;
+  @Mock private MonitoringLogService monitoringLogService;
 
-    @Mock
-    private AppProperties appProperties;
+  @Mock private AppProperties appProperties;
 
-    @InjectMocks
-    private StatisticsService serviceImpl;
+  @InjectMocks private StatisticsService serviceImpl;
 
-    @BeforeEach
-    void setUp() {
-        when(appProperties.jms()).thenReturn(JMS_DISABLED);
-    }
+  @BeforeEach
+  void setUp() {
+    when(appProperties.jms()).thenReturn(JMS_DISABLED);
+  }
 
-    @Test
-    void disabledServiceDoesNothingOnCreated() {
-        serviceImpl.created(null, null, null, null);
-        verify(template, never()).send(anyString(), any(MessageCreator.class));
-    }
+  @Test
+  void disabledServiceDoesNothingOnCreated() {
+    serviceImpl.created(null, null, null, null);
+    verify(template, never()).send(anyString(), any(MessageCreator.class));
+  }
 
-    @Test
-    void disabledServiceDoesNothingOnRevoked() {
-        serviceImpl.revoked(null, null, null, null);
-        verify(template, never()).send(anyString(), any(MessageCreator.class));
-    }
+  @Test
+  void disabledServiceDoesNothingOnRevoked() {
+    serviceImpl.revoked(null, null, null, null);
+    verify(template, never()).send(anyString(), any(MessageCreator.class));
+  }
 
-    @Test
-    void serviceSendsDocumentAndIdForCreate() throws JMSException {
-        final String xml = "The document";
-        final String id = "The id";
-        final String type = "the type of the certificate";
+  @Test
+  void serviceSendsDocumentAndIdForCreate() throws JMSException {
+    final String xml = "The document";
+    final String id = "The id";
+    final String type = "the type of the certificate";
 
-        when(appProperties.jms()).thenReturn(JMS_ENABLED);
+    when(appProperties.jms()).thenReturn(JMS_ENABLED);
 
-        ArgumentCaptor<String> destination = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<MessageCreator> messageCreator = ArgumentCaptor.forClass(MessageCreator.class);
+    ArgumentCaptor<String> destination = ArgumentCaptor.forClass(String.class);
+    ArgumentCaptor<MessageCreator> messageCreator = ArgumentCaptor.forClass(MessageCreator.class);
 
-        TextMessage message = mock(TextMessage.class);
-        Session session = mock(Session.class);
+    TextMessage message = mock(TextMessage.class);
+    Session session = mock(Session.class);
 
-        when(session.createTextMessage(xml)).thenReturn(message);
+    when(session.createTextMessage(xml)).thenReturn(message);
 
-        boolean created = serviceImpl.created(xml, id, type, "unit");
+    boolean created = serviceImpl.created(xml, id, type, "unit");
 
-        assertTrue(created);
-        verify(template, only()).send(destination.capture(), messageCreator.capture());
-        messageCreator.getValue().createMessage(session);
-        verify(message).setStringProperty("action", "created");
-        verify(message).setStringProperty("certificate-id", id);
-        verify(message).setStringProperty("certificate-type", type);
-        verify(message, never()).setStringProperty(eq("certificate-recipient"), any());
-        verify(monitoringLogService, only()).logStatisticsCreated(id, type, "unit");
-    }
+    assertTrue(created);
+    verify(template, only()).send(destination.capture(), messageCreator.capture());
+    messageCreator.getValue().createMessage(session);
+    verify(message).setStringProperty("action", "created");
+    verify(message).setStringProperty("certificate-id", id);
+    verify(message).setStringProperty("certificate-type", type);
+    verify(message, never()).setStringProperty(eq("certificate-recipient"), any());
+    verify(monitoringLogService, only()).logStatisticsCreated(id, type, "unit");
+  }
 
-    @Test
-    void serviceSendsCertificateSent() throws Exception {
+  @Test
+  void serviceSendsCertificateSent() throws Exception {
 
-        final String action = "sent";
-        final String xml = null;
-        final String id = "id";
-        final String type = "typ";
-        final String unit = "unit";
-        final String recipient = "recipient";
+    final String action = "sent";
+    final String xml = null;
+    final String id = "id";
+    final String type = "typ";
+    final String unit = "unit";
+    final String recipient = "recipient";
 
-        when(appProperties.jms()).thenReturn(JMS_ENABLED);
+    when(appProperties.jms()).thenReturn(JMS_ENABLED);
 
-        ArgumentCaptor<String> destination = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<MessageCreator> messageCreator = ArgumentCaptor.forClass(MessageCreator.class);
+    ArgumentCaptor<String> destination = ArgumentCaptor.forClass(String.class);
+    ArgumentCaptor<MessageCreator> messageCreator = ArgumentCaptor.forClass(MessageCreator.class);
 
-        TextMessage message = mock(TextMessage.class);
-        Session session = mock(Session.class);
+    TextMessage message = mock(TextMessage.class);
+    Session session = mock(Session.class);
 
-        doReturn(message).when(session).createTextMessage(xml);
+    doReturn(message).when(session).createTextMessage(xml);
 
-        boolean sent = serviceImpl.sent(id, type, unit, recipient);
+    boolean sent = serviceImpl.sent(id, type, unit, recipient);
 
-        assertTrue(sent);
-        verify(template, only()).send(destination.capture(), messageCreator.capture());
-        messageCreator.getValue().createMessage(session);
+    assertTrue(sent);
+    verify(template, only()).send(destination.capture(), messageCreator.capture());
+    messageCreator.getValue().createMessage(session);
 
-        verify(message).setStringProperty("action", action);
-        verify(message).setStringProperty("certificate-id", id);
-        verify(message).setStringProperty("certificate-type", type);
-        verify(message).setStringProperty("certificate-recipient", recipient);
-        verify(monitoringLogService, only()).logStatisticsSent(id, type, unit, recipient);
+    verify(message).setStringProperty("action", action);
+    verify(message).setStringProperty("certificate-id", id);
+    verify(message).setStringProperty("certificate-type", type);
+    verify(message).setStringProperty("certificate-recipient", recipient);
+    verify(monitoringLogService, only()).logStatisticsSent(id, type, unit, recipient);
+  }
 
-    }
+  @Test
+  void serviceSendsDocumentAndIdForRevoke() throws Exception {
+    final String type = "lisjp";
+    final String xmlBody = "xml body";
+    final String id = "The id";
 
-    @Test
-    void serviceSendsDocumentAndIdForRevoke() throws Exception {
-        final String type = "lisjp";
-        final String xmlBody = "xml body";
-        final String id = "The id";
+    when(appProperties.jms()).thenReturn(JMS_ENABLED);
 
-        when(appProperties.jms()).thenReturn(JMS_ENABLED);
+    ArgumentCaptor<String> destination = ArgumentCaptor.forClass(String.class);
+    ArgumentCaptor<MessageCreator> messageCreator = ArgumentCaptor.forClass(MessageCreator.class);
 
-        ArgumentCaptor<String> destination = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<MessageCreator> messageCreator = ArgumentCaptor.forClass(MessageCreator.class);
+    TextMessage message = mock(TextMessage.class);
+    Session session = mock(Session.class);
+    Certificate certificate = mock(Certificate.class);
+    OriginalCertificate originalCertificate = mock(OriginalCertificate.class);
 
-        TextMessage message = mock(TextMessage.class);
-        Session session = mock(Session.class);
-        Certificate certificate = mock(Certificate.class);
-        OriginalCertificate originalCertificate = mock(OriginalCertificate.class);
+    when(originalCertificate.getDocument()).thenReturn(xmlBody);
+    when(certificate.getOriginalCertificate()).thenReturn(originalCertificate);
+    when(certificate.getId()).thenReturn(id);
+    when(certificate.getType()).thenReturn(type);
+    when(session.createTextMessage(xmlBody)).thenReturn(message);
 
-        when(originalCertificate.getDocument()).thenReturn(xmlBody);
-        when(certificate.getOriginalCertificate()).thenReturn(originalCertificate);
-        when(certificate.getId()).thenReturn(id);
-        when(certificate.getType()).thenReturn(type);
-        when(session.createTextMessage(xmlBody)).thenReturn(message);
+    boolean revoked =
+        serviceImpl.revoked(
+            certificate.getOriginalCertificate().getDocument(),
+            certificate.getId(),
+            certificate.getType(),
+            "unit");
 
-        boolean revoked = serviceImpl.revoked(certificate.getOriginalCertificate().getDocument(), certificate.getId(),
-            certificate.getType(), "unit");
+    assertTrue(revoked);
+    verify(template, only()).send(destination.capture(), messageCreator.capture());
+    messageCreator.getValue().createMessage(session);
 
-        assertTrue(revoked);
-        verify(template, only()).send(destination.capture(), messageCreator.capture());
-        messageCreator.getValue().createMessage(session);
+    verify(message).setStringProperty("action", "revoked");
+    verify(message).setStringProperty("certificate-id", id);
+    verify(message).setStringProperty("certificate-type", type);
+    verify(message, never()).setStringProperty(eq("certificate-recipient"), any());
+    verify(monitoringLogService, only()).logStatisticsRevoked(id, certificate.getType(), "unit");
+  }
 
-        verify(message).setStringProperty("action", "revoked");
-        verify(message).setStringProperty("certificate-id", id);
-        verify(message).setStringProperty("certificate-type", type);
-        verify(message, never()).setStringProperty(eq("certificate-recipient"), any());
-        verify(monitoringLogService, only()).logStatisticsRevoked(id, certificate.getType(), "unit");
-    }
+  @Test
+  void serviceSendsDocumentAndIdForMessageSent() throws Exception {
+    final String messageBody = "Message body";
+    final String messageId = "This is the id of the message";
 
-    @Test
-    void serviceSendsDocumentAndIdForMessageSent() throws Exception {
-        final String messageBody = "Message body";
-        final String messageId = "This is the id of the message";
+    when(appProperties.jms()).thenReturn(JMS_ENABLED);
 
-        when(appProperties.jms()).thenReturn(JMS_ENABLED);
+    ArgumentCaptor<String> destination = ArgumentCaptor.forClass(String.class);
+    ArgumentCaptor<MessageCreator> messageCreator = ArgumentCaptor.forClass(MessageCreator.class);
 
-        ArgumentCaptor<String> destination = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<MessageCreator> messageCreator = ArgumentCaptor.forClass(MessageCreator.class);
+    TextMessage message = mock(TextMessage.class);
+    Session session = mock(Session.class);
 
-        TextMessage message = mock(TextMessage.class);
-        Session session = mock(Session.class);
+    when(session.createTextMessage(messageBody)).thenReturn(message);
 
-        when(session.createTextMessage(messageBody)).thenReturn(message);
+    boolean messageSent = serviceImpl.messageSent(messageBody, messageId, "topic");
 
-        boolean messageSent = serviceImpl.messageSent(messageBody, messageId, "topic");
+    assertTrue(messageSent);
+    verify(template, only()).send(destination.capture(), messageCreator.capture());
+    messageCreator.getValue().createMessage(session);
 
-        assertTrue(messageSent);
-        verify(template, only()).send(destination.capture(), messageCreator.capture());
-        messageCreator.getValue().createMessage(session);
+    verify(message).setStringProperty("action", "message-sent");
+    verify(message).setStringProperty("message-id", messageId);
+    verify(monitoringLogService, only()).logStatisticsMessageSent(messageId, "topic");
+  }
 
-        verify(message).setStringProperty("action", "message-sent");
-        verify(message).setStringProperty("message-id", messageId);
-        verify(monitoringLogService, only()).logStatisticsMessageSent(messageId, "topic");
-    }
+  @Test
+  void testNoJmsTemplateConfigured() {
+    when(appProperties.jms()).thenReturn(JMS_ENABLED);
+    StatisticsService serviceWithNullTemplate =
+        new StatisticsService(null, monitoringLogService, appProperties);
 
-    @Test
-    void testNoJmsTemplateConfigured() {
-        when(appProperties.jms()).thenReturn(JMS_ENABLED);
-        StatisticsService serviceWithNullTemplate = new StatisticsService(null, monitoringLogService, appProperties);
+    assertThrows(
+        NullPointerException.class,
+        () -> serviceWithNullTemplate.created("The document", "The id", "luse", "unit"));
+  }
 
-        assertThrows(NullPointerException.class, () -> serviceWithNullTemplate.created("The document", "The id", "luse", "unit"));
-    }
+  @Test
+  void testJmsTemplateThrowsJmsException() {
+    when(appProperties.jms()).thenReturn(JMS_ENABLED);
+    doThrow(mock(JmsException.class)).when(template).send(anyString(), any(MessageCreator.class));
 
-    @Test
-    void testJmsTemplateThrowsJmsException() {
-        when(appProperties.jms()).thenReturn(JMS_ENABLED);
-        doThrow(mock(JmsException.class)).when(template).send(anyString(), any(MessageCreator.class));
+    boolean created = serviceImpl.created("The document", "The id", "luse", "unit");
 
-        boolean created = serviceImpl.created("The document", "The id", "luse", "unit");
-
-        assertFalse(created);
-        verify(template, only()).send(anyString(), any(MessageCreator.class));
-        verifyNoInteractions(monitoringLogService);
-    }
+    assertFalse(created);
+    verify(template, only()).send(anyString(), any(MessageCreator.class));
+    verifyNoInteractions(monitoringLogService);
+  }
 }

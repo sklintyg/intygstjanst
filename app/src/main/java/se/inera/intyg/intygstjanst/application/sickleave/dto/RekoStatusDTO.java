@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -29,13 +29,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class RekoStatusDTO {
 
-    private RekoStatusTypeDTO status;
-    private String patientId;
-    private String careProviderId;
-    private String careUnitId;
-    private String unitId;
-    private String staffId;
-    private String staffName;
-    private LocalDateTime sickLeaveTimestamp;
-    private LocalDateTime registrationTimestamp;
+  private RekoStatusTypeDTO status;
+  private String patientId;
+  private String careProviderId;
+  private String careUnitId;
+  private String unitId;
+  private String staffId;
+  private String staffName;
+  private LocalDateTime sickLeaveTimestamp;
+  private LocalDateTime registrationTimestamp;
 }

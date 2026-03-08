@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,20 +16,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.application.sickleave.converter;
 
+import com.google.common.base.Strings;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
-import com.google.common.base.Strings;
-
 import se.inera.intyg.common.fk7263.model.internal.Fk7263Utlatande;
 import se.inera.intyg.common.fkparent.model.internal.Diagnos;
 import se.inera.intyg.common.lisjp.model.internal.Sjukskrivning;
@@ -45,236 +43,266 @@ import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Sjukfall
 /**
  * Converts a (fk7263) Certificate to a CertificateSjukfall.
  *
- * Created by eriklupander on 2016-02-04.
+ * <p>Created by eriklupander on 2016-02-04.
  */
 @Component
 public class CertificateToSjukfallCertificateConverter {
 
-    private static final Logger LOG = LoggerFactory.getLogger(CertificateToSjukfallCertificateConverter.class);
+  private static final Logger LOG =
+      LoggerFactory.getLogger(CertificateToSjukfallCertificateConverter.class);
 
-    private static final int WORK_CAPACITY_100 = 100;
-    private static final int WORK_CAPACITY_75 = 75;
-    private static final int WORK_CAPACITY_50 = 50;
-    private static final int WORK_CAPACITY_25 = 25;
+  private static final int WORK_CAPACITY_100 = 100;
+  private static final int WORK_CAPACITY_75 = 75;
+  private static final int WORK_CAPACITY_50 = 50;
+  private static final int WORK_CAPACITY_25 = 25;
 
-    // Ur kodverk KV_FKMU_0002
-    private static final String NUVARANDE_ARBETE = "NUVARANDE_ARBETE";
-    private static final String ARBETSSOKANDE = "ARBETSSOKANDE";
-    private static final String FORALDRALEDIG = "FORALDRALEDIG";
+  // Ur kodverk KV_FKMU_0002
+  private static final String NUVARANDE_ARBETE = "NUVARANDE_ARBETE";
+  private static final String ARBETSSOKANDE = "ARBETSSOKANDE";
+  private static final String FORALDRALEDIG = "FORALDRALEDIG";
 
-    /**
-     * Converts a fk7263 certificate into a SjukfallCertificate.
-     *
-     * @param certificate fk7263 cert
-     * @param utlatande fk7263 Utlatande (will perform instanceof check internally)
-     * @return A SjukfallCertificate
-     * @throws IllegalArgumentException if fk7263 check fails.
-     */
-    //NOTE: See INTYG-7275
-    public SjukfallCertificate convertFk7263(Certificate certificate, Utlatande utlatande) {
+  /**
+   * Converts a fk7263 certificate into a SjukfallCertificate.
+   *
+   * @param certificate fk7263 cert
+   * @param utlatande fk7263 Utlatande (will perform instanceof check internally)
+   * @return A SjukfallCertificate
+   * @throws IllegalArgumentException if fk7263 check fails.
+   */
+  // NOTE: See INTYG-7275
+  public SjukfallCertificate convertFk7263(Certificate certificate, Utlatande utlatande) {
 
-        if (!(utlatande instanceof Fk7263Utlatande)) {
-            throw new IllegalArgumentException("Cannot convert " + utlatande.getClass().getName() + " to SjukfallCertificate");
-        }
+    if (!(utlatande instanceof Fk7263Utlatande)) {
+      throw new IllegalArgumentException(
+          "Cannot convert " + utlatande.getClass().getName() + " to SjukfallCertificate");
+    }
 
-        Fk7263Utlatande fkUtlatande = (Fk7263Utlatande) utlatande;
+    Fk7263Utlatande fkUtlatande = (Fk7263Utlatande) utlatande;
 
-        return new SjukfallCertificateBuilder(Strings.nullToEmpty(certificate.getId()).trim())
+    return new SjukfallCertificateBuilder(Strings.nullToEmpty(certificate.getId()).trim())
+        .careGiverId(Strings.nullToEmpty(certificate.getCareGiverId()).trim())
+        .careUnitId(Strings.nullToEmpty(certificate.getCareUnitId()).trim())
+        .careUnitName(certificate.getCareUnitName())
+        .certificateType(certificate.getType())
+        .civicRegistrationNumber(
+            Strings.nullToEmpty(certificate.getCivicRegistrationNumber().getPersonnummerWithDash())
+                .trim())
+        .signingDoctorName(certificate.getSigningDoctorName())
+        .patientName(getPatientName(fkUtlatande.getGrundData().getPatient()))
+        .diagnoseCode(fkUtlatande.getDiagnosKod())
+        .signingDoctorId(
+            Strings.nullToEmpty(fkUtlatande.getGrundData().getSkapadAv().getPersonId()).trim())
+        .signingDoctorName(fkUtlatande.getGrundData().getSkapadAv().getFullstandigtNamn())
+        .signingDateTime(certificate.getSignedDate())
+        .certificateType(certificate.getType())
+        .deleted(certificate.isRevoked())
+        .workCapacities(buildWorkCapacitiesFk7263(fkUtlatande))
+        .employment(buildFk7263Sysselsattning(fkUtlatande))
+        .testCertificate(certificate.isTestCertificate())
+        .build();
+  }
+
+  // NUVARANDE_ARBETE|ARBETSSOKANDE|FORALDRALEDIG|STUDIER
+  private String buildFk7263Sysselsattning(Fk7263Utlatande fkUtlatande) {
+    List<String> sysselsattningar = new ArrayList<>();
+    if (fkUtlatande.isNuvarandeArbete()) {
+      sysselsattningar.add(NUVARANDE_ARBETE);
+    }
+    if (fkUtlatande.isArbetsloshet()) {
+      sysselsattningar.add(ARBETSSOKANDE);
+    }
+    if (fkUtlatande.isForaldrarledighet()) {
+      sysselsattningar.add(FORALDRALEDIG);
+    }
+    return sysselsattningar.stream().collect(Collectors.joining(","));
+  }
+
+  /**
+   * Converts a fk7263 certificate into a SjukfallCertificate.
+   *
+   * @param certificate fk7263 cert
+   * @param utlatande fk7263 Utlatande (will perform instanceof check internally)
+   * @return A SjukfallCertificate
+   * @throws IllegalArgumentException if fk7263 check fails.
+   */
+  public SjukfallCertificate convertLisjp(Certificate certificate, Utlatande utlatande) {
+
+    if (!(utlatande instanceof LisjpUtlatandeV1)) {
+      throw new IllegalArgumentException(
+          "Cannot convert " + utlatande.getClass().getName() + " to SjukfallCertificate");
+    }
+
+    LisjpUtlatandeV1 lisjpUtlatandeV1 = (LisjpUtlatandeV1) utlatande;
+
+    SjukfallCertificate sc =
+        new SjukfallCertificateBuilder(Strings.nullToEmpty(certificate.getId()).trim())
             .careGiverId(Strings.nullToEmpty(certificate.getCareGiverId()).trim())
             .careUnitId(Strings.nullToEmpty(certificate.getCareUnitId()).trim())
             .careUnitName(certificate.getCareUnitName())
             .certificateType(certificate.getType())
-            .civicRegistrationNumber(Strings.nullToEmpty(certificate.getCivicRegistrationNumber().getPersonnummerWithDash()).trim())
-            .signingDoctorName(certificate.getSigningDoctorName())
-            .patientName(getPatientName(fkUtlatande.getGrundData().getPatient()))
-            .diagnoseCode(fkUtlatande.getDiagnosKod())
-            .signingDoctorId(Strings.nullToEmpty(fkUtlatande.getGrundData().getSkapadAv().getPersonId()).trim())
-            .signingDoctorName(fkUtlatande.getGrundData().getSkapadAv().getFullstandigtNamn())
-            .signingDateTime(certificate.getSignedDate())
-            .certificateType(certificate.getType())
-            .deleted(certificate.isRevoked())
-            .workCapacities(buildWorkCapacitiesFk7263(fkUtlatande))
-            .employment(buildFk7263Sysselsattning(fkUtlatande))
-            .testCertificate(certificate.isTestCertificate())
-            .build();
-    }
-
-    // NUVARANDE_ARBETE|ARBETSSOKANDE|FORALDRALEDIG|STUDIER
-    private String buildFk7263Sysselsattning(Fk7263Utlatande fkUtlatande) {
-        List<String> sysselsattningar = new ArrayList<>();
-        if (fkUtlatande.isNuvarandeArbete()) {
-            sysselsattningar.add(NUVARANDE_ARBETE);
-        }
-        if (fkUtlatande.isArbetsloshet()) {
-            sysselsattningar.add(ARBETSSOKANDE);
-        }
-        if (fkUtlatande.isForaldrarledighet()) {
-            sysselsattningar.add(FORALDRALEDIG);
-        }
-        return sysselsattningar.stream().collect(Collectors.joining(","));
-    }
-
-    /**
-     * Converts a fk7263 certificate into a SjukfallCertificate.
-     *
-     * @param certificate fk7263 cert
-     * @param utlatande fk7263 Utlatande (will perform instanceof check internally)
-     * @return A SjukfallCertificate
-     * @throws IllegalArgumentException if fk7263 check fails.
-     */
-    public SjukfallCertificate convertLisjp(Certificate certificate, Utlatande utlatande) {
-
-        if (!(utlatande instanceof LisjpUtlatandeV1)) {
-            throw new IllegalArgumentException("Cannot convert " + utlatande.getClass().getName() + " to SjukfallCertificate");
-        }
-
-        LisjpUtlatandeV1 lisjpUtlatandeV1 = (LisjpUtlatandeV1) utlatande;
-
-        SjukfallCertificate sc = new SjukfallCertificateBuilder(Strings.nullToEmpty(certificate.getId()).trim())
-            .careGiverId(Strings.nullToEmpty(certificate.getCareGiverId()).trim())
-            .careUnitId(Strings.nullToEmpty(certificate.getCareUnitId()).trim())
-            .careUnitName(certificate.getCareUnitName())
-            .certificateType(certificate.getType())
-            .civicRegistrationNumber(Strings.nullToEmpty(certificate.getCivicRegistrationNumber().getPersonnummerWithDash()).trim())
+            .civicRegistrationNumber(
+                Strings.nullToEmpty(
+                        certificate.getCivicRegistrationNumber().getPersonnummerWithDash())
+                    .trim())
             .signingDoctorName(certificate.getSigningDoctorName())
             .patientName(getPatientName(lisjpUtlatandeV1.getGrundData().getPatient()))
             .diagnoseCode(lisjpUtlatandeV1.getDiagnoser().get(0).getDiagnosKod())
-            .signingDoctorId(Strings.nullToEmpty(lisjpUtlatandeV1.getGrundData().getSkapadAv().getPersonId()).trim())
+            .signingDoctorId(
+                Strings.nullToEmpty(lisjpUtlatandeV1.getGrundData().getSkapadAv().getPersonId())
+                    .trim())
             .signingDoctorName(lisjpUtlatandeV1.getGrundData().getSkapadAv().getFullstandigtNamn())
             .signingDateTime(certificate.getSignedDate())
             .certificateType(certificate.getType())
             .deleted(certificate.isRevoked())
             .workCapacities(buildWorkCapacitiesLisjp(lisjpUtlatandeV1))
-            .employment(lisjpUtlatandeV1.getSysselsattning() != null ? lisjpUtlatandeV1.getSysselsattning()
-                .stream()
-                .filter(Objects::nonNull)
-                .map(s -> s.getTyp().getId())
-                .collect(Collectors.joining(",")) : null)
+            .employment(
+                lisjpUtlatandeV1.getSysselsattning() != null
+                    ? lisjpUtlatandeV1.getSysselsattning().stream()
+                        .filter(Objects::nonNull)
+                        .map(s -> s.getTyp().getId())
+                        .collect(Collectors.joining(","))
+                    : null)
             .testCertificate(certificate.isTestCertificate())
             .build();
 
-        if (lisjpUtlatandeV1.getDiagnoser().size() > 1) {
-            for (int a = 1; a < lisjpUtlatandeV1.getDiagnoser().size(); a++) {
-                if (a == 1) {
-                    sc.setBiDiagnoseCode1(lisjpUtlatandeV1.getDiagnoser().get(a).getDiagnosKod());
-                }
-                if (a == 2) {
-                    sc.setBiDiagnoseCode2(lisjpUtlatandeV1.getDiagnoser().get(a).getDiagnosKod());
-                }
-            }
+    if (lisjpUtlatandeV1.getDiagnoser().size() > 1) {
+      for (int a = 1; a < lisjpUtlatandeV1.getDiagnoser().size(); a++) {
+        if (a == 1) {
+          sc.setBiDiagnoseCode1(lisjpUtlatandeV1.getDiagnoser().get(a).getDiagnosKod());
         }
-
-        return sc;
+        if (a == 2) {
+          sc.setBiDiagnoseCode2(lisjpUtlatandeV1.getDiagnoser().get(a).getDiagnosKod());
+        }
+      }
     }
 
-    private List<SjukfallCertificateWorkCapacity> buildWorkCapacitiesLisjp(LisjpUtlatandeV1 lisjpUtlatandeV1) {
-        List<SjukfallCertificateWorkCapacity> workCapacities = new ArrayList<>();
-        lisjpUtlatandeV1.getSjukskrivningar().stream().forEach(sjukskrivning -> {
-            if (sjukskrivning.getSjukskrivningsgrad() == Sjukskrivning.SjukskrivningsGrad.HELT_NEDSATT) {
+    return sc;
+  }
+
+  private List<SjukfallCertificateWorkCapacity> buildWorkCapacitiesLisjp(
+      LisjpUtlatandeV1 lisjpUtlatandeV1) {
+    List<SjukfallCertificateWorkCapacity> workCapacities = new ArrayList<>();
+    lisjpUtlatandeV1.getSjukskrivningar().stream()
+        .forEach(
+            sjukskrivning -> {
+              if (sjukskrivning.getSjukskrivningsgrad()
+                  == Sjukskrivning.SjukskrivningsGrad.HELT_NEDSATT) {
                 workCapacities.add(buildWorkCapacity(WORK_CAPACITY_100, sjukskrivning.getPeriod()));
-            }
-            if (sjukskrivning.getSjukskrivningsgrad() == Sjukskrivning.SjukskrivningsGrad.NEDSATT_3_4) {
+              }
+              if (sjukskrivning.getSjukskrivningsgrad()
+                  == Sjukskrivning.SjukskrivningsGrad.NEDSATT_3_4) {
                 workCapacities.add(buildWorkCapacity(WORK_CAPACITY_75, sjukskrivning.getPeriod()));
-            }
-            if (sjukskrivning.getSjukskrivningsgrad() == Sjukskrivning.SjukskrivningsGrad.NEDSATT_HALFTEN) {
+              }
+              if (sjukskrivning.getSjukskrivningsgrad()
+                  == Sjukskrivning.SjukskrivningsGrad.NEDSATT_HALFTEN) {
                 workCapacities.add(buildWorkCapacity(WORK_CAPACITY_50, sjukskrivning.getPeriod()));
-            }
-            if (sjukskrivning.getSjukskrivningsgrad() == Sjukskrivning.SjukskrivningsGrad.NEDSATT_1_4) {
+              }
+              if (sjukskrivning.getSjukskrivningsgrad()
+                  == Sjukskrivning.SjukskrivningsGrad.NEDSATT_1_4) {
                 workCapacities.add(buildWorkCapacity(WORK_CAPACITY_25, sjukskrivning.getPeriod()));
-            }
-        });
-        return workCapacities;
+              }
+            });
+    return workCapacities;
+  }
+
+  private List<SjukfallCertificateWorkCapacity> buildWorkCapacitiesFk7263(
+      Fk7263Utlatande fkUtlatande) {
+    List<SjukfallCertificateWorkCapacity> workCapacities = new ArrayList<>();
+    if (fkUtlatande.getNedsattMed100() != null) {
+      workCapacities.add(buildWorkCapacity(WORK_CAPACITY_100, fkUtlatande.getNedsattMed100()));
+    }
+    if (fkUtlatande.getNedsattMed75() != null) {
+      workCapacities.add(buildWorkCapacity(WORK_CAPACITY_75, fkUtlatande.getNedsattMed75()));
+    }
+    if (fkUtlatande.getNedsattMed50() != null) {
+      workCapacities.add(buildWorkCapacity(WORK_CAPACITY_50, fkUtlatande.getNedsattMed50()));
+    }
+    if (fkUtlatande.getNedsattMed25() != null) {
+      workCapacities.add(buildWorkCapacity(WORK_CAPACITY_25, fkUtlatande.getNedsattMed25()));
+    }
+    return workCapacities;
+  }
+
+  private String getPatientName(Patient patient) {
+    String name = "";
+
+    if (patient == null) {
+      return name;
     }
 
-    private List<SjukfallCertificateWorkCapacity> buildWorkCapacitiesFk7263(Fk7263Utlatande fkUtlatande) {
-        List<SjukfallCertificateWorkCapacity> workCapacities = new ArrayList<>();
-        if (fkUtlatande.getNedsattMed100() != null) {
-            workCapacities.add(buildWorkCapacity(WORK_CAPACITY_100, fkUtlatande.getNedsattMed100()));
-        }
-        if (fkUtlatande.getNedsattMed75() != null) {
-            workCapacities.add(buildWorkCapacity(WORK_CAPACITY_75, fkUtlatande.getNedsattMed75()));
-        }
-        if (fkUtlatande.getNedsattMed50() != null) {
-            workCapacities.add(buildWorkCapacity(WORK_CAPACITY_50, fkUtlatande.getNedsattMed50()));
-        }
-        if (fkUtlatande.getNedsattMed25() != null) {
-            workCapacities.add(buildWorkCapacity(WORK_CAPACITY_25, fkUtlatande.getNedsattMed25()));
-        }
-        return workCapacities;
+    String fnamn = patient.getFornamn();
+    String mnamn = patient.getMellannamn();
+    String enamn = patient.getEfternamn();
+
+    if (fnamn != null) {
+      name = fnamn.isEmpty() ? "" : fnamn;
     }
 
-    private String getPatientName(Patient patient) {
-        String name = "";
-
-        if (patient == null) {
-            return name;
-        }
-
-        String fnamn = patient.getFornamn();
-        String mnamn = patient.getMellannamn();
-        String enamn = patient.getEfternamn();
-
-        if (fnamn != null) {
-            name = fnamn.isEmpty() ? "" : fnamn;
-        }
-
-        if (mnamn != null) {
-            name = mnamn.isEmpty() ? "" : name + " " + mnamn;
-        }
-
-        if (enamn != null) {
-            name = enamn.isEmpty() ? "" : name + " " + enamn;
-        }
-
-        return name.trim();
+    if (mnamn != null) {
+      name = mnamn.isEmpty() ? "" : name + " " + mnamn;
     }
 
-    private SjukfallCertificateWorkCapacity buildWorkCapacity(Integer workCapacity, InternalLocalDateInterval interval) {
-        SjukfallCertificateWorkCapacity wc = new SjukfallCertificateWorkCapacity();
-        wc.setCapacityPercentage(workCapacity);
-        wc.setFromDate(interval.fromAsLocalDate().format(DateTimeFormatter.ISO_LOCAL_DATE));
-        wc.setToDate(interval.tomAsLocalDate().format(DateTimeFormatter.ISO_LOCAL_DATE));
-        return wc;
+    if (enamn != null) {
+      name = enamn.isEmpty() ? "" : name + " " + enamn;
     }
 
-    public boolean isConvertableFk7263(Utlatande utlatande) {
-        if (utlatande == null || !(utlatande instanceof Fk7263Utlatande)) {
-            return false;
-        }
+    return name.trim();
+  }
 
-        Fk7263Utlatande fkUtlatande = (Fk7263Utlatande) utlatande;
+  private SjukfallCertificateWorkCapacity buildWorkCapacity(
+      Integer workCapacity, InternalLocalDateInterval interval) {
+    SjukfallCertificateWorkCapacity wc = new SjukfallCertificateWorkCapacity();
+    wc.setCapacityPercentage(workCapacity);
+    wc.setFromDate(interval.fromAsLocalDate().format(DateTimeFormatter.ISO_LOCAL_DATE));
+    wc.setToDate(interval.tomAsLocalDate().format(DateTimeFormatter.ISO_LOCAL_DATE));
+    return wc;
+  }
 
-        if (fkUtlatande.isAvstangningSmittskydd()) {
-            LOG.debug("Intyg {} is not a valid SjukfallCertificate, is smittskydd.", fkUtlatande.getId());
-            return false;
-        }
-
-        if (fkUtlatande.getDiagnosKod() == null || "".equals(fkUtlatande.getDiagnosKod().trim())) {
-            LOG.debug("Intyg {} is not a valid SjukfallCertificate, has no diagnoseCode.", fkUtlatande.getId());
-            return false;
-        }
-
-        return true;
+  public boolean isConvertableFk7263(Utlatande utlatande) {
+    if (utlatande == null || !(utlatande instanceof Fk7263Utlatande)) {
+      return false;
     }
 
-    public boolean isConvertableLisjp(Utlatande utlatande) {
+    Fk7263Utlatande fkUtlatande = (Fk7263Utlatande) utlatande;
 
-        if (utlatande == null || !(utlatande instanceof LisjpUtlatandeV1)) {
-            return false;
-        }
-
-        LisjpUtlatandeV1 lisjpUtlatandeV1 = (LisjpUtlatandeV1) utlatande;
-        if (lisjpUtlatandeV1.getAvstangningSmittskydd() != null && lisjpUtlatandeV1.getAvstangningSmittskydd()) {
-            LOG.debug("Intyg {} is not a valid SjukfallCertificate, is smittskydd.", lisjpUtlatandeV1.getId());
-            return false;
-        }
-
-        Diagnos diagnos = lisjpUtlatandeV1.getDiagnoser().stream().findFirst().orElse(null);
-        if (diagnos == null || diagnos.getDiagnosKod() == null || "".equals(diagnos.getDiagnosKod().trim())) {
-            LOG.debug("Intyg {} is not a valid SjukfallCertificate, has no diagnoseCode.", lisjpUtlatandeV1.getId());
-            return false;
-        }
-
-        return true;
+    if (fkUtlatande.isAvstangningSmittskydd()) {
+      LOG.debug("Intyg {} is not a valid SjukfallCertificate, is smittskydd.", fkUtlatande.getId());
+      return false;
     }
+
+    if (fkUtlatande.getDiagnosKod() == null || "".equals(fkUtlatande.getDiagnosKod().trim())) {
+      LOG.debug(
+          "Intyg {} is not a valid SjukfallCertificate, has no diagnoseCode.", fkUtlatande.getId());
+      return false;
+    }
+
+    return true;
+  }
+
+  public boolean isConvertableLisjp(Utlatande utlatande) {
+
+    if (utlatande == null || !(utlatande instanceof LisjpUtlatandeV1)) {
+      return false;
+    }
+
+    LisjpUtlatandeV1 lisjpUtlatandeV1 = (LisjpUtlatandeV1) utlatande;
+    if (lisjpUtlatandeV1.getAvstangningSmittskydd() != null
+        && lisjpUtlatandeV1.getAvstangningSmittskydd()) {
+      LOG.debug(
+          "Intyg {} is not a valid SjukfallCertificate, is smittskydd.", lisjpUtlatandeV1.getId());
+      return false;
+    }
+
+    Diagnos diagnos = lisjpUtlatandeV1.getDiagnoser().stream().findFirst().orElse(null);
+    if (diagnos == null
+        || diagnos.getDiagnosKod() == null
+        || "".equals(diagnos.getDiagnosKod().trim())) {
+      LOG.debug(
+          "Intyg {} is not a valid SjukfallCertificate, has no diagnoseCode.",
+          lisjpUtlatandeV1.getId());
+      return false;
+    }
+
+    return true;
+  }
 }

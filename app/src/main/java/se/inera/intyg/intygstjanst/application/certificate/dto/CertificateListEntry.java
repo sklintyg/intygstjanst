@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.application.certificate.dto;
 
 import java.time.LocalDateTime;
@@ -24,14 +25,14 @@ import lombok.Data;
 @Data
 public class CertificateListEntry {
 
-    private String certificateId;
-    private String civicRegistrationNumber;
-    private String certificateType;
-    private String certificateTypeVersion;
-    private String certificateTypeName;
-    private LocalDateTime signedDate;
-    private boolean isSent;
-    private boolean isProtectedIdentity;
-    private boolean isTestIndicator;
-    private boolean isDeceased;
+  private String certificateId;
+  private String civicRegistrationNumber;
+  private String certificateType;
+  private String certificateTypeVersion;
+  private String certificateTypeName;
+  private LocalDateTime signedDate;
+  private boolean isSent;
+  private boolean isProtectedIdentity;
+  private boolean isTestIndicator;
+  private boolean isDeceased;
 }

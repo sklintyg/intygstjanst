@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.application.recipient;
 
 import java.util.List;
@@ -33,31 +34,35 @@ import se.inera.intyg.intygstjanst.infrastructure.logging.PerformanceLogging;
 @Service
 public class ListKnownRecipientsResponderImpl implements ListKnownRecipientsResponderInterface {
 
-    @Autowired
-    private RecipientService recipientService;
+  @Autowired private RecipientService recipientService;
 
-    @Override
-
-    @PerformanceLogging(eventAction = "list-recipients", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
-    public ListKnownRecipientsResponseType listKnownRecipients(String logicalAddress, ListKnownRecipientsType request) {
-        ListKnownRecipientsResponseType response = new ListKnownRecipientsResponseType();
-        List<RecipientType> recipientTypeList = recipientService.listRecipients().stream()
-            .map(r -> {
-                RecipientType recipientType = new RecipientType();
-                recipientType.setId(r.getId());
-                recipientType.setName(r.getName());
-                recipientType.setTrusted(r.isTrusted());
-                return recipientType;
-            })
+  @Override
+  @PerformanceLogging(
+      eventAction = "list-recipients",
+      eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
+  public ListKnownRecipientsResponseType listKnownRecipients(
+      String logicalAddress, ListKnownRecipientsType request) {
+    ListKnownRecipientsResponseType response = new ListKnownRecipientsResponseType();
+    List<RecipientType> recipientTypeList =
+        recipientService.listRecipients().stream()
+            .map(
+                r -> {
+                  RecipientType recipientType = new RecipientType();
+                  recipientType.setId(r.getId());
+                  recipientType.setName(r.getName());
+                  recipientType.setTrusted(r.isTrusted());
+                  return recipientType;
+                })
             .toList();
 
-        if (recipientTypeList.isEmpty()) {
-            response.setResult(ResultTypeUtil.errorResult(ErrorIdType.APPLICATION_ERROR, "No recipients found!"));
-        } else {
-            response.getRecipient().addAll(recipientTypeList);
-            response.setResult(ResultTypeUtil.okResult());
-        }
-
-        return response;
+    if (recipientTypeList.isEmpty()) {
+      response.setResult(
+          ResultTypeUtil.errorResult(ErrorIdType.APPLICATION_ERROR, "No recipients found!"));
+    } else {
+      response.getRecipient().addAll(recipientTypeList);
+      response.setResult(ResultTypeUtil.okResult());
     }
+
+    return response;
+  }
 }

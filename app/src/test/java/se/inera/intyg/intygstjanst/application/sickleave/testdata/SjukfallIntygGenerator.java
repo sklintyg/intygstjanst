@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.application.sickleave.testdata;
 
 import java.io.IOException;
@@ -25,36 +26,30 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import se.inera.intyg.intygstjanst.application.sickleave.dto.IntygData;
 
-
-/**
- * Created by Magnus Ekstrand on 2016-02-10.
- */
+/** Created by Magnus Ekstrand on 2016-02-10. */
 public class SjukfallIntygGenerator {
 
-    private final int linesToSkip = 1;
+  private final int linesToSkip = 1;
 
-    private SjukfallIntygReader reader;
-    private List<IntygData> intygData;
+  private SjukfallIntygReader reader;
+  private List<IntygData> intygData;
 
-    public SjukfallIntygGenerator(String location) {
-        this.reader = new SjukfallIntygReader(location, linesToSkip);
-        this.intygData = new ArrayList<>();
-    }
+  public SjukfallIntygGenerator(String location) {
+    this.reader = new SjukfallIntygReader(location, linesToSkip);
+    this.intygData = new ArrayList<>();
+  }
 
-    public SjukfallIntygGenerator generate() throws IOException {
-        List<String> csvlines = reader.read();
-        intygData = SjukfallIntygLineMapper.map(csvlines);
-        return this;
-    }
+  public SjukfallIntygGenerator generate() throws IOException {
+    List<String> csvlines = reader.read();
+    intygData = SjukfallIntygLineMapper.map(csvlines);
+    return this;
+  }
 
-    public List<IntygData> get() {
-        return this.intygData;
-    }
+  public List<IntygData> get() {
+    return this.intygData;
+  }
 
-    public List<IntygData> get(Predicate<? super IntygData> predicate) {
-        return this.intygData.stream()
-            .filter(predicate)
-            .collect(Collectors.toList());
-    }
-
+  public List<IntygData> get(Predicate<? super IntygData> predicate) {
+    return this.intygData.stream().filter(predicate).collect(Collectors.toList());
+  }
 }

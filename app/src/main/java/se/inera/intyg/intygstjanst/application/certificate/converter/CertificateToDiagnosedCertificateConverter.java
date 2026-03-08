@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.application.certificate.converter;
 
 import com.google.common.collect.ImmutableList;
@@ -35,78 +36,78 @@ import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Certific
 @Component
 public class CertificateToDiagnosedCertificateConverter {
 
-    public DiagnosedCertificate convertLuaefs(Certificate certificate,
-        Utlatande statement) {
+  public DiagnosedCertificate convertLuaefs(Certificate certificate, Utlatande statement) {
 
-        if (!(statement instanceof LuaefsUtlatandeV1)) {
-            throw new IllegalArgumentException("Cannot convert " + statement.getClass().getName() + " to DiagnosedCertificate");
-        }
-
-        var typedStatement = (LuaefsUtlatandeV1) statement;
-
-        return convert(certificate, typedStatement.getDiagnoser(), typedStatement.getGrundData());
+    if (!(statement instanceof LuaefsUtlatandeV1)) {
+      throw new IllegalArgumentException(
+          "Cannot convert " + statement.getClass().getName() + " to DiagnosedCertificate");
     }
 
-    public DiagnosedCertificate convertLuaena(Certificate certificate,
-        Utlatande statement) {
+    var typedStatement = (LuaefsUtlatandeV1) statement;
 
-        if (!(statement instanceof LuaenaUtlatandeV1)) {
-            throw new IllegalArgumentException("Cannot convert " + statement.getClass().getName() + " to DiagnosedCertificate");
-        }
+    return convert(certificate, typedStatement.getDiagnoser(), typedStatement.getGrundData());
+  }
 
-        var typedStatement = (LuaenaUtlatandeV1) statement;
+  public DiagnosedCertificate convertLuaena(Certificate certificate, Utlatande statement) {
 
-        return convert(certificate, typedStatement.getDiagnoser(), typedStatement.getGrundData());
+    if (!(statement instanceof LuaenaUtlatandeV1)) {
+      throw new IllegalArgumentException(
+          "Cannot convert " + statement.getClass().getName() + " to DiagnosedCertificate");
     }
 
-    public DiagnosedCertificate convertLuse(Certificate certificate,
-        Utlatande statement) {
+    var typedStatement = (LuaenaUtlatandeV1) statement;
 
-        if (!(statement instanceof LuseUtlatandeV1)) {
-            throw new IllegalArgumentException("Cannot convert " + statement.getClass().getName() + " to DiagnosedCertificate");
-        }
+    return convert(certificate, typedStatement.getDiagnoser(), typedStatement.getGrundData());
+  }
 
-        var typedStatement = (LuseUtlatandeV1) statement;
+  public DiagnosedCertificate convertLuse(Certificate certificate, Utlatande statement) {
 
-        return convert(certificate, typedStatement.getDiagnoser(), typedStatement.getGrundData());
+    if (!(statement instanceof LuseUtlatandeV1)) {
+      throw new IllegalArgumentException(
+          "Cannot convert " + statement.getClass().getName() + " to DiagnosedCertificate");
     }
 
-    public DiagnosedCertificate convert(Certificate certificate, List<String> diagnoses) {
-        return getBuild(certificate, certificate.getCertificateMetaData().getDoctorId(), diagnoses);
+    var typedStatement = (LuseUtlatandeV1) statement;
+
+    return convert(certificate, typedStatement.getDiagnoser(), typedStatement.getGrundData());
+  }
+
+  public DiagnosedCertificate convert(Certificate certificate, List<String> diagnoses) {
+    return getBuild(certificate, certificate.getCertificateMetaData().getDoctorId(), diagnoses);
+  }
+
+  public DiagnosedCertificate convert(
+      Certificate certificate, ImmutableList<Diagnos> diagnoses, GrundData grundData) {
+    return getBuild(certificate, grundData.getSkapadAv().getPersonId(), toListOfCodes(diagnoses));
+  }
+
+  private static DiagnosedCertificate getBuild(
+      Certificate certificate, String doctorId, List<String> diagnoses) {
+    return new DiagnosedCertificateBuilder(certificate.getId())
+        .certificateType(certificate.getType())
+        .personId(certificate.getCivicRegistrationNumber().getPersonnummerWithDash())
+        .personalHsaId(doctorId)
+        .signingDoctorName(certificate.getSigningDoctorName())
+        .careProviderId(certificate.getCareGiverId())
+        .careUnitId(certificate.getCareUnitId())
+        .careUnitName(certificate.getCareUnitName())
+        .signingDateTime(certificate.getSignedDate())
+        .deleted(certificate.isRevoked())
+        .testCertificate(certificate.isTestCertificate())
+        .diagnoseCode(diagnoses != null ? diagnoses.get(0) : null)
+        .secondaryDiagnoseCodes(buildSecondaryDiagnoseCodes(diagnoses))
+        .build();
+  }
+
+  private static List<String> buildSecondaryDiagnoseCodes(List<String> diagnoses) {
+    if (diagnoses == null || diagnoses.size() <= 1) {
+      return null;
     }
 
-    public DiagnosedCertificate convert(Certificate certificate, ImmutableList<Diagnos> diagnoses, GrundData grundData) {
-        return getBuild(certificate, grundData.getSkapadAv().getPersonId(), toListOfCodes(diagnoses));
-    }
+    return diagnoses.stream().skip(1).collect(Collectors.toList());
+  }
 
-    private static DiagnosedCertificate getBuild(Certificate certificate, String doctorId, List<String> diagnoses) {
-        return new DiagnosedCertificateBuilder(certificate.getId())
-            .certificateType(certificate.getType())
-            .personId(certificate.getCivicRegistrationNumber().getPersonnummerWithDash())
-            .personalHsaId(doctorId)
-            .signingDoctorName(certificate.getSigningDoctorName())
-            .careProviderId(certificate.getCareGiverId())
-            .careUnitId(certificate.getCareUnitId())
-            .careUnitName(certificate.getCareUnitName())
-            .signingDateTime(certificate.getSignedDate())
-            .deleted(certificate.isRevoked())
-            .testCertificate(certificate.isTestCertificate())
-            .diagnoseCode(diagnoses != null ? diagnoses.get(0) : null)
-            .secondaryDiagnoseCodes(buildSecondaryDiagnoseCodes(diagnoses))
-            .build();
-    }
-
-    private static List<String> buildSecondaryDiagnoseCodes(List<String> diagnoses) {
-        if (diagnoses == null || diagnoses.size() <= 1) {
-            return null;
-        }
-
-        return diagnoses.stream().skip(1).collect(Collectors.toList());
-    }
-
-    private List<String> toListOfCodes(ImmutableList<Diagnos> diagnoses) {
-        return diagnoses.stream()
-            .map(Diagnos::getDiagnosKod)
-            .collect(Collectors.toList());
-    }
+  private List<String> toListOfCodes(ImmutableList<Diagnos> diagnoses) {
+    return diagnoses.stream().map(Diagnos::getDiagnosKod).collect(Collectors.toList());
+  }
 }

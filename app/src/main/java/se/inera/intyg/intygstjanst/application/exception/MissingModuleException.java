@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,25 +16,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.application.exception;
 
 public class MissingModuleException extends ServerException {
 
-    private static final long serialVersionUID = 2123077268951651241L;
+  private static final long serialVersionUID = 2123077268951651241L;
 
-    public MissingModuleException() {
-        super();
-    }
+  public MissingModuleException() {
+    super();
+  }
 
-    public MissingModuleException(String message, Throwable cause) {
-        super(message, cause);
-    }
+  public MissingModuleException(String message, Throwable cause) {
+    super(message, cause);
+  }
 
-    public MissingModuleException(String message) {
-        super(message);
-    }
+  public MissingModuleException(String message) {
+    super(message);
+  }
 
-    public MissingModuleException(Throwable cause) {
-        super(cause);
-    }
+  public MissingModuleException(Throwable cause) {
+    super(cause);
+  }
 }

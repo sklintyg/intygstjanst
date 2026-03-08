@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.testability;
 
 import jakarta.persistence.EntityManager;
@@ -43,35 +44,35 @@ import se.inera.intyg.intygstjanst.infrastructure.security.interceptor.ApiBasePa
 @Profile({"dev", "testability-api"})
 public class SjukfallCertResource {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SjukfallCertResource.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(SjukfallCertResource.class);
 
-    @PersistenceContext
-    private EntityManager entityManager;
+  @PersistenceContext private EntityManager entityManager;
 
-    @GetMapping("/{id}")
-    public SjukfallCertificate getSjukfallCertificate(@PathVariable("id") String id) {
-        return entityManager.find(SjukfallCertificate.class, id);
+  @GetMapping("/{id}")
+  public SjukfallCertificate getSjukfallCertificate(@PathVariable("id") String id) {
+    return entityManager.find(SjukfallCertificate.class, id);
+  }
+
+  @DeleteMapping("/{id}")
+  @Transactional
+  public ResponseEntity<?> deleteSjukfallCertificate(@PathVariable("id") final String id) {
+    SjukfallCertificate cert = entityManager.find(SjukfallCertificate.class, id);
+    if (cert != null) {
+      entityManager.remove(cert);
     }
+    return ResponseEntity.ok().build();
+  }
 
-    @DeleteMapping("/{id}")
-    @Transactional
-    public ResponseEntity<?> deleteSjukfallCertificate(@PathVariable("id") final String id) {
-        SjukfallCertificate cert = entityManager.find(SjukfallCertificate.class, id);
-        if (cert != null) {
-            entityManager.remove(cert);
-        }
-        return ResponseEntity.ok().build();
-    }
-
-    @DeleteMapping()
-    @Transactional
-    public ResponseEntity<?> deleteAllSjukfallCertificates() {
-        List<SjukfallCertificate> certificates = entityManager
+  @DeleteMapping()
+  @Transactional
+  public ResponseEntity<?> deleteAllSjukfallCertificates() {
+    List<SjukfallCertificate> certificates =
+        entityManager
             .createQuery("SELECT sc FROM SjukfallCertificate sc", SjukfallCertificate.class)
             .getResultList();
-        for (SjukfallCertificate sjukfallCert : certificates) {
-            entityManager.remove(sjukfallCert);
-        }
-        return ResponseEntity.ok().build();
+    for (SjukfallCertificate sjukfallCert : certificates) {
+      entityManager.remove(sjukfallCert);
     }
+    return ResponseEntity.ok().build();
+  }
 }

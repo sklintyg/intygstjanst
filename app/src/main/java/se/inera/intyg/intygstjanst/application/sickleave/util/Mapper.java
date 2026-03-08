@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.application.sickleave.util;
 
 import java.util.AbstractMap;
@@ -28,13 +29,11 @@ import java.util.stream.Collectors;
  */
 public abstract class Mapper {
 
-    protected static <K, V> Map.Entry<K, V> entry(K key, V value) {
-        return new AbstractMap.SimpleEntry<>(key, value);
-    }
+  protected static <K, V> Map.Entry<K, V> entry(K key, V value) {
+    return new AbstractMap.SimpleEntry<>(key, value);
+  }
 
-    protected static <K, U> Collector<Map.Entry<K, U>, ?, Map<K, U>> entriesToMap() {
-        return Collectors.toMap((e) -> e.getKey(), (e) -> e.getValue());
-    }
-
-
+  protected static <K, U> Collector<Map.Entry<K, U>, ?, Map<K, U>> entriesToMap() {
+    return Collectors.toMap((e) -> e.getKey(), (e) -> e.getValue());
+  }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -26,12 +26,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import se.inera.intyg.intygstjanst.application.reko.dto.CreateRekoStatusRequestDTO;
 import se.inera.intyg.intygstjanst.application.reko.dto.GetRekoStatusRequestDTO;
+import se.inera.intyg.intygstjanst.application.reko.service.CreateRekoStatusService;
+import se.inera.intyg.intygstjanst.application.reko.service.GetRekoStatusService;
 import se.inera.intyg.intygstjanst.application.sickleave.dto.RekoStatusDTO;
 import se.inera.intyg.intygstjanst.infrastructure.logging.MdcLogConstants;
 import se.inera.intyg.intygstjanst.infrastructure.logging.PerformanceLogging;
-import se.inera.intyg.intygstjanst.application.reko.service.CreateRekoStatusService;
 import se.inera.intyg.intygstjanst.infrastructure.security.interceptor.ApiBasePath;
-import se.inera.intyg.intygstjanst.application.reko.service.GetRekoStatusService;
 
 @RestController
 @ApiBasePath("/internalapi")
@@ -39,32 +39,34 @@ import se.inera.intyg.intygstjanst.application.reko.service.GetRekoStatusService
 @RequiredArgsConstructor
 public class RekoController {
 
-    private final CreateRekoStatusService createRekoStatusService;
-    private final GetRekoStatusService getRekoStatusService;
+  private final CreateRekoStatusService createRekoStatusService;
+  private final GetRekoStatusService getRekoStatusService;
 
-    @PostMapping()
-    @PerformanceLogging(eventAction = "create-reko-status", eventType = MdcLogConstants.EVENT_TYPE_CREATION)
-    public RekoStatusDTO createRekoStatus(@RequestBody CreateRekoStatusRequestDTO request) {
-        return createRekoStatusService.create(
-            request.getPatientId(),
-            request.getStatusId(),
-            request.getCareProviderId(),
-            request.getCareUnitId(),
-            request.getUnitId(),
-            request.getStaffId(),
-            request.getStaffName(),
-            request.getSickLeaveTimestamp()
-        );
-    }
+  @PostMapping()
+  @PerformanceLogging(
+      eventAction = "create-reko-status",
+      eventType = MdcLogConstants.EVENT_TYPE_CREATION)
+  public RekoStatusDTO createRekoStatus(@RequestBody CreateRekoStatusRequestDTO request) {
+    return createRekoStatusService.create(
+        request.getPatientId(),
+        request.getStatusId(),
+        request.getCareProviderId(),
+        request.getCareUnitId(),
+        request.getUnitId(),
+        request.getStaffId(),
+        request.getStaffName(),
+        request.getSickLeaveTimestamp());
+  }
 
-    @PostMapping("/patient")
-    @PerformanceLogging(eventAction = "retrieve-reko-status", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
-    public RekoStatusDTO getRekoStatus(@RequestBody GetRekoStatusRequestDTO request) {
-        return getRekoStatusService.get(
-            request.getPatientId(),
-            request.getEndDate(),
-            request.getStartDate(),
-            request.getCareUnitId()
-        );
-    }
+  @PostMapping("/patient")
+  @PerformanceLogging(
+      eventAction = "retrieve-reko-status",
+      eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
+  public RekoStatusDTO getRekoStatus(@RequestBody GetRekoStatusRequestDTO request) {
+    return getRekoStatusService.get(
+        request.getPatientId(),
+        request.getEndDate(),
+        request.getStartDate(),
+        request.getCareUnitId());
+  }
 }

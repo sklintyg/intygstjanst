@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,14 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.application.exception;
 
-/**
- * Exception to be used when test certificates are not allowed.
- */
+/** Exception to be used when test certificates are not allowed. */
 public class TestCertificateException extends Exception {
 
-    public TestCertificateException(String certificateId) {
-        super(String.format("Certificate '%s' is a test certificate", certificateId));
-    }
+  public TestCertificateException(String certificateId) {
+    super(String.format("Certificate '%s' is a test certificate", certificateId));
+  }
 }

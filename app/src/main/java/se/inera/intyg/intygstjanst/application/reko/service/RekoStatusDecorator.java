@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -19,53 +19,54 @@
 
 package se.inera.intyg.intygstjanst.application.reko.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.intygstjanst.application.sickleave.dto.RekoStatusDTO;
 import se.inera.intyg.intygstjanst.application.sickleave.dto.SjukfallEnhet;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Reko;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.RekoRepository;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Service
 public class RekoStatusDecorator {
 
-    final RekoRepository rekoRepository;
-    final RekoStatusFilter rekoStatusFilter;
-    final RekoStatusConverter rekoStatusConverter;
+  final RekoRepository rekoRepository;
+  final RekoStatusFilter rekoStatusFilter;
+  final RekoStatusConverter rekoStatusConverter;
 
-    public RekoStatusDecorator(RekoRepository rekoRepository,
-        RekoStatusFilter rekoStatusFilter,
-        RekoStatusConverter rekoStatusConverter) {
-        this.rekoRepository = rekoRepository;
-        this.rekoStatusFilter = rekoStatusFilter;
-        this.rekoStatusConverter = rekoStatusConverter;
+  public RekoStatusDecorator(
+      RekoRepository rekoRepository,
+      RekoStatusFilter rekoStatusFilter,
+      RekoStatusConverter rekoStatusConverter) {
+    this.rekoRepository = rekoRepository;
+    this.rekoStatusFilter = rekoStatusFilter;
+    this.rekoStatusConverter = rekoStatusConverter;
+  }
+
+  public void decorate(List<SjukfallEnhet> sickLeaves, String careUnitId) {
+    if (sickLeaves.isEmpty()) {
+      return;
     }
 
-    public void decorate(List<SjukfallEnhet> sickLeaves, String careUnitId) {
-        if (sickLeaves.isEmpty()) {
-            return;
-        }
-
-        final var rekoStatuses = rekoRepository.findByPatientIdInAndCareUnitId(
-            sickLeaves
-                .stream()
+    final var rekoStatuses =
+        rekoRepository.findByPatientIdInAndCareUnitId(
+            sickLeaves.stream()
                 .map((sickLeave) -> sickLeave.getPatient().getId())
-                .collect(Collectors.toList()), careUnitId
+                .collect(Collectors.toList()),
+            careUnitId);
 
-        );
+    sickLeaves.forEach(
+        (sickLeave) -> sickLeave.setRekoStatus(getRekoStatus(sickLeave, rekoStatuses)));
+  }
 
-        sickLeaves.forEach((sickLeave) -> sickLeave.setRekoStatus(getRekoStatus(sickLeave, rekoStatuses)));
-    }
-
-    private RekoStatusDTO getRekoStatus(SjukfallEnhet sickLeave, List<Reko> rekoStatuses) {
-        final var filteredRekoStatus = rekoStatusFilter.filter(
+  private RekoStatusDTO getRekoStatus(SjukfallEnhet sickLeave, List<Reko> rekoStatuses) {
+    final var filteredRekoStatus =
+        rekoStatusFilter.filter(
             rekoStatuses,
             sickLeave.getPatient().getId(),
             sickLeave.getSlut(),
             sickLeave.getStart());
 
-        return filteredRekoStatus.map(rekoStatusConverter::convert).orElse(null);
-    }
+    return filteredRekoStatus.map(rekoStatusConverter::convert).orElse(null);
+  }
 }

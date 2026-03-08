@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -34,195 +34,206 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import se.inera.intyg.intygstjanst.application.sickleave.dto.IntygData;
 import se.inera.intyg.intygstjanst.integration.pu.model.Person;
 import se.inera.intyg.intygstjanst.integration.pu.model.PersonSvar;
 import se.inera.intyg.intygstjanst.integration.pu.services.PUService;
-import se.inera.intyg.intygstjanst.application.sickleave.dto.IntygData;
 import se.inera.intyg.schemas.contract.Personnummer;
 
 @ExtendWith(MockitoExtension.class)
 class PuFilterServiceTest {
 
-    @Mock
-    private PUService puService;
+  @Mock private PUService puService;
 
-    @InjectMocks
-    private PuFilterService puFilterService;
+  @InjectMocks private PuFilterService puFilterService;
 
-    private static final String TOLVANSSON_PNR = "19121212-1212";
-    private static final String TOLVANSSON_PNR_INVALID = "19121212-1211";
-    private static final String VARDENHET_1 = "vg-1-ve-1";
-    private static final String LAKARE1_HSA_ID = "lakare-1";
-    private static final String LAKARE1_NAMN = "Läkare Läkarsson";
+  private static final String TOLVANSSON_PNR = "19121212-1212";
+  private static final String TOLVANSSON_PNR_INVALID = "19121212-1211";
+  private static final String VARDENHET_1 = "vg-1-ve-1";
+  private static final String LAKARE1_HSA_ID = "lakare-1";
+  private static final String LAKARE1_NAMN = "Läkare Läkarsson";
 
-    @Test
-    void testSekretessmarkeradIsNotFilteredWhenFilterOnProtectedPersonIsFalse() {
-        mockPersonSvar(false, true);
-        List<IntygData> list = buildIntygDataList(TOLVANSSON_PNR);
+  @Test
+  void testSekretessmarkeradIsNotFilteredWhenFilterOnProtectedPersonIsFalse() {
+    mockPersonSvar(false, true);
+    List<IntygData> list = buildIntygDataList(TOLVANSSON_PNR);
 
-        puFilterService.enrichWithPatientNameAndFilter(list, LAKARE1_HSA_ID);
+    puFilterService.enrichWithPatientNameAndFilter(list, LAKARE1_HSA_ID);
 
-        assertEquals(1, list.size());
-    }
+    assertEquals(1, list.size());
+  }
 
-    @Test
-    void testSekretessmarkeradIsFilteredWhenFilterOnProtectedPersonIsTrue() {
-        mockPersonSvar(false, true);
-        final var list = buildIntygDataList(TOLVANSSON_PNR);
+  @Test
+  void testSekretessmarkeradIsFilteredWhenFilterOnProtectedPersonIsTrue() {
+    mockPersonSvar(false, true);
+    final var list = buildIntygDataList(TOLVANSSON_PNR);
 
-        puFilterService.enrichWithPatientNameAndFilter(list, null);
-        assertEquals(0, list.size());
-    }
+    puFilterService.enrichWithPatientNameAndFilter(list, null);
+    assertEquals(0, list.size());
+  }
 
-    @Test
-    void testDeceasedIsFilteredWhenFilterOnProtectedPersonIsFalse() {
-        mockPersonSvar(true, false);
-        List<IntygData> list = buildIntygDataList(TOLVANSSON_PNR);
+  @Test
+  void testDeceasedIsFilteredWhenFilterOnProtectedPersonIsFalse() {
+    mockPersonSvar(true, false);
+    List<IntygData> list = buildIntygDataList(TOLVANSSON_PNR);
 
-        puFilterService.enrichWithPatientNameAndFilter(list, LAKARE1_HSA_ID);
+    puFilterService.enrichWithPatientNameAndFilter(list, LAKARE1_HSA_ID);
 
-        assertEquals(0, list.size());
-    }
+    assertEquals(0, list.size());
+  }
 
-    @Test
-    void testDeceasedAndSekretessmarkeradIsFilteredWhenFilterOnProtectedPersonIsFalse() {
-        mockPersonSvar(true, true);
-        List<IntygData> list = buildIntygDataList(TOLVANSSON_PNR);
+  @Test
+  void testDeceasedAndSekretessmarkeradIsFilteredWhenFilterOnProtectedPersonIsFalse() {
+    mockPersonSvar(true, true);
+    List<IntygData> list = buildIntygDataList(TOLVANSSON_PNR);
 
-        puFilterService.enrichWithPatientNameAndFilter(list, LAKARE1_HSA_ID);
+    puFilterService.enrichWithPatientNameAndFilter(list, LAKARE1_HSA_ID);
 
-        assertEquals(0, list.size());
-    }
+    assertEquals(0, list.size());
+  }
 
-    @Test
-    void testDeceasedIsFilteredWhenFilterOnProtectedPersonIsTrue() {
-        mockPersonSvar(true, false);
-        final var list = buildIntygDataList(TOLVANSSON_PNR);
+  @Test
+  void testDeceasedIsFilteredWhenFilterOnProtectedPersonIsTrue() {
+    mockPersonSvar(true, false);
+    final var list = buildIntygDataList(TOLVANSSON_PNR);
 
-        puFilterService.enrichWithPatientNameAndFilter(list, null);
-        assertEquals(0, list.size());
-    }
+    puFilterService.enrichWithPatientNameAndFilter(list, null);
+    assertEquals(0, list.size());
+  }
 
-    @Test
-    void testExceptionIsThrownWhenPersonSvarIncludesAnError() {
-        mockPersonSvarError();
-        assertThrows(
-            IllegalStateException.class,
-            () -> puFilterService.enrichWithPatientNameAndFilter(buildIntygDataList(TOLVANSSON_PNR), LAKARE1_HSA_ID)
-        );
-    }
+  @Test
+  void testExceptionIsThrownWhenPersonSvarIncludesAnError() {
+    mockPersonSvarError();
+    assertThrows(
+        IllegalStateException.class,
+        () ->
+            puFilterService.enrichWithPatientNameAndFilter(
+                buildIntygDataList(TOLVANSSON_PNR), LAKARE1_HSA_ID));
+  }
 
-    @Test
-    void testNameIsAppliedFromPersonSvar() {
-        mockPersonSvar(false, false);
-        final var list = buildIntygDataList(TOLVANSSON_PNR);
+  @Test
+  void testNameIsAppliedFromPersonSvar() {
+    mockPersonSvar(false, false);
+    final var list = buildIntygDataList(TOLVANSSON_PNR);
 
-        puFilterService.enrichWithPatientNameAndFilter(list, LAKARE1_HSA_ID);
-        assertEquals("Fornamn Efternamn", list.getFirst().getPatientNamn());
-    }
+    puFilterService.enrichWithPatientNameAndFilter(list, LAKARE1_HSA_ID);
+    assertEquals("Fornamn Efternamn", list.getFirst().getPatientNamn());
+  }
 
-    @Test
-    void testNameIsReplacedWhenSekretessmarkerad() {
-        mockPersonSvar(false, true);
-        final var list = buildIntygDataList(TOLVANSSON_PNR);
+  @Test
+  void testNameIsReplacedWhenSekretessmarkerad() {
+    mockPersonSvar(false, true);
+    final var list = buildIntygDataList(TOLVANSSON_PNR);
 
-        puFilterService.enrichWithPatientNameAndFilter(list, LAKARE1_HSA_ID);
+    puFilterService.enrichWithPatientNameAndFilter(list, LAKARE1_HSA_ID);
 
-        assertEquals("Skyddad personuppgift", list.getFirst().getPatientNamn());
-    }
+    assertEquals("Skyddad personuppgift", list.getFirst().getPatientNamn());
+  }
 
-    @Test
-    void testNameIsReplacedByPlaceholderIfFromPersonSvarWasNotFound() {
-        mockPersonSvarNotFound();
-        final var list = buildIntygDataList(TOLVANSSON_PNR);
+  @Test
+  void testNameIsReplacedByPlaceholderIfFromPersonSvarWasNotFound() {
+    mockPersonSvarNotFound();
+    final var list = buildIntygDataList(TOLVANSSON_PNR);
 
-        puFilterService.enrichWithPatientNameAndFilter(list, LAKARE1_HSA_ID);
-        assertEquals("Namn okänt", list.getFirst().getPatientNamn());
-    }
+    puFilterService.enrichWithPatientNameAndFilter(list, LAKARE1_HSA_ID);
+    assertEquals("Namn okänt", list.getFirst().getPatientNamn());
+  }
 
-    @Test
-    void testFilterIsAppliedIfPersonSvarWasNotFoundAndFilterOnProtectedPersonTrue() {
-        mockPersonSvarNotFound();
-        final var list = buildIntygDataList(TOLVANSSON_PNR);
+  @Test
+  void testFilterIsAppliedIfPersonSvarWasNotFoundAndFilterOnProtectedPersonTrue() {
+    mockPersonSvarNotFound();
+    final var list = buildIntygDataList(TOLVANSSON_PNR);
 
-        puFilterService.enrichWithPatientNameAndFilter(list, null);
+    puFilterService.enrichWithPatientNameAndFilter(list, null);
 
-        assertEquals(0, list.size());
-    }
+    assertEquals(0, list.size());
+  }
 
-    @Test
-    void testFilterIsNotAppliedIfPersonSvarWasNotFoundAndFilterOnProtectedPersonFalse() {
-        mockPersonSvarNotFound();
-        final var list = buildIntygDataList(TOLVANSSON_PNR);
+  @Test
+  void testFilterIsNotAppliedIfPersonSvarWasNotFoundAndFilterOnProtectedPersonFalse() {
+    mockPersonSvarNotFound();
+    final var list = buildIntygDataList(TOLVANSSON_PNR);
 
-        puFilterService.enrichWithPatientNameAndFilter(list, LAKARE1_HSA_ID);
+    puFilterService.enrichWithPatientNameAndFilter(list, LAKARE1_HSA_ID);
 
-        assertEquals(1, list.size());
-    }
+    assertEquals(1, list.size());
+  }
 
-    @Test
-    void testEnrichPatientsWhenPersonnummerHasInvalidDigit() {
-        assertThrows(
-            IllegalStateException.class,
-            () -> puFilterService.enrichWithPatientNameAndFilter(buildIntygDataList(TOLVANSSON_PNR_INVALID), LAKARE1_HSA_ID)
-        );
-    }
+  @Test
+  void testEnrichPatientsWhenPersonnummerHasInvalidDigit() {
+    assertThrows(
+        IllegalStateException.class,
+        () ->
+            puFilterService.enrichWithPatientNameAndFilter(
+                buildIntygDataList(TOLVANSSON_PNR_INVALID), LAKARE1_HSA_ID));
+  }
 
-    private void mockPersonSvar(boolean avliden, boolean sekretess) {
-        when(puService.getPersons(anyList()))
-            .thenReturn(buildPersonMap(buildPersonSvar(TOLVANSSON_PNR, sekretess, avliden)));
-    }
+  private void mockPersonSvar(boolean avliden, boolean sekretess) {
+    when(puService.getPersons(anyList()))
+        .thenReturn(buildPersonMap(buildPersonSvar(TOLVANSSON_PNR, sekretess, avliden)));
+  }
 
-    private void mockPersonSvarError() {
-        Map<Personnummer, PersonSvar> personSvarMap = new HashMap<>();
-        personSvarMap.put(createPnr(TOLVANSSON_PNR), PersonSvar.error());
-        when(puService.getPersons(anyList())).thenReturn(personSvarMap);
-    }
+  private void mockPersonSvarError() {
+    Map<Personnummer, PersonSvar> personSvarMap = new HashMap<>();
+    personSvarMap.put(createPnr(TOLVANSSON_PNR), PersonSvar.error());
+    when(puService.getPersons(anyList())).thenReturn(personSvarMap);
+  }
 
-    private void mockPersonSvarNotFound() {
-        Map<Personnummer, PersonSvar> personSvarMap = new HashMap<>();
-        personSvarMap.put(createPnr(TOLVANSSON_PNR), PersonSvar.notFound());
-        when(puService.getPersons(anyList())).thenReturn(personSvarMap);
-    }
+  private void mockPersonSvarNotFound() {
+    Map<Personnummer, PersonSvar> personSvarMap = new HashMap<>();
+    personSvarMap.put(createPnr(TOLVANSSON_PNR), PersonSvar.notFound());
+    when(puService.getPersons(anyList())).thenReturn(personSvarMap);
+  }
 
+  private PersonSvar buildPersonSvar(String pnr, boolean sekretess, boolean avliden) {
+    return PersonSvar.found(buildPerson(pnr, sekretess, avliden));
+  }
 
-    private PersonSvar buildPersonSvar(String pnr, boolean sekretess, boolean avliden) {
-        return PersonSvar.found(buildPerson(pnr, sekretess, avliden));
-    }
+  private Person buildPerson(String pnr, boolean sekretess, boolean avliden) {
+    return new Person(
+        createPnr(pnr),
+        sekretess,
+        avliden,
+        "Fornamn",
+        null,
+        "Efternamn",
+        "Gatan 1",
+        "11212",
+        "Orten",
+        false);
+  }
 
-    private Person buildPerson(String pnr, boolean sekretess, boolean avliden) {
-        return new Person(createPnr(pnr), sekretess, avliden, "Fornamn", null, "Efternamn",
-            "Gatan 1", "11212", "Orten", false);
-    }
+  private List<IntygData> buildIntygDataList(String... personId) {
+    return Arrays.stream(personId)
+        .map(pnr -> buildIntygData(pnr, "Patient-" + pnr))
+        .collect(Collectors.toList());
+  }
 
-    private List<IntygData> buildIntygDataList(String... personId) {
-        return Arrays.stream(personId)
-            .map(pnr -> buildIntygData(pnr, "Patient-" + pnr))
-            .collect(Collectors.toList());
-    }
+  private IntygData buildIntygData(String id, String name) {
+    final var intygData = new IntygData();
+    intygData.setPatientNamn(name);
+    intygData.setPatientId(id);
+    intygData.setVardenhetId(VARDENHET_1);
+    intygData.setLakareId(LAKARE1_HSA_ID);
+    intygData.setLakareNamn(LAKARE1_NAMN);
+    return intygData;
+  }
 
-    private IntygData buildIntygData(String id, String name) {
-        final var intygData = new IntygData();
-        intygData.setPatientNamn(name);
-        intygData.setPatientId(id);
-        intygData.setVardenhetId(VARDENHET_1);
-        intygData.setLakareId(LAKARE1_HSA_ID);
-        intygData.setLakareNamn(LAKARE1_NAMN);
-        return intygData;
-    }
+  private Map<Personnummer, PersonSvar> buildPersonMap(PersonSvar... arr) {
+    Map<Personnummer, PersonSvar> persons = new HashMap<>();
+    Arrays.stream(arr)
+        .forEach(
+            ps -> {
+              Personnummer pnr = ps.getPerson() == null ? null : ps.getPerson().personnummer();
+              persons.put(pnr, ps);
+            });
+    return persons;
+  }
 
-    private Map<Personnummer, PersonSvar> buildPersonMap(PersonSvar... arr) {
-        Map<Personnummer, PersonSvar> persons = new HashMap<>();
-        Arrays.stream(arr).forEach(ps -> {
-            Personnummer pnr = ps.getPerson() == null ? null : ps.getPerson().personnummer();
-            persons.put(pnr, ps);
-        });
-        return persons;
-    }
-
-    private Personnummer createPnr(String pnr) {
-        return Personnummer
-            .createPersonnummer(pnr)
-            .orElseThrow(() -> new IllegalArgumentException("Cannot create Personnummer object with pnr: " + pnr));
-    }
+  private Personnummer createPnr(String pnr) {
+    return Personnummer.createPersonnummer(pnr)
+        .orElseThrow(
+            () ->
+                new IllegalArgumentException("Cannot create Personnummer object with pnr: " + pnr));
+  }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.application.certificate.service;
 
 import java.util.List;
@@ -25,28 +26,25 @@ import org.springframework.stereotype.Service;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Relation;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.RelationDao;
 
-/**
- * Created by eriklupander on 2017-05-10.
- */
+/** Created by eriklupander on 2017-05-10. */
 @Service
 public class RelationService {
 
-    @Autowired
-    private RelationDao relationDao;
+  @Autowired private RelationDao relationDao;
 
-    public void storeRelation(Relation relation) {
-        relationDao.store(relation);
-    }
+  public void storeRelation(Relation relation) {
+    relationDao.store(relation);
+  }
 
-    public List<Relation> getRelationGraph(String intygsId) {
-        return relationDao.getGraph(intygsId);
-    }
+  public List<Relation> getRelationGraph(String intygsId) {
+    return relationDao.getGraph(intygsId);
+  }
 
-    public Optional<Relation> getParentRelation(String intygsId) {
-        return relationDao.getParentRelation(intygsId);
-    }
+  public Optional<Relation> getParentRelation(String intygsId) {
+    return relationDao.getParentRelation(intygsId);
+  }
 
-    public List<Relation> getChildRelations(String intygsId) {
-        return relationDao.getChildren(intygsId);
-    }
+  public List<Relation> getChildRelations(String intygsId) {
+    return relationDao.getChildren(intygsId);
+  }
 }

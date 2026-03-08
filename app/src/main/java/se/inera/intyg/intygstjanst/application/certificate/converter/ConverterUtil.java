@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.application.certificate.converter;
 
 import java.util.ArrayList;
@@ -32,101 +33,116 @@ import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Certific
 
 public final class ConverterUtil {
 
-    private ConverterUtil() {
+  private ConverterUtil() {}
+
+  public static Certificate toCertificate(CertificateHolder certificateHolder) {
+    Certificate certificate = new Certificate(certificateHolder.getId());
+
+    certificate.setType(certificateHolder.getType());
+    certificate.setTypeVersion(certificateHolder.getTypeVersion());
+    certificate.setSigningDoctorName(certificateHolder.getSigningDoctorName());
+    certificate.setSignedDate(certificateHolder.getSignedDate());
+
+    certificate.setCareUnitId(certificateHolder.getCareUnitId());
+    certificate.setCareUnitName(certificateHolder.getCareUnitName());
+    certificate.setCareGiverId(certificateHolder.getCareGiverId());
+    certificate.setCivicRegistrationNumber(certificateHolder.getCivicRegistrationNumber());
+    certificate.setValidFromDate(certificateHolder.getValidFromDate());
+    certificate.setValidToDate(certificateHolder.getValidToDate());
+    certificate.setDeletedByCareGiver(certificateHolder.isDeletedByCareGiver());
+    certificate.setAdditionalInfo(certificateHolder.getAdditionalInfo());
+    if (certificateHolder.getCertificateStates() != null) {
+      List<CertificateStateHistoryEntry> certificateStates =
+          new ArrayList<>(certificateHolder.getCertificateStates().size());
+      for (CertificateStateHolder certificateStateHolder :
+          certificateHolder.getCertificateStates()) {
+        certificateStates.add(
+            new CertificateStateHistoryEntry(
+                certificateStateHolder.getTarget(),
+                certificateStateHolder.getState(),
+                certificateStateHolder.getTimestamp()));
+      }
+      certificate.setStates(certificateStates);
     }
 
-    public static Certificate toCertificate(CertificateHolder certificateHolder) {
-        Certificate certificate = new Certificate(certificateHolder.getId());
+    final var diagnoses = getDiagnoses(certificateHolder.getAdditionalMetaData());
+    certificate.setCertificateMetaData(
+        new CertificateMetaData(
+            certificate,
+            certificateHolder.getSigningDoctorId(),
+            certificateHolder.getSigningDoctorName(),
+            certificateHolder.isRevoked(),
+            diagnoses));
 
-        certificate.setType(certificateHolder.getType());
-        certificate.setTypeVersion(certificateHolder.getTypeVersion());
-        certificate.setSigningDoctorName(certificateHolder.getSigningDoctorName());
-        certificate.setSignedDate(certificateHolder.getSignedDate());
+    return certificate;
+  }
 
-        certificate.setCareUnitId(certificateHolder.getCareUnitId());
-        certificate.setCareUnitName(certificateHolder.getCareUnitName());
-        certificate.setCareGiverId(certificateHolder.getCareGiverId());
-        certificate.setCivicRegistrationNumber(certificateHolder.getCivicRegistrationNumber());
-        certificate.setValidFromDate(certificateHolder.getValidFromDate());
-        certificate.setValidToDate(certificateHolder.getValidToDate());
-        certificate.setDeletedByCareGiver(certificateHolder.isDeletedByCareGiver());
-        certificate.setAdditionalInfo(certificateHolder.getAdditionalInfo());
-        if (certificateHolder.getCertificateStates() != null) {
-            List<CertificateStateHistoryEntry> certificateStates = new ArrayList<>(
-                certificateHolder.getCertificateStates().size());
-            for (CertificateStateHolder certificateStateHolder : certificateHolder.getCertificateStates()) {
-                certificateStates
-                    .add(new CertificateStateHistoryEntry(certificateStateHolder.getTarget(), certificateStateHolder.getState(),
-                        certificateStateHolder.getTimestamp()));
-            }
-            certificate.setStates(certificateStates);
-        }
+  public static String getDiagnoses(AdditionalMetaData additionalMetaData) {
+    if (additionalMetaData == null
+        || additionalMetaData.getDiagnoses() == null
+        || additionalMetaData.getDiagnoses().isEmpty()) {
+      return null;
+    }
+    return StringUtils.join(additionalMetaData.getDiagnoses());
+  }
 
-        final var diagnoses = getDiagnoses(certificateHolder.getAdditionalMetaData());
-        certificate.setCertificateMetaData(new CertificateMetaData(certificate, certificateHolder.getSigningDoctorId(),
-            certificateHolder.getSigningDoctorName(), certificateHolder.isRevoked(), diagnoses));
+  public static CertificateHolder toCertificateHolder(Certificate certificate) {
+    CertificateHolder certificateHolder = new CertificateHolder();
+    certificateHolder.setId(certificate.getId());
+    certificateHolder.setType(certificate.getType());
+    certificateHolder.setTypeVersion(certificate.getTypeVersion());
+    certificateHolder.setOriginalCertificate(
+        certificate.getOriginalCertificate() == null
+            ? null
+            : certificate.getOriginalCertificate().getDocument());
+    certificateHolder.setCareUnitId(certificate.getCareUnitId());
+    certificateHolder.setCareUnitName(certificate.getCareUnitName());
+    certificateHolder.setCareGiverId(certificate.getCareGiverId());
+    certificateHolder.setSigningDoctorId(
+        certificate.getCertificateMetaData() == null
+            ? null
+            : certificate.getCertificateMetaData().getDoctorId());
+    certificateHolder.setSigningDoctorName(certificate.getSigningDoctorName());
+    certificateHolder.setSignedDate(certificate.getSignedDate());
+    certificateHolder.setCivicRegistrationNumber(certificate.getCivicRegistrationNumber());
+    certificateHolder.setAdditionalInfo(certificate.getAdditionalInfo());
+    certificateHolder.setDeleted(certificate.isDeleted());
+    certificateHolder.setValidFromDate(certificate.getValidFromDate());
+    certificateHolder.setValidToDate(certificate.getValidToDate());
+    certificateHolder.setDeletedByCareGiver(certificate.isDeletedByCareGiver());
+    List<CertificateStateHolder> certificateStates =
+        new ArrayList<>(certificate.getStates().size());
+    for (CertificateStateHistoryEntry certificateStateEntry : certificate.getStates()) {
+      certificateStates.add(
+          new CertificateStateHolder(
+              certificateStateEntry.getTarget(),
+              certificateStateEntry.getState(),
+              certificateStateEntry.getTimestamp()));
+    }
+    certificateHolder.setCertificateStates(certificateStates);
+    certificateHolder.setRevoked(certificate.isRevoked());
+    certificateHolder.setAdditionalMetaData(
+        certificate.getCertificateMetaData() != null
+            ? getAdditionalMetaData(certificate.getCertificateMetaData())
+            : null);
+    return certificateHolder;
+  }
 
-        return certificate;
+  private static AdditionalMetaData getAdditionalMetaData(CertificateMetaData certificateMetaData) {
+    final var addtionalMetaData = new AdditionalMetaData();
+
+    final var diagnoses = getDiagnoses(certificateMetaData.getDiagnoses());
+
+    addtionalMetaData.setDiagnoses(diagnoses);
+
+    return addtionalMetaData;
+  }
+
+  private static List<String> getDiagnoses(String diagnosesAsString) {
+    if (diagnosesAsString == null || diagnosesAsString.trim().length() == 0) {
+      return Collections.emptyList();
     }
 
-    public static String getDiagnoses(AdditionalMetaData additionalMetaData) {
-        if (additionalMetaData == null || additionalMetaData.getDiagnoses() == null || additionalMetaData.getDiagnoses().isEmpty()) {
-            return null;
-        }
-        return StringUtils.join(additionalMetaData.getDiagnoses());
-    }
-
-    public static CertificateHolder toCertificateHolder(Certificate certificate) {
-        CertificateHolder certificateHolder = new CertificateHolder();
-        certificateHolder.setId(certificate.getId());
-        certificateHolder.setType(certificate.getType());
-        certificateHolder.setTypeVersion(certificate.getTypeVersion());
-        certificateHolder.setOriginalCertificate(
-            certificate.getOriginalCertificate() == null ? null : certificate.getOriginalCertificate().getDocument());
-        certificateHolder.setCareUnitId(certificate.getCareUnitId());
-        certificateHolder.setCareUnitName(certificate.getCareUnitName());
-        certificateHolder.setCareGiverId(certificate.getCareGiverId());
-        certificateHolder
-            .setSigningDoctorId(certificate.getCertificateMetaData() == null ? null : certificate.getCertificateMetaData().getDoctorId());
-        certificateHolder.setSigningDoctorName(certificate.getSigningDoctorName());
-        certificateHolder.setSignedDate(certificate.getSignedDate());
-        certificateHolder.setCivicRegistrationNumber(certificate.getCivicRegistrationNumber());
-        certificateHolder.setAdditionalInfo(certificate.getAdditionalInfo());
-        certificateHolder.setDeleted(certificate.isDeleted());
-        certificateHolder.setValidFromDate(certificate.getValidFromDate());
-        certificateHolder.setValidToDate(certificate.getValidToDate());
-        certificateHolder.setDeletedByCareGiver(certificate.isDeletedByCareGiver());
-        List<CertificateStateHolder> certificateStates = new ArrayList<>(certificate.getStates().size());
-        for (CertificateStateHistoryEntry certificateStateEntry : certificate.getStates()) {
-            certificateStates.add(new CertificateStateHolder(certificateStateEntry.getTarget(), certificateStateEntry.getState(),
-                certificateStateEntry.getTimestamp()));
-        }
-        certificateHolder.setCertificateStates(certificateStates);
-        certificateHolder.setRevoked(certificate.isRevoked());
-        certificateHolder.setAdditionalMetaData(certificate.getCertificateMetaData() != null ? getAdditionalMetaData(
-            certificate.getCertificateMetaData()) : null);
-        return certificateHolder;
-    }
-
-    private static AdditionalMetaData getAdditionalMetaData(CertificateMetaData certificateMetaData) {
-        final var addtionalMetaData = new AdditionalMetaData();
-
-        final var diagnoses = getDiagnoses(certificateMetaData.getDiagnoses());
-
-        addtionalMetaData.setDiagnoses(diagnoses);
-
-        return addtionalMetaData;
-    }
-
-    private static List<String> getDiagnoses(String diagnosesAsString) {
-        if (diagnosesAsString == null || diagnosesAsString.trim().length() == 0) {
-            return Collections.emptyList();
-        }
-
-        return Arrays.asList(
-            diagnosesAsString
-                .replaceAll("\\[|\\]", "")
-                .split("\\s*,\\s*")
-        );
-    }
+    return Arrays.asList(diagnosesAsString.replaceAll("\\[|\\]", "").split("\\s*,\\s*"));
+  }
 }

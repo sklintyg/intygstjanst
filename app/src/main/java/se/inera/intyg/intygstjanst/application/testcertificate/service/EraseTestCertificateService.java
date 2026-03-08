@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.application.testcertificate.service;
 
 import java.util.List;
@@ -30,23 +31,19 @@ import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Sjukfall
 @Service
 public class EraseTestCertificateService {
 
-    @Autowired
-    private CertificateDao certificateDao;
+  @Autowired private CertificateDao certificateDao;
 
-    @Autowired
-    private RelationDao relationDao;
+  @Autowired private RelationDao relationDao;
 
-    @Autowired
-    private SjukfallCertificateDao sjukfallCertificateDao;
+  @Autowired private SjukfallCertificateDao sjukfallCertificateDao;
 
-    @Autowired
-    private ApprovedReceiverDao approvedReceiverDao;
+  @Autowired private ApprovedReceiverDao approvedReceiverDao;
 
-    @Transactional
-    public void eraseTestCertificates(List<String> testCertificateIds) {
-        certificateDao.eraseTestCertificates(testCertificateIds);
-        relationDao.eraseTestCertificates(testCertificateIds);
-        approvedReceiverDao.eraseTestCertificates(testCertificateIds);
-        sjukfallCertificateDao.eraseTestCertificates(testCertificateIds);
-    }
+  @Transactional
+  public void eraseTestCertificates(List<String> testCertificateIds) {
+    certificateDao.eraseTestCertificates(testCertificateIds);
+    relationDao.eraseTestCertificates(testCertificateIds);
+    approvedReceiverDao.eraseTestCertificates(testCertificateIds);
+    sjukfallCertificateDao.eraseTestCertificates(testCertificateIds);
+  }
 }

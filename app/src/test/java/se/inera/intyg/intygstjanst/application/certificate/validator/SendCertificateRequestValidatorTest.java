@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.application.certificate.validator;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -33,89 +34,92 @@ import se.inera.ifv.insuranceprocess.healthreporting.v2.HosPersonalType;
 import se.inera.ifv.insuranceprocess.healthreporting.v2.PatientType;
 import se.inera.ifv.insuranceprocess.healthreporting.v2.VardgivareType;
 import se.inera.intyg.common.support.validate.CertificateValidationException;
-import se.inera.intyg.intygstjanst.application.certificate.validator.SendCertificateRequestValidator;
 
 @ExtendWith(MockitoExtension.class)
 class SendCertificateRequestValidatorTest {
 
-    @Test
-    void testValidateAndCorrect() throws Exception {
-        new SendCertificateRequestValidator(createRequest()).validateAndCorrect();
-    }
+  @Test
+  void testValidateAndCorrect() throws Exception {
+    new SendCertificateRequestValidator(createRequest()).validateAndCorrect();
+  }
 
-    @Test
-    void testValidateAndCorrectVardReferensIdMissing() {
-        SendType sendRequest = createRequest();
-        sendRequest.setVardReferensId(null);
-        assertThrows(CertificateValidationException.class,
-            () -> new SendCertificateRequestValidator(sendRequest).validateAndCorrect());
-    }
+  @Test
+  void testValidateAndCorrectVardReferensIdMissing() {
+    SendType sendRequest = createRequest();
+    sendRequest.setVardReferensId(null);
+    assertThrows(
+        CertificateValidationException.class,
+        () -> new SendCertificateRequestValidator(sendRequest).validateAndCorrect());
+  }
 
-    @Test
-    void testValidateAndCorrectAvsantTidpunktMissing() {
-        SendType sendRequest = createRequest();
-        sendRequest.setAvsantTidpunkt(null);
-        assertThrows(CertificateValidationException.class,
-            () -> new SendCertificateRequestValidator(sendRequest).validateAndCorrect());
-    }
+  @Test
+  void testValidateAndCorrectAvsantTidpunktMissing() {
+    SendType sendRequest = createRequest();
+    sendRequest.setAvsantTidpunkt(null);
+    assertThrows(
+        CertificateValidationException.class,
+        () -> new SendCertificateRequestValidator(sendRequest).validateAndCorrect());
+  }
 
-    @Test
-    void testValidateAndCorrectLakarutlatandeError() {
-        SendType sendRequest = createRequest();
-        sendRequest.getLakarutlatande().setPatient(null);
-        assertThrows(CertificateValidationException.class,
-            () -> new SendCertificateRequestValidator(sendRequest).validateAndCorrect());
-    }
+  @Test
+  void testValidateAndCorrectLakarutlatandeError() {
+    SendType sendRequest = createRequest();
+    sendRequest.getLakarutlatande().setPatient(null);
+    assertThrows(
+        CertificateValidationException.class,
+        () -> new SendCertificateRequestValidator(sendRequest).validateAndCorrect());
+  }
 
-    @Test
-    void testValidateAndCorrectAdressVardError() {
-        SendType sendRequest = createRequest();
-        sendRequest.getAdressVard().setHosPersonal(null);
-        assertThrows(CertificateValidationException.class,
-            () -> new SendCertificateRequestValidator(sendRequest).validateAndCorrect());
-    }
+  @Test
+  void testValidateAndCorrectAdressVardError() {
+    SendType sendRequest = createRequest();
+    sendRequest.getAdressVard().setHosPersonal(null);
+    assertThrows(
+        CertificateValidationException.class,
+        () -> new SendCertificateRequestValidator(sendRequest).validateAndCorrect());
+  }
 
-    private SendType createRequest() {
-        final String hsaIdRoot = "1.2.752.129.2.1.4.1";
-        SendType sendType = new SendType();
-        VardAdresseringsType vardAdresseringsType = new VardAdresseringsType();
-        HosPersonalType hosPersonal = new HosPersonalType();
-        EnhetType enhet = new EnhetType();
-        enhet.setEnhetsnamn("enhetsnamn");
-        II enhetsId = new II();
-        enhetsId.setRoot(hsaIdRoot);
-        enhetsId.setExtension("enhetsid");
-        enhet.setEnhetsId(enhetsId);
-        VardgivareType vardGivare = new VardgivareType();
-        II vardGivarId = new II();
-        vardGivarId.setRoot(hsaIdRoot);
-        vardGivarId.setExtension("vardgivarid");
-        vardGivare.setVardgivareId(vardGivarId);
-        vardGivare.setVardgivarnamn("MI");
-        enhet.setVardgivare(vardGivare);
-        hosPersonal.setEnhet(enhet);
-        hosPersonal.setFullstandigtNamn("MI");
-        II personalId = new II();
-        personalId.setRoot(hsaIdRoot);
-        personalId.setExtension("MI");
-        hosPersonal.setPersonalId(personalId);
-        hosPersonal.setFullstandigtNamn("hospersonal namn");
-        vardAdresseringsType.setHosPersonal(hosPersonal);
-        sendType.setAdressVard(vardAdresseringsType);
-        sendType.setAvsantTidpunkt(LocalDateTime.now());
-        sendType.setVardReferensId("MI");
-        LakarutlatandeEnkelType lakarutlatande = new LakarutlatandeEnkelType();
-        lakarutlatande.setLakarutlatandeId("certificateId");
-        lakarutlatande.setSigneringsTidpunkt(LocalDateTime.now());
-        PatientType patient = new PatientType();
-        II patientIdHolder = new II();
-        patientIdHolder.setRoot("1.2.752.129.2.1.3.1");
-        patientIdHolder.setExtension("19121212-1212");
-        patient.setPersonId(patientIdHolder);
-        patient.setFullstandigtNamn("patientnamn");
-        lakarutlatande.setPatient(patient);
+  private SendType createRequest() {
+    final String hsaIdRoot = "1.2.752.129.2.1.4.1";
+    SendType sendType = new SendType();
+    VardAdresseringsType vardAdresseringsType = new VardAdresseringsType();
+    HosPersonalType hosPersonal = new HosPersonalType();
+    EnhetType enhet = new EnhetType();
+    enhet.setEnhetsnamn("enhetsnamn");
+    II enhetsId = new II();
+    enhetsId.setRoot(hsaIdRoot);
+    enhetsId.setExtension("enhetsid");
+    enhet.setEnhetsId(enhetsId);
+    VardgivareType vardGivare = new VardgivareType();
+    II vardGivarId = new II();
+    vardGivarId.setRoot(hsaIdRoot);
+    vardGivarId.setExtension("vardgivarid");
+    vardGivare.setVardgivareId(vardGivarId);
+    vardGivare.setVardgivarnamn("MI");
+    enhet.setVardgivare(vardGivare);
+    hosPersonal.setEnhet(enhet);
+    hosPersonal.setFullstandigtNamn("MI");
+    II personalId = new II();
+    personalId.setRoot(hsaIdRoot);
+    personalId.setExtension("MI");
+    hosPersonal.setPersonalId(personalId);
+    hosPersonal.setFullstandigtNamn("hospersonal namn");
+    vardAdresseringsType.setHosPersonal(hosPersonal);
+    sendType.setAdressVard(vardAdresseringsType);
+    sendType.setAvsantTidpunkt(LocalDateTime.now());
+    sendType.setVardReferensId("MI");
+    LakarutlatandeEnkelType lakarutlatande = new LakarutlatandeEnkelType();
+    lakarutlatande.setLakarutlatandeId("certificateId");
+    lakarutlatande.setSigneringsTidpunkt(LocalDateTime.now());
+    PatientType patient = new PatientType();
+    II patientIdHolder = new II();
+    patientIdHolder.setRoot("1.2.752.129.2.1.3.1");
+    patientIdHolder.setExtension("19121212-1212");
+    patient.setPersonId(patientIdHolder);
+    patient.setFullstandigtNamn("patientnamn");
+    lakarutlatande.setPatient(patient);
 
-        sendType.setLakarutlatande(lakarutlatande);
-        return sendType;
-    }
+    sendType.setLakarutlatande(lakarutlatande);
+    return sendType;
+  }
 }

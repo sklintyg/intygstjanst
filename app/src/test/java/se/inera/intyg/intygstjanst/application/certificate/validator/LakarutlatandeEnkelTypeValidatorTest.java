@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.application.certificate.validator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -29,55 +30,56 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.LakarutlatandeEnkelType;
 import se.inera.ifv.insuranceprocess.healthreporting.v2.PatientType;
-import se.inera.intyg.intygstjanst.application.certificate.validator.LakarutlatandeEnkelTypeValidator;
 
 class LakarutlatandeEnkelTypeValidatorTest {
 
-    private LakarutlatandeEnkelType lakarutlatande;
-    private PatientType patient;
-    private II patientId;
-    private List<String> errors;
-    private LakarutlatandeEnkelTypeValidator validator;
+  private LakarutlatandeEnkelType lakarutlatande;
+  private PatientType patient;
+  private II patientId;
+  private List<String> errors;
+  private LakarutlatandeEnkelTypeValidator validator;
 
-    @BeforeEach
-    void setup() {
-        lakarutlatande = new LakarutlatandeEnkelType();
-        lakarutlatande.setLakarutlatandeId("id");
-        lakarutlatande.setSigneringsTidpunkt(LocalDateTime.now());
-        patient = new PatientType();
-        patientId = new II();
-        patientId.setRoot("1.2.752.129.2.1.3.1");
-        patientId.setExtension("19121212-1212");
-        patient.setPersonId(patientId);
-        patient.setFullstandigtNamn("namn");
-        lakarutlatande.setPatient(patient);
-        errors = new ArrayList<>();
-        validator = new LakarutlatandeEnkelTypeValidator(lakarutlatande, errors);
-    }
+  @BeforeEach
+  void setup() {
+    lakarutlatande = new LakarutlatandeEnkelType();
+    lakarutlatande.setLakarutlatandeId("id");
+    lakarutlatande.setSigneringsTidpunkt(LocalDateTime.now());
+    patient = new PatientType();
+    patientId = new II();
+    patientId.setRoot("1.2.752.129.2.1.3.1");
+    patientId.setExtension("19121212-1212");
+    patient.setPersonId(patientId);
+    patient.setFullstandigtNamn("namn");
+    lakarutlatande.setPatient(patient);
+    errors = new ArrayList<>();
+    validator = new LakarutlatandeEnkelTypeValidator(lakarutlatande, errors);
+  }
 
-    @Test
-    void testErrorsOnEmtpyCertificate() {
-        lakarutlatande.setLakarutlatandeId(null);
-        lakarutlatande.setSigneringsTidpunkt(null);
-        lakarutlatande.setPatient(null);
-        validator.validateAndCorrect();
-        assertTrue(errors.contains("No Lakarutlatande Id found!"));
-        assertTrue(errors.contains("No signeringstidpunkt found!"));
-        assertTrue(errors.contains("No Patient element found!"));
-    }
+  @Test
+  void testErrorsOnEmtpyCertificate() {
+    lakarutlatande.setLakarutlatandeId(null);
+    lakarutlatande.setSigneringsTidpunkt(null);
+    lakarutlatande.setPatient(null);
+    validator.validateAndCorrect();
+    assertTrue(errors.contains("No Lakarutlatande Id found!"));
+    assertTrue(errors.contains("No signeringstidpunkt found!"));
+    assertTrue(errors.contains("No Patient element found!"));
+  }
 
-    @Test
-    void testInvalidPatientIdExtension() {
-        patientId.setExtension("19121212-121X");
-        validator.validateAndCorrect();
-        assertTrue(errors.contains("Wrong format for person-id! Valid format is YYYYMMDD-XXXX or YYYYMMDD+XXXX."));
-    }
+  @Test
+  void testInvalidPatientIdExtension() {
+    patientId.setExtension("19121212-121X");
+    validator.validateAndCorrect();
+    assertTrue(
+        errors.contains(
+            "Wrong format for person-id! Valid format is YYYYMMDD-XXXX or YYYYMMDD+XXXX."));
+  }
 
-    @Test
-    void testDashInPatientIdExtensionIsCorrected() {
-        patientId.setExtension("191212121212");
-        validator.validateAndCorrect();
-        assertTrue(errors.isEmpty());
-        assertEquals("19121212-1212", patientId.getExtension());
-    }
+  @Test
+  void testDashInPatientIdExtensionIsCorrected() {
+    patientId.setExtension("191212121212");
+    validator.validateAndCorrect();
+    assertTrue(errors.isEmpty());
+    assertEquals("19121212-1212", patientId.getExtension());
+  }
 }

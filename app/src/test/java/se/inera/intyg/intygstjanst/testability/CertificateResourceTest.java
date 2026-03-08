@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.testability;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -50,80 +51,78 @@ import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Original
 @ExtendWith(MockitoExtension.class)
 class CertificateResourceTest {
 
-    @Mock
-    private EntityManager entityManager = mock(EntityManager.class);
+  @Mock private EntityManager entityManager = mock(EntityManager.class);
 
-    @Mock
-    private IntygModuleRegistry moduleRegistry = mock(IntygModuleRegistry.class);
+  @Mock private IntygModuleRegistry moduleRegistry = mock(IntygModuleRegistry.class);
 
-    @Mock
-    private ModuleApi moduleApi = mock(ModuleApi.class);
+  @Mock private ModuleApi moduleApi = mock(ModuleApi.class);
 
-    @Mock
-    private Utlatande utlatande = mock(Utlatande.class);
+  @Mock private Utlatande utlatande = mock(Utlatande.class);
 
-    @InjectMocks
-    private CertificateResource certificateResource = new CertificateResource();
+  @InjectMocks private CertificateResource certificateResource = new CertificateResource();
 
-    @Test
-    void testGetCertificate() {
-        certificateResource.getCertificate("1");
+  @Test
+  void testGetCertificate() {
+    certificateResource.getCertificate("1");
 
-        verify(entityManager).find(Certificate.class, "1");
-    }
+    verify(entityManager).find(Certificate.class, "1");
+  }
 
-    @Test
-    void testDeleteCertificate() {
-        Certificate certificate = new Certificate("1");
-        when(entityManager.find(Certificate.class, "1")).thenReturn(certificate);
+  @Test
+  void testDeleteCertificate() {
+    Certificate certificate = new Certificate("1");
+    when(entityManager.find(Certificate.class, "1")).thenReturn(certificate);
 
-        certificateResource.deleteCertificate("1");
+    certificateResource.deleteCertificate("1");
 
-        verify(entityManager).find(Certificate.class, "1");
-        verify(entityManager).remove(certificate);
-    }
+    verify(entityManager).find(Certificate.class, "1");
+    verify(entityManager).remove(certificate);
+  }
 
-    @Test
-    void testDeleteCertificateHandlesException() {
-        Certificate certificate = new Certificate("1");
-        when(entityManager.find(Certificate.class, "1")).thenReturn(certificate);
-        doThrow(new RuntimeException("")).when(entityManager).remove(certificate);
+  @Test
+  void testDeleteCertificateHandlesException() {
+    Certificate certificate = new Certificate("1");
+    when(entityManager.find(Certificate.class, "1")).thenReturn(certificate);
+    doThrow(new RuntimeException("")).when(entityManager).remove(certificate);
 
-        assertThrows(ResponseStatusException.class, () -> certificateResource.deleteCertificate("1"));
-    }
+    assertThrows(ResponseStatusException.class, () -> certificateResource.deleteCertificate("1"));
+  }
 
-    @Test
-    void testInsertCertificate() throws Exception {
-        Certificate certificate = new Certificate("1");
-        certificate.setOriginalCertificate(new OriginalCertificate(LocalDateTime.now(), "xml", certificate));
-        when(moduleRegistry.getModuleApi(any(), any())).thenReturn(moduleApi);
-        when(moduleApi.getAdditionalInfo(any())).thenReturn("additional info");
-        when(moduleApi.getUtlatandeFromXml(any())).thenReturn(utlatande);
-        GrundData gd = new GrundData();
-        HoSPersonal sa = new HoSPersonal();
-        sa.setFullstandigtNamn("namn");
-        sa.setPersonId("id");
-        gd.setSkapadAv(sa);
-        when(utlatande.getGrundData()).thenReturn(gd);
+  @Test
+  void testInsertCertificate() throws Exception {
+    Certificate certificate = new Certificate("1");
+    certificate.setOriginalCertificate(
+        new OriginalCertificate(LocalDateTime.now(), "xml", certificate));
+    when(moduleRegistry.getModuleApi(any(), any())).thenReturn(moduleApi);
+    when(moduleApi.getAdditionalInfo(any())).thenReturn("additional info");
+    when(moduleApi.getUtlatandeFromXml(any())).thenReturn(utlatande);
+    GrundData gd = new GrundData();
+    HoSPersonal sa = new HoSPersonal();
+    sa.setFullstandigtNamn("namn");
+    sa.setPersonId("id");
+    gd.setSkapadAv(sa);
+    when(utlatande.getGrundData()).thenReturn(gd);
 
-        certificateResource.insertCertificate(ConverterUtil.toCertificateHolder(certificate));
+    certificateResource.insertCertificate(ConverterUtil.toCertificateHolder(certificate));
 
-        ArgumentCaptor<Object> argument = ArgumentCaptor.forClass(Object.class);
-        verify(entityManager, times(3)).persist(argument.capture());
-        List<Object> persistedObjects = argument.getAllValues();
-        Certificate certificateArgument = (Certificate) persistedObjects.get(0);
-        assertEquals(certificate.getId(), certificateArgument.getId());
-        CertificateMetaData metadataArgument = (CertificateMetaData) persistedObjects.get(1);
-        assertEquals(certificate.getId(), metadataArgument.getCertificateId());
-        OriginalCertificate originalCertificateArgument = (OriginalCertificate) persistedObjects.get(2);
-        assertEquals(certificate.getId(), originalCertificateArgument.getCertificate().getId());
-    }
+    ArgumentCaptor<Object> argument = ArgumentCaptor.forClass(Object.class);
+    verify(entityManager, times(3)).persist(argument.capture());
+    List<Object> persistedObjects = argument.getAllValues();
+    Certificate certificateArgument = (Certificate) persistedObjects.get(0);
+    assertEquals(certificate.getId(), certificateArgument.getId());
+    CertificateMetaData metadataArgument = (CertificateMetaData) persistedObjects.get(1);
+    assertEquals(certificate.getId(), metadataArgument.getCertificateId());
+    OriginalCertificate originalCertificateArgument = (OriginalCertificate) persistedObjects.get(2);
+    assertEquals(certificate.getId(), originalCertificateArgument.getCertificate().getId());
+  }
 
-    @Test
-    void testInsertCertificateHandlesException() {
-        Certificate certificate = new Certificate("1");
+  @Test
+  void testInsertCertificateHandlesException() {
+    Certificate certificate = new Certificate("1");
 
-        assertThrows(ResponseStatusException.class,
-            () -> certificateResource.insertCertificate(ConverterUtil.toCertificateHolder(certificate)));
-    }
+    assertThrows(
+        ResponseStatusException.class,
+        () ->
+            certificateResource.insertCertificate(ConverterUtil.toCertificateHolder(certificate)));
+  }
 }

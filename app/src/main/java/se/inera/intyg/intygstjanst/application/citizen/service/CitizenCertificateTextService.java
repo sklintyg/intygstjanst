@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -26,25 +26,25 @@ import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
 @Service
 public class CitizenCertificateTextService {
 
-    private final IntygModuleRegistry intygModuleRegistry;
+  private final IntygModuleRegistry intygModuleRegistry;
 
-    public CitizenCertificateTextService(IntygModuleRegistry intygModuleRegistry) {
-        this.intygModuleRegistry = intygModuleRegistry;
-    }
+  public CitizenCertificateTextService(IntygModuleRegistry intygModuleRegistry) {
+    this.intygModuleRegistry = intygModuleRegistry;
+  }
 
-    public String getTypeName(String typeId) {
-        try {
-            return intygModuleRegistry.getModuleEntryPoint(typeId).getModuleName();
-        } catch (ModuleNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+  public String getTypeName(String typeId) {
+    try {
+      return intygModuleRegistry.getModuleEntryPoint(typeId).getModuleName();
+    } catch (ModuleNotFoundException e) {
+      throw new RuntimeException(e);
     }
+  }
 
-    public String getAdditionalInfoLabel(String typeId, String typeVersion) {
-        try {
-            return intygModuleRegistry.getModuleApi(typeId, typeVersion).getAdditionalInfoLabel();
-        } catch (ModuleNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+  public String getAdditionalInfoLabel(String typeId, String typeVersion) {
+    try {
+      return intygModuleRegistry.getModuleApi(typeId, typeVersion).getAdditionalInfoLabel();
+    } catch (ModuleNotFoundException e) {
+      throw new RuntimeException(e);
     }
+  }
 }

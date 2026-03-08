@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -26,26 +26,27 @@ import se.inera.intyg.schemas.contract.Personnummer;
 @Service
 public class ResolvePatientGenderServiceImpl implements ResolvePatientGenderService {
 
-    private static final int GENDER_START = 10;
-    private static final int GENDER_END = 11;
-    private static final String UKNOWN = "Okänd";
-    private static final String MALE_PATIENT_ID_REGEX = "^\\d*[13579]$";
+  private static final int GENDER_START = 10;
+  private static final int GENDER_END = 11;
+  private static final String UKNOWN = "Okänd";
+  private static final String MALE_PATIENT_ID_REGEX = "^\\d*[13579]$";
 
-    @Override
-    public String get(String patientId) {
-        return getGenderFromString(patientId);
-    }
+  @Override
+  public String get(String patientId) {
+    return getGenderFromString(patientId);
+  }
 
-    private static String getGenderFromString(String patientId) {
-        try {
-            return Personnummer
-                .createPersonnummer(patientId)
-                .orElseThrow()
-                .getPersonnummer()
-                .substring(GENDER_START, GENDER_END)
-                .matches(MALE_PATIENT_ID_REGEX) ? "Man" : "Kvinna";
-        } catch (Exception exception) {
-            return UKNOWN;
-        }
+  private static String getGenderFromString(String patientId) {
+    try {
+      return Personnummer.createPersonnummer(patientId)
+              .orElseThrow()
+              .getPersonnummer()
+              .substring(GENDER_START, GENDER_END)
+              .matches(MALE_PATIENT_ID_REGEX)
+          ? "Man"
+          : "Kvinna";
+    } catch (Exception exception) {
+      return UKNOWN;
     }
+  }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -28,84 +28,93 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import se.inera.intyg.intygstjanst.application.sickleave.dto.IntygData;
-import se.inera.intyg.intygstjanst.application.sickleave.dto.SjukfallEnhet;
 import se.inera.intyg.intygstjanst.application.reko.service.RekoStatusDecorator;
 import se.inera.intyg.intygstjanst.application.sickleave.dto.GetSickLeaveServiceRequest;
+import se.inera.intyg.intygstjanst.application.sickleave.dto.IntygData;
+import se.inera.intyg.intygstjanst.application.sickleave.dto.SjukfallEnhet;
 
 @Service
 public class GetSickLeavesService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(GetSickLeavesService.class);
-    private final HsaService hsaService;
-    private final GetActiveSickLeaveCertificates getActiveSickLeaveCertificates;
-    private final GetSickLeaveCertificates getSickLeaveCertificates;
-    private final FilterSickLeaves filterSickLeaves;
-    private final RekoStatusDecorator rekoStatusDecorator;
+  private static final Logger LOG = LoggerFactory.getLogger(GetSickLeavesService.class);
+  private final HsaService hsaService;
+  private final GetActiveSickLeaveCertificates getActiveSickLeaveCertificates;
+  private final GetSickLeaveCertificates getSickLeaveCertificates;
+  private final FilterSickLeaves filterSickLeaves;
+  private final RekoStatusDecorator rekoStatusDecorator;
 
-    public GetSickLeavesService(HsaService hsaService,
-        GetActiveSickLeaveCertificates getActiveSickLeaveCertificates,
-        GetSickLeaveCertificates getSickLeaveCertificates,
-        FilterSickLeaves filterSickLeaves, RekoStatusDecorator rekoStatusDecorator) {
-        this.hsaService = hsaService;
-        this.getActiveSickLeaveCertificates = getActiveSickLeaveCertificates;
-        this.getSickLeaveCertificates = getSickLeaveCertificates;
-        this.filterSickLeaves = filterSickLeaves;
-        this.rekoStatusDecorator = rekoStatusDecorator;
-    }
+  public GetSickLeavesService(
+      HsaService hsaService,
+      GetActiveSickLeaveCertificates getActiveSickLeaveCertificates,
+      GetSickLeaveCertificates getSickLeaveCertificates,
+      FilterSickLeaves filterSickLeaves,
+      RekoStatusDecorator rekoStatusDecorator) {
+    this.hsaService = hsaService;
+    this.getActiveSickLeaveCertificates = getActiveSickLeaveCertificates;
+    this.getSickLeaveCertificates = getSickLeaveCertificates;
+    this.filterSickLeaves = filterSickLeaves;
+    this.rekoStatusDecorator = rekoStatusDecorator;
+  }
 
-    public List<SjukfallEnhet> get(GetSickLeaveServiceRequest getSickLeaveServiceRequest) {
-        final var careProviderId = hsaService.getHsaIdForVardgivare(getSickLeaveServiceRequest.getCareUnitId());
-        final var careUnitAndSubUnits = hsaService.getHsaIdsForCareUnitAndSubUnits(getSickLeaveServiceRequest.getCareUnitId());
+  public List<SjukfallEnhet> get(GetSickLeaveServiceRequest getSickLeaveServiceRequest) {
+    final var careProviderId =
+        hsaService.getHsaIdForVardgivare(getSickLeaveServiceRequest.getCareUnitId());
+    final var careUnitAndSubUnits =
+        hsaService.getHsaIdsForCareUnitAndSubUnits(getSickLeaveServiceRequest.getCareUnitId());
 
-        final var sickLeaveLogMessageFactory = new SickLeaveLogMessageFactory(System.currentTimeMillis());
-        final var intygData = getActiveSickLeaveCertificates.get(
+    final var sickLeaveLogMessageFactory =
+        new SickLeaveLogMessageFactory(System.currentTimeMillis());
+    final var intygData =
+        getActiveSickLeaveCertificates.get(
             careProviderId,
             getUnitIdFromRequestIfProvided(getSickLeaveServiceRequest, careUnitAndSubUnits),
             getSickLeaveServiceRequest.getDoctorIds(),
-            getSickLeaveServiceRequest.getMaxDaysSinceSickLeaveCompleted()
-        );
-        LOG.info(sickLeaveLogMessageFactory.message(GET_ACTIVE_SICK_LEAVE_CERTIFICATES, intygData.size()));
+            getSickLeaveServiceRequest.getMaxDaysSinceSickLeaveCompleted());
+    LOG.info(
+        sickLeaveLogMessageFactory.message(GET_ACTIVE_SICK_LEAVE_CERTIFICATES, intygData.size()));
 
-        if (intygData.isEmpty()) {
-            return Collections.emptyList();
-        }
+    if (intygData.isEmpty()) {
+      return Collections.emptyList();
+    }
 
-        final var patientIds = intygData.stream()
-            .map(IntygData::getPatientId)
-            .collect(Collectors.toList());
+    final var patientIds =
+        intygData.stream().map(IntygData::getPatientId).collect(Collectors.toList());
 
-        sickLeaveLogMessageFactory.setStartTimer(System.currentTimeMillis());
-        final var sjukfallEnhetList = getSickLeaveCertificates.get(
+    sickLeaveLogMessageFactory.setStartTimer(System.currentTimeMillis());
+    final var sjukfallEnhetList =
+        getSickLeaveCertificates.get(
             careProviderId,
             careUnitAndSubUnits,
             patientIds,
             getSickLeaveServiceRequest.getMaxCertificateGap(),
             getSickLeaveServiceRequest.getMaxDaysSinceSickLeaveCompleted(),
-            getSickLeaveServiceRequest.getProtectedPersonFilterId()
-        );
-        LOG.info(sickLeaveLogMessageFactory.message(GET_SICK_LEAVES, intygData.size()));
+            getSickLeaveServiceRequest.getProtectedPersonFilterId());
+    LOG.info(sickLeaveLogMessageFactory.message(GET_SICK_LEAVES, intygData.size()));
 
-        sickLeaveLogMessageFactory.setStartTimer(System.currentTimeMillis());
-        rekoStatusDecorator.decorate(sjukfallEnhetList, getSickLeaveServiceRequest.getCareUnitId());
-        LOG.info(sickLeaveLogMessageFactory.message(SickLeaveLogMessageFactory.DECORATE_REKO_STATUS, sjukfallEnhetList.size()));
+    sickLeaveLogMessageFactory.setStartTimer(System.currentTimeMillis());
+    rekoStatusDecorator.decorate(sjukfallEnhetList, getSickLeaveServiceRequest.getCareUnitId());
+    LOG.info(
+        sickLeaveLogMessageFactory.message(
+            SickLeaveLogMessageFactory.DECORATE_REKO_STATUS, sjukfallEnhetList.size()));
 
-        return filterSickLeaves.filter(
-            sjukfallEnhetList,
-            getSickLeaveServiceRequest.getSickLeaveLengthIntervals(),
-            getSickLeaveServiceRequest.getDiagnosisChapters(),
-            getSickLeaveServiceRequest.getFromPatientAge(),
-            getSickLeaveServiceRequest.getToPatientAge(),
-            getSickLeaveServiceRequest.getFromSickLeaveEndDate(),
-            getSickLeaveServiceRequest.getToSickLeaveEndDate(),
-            getSickLeaveServiceRequest.getDoctorIds(),
-            getSickLeaveServiceRequest.getRekoStatusTypeIds(),
-            getSickLeaveServiceRequest.getOccupationTypeIds(),
-            getSickLeaveServiceRequest.getTextSearch());
-    }
+    return filterSickLeaves.filter(
+        sjukfallEnhetList,
+        getSickLeaveServiceRequest.getSickLeaveLengthIntervals(),
+        getSickLeaveServiceRequest.getDiagnosisChapters(),
+        getSickLeaveServiceRequest.getFromPatientAge(),
+        getSickLeaveServiceRequest.getToPatientAge(),
+        getSickLeaveServiceRequest.getFromSickLeaveEndDate(),
+        getSickLeaveServiceRequest.getToSickLeaveEndDate(),
+        getSickLeaveServiceRequest.getDoctorIds(),
+        getSickLeaveServiceRequest.getRekoStatusTypeIds(),
+        getSickLeaveServiceRequest.getOccupationTypeIds(),
+        getSickLeaveServiceRequest.getTextSearch());
+  }
 
-    private static List<String> getUnitIdFromRequestIfProvided(GetSickLeaveServiceRequest getSickLeaveServiceRequest,
-        List<String> careUnitAndSubUnits) {
-        return getSickLeaveServiceRequest.getUnitId() != null ? List.of(getSickLeaveServiceRequest.getUnitId()) : careUnitAndSubUnits;
-    }
+  private static List<String> getUnitIdFromRequestIfProvided(
+      GetSickLeaveServiceRequest getSickLeaveServiceRequest, List<String> careUnitAndSubUnits) {
+    return getSickLeaveServiceRequest.getUnitId() != null
+        ? List.of(getSickLeaveServiceRequest.getUnitId())
+        : careUnitAndSubUnits;
+  }
 }

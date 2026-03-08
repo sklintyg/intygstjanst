@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -36,19 +36,19 @@ import se.inera.intyg.intygstjanst.integration.hsa.model.legacy.Vardenhet;
 @RequiredArgsConstructor
 public class GetCareUnitListService {
 
-    private final GetCareUnitService getCareUnitService;
+  private final GetCareUnitService getCareUnitService;
 
-    public List<Vardenhet> get(List<Commission> commissions) {
-        return commissions.stream()
-            .filter(this::isUnitActive)
-            .map(getCareUnitService::get)
-            .filter(Objects::nonNull)
-            .distinct()
-            .sorted(Comparator.comparing(Vardenhet::getNamn))
-            .collect(Collectors.toList());
-    }
+  public List<Vardenhet> get(List<Commission> commissions) {
+    return commissions.stream()
+        .filter(this::isUnitActive)
+        .map(getCareUnitService::get)
+        .filter(Objects::nonNull)
+        .distinct()
+        .sorted(Comparator.comparing(Vardenhet::getNamn))
+        .collect(Collectors.toList());
+  }
 
-    private boolean isUnitActive(Commission commission) {
-        return isActive(commission.getHealthCareUnitStartDate(), commission.getHealthCareUnitEndDate());
-    }
+  private boolean isUnitActive(Commission commission) {
+    return isActive(commission.getHealthCareUnitStartDate(), commission.getHealthCareUnitEndDate());
+  }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -30,10 +30,8 @@ import se.inera.intyg.intygstjanst.infrastructure.csintegration.dto.GetMessageXm
 @Builder
 public class GetMessageXmlResponse {
 
-    String xml;
+  String xml;
 
-    @JsonPOJOBuilder(withPrefix = "")
-    public static class GetMessageXmlResponseBuilder {
-
-    }
+  @JsonPOJOBuilder(withPrefix = "")
+  public static class GetMessageXmlResponseBuilder {}
 }

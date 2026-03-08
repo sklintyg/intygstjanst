@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -31,14 +31,11 @@ import se.inera.intyg.intygstjanst.application.event.dto.RevokedInformationDTO.R
 @Builder
 public class RevokedInformationDTO {
 
-    String message;
-    String reason;
-    LocalDateTime revokedAt;
-    StaffDTO revokedBy;
+  String message;
+  String reason;
+  LocalDateTime revokedAt;
+  StaffDTO revokedBy;
 
-    @JsonPOJOBuilder(withPrefix = "")
-    public static class RevokedInformationDTOBuilder {
-
-    }
-
+  @JsonPOJOBuilder(withPrefix = "")
+  public static class RevokedInformationDTOBuilder {}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao;
 
 import java.time.LocalDateTime;
@@ -33,45 +34,48 @@ import se.inera.intyg.schemas.contract.Personnummer;
 @Transactional
 public abstract class TestSupport {
 
-    public static final LocalDateTime SIGNED_DATE = LocalDateTime.of(1999, 12, 31, 10, 32);
+  public static final LocalDateTime SIGNED_DATE = LocalDateTime.of(1999, 12, 31, 10, 32);
 
-    public static final Personnummer CIVIC_REGISTRATION_NUMBER = Personnummer.createPersonnummer("19001122-3344").orElseThrow();
-    public static final Personnummer CIVIC_REGISTRATION_NUMBER_NO_DASH = Personnummer.createPersonnummer("190011223344").orElseThrow();
+  public static final Personnummer CIVIC_REGISTRATION_NUMBER =
+      Personnummer.createPersonnummer("19001122-3344").orElseThrow();
+  public static final Personnummer CIVIC_REGISTRATION_NUMBER_NO_DASH =
+      Personnummer.createPersonnummer("190011223344").orElseThrow();
 
-    public static final String CERTIFICATE_ID = "123456";
-    public static final String FK7263 = "fk7263";
-    public static final String SIGNING_DOCTOR = "Dr. Oetker";
-    public static final String CARE_UNIT_ID = "1.2.3.4.5.6";
-    public static final String CARE_UNIT_NAME = "London Bridge Hospital";
-    public static final String CARE_GIVER_ID = "5678";
-    private static final String DEFAULT_TYPE_VERSION = "1.0";
+  public static final String CERTIFICATE_ID = "123456";
+  public static final String FK7263 = "fk7263";
+  public static final String SIGNING_DOCTOR = "Dr. Oetker";
+  public static final String CARE_UNIT_ID = "1.2.3.4.5.6";
+  public static final String CARE_UNIT_NAME = "London Bridge Hospital";
+  public static final String CARE_GIVER_ID = "5678";
+  private static final String DEFAULT_TYPE_VERSION = "1.0";
 
-    public static Certificate buildCertificate() {
-        return buildCertificate(CERTIFICATE_ID);
-    }
+  public static Certificate buildCertificate() {
+    return buildCertificate(CERTIFICATE_ID);
+  }
 
-    public static Certificate buildCertificate(String certificateId) {
-        return buildCertificate(certificateId, SIGNED_DATE);
-    }
+  public static Certificate buildCertificate(String certificateId) {
+    return buildCertificate(certificateId, SIGNED_DATE);
+  }
 
-    public static Certificate buildCertificate(String certificateId, String certificateType) {
-        return buildCertificate(certificateId, certificateType, SIGNED_DATE);
-    }
+  public static Certificate buildCertificate(String certificateId, String certificateType) {
+    return buildCertificate(certificateId, certificateType, SIGNED_DATE);
+  }
 
-    public static Certificate buildCertificate(String certificateId, LocalDateTime signedDate) {
-        return buildCertificate(certificateId, FK7263, signedDate);
-    }
+  public static Certificate buildCertificate(String certificateId, LocalDateTime signedDate) {
+    return buildCertificate(certificateId, FK7263, signedDate);
+  }
 
-    public static Certificate buildCertificate(String certificateId, String certificateType, LocalDateTime signedDate) {
-        Certificate certificate = new Certificate(certificateId);
-        certificate.setCivicRegistrationNumber(CIVIC_REGISTRATION_NUMBER);
-        certificate.setType(certificateType);
-        certificate.setTypeVersion(DEFAULT_TYPE_VERSION);
-        certificate.setSignedDate(signedDate);
-        certificate.setSigningDoctorName(SIGNING_DOCTOR);
-        certificate.setCareUnitId(CARE_UNIT_ID);
-        certificate.setCareUnitName(CARE_UNIT_NAME);
-        certificate.setCareGiverId(CARE_GIVER_ID);
-        return certificate;
-    }
+  public static Certificate buildCertificate(
+      String certificateId, String certificateType, LocalDateTime signedDate) {
+    Certificate certificate = new Certificate(certificateId);
+    certificate.setCivicRegistrationNumber(CIVIC_REGISTRATION_NUMBER);
+    certificate.setType(certificateType);
+    certificate.setTypeVersion(DEFAULT_TYPE_VERSION);
+    certificate.setSignedDate(signedDate);
+    certificate.setSigningDoctorName(SIGNING_DOCTOR);
+    certificate.setCareUnitId(CARE_UNIT_ID);
+    certificate.setCareUnitName(CARE_UNIT_NAME);
+    certificate.setCareGiverId(CARE_GIVER_ID);
+    return certificate;
+  }
 }

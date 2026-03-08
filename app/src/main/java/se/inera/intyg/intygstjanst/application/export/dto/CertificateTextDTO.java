@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.application.export.dto;
 
 import lombok.AllArgsConstructor;
@@ -27,8 +28,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CertificateTextDTO {
 
-    private String type;
-    private String version;
-    private String xml;
-
+  private String type;
+  private String version;
+  private String xml;
 }

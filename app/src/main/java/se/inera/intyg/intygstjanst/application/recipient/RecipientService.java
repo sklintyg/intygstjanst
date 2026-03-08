@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.application.recipient;
 
 import java.util.List;
@@ -23,76 +24,78 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.ApprovedReceiver;
-import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.ApprovedReceiverDao;
 import se.inera.intyg.intygstjanst.application.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.application.recipient.repository.RecipientRepo;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.ApprovedReceiver;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.ApprovedReceiverDao;
 
 @Service
 public class RecipientService {
 
-    @Autowired
-    private ApprovedReceiverDao approvedReceiverDao;
+  @Autowired private ApprovedReceiverDao approvedReceiverDao;
 
-    @Autowired
-    private RecipientRepo recipientRepo;
+  @Autowired private RecipientRepo recipientRepo;
 
-    public Recipient getRecipientForLogicalAddress(String logicalAddress) throws RecipientUnknownException {
-        return recipientRepo.getRecipientForLogicalAddress(logicalAddress);
-    }
+  public Recipient getRecipientForLogicalAddress(String logicalAddress)
+      throws RecipientUnknownException {
+    return recipientRepo.getRecipientForLogicalAddress(logicalAddress);
+  }
 
-    public Recipient getRecipient(String recipientId) throws RecipientUnknownException {
-        return recipientRepo.getRecipient(recipientId);
-    }
+  public Recipient getRecipient(String recipientId) throws RecipientUnknownException {
+    return recipientRepo.getRecipient(recipientId);
+  }
 
-    public List<Recipient> listRecipients() {
-        return recipientRepo.listRecipients();
-    }
+  public List<Recipient> listRecipients() {
+    return recipientRepo.listRecipients();
+  }
 
-    public List<Recipient> listRecipients(String certificateId) {
-        // Get list of registered possible receivers.
-        List<ApprovedReceiver> possibleReceivers =
-            approvedReceiverDao.getApprovedReceiverIdsForCertificate(certificateId);
+  public List<Recipient> listRecipients(String certificateId) {
+    // Get list of registered possible receivers.
+    List<ApprovedReceiver> possibleReceivers =
+        approvedReceiverDao.getApprovedReceiverIdsForCertificate(certificateId);
 
-        // Reduce to approved recipients
-        return recipientRepo.listRecipients().stream()
-            .filter(isApprovedRecipient(possibleReceivers))
-            .collect(Collectors.toList());
-    }
+    // Reduce to approved recipients
+    return recipientRepo.listRecipients().stream()
+        .filter(isApprovedRecipient(possibleReceivers))
+        .collect(Collectors.toList());
+  }
 
-    public List<Recipient> listRecipients(CertificateType certificateType) {
-        // Filter out HSVARD and INVANA recipients, as these are in fact Webcert/intygstjansten and Mina intyg)
-        return recipientRepo.listRecipients().stream()
-            .filter(r -> !getPrimaryRecipientHsvard().getId().equals(r.getId())
-                && !getPrimaryRecipientInvana().getId().equals(r.getId()))
-            .filter(r -> r.getCertificateTypes().contains(certificateType.getCertificateTypeId()))
-            .collect(Collectors.toList());
-    }
+  public List<Recipient> listRecipients(CertificateType certificateType) {
+    // Filter out HSVARD and INVANA recipients, as these are in fact Webcert/intygstjansten and Mina
+    // intyg)
+    return recipientRepo.listRecipients().stream()
+        .filter(
+            r ->
+                !getPrimaryRecipientHsvard().getId().equals(r.getId())
+                    && !getPrimaryRecipientInvana().getId().equals(r.getId()))
+        .filter(r -> r.getCertificateTypes().contains(certificateType.getCertificateTypeId()))
+        .collect(Collectors.toList());
+  }
 
-    public Recipient getPrimaryRecipientFkassa() {
-        return recipientRepo.getRecipientFkassa();
-    }
+  public Recipient getPrimaryRecipientFkassa() {
+    return recipientRepo.getRecipientFkassa();
+  }
 
-    public Recipient getPrimaryRecipientHsvard() {
-        return recipientRepo.getRecipientHsvard();
-    }
+  public Recipient getPrimaryRecipientHsvard() {
+    return recipientRepo.getRecipientHsvard();
+  }
 
-    public Recipient getPrimaryRecipientInvana() {
-        return recipientRepo.getRecipientInvana();
-    }
+  public Recipient getPrimaryRecipientInvana() {
+    return recipientRepo.getRecipientInvana();
+  }
 
-    public Recipient getPrimaryRecipientTransp() {
-        return recipientRepo.getRecipientTransp();
-    }
+  public Recipient getPrimaryRecipientTransp() {
+    return recipientRepo.getRecipientTransp();
+  }
 
-    private Predicate<Recipient> isApprovedRecipient(List<ApprovedReceiver> receivers) {
-        return recipient -> !getPrimaryRecipientHsvard().getId().equals(recipient.getId())
+  private Predicate<Recipient> isApprovedRecipient(List<ApprovedReceiver> receivers) {
+    return recipient ->
+        !getPrimaryRecipientHsvard().getId().equals(recipient.getId())
             && !getPrimaryRecipientInvana().getId().equals(recipient.getId())
             && receivers.stream()
-            .anyMatch(approvedReceiver -> approvedReceiver.isApproved()
-                && approvedReceiver.getReceiverId().equals(recipient.getId())
-            );
-    }
-
-
+                .anyMatch(
+                    approvedReceiver ->
+                        approvedReceiver.isApproved()
+                            && approvedReceiver.getReceiverId().equals(recipient.getId()));
+  }
 }

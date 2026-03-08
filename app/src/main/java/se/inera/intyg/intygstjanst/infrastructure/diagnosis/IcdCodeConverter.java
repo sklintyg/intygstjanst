@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -40,48 +40,56 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class IcdCodeConverter {
 
-    private static final String CODE_HEADING = "Kod";
-    private static final int DIAGNOSIS_CODE_INDEX = 0;
-    private static final int DIAGNOSIS_TITLE_INDEX = 3;
-    private final ResourceLoader resourceLoader;
+  private static final String CODE_HEADING = "Kod";
+  private static final int DIAGNOSIS_CODE_INDEX = 0;
+  private static final int DIAGNOSIS_TITLE_INDEX = 3;
+  private final ResourceLoader resourceLoader;
 
-    public Map<String, String> convert(String file) throws IOException {
-        final var resource = resourceLoader.getResource(file);
-        final var diagnosisMap = getStream(resource)
+  public Map<String, String> convert(String file) throws IOException {
+    final var resource = resourceLoader.getResource(file);
+    final var diagnosisMap =
+        getStream(resource)
             .map(this::toDiagnosis)
             .filter(Objects::nonNull)
             .collect(Collectors.toMap(DiagnosisFromFile::getCode, DiagnosisFromFile::getName));
 
-        log.info("Loaded {} codes from file {}", diagnosisMap.size(), file);
-        return diagnosisMap;
-    }
+    log.info("Loaded {} codes from file {}", diagnosisMap.size(), file);
+    return diagnosisMap;
+  }
 
-    private static Stream<String> getStream(Resource resource) throws IOException {
-        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(
-            IOUtils.lineIterator(resource.getInputStream(), StandardCharsets.UTF_8), Spliterator.ORDERED), false);
-    }
+  private static Stream<String> getStream(Resource resource) throws IOException {
+    return StreamSupport.stream(
+        Spliterators.spliteratorUnknownSize(
+            IOUtils.lineIterator(resource.getInputStream(), StandardCharsets.UTF_8),
+            Spliterator.ORDERED),
+        false);
+  }
 
-    private DiagnosisFromFile toDiagnosis(String line) {
-        final var text = line.replace("\"", "").split("\t");
-        if (isDiagnosisChapter(text) || isDiagnosisGroup(text) || isNotActive(text) || isHeading(text)) {
-            return null;
-        }
-        return new DiagnosisFromFile(text[DIAGNOSIS_CODE_INDEX].replace(".", ""), text[DIAGNOSIS_TITLE_INDEX]);
+  private DiagnosisFromFile toDiagnosis(String line) {
+    final var text = line.replace("\"", "").split("\t");
+    if (isDiagnosisChapter(text)
+        || isDiagnosisGroup(text)
+        || isNotActive(text)
+        || isHeading(text)) {
+      return null;
     }
+    return new DiagnosisFromFile(
+        text[DIAGNOSIS_CODE_INDEX].replace(".", ""), text[DIAGNOSIS_TITLE_INDEX]);
+  }
 
-    private boolean isHeading(String[] text) {
-        return text[0].equals(CODE_HEADING);
-    }
+  private boolean isHeading(String[] text) {
+    return text[0].equals(CODE_HEADING);
+  }
 
-    private boolean isNotActive(String[] line) {
-        return line[1].isEmpty();
-    }
+  private boolean isNotActive(String[] line) {
+    return line[1].isEmpty();
+  }
 
-    private boolean isDiagnosisGroup(String[] line) {
-        return line[0].contains("-");
-    }
+  private boolean isDiagnosisGroup(String[] line) {
+    return line[0].contains("-");
+  }
 
-    private boolean isDiagnosisChapter(String[] line) {
-        return Character.isDigit(line[0].charAt(0));
-    }
+  private boolean isDiagnosisChapter(String[] line) {
+    return Character.isDigit(line[0].charAt(0));
+  }
 }

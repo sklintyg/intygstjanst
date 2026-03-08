@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -42,103 +42,97 @@ import se.inera.intyg.intygstjanst.application.citizen.dto.CitizenCertificateUni
 @RequiredArgsConstructor
 public class CitizenCertificateConverterFromCS {
 
-    private final IntygModuleRegistry intygModuleRegistry;
+  private final IntygModuleRegistry intygModuleRegistry;
 
-    public CitizenCertificateDTO convert(Certificate certificate) {
-        return CitizenCertificateDTO.builder()
-            .id(certificate.getMetadata().getId())
-            .type(
-                CitizenCertificateTypeDTO.builder()
-                    .id(getCertificateType(certificate))
-                    .name(certificate.getMetadata().getName())
-                    .version(certificate.getMetadata().getTypeVersion())
-                    .build()
-            )
-            .unit(
-                CitizenCertificateUnitDTO.builder()
-                    .id(certificate.getMetadata().getUnit().getUnitId())
-                    .name(certificate.getMetadata().getUnit().getUnitName())
-                    .build()
-            )
-            .issued(certificate.getMetadata().getSigned())
-            .issuer(
-                CitizenCertificateIssuerDTO.builder()
-                    .name(certificate.getMetadata().getIssuedBy().getFullName())
-                    .build()
-            )
-            .summary(
-                CitizenCertificateSummaryDTO.builder()
-                    .label(certificate.getMetadata().getSummary().getLabel())
-                    .value(certificate.getMetadata().getSummary().getValue())
-                    .build()
-            )
-            .recipient(
-                certificate.getMetadata().getRecipient() == null ? null :
-                    CitizenCertificateRecipientDTO.builder()
-                        .id(certificate.getMetadata().getRecipient().getId())
-                        .name(certificate.getMetadata().getRecipient().getName())
-                        .sent(certificate.getMetadata().getRecipient().getSent())
-                        .build()
-            )
-            .relations(
-                Stream.concat(
-                        parentRelation(certificate),
-                        childRelations(certificate)
-                    )
-                    .toList()
-            )
-            .build();
+  public CitizenCertificateDTO convert(Certificate certificate) {
+    return CitizenCertificateDTO.builder()
+        .id(certificate.getMetadata().getId())
+        .type(
+            CitizenCertificateTypeDTO.builder()
+                .id(getCertificateType(certificate))
+                .name(certificate.getMetadata().getName())
+                .version(certificate.getMetadata().getTypeVersion())
+                .build())
+        .unit(
+            CitizenCertificateUnitDTO.builder()
+                .id(certificate.getMetadata().getUnit().getUnitId())
+                .name(certificate.getMetadata().getUnit().getUnitName())
+                .build())
+        .issued(certificate.getMetadata().getSigned())
+        .issuer(
+            CitizenCertificateIssuerDTO.builder()
+                .name(certificate.getMetadata().getIssuedBy().getFullName())
+                .build())
+        .summary(
+            CitizenCertificateSummaryDTO.builder()
+                .label(certificate.getMetadata().getSummary().getLabel())
+                .value(certificate.getMetadata().getSummary().getValue())
+                .build())
+        .recipient(
+            certificate.getMetadata().getRecipient() == null
+                ? null
+                : CitizenCertificateRecipientDTO.builder()
+                    .id(certificate.getMetadata().getRecipient().getId())
+                    .name(certificate.getMetadata().getRecipient().getName())
+                    .sent(certificate.getMetadata().getRecipient().getSent())
+                    .build())
+        .relations(Stream.concat(parentRelation(certificate), childRelations(certificate)).toList())
+        .build();
+  }
+
+  private String getCertificateType(Certificate certificate) {
+    return intygModuleRegistry.getModuleEntryPoints().stream()
+        .filter(
+            entryPoint ->
+                entryPoint.certificateServiceTypeId().equals(certificate.getMetadata().getType()))
+        .findFirst()
+        .map(ModuleEntryPoint::getModuleId)
+        .orElse(certificate.getMetadata().getType());
+  }
+
+  private static Stream<CitizenCertificateRelationDTO> childRelations(Certificate certificate) {
+    if (certificate.getMetadata().getRelations() == null
+        || certificate.getMetadata().getRelations().getChildren() == null) {
+      return Stream.empty();
     }
 
-    private String getCertificateType(Certificate certificate) {
-        return intygModuleRegistry.getModuleEntryPoints().stream()
-            .filter(entryPoint -> entryPoint.certificateServiceTypeId().equals(certificate.getMetadata().getType()))
-            .findFirst()
-            .map(ModuleEntryPoint::getModuleId)
-            .orElse(certificate.getMetadata().getType());
-    }
-
-    private static Stream<CitizenCertificateRelationDTO> childRelations(Certificate certificate) {
-        if (certificate.getMetadata().getRelations() == null || certificate.getMetadata().getRelations().getChildren() == null) {
-            return Stream.empty();
-        }
-
-        return Arrays.stream(certificate.getMetadata().getRelations().getChildren())
-            .filter(CitizenCertificateConverterFromCS::isSigned)
-            .filter(CitizenCertificateConverterFromCS::isReplacedOrComplemented)
-            .map(certificateRelation ->
+    return Arrays.stream(certificate.getMetadata().getRelations().getChildren())
+        .filter(CitizenCertificateConverterFromCS::isSigned)
+        .filter(CitizenCertificateConverterFromCS::isReplacedOrComplemented)
+        .map(
+            certificateRelation ->
                 CitizenCertificateRelationDTO.builder()
                     .certificateId(certificateRelation.getCertificateId())
                     .timestamp(certificateRelation.getCreated())
                     .type(CitizenCertificateRelationType.REPLACED)
                     .build());
+  }
+
+  private static Stream<CitizenCertificateRelationDTO> parentRelation(Certificate certificate) {
+    if (certificate.getMetadata().getRelations() == null
+        || certificate.getMetadata().getRelations().getParent() == null) {
+      return Stream.empty();
     }
 
-    private static Stream<CitizenCertificateRelationDTO> parentRelation(Certificate certificate) {
-        if (certificate.getMetadata().getRelations() == null || certificate.getMetadata().getRelations().getParent() == null) {
-            return Stream.empty();
-        }
-
-        if (!isSigned(certificate.getMetadata().getRelations().getParent()) || !isReplacedOrComplemented(
-            certificate.getMetadata().getRelations().getParent())) {
-            return Stream.empty();
-        }
-
-        return Stream.of(
-            CitizenCertificateRelationDTO.builder()
-                .certificateId(certificate.getMetadata().getRelations().getParent().getCertificateId())
-                .timestamp(certificate.getMetadata().getRelations().getParent().getCreated())
-                .type(CitizenCertificateRelationType.REPLACES)
-                .build()
-        );
+    if (!isSigned(certificate.getMetadata().getRelations().getParent())
+        || !isReplacedOrComplemented(certificate.getMetadata().getRelations().getParent())) {
+      return Stream.empty();
     }
 
-    private static boolean isSigned(CertificateRelation certificateRelation) {
-        return certificateRelation.getStatus().equals(CertificateStatus.SIGNED);
-    }
+    return Stream.of(
+        CitizenCertificateRelationDTO.builder()
+            .certificateId(certificate.getMetadata().getRelations().getParent().getCertificateId())
+            .timestamp(certificate.getMetadata().getRelations().getParent().getCreated())
+            .type(CitizenCertificateRelationType.REPLACES)
+            .build());
+  }
 
-    private static boolean isReplacedOrComplemented(CertificateRelation certificateRelation) {
-        return certificateRelation.getType().equals(CertificateRelationType.REPLACED)
-            || certificateRelation.getType().equals(CertificateRelationType.COMPLEMENTED);
-    }
+  private static boolean isSigned(CertificateRelation certificateRelation) {
+    return certificateRelation.getStatus().equals(CertificateStatus.SIGNED);
+  }
+
+  private static boolean isReplacedOrComplemented(CertificateRelation certificateRelation) {
+    return certificateRelation.getType().equals(CertificateRelationType.REPLACED)
+        || certificateRelation.getType().equals(CertificateRelationType.COMPLEMENTED);
+  }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.integration.hsa.services.legacy;
 
 import jakarta.xml.ws.WebServiceException;
@@ -24,26 +25,27 @@ import se.inera.intyg.intygstjanst.integration.hsa.model.PersonInformation;
 
 public interface HsaEmployeeService {
 
-    /**
-     * Returnerar information, som kontaktinformation samt legitimerad yrkesgrupp och specialitet, för sökt person.
-     * Exakt ett av fälten personHsaId och personalIdentityNumber ska anges.
-     *
-     * @param personHsaId Sökt persons HSA-id.
-     * @param personalIdentityNumber Sökt persons Person-id (personnummer eller samordningsnummer).
-     * @return Information om sökt person.
-     */
-    List<PersonInformation> getEmployee(String personHsaId, String personalIdentityNumber) throws WebServiceException;
+  /**
+   * Returnerar information, som kontaktinformation samt legitimerad yrkesgrupp och specialitet, för
+   * sökt person. Exakt ett av fälten personHsaId och personalIdentityNumber ska anges.
+   *
+   * @param personHsaId Sökt persons HSA-id.
+   * @param personalIdentityNumber Sökt persons Person-id (personnummer eller samordningsnummer).
+   * @return Information om sökt person.
+   */
+  List<PersonInformation> getEmployee(String personHsaId, String personalIdentityNumber)
+      throws WebServiceException;
 
-    /**
-     * Returnerar information, som kontaktinformation samt legitimerad yrkesgrupp och specialitet, för sökt person.
-     * Exakt ett av fälten personHsaId och personalIdentityNumber ska anges.
-     *
-     * @param personHsaId Sökt persons HSA-id.
-     * @param personalIdentityNumber Sökt persons Person-id (personnummer eller samordningsnummer).
-     * @param searchBase Sökbas. Om ingen sökbas anges används c=SE som sökbas.
-     * @return Information om sökt person.
-     */
-    List<PersonInformation> getEmployee(String personHsaId, String personalIdentityNumber, String searchBase)
-        throws WebServiceException;
-
+  /**
+   * Returnerar information, som kontaktinformation samt legitimerad yrkesgrupp och specialitet, för
+   * sökt person. Exakt ett av fälten personHsaId och personalIdentityNumber ska anges.
+   *
+   * @param personHsaId Sökt persons HSA-id.
+   * @param personalIdentityNumber Sökt persons Person-id (personnummer eller samordningsnummer).
+   * @param searchBase Sökbas. Om ingen sökbas anges används c=SE som sökbas.
+   * @return Information om sökt person.
+   */
+  List<PersonInformation> getEmployee(
+      String personHsaId, String personalIdentityNumber, String searchBase)
+      throws WebServiceException;
 }

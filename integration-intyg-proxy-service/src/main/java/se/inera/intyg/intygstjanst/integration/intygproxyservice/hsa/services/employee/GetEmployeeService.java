@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -33,27 +33,32 @@ import se.inera.intyg.intygstjanst.integration.intygproxyservice.hsa.dto.employe
 @RequiredArgsConstructor
 public class GetEmployeeService {
 
-    private final HsaIntygProxyServiceEmployeeClient hsaIntygProxyServiceEmployeeClient;
+  private final HsaIntygProxyServiceEmployeeClient hsaIntygProxyServiceEmployeeClient;
 
-    @Cacheable(cacheNames = EMPLOYEE_CACHE_NAME, key = "#getEmployeeRequestDTO.personId + #getEmployeeRequestDTO.hsaId",
-        unless = "#result == null")
-    public List<PersonInformation> get(GetEmployeeRequestDTO getEmployeeRequestDTO) {
-        validateRequestParameters(getEmployeeRequestDTO);
-        final var employee = hsaIntygProxyServiceEmployeeClient.getEmployee(getEmployeeRequestDTO);
-        return employee.getEmployee().getPersonInformation();
-    }
+  @Cacheable(
+      cacheNames = EMPLOYEE_CACHE_NAME,
+      key = "#getEmployeeRequestDTO.personId + #getEmployeeRequestDTO.hsaId",
+      unless = "#result == null")
+  public List<PersonInformation> get(GetEmployeeRequestDTO getEmployeeRequestDTO) {
+    validateRequestParameters(getEmployeeRequestDTO);
+    final var employee = hsaIntygProxyServiceEmployeeClient.getEmployee(getEmployeeRequestDTO);
+    return employee.getEmployee().getPersonInformation();
+  }
 
-    private void validateRequestParameters(GetEmployeeRequestDTO getEmployeeRequestDTO) {
-        if (isNullOrEmpty(getEmployeeRequestDTO.getHsaId()) && isNullOrEmpty(getEmployeeRequestDTO.getPersonId())) {
-            throw new IllegalArgumentException(
-                "Missing required parameters. Must provide either personalIdentityNumber or personHsaId");
-        }
-        if (!isNullOrEmpty(getEmployeeRequestDTO.getHsaId()) && !isNullOrEmpty(getEmployeeRequestDTO.getPersonId())) {
-            throw new IllegalArgumentException("Only provide either personalIdentityNumber or personHsaId. ");
-        }
+  private void validateRequestParameters(GetEmployeeRequestDTO getEmployeeRequestDTO) {
+    if (isNullOrEmpty(getEmployeeRequestDTO.getHsaId())
+        && isNullOrEmpty(getEmployeeRequestDTO.getPersonId())) {
+      throw new IllegalArgumentException(
+          "Missing required parameters. Must provide either personalIdentityNumber or personHsaId");
     }
+    if (!isNullOrEmpty(getEmployeeRequestDTO.getHsaId())
+        && !isNullOrEmpty(getEmployeeRequestDTO.getPersonId())) {
+      throw new IllegalArgumentException(
+          "Only provide either personalIdentityNumber or personHsaId. ");
+    }
+  }
 
-    private boolean isNullOrEmpty(String value) {
-        return value == null || value.isEmpty();
-    }
+  private boolean isNullOrEmpty(String value) {
+    return value == null || value.isEmpty();
+  }
 }

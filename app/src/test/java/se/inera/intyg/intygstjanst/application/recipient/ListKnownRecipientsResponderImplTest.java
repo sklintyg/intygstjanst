@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.application.recipient;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,43 +35,44 @@ import se.inera.clinicalprocess.healthcond.certificate.v1.ResultCodeType;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.listknownrecipients.v1.ListKnownRecipientsResponseType;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.listknownrecipients.v1.ListKnownRecipientsType;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.listknownrecipients.v1.RecipientType;
-import se.inera.intyg.intygstjanst.application.recipient.RecipientBuilder;
 
 @ExtendWith(MockitoExtension.class)
 class ListKnownRecipientsResponderImplTest {
 
-    @Mock
-    private RecipientService recipientService;
-    @InjectMocks
-    private ListKnownRecipientsResponderImpl responder;
+  @Mock private RecipientService recipientService;
+  @InjectMocks private ListKnownRecipientsResponderImpl responder;
 
-    @Test
-    void testListKnownRecipients() {
-        final String recipientId = "recipientId";
-        final String recipientName = "recipientName";
-        when(recipientService.listRecipients()).thenReturn(Arrays.asList(new RecipientBuilder()
-                .setLogicalAddress("logicalAddress")
-                .setName(recipientName)
-                .setId(recipientId)
-                .setCertificateTypes("certificateTypes")
-                .setActive(true)
-                .setTrusted(true)
-                .build(),
-            new RecipientBuilder()
-                .setLogicalAddress("logicalAddress2")
-                .setName("name2")
-                .setId("id2")
-                .setCertificateTypes("certificateTypes")
-                .setActive(true)
-                .setTrusted(false)
-                .build()));
-        ListKnownRecipientsResponseType response = responder.listKnownRecipients("", new ListKnownRecipientsType());
-        assertNotNull(response);
-        assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
-        assertEquals(2, response.getRecipient().size());
-        assertEquals(recipientId, response.getRecipient().getFirst().getId());
-        assertEquals(recipientName, response.getRecipient().getFirst().getName());
-        assertTrue(response.getRecipient().getFirst().isTrusted());
-        assertFalse(response.getRecipient().stream().allMatch(RecipientType::isTrusted));
-    }
+  @Test
+  void testListKnownRecipients() {
+    final String recipientId = "recipientId";
+    final String recipientName = "recipientName";
+    when(recipientService.listRecipients())
+        .thenReturn(
+            Arrays.asList(
+                new RecipientBuilder()
+                    .setLogicalAddress("logicalAddress")
+                    .setName(recipientName)
+                    .setId(recipientId)
+                    .setCertificateTypes("certificateTypes")
+                    .setActive(true)
+                    .setTrusted(true)
+                    .build(),
+                new RecipientBuilder()
+                    .setLogicalAddress("logicalAddress2")
+                    .setName("name2")
+                    .setId("id2")
+                    .setCertificateTypes("certificateTypes")
+                    .setActive(true)
+                    .setTrusted(false)
+                    .build()));
+    ListKnownRecipientsResponseType response =
+        responder.listKnownRecipients("", new ListKnownRecipientsType());
+    assertNotNull(response);
+    assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
+    assertEquals(2, response.getRecipient().size());
+    assertEquals(recipientId, response.getRecipient().getFirst().getId());
+    assertEquals(recipientName, response.getRecipient().getFirst().getName());
+    assertTrue(response.getRecipient().getFirst().isTrusted());
+    assertFalse(response.getRecipient().stream().allMatch(RecipientType::isTrusted));
+  }
 }

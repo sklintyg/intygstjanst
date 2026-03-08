@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -32,10 +32,8 @@ import se.inera.intyg.intygstjanst.infrastructure.csintegration.dto.GetCitizenCe
 @Builder
 public class GetCitizenCertificatesResponse {
 
-    List<Certificate> citizenCertificates;
+  List<Certificate> citizenCertificates;
 
-    @JsonPOJOBuilder(withPrefix = "")
-    public static class GetCitizenCertificatesResponseBuilder {
-
-    }
+  @JsonPOJOBuilder(withPrefix = "")
+  public static class GetCitizenCertificatesResponseBuilder {}
 }

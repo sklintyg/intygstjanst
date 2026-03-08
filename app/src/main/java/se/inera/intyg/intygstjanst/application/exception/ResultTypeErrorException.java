@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,27 +16,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.application.exception;
 
 import se.riv.clinicalprocess.healthcond.certificate.v1.ResultType;
 
-
 public class ResultTypeErrorException extends RuntimeException {
 
-    private static final long serialVersionUID = -412823459027541760L;
+  private static final long serialVersionUID = -412823459027541760L;
 
-    private final ResultType resultType;
+  private final ResultType resultType;
 
-    public ResultTypeErrorException(ResultType resultType) {
-        this.resultType = resultType;
-    }
+  public ResultTypeErrorException(ResultType resultType) {
+    this.resultType = resultType;
+  }
 
-    @Override
-    public String getMessage() {
-        return "Failed to invoke internal web service. Result type is " + resultType;
-    }
+  @Override
+  public String getMessage() {
+    return "Failed to invoke internal web service. Result type is " + resultType;
+  }
 
-    public ResultType getResultType() {
-        return resultType;
-    }
+  public ResultType getResultType() {
+    return resultType;
+  }
 }

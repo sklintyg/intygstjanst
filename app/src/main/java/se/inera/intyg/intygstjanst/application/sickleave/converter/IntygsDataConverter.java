@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -34,52 +34,55 @@ import se.riv.clinicalprocess.healthcond.rehabilitation.v1.IntygsData;
 @Component
 public class IntygsDataConverter {
 
-    public List<IntygData> convert(List<SjukfallCertificate> sjukfallCertificateList) {
-        return new ArrayList<>(
-            new SjukfallCertificateIntygsDataConverter().buildIntygsData(sjukfallCertificateList)).stream()
-            .map((this::map)).collect(Collectors.toList());
+  public List<IntygData> convert(List<SjukfallCertificate> sjukfallCertificateList) {
+    return new ArrayList<>(
+            new SjukfallCertificateIntygsDataConverter().buildIntygsData(sjukfallCertificateList))
+        .stream().map((this::map)).collect(Collectors.toList());
+  }
+
+  public IntygData map(IntygsData from) {
+    IntygData to = new IntygData();
+
+    try {
+      to.setIntygId(from.getIntygsId());
+      to.setPatientId(from.getPatient().getPersonId().getExtension());
+      to.setPatientNamn(from.getPatient().getFullstandigtNamn());
+      to.setLakareId(from.getSkapadAv().getPersonalId().getExtension());
+      to.setLakareNamn(from.getSkapadAv().getFullstandigtNamn());
+      to.setVardenhetId(from.getSkapadAv().getEnhet().getEnhetsId().getExtension());
+      to.setVardenhetNamn(from.getSkapadAv().getEnhet().getEnhetsnamn());
+      to.setVardgivareId(
+          from.getSkapadAv().getEnhet().getVardgivare().getVardgivarId().getExtension());
+      to.setVardgivareNamn(from.getSkapadAv().getEnhet().getVardgivare().getVardgivarnamn());
+      to.setDiagnosKod(DiagnosKod.create(from.getDiagnoskod()));
+      to.setFormagor(mapFormagor(from.getArbetsformaga().getFormaga()));
+      to.setSigneringsTidpunkt(from.getSigneringsTidpunkt());
+      to.setEnkeltIntyg(from.isEnkeltIntyg());
+      to.setBiDiagnoser(mapDiagnoser(from.getBidiagnoser()));
+      to.setSysselsattning(from.getSysselsattning());
+
+    } catch (Exception e) {
+      throw new RuntimeException(
+          "Error mapping Intygstjänsten's format to SjukfallEngine format", e);
     }
 
-    public IntygData map(IntygsData from) {
-        IntygData to = new IntygData();
+    return to;
+  }
 
-        try {
-            to.setIntygId(from.getIntygsId());
-            to.setPatientId(from.getPatient().getPersonId().getExtension());
-            to.setPatientNamn(from.getPatient().getFullstandigtNamn());
-            to.setLakareId(from.getSkapadAv().getPersonalId().getExtension());
-            to.setLakareNamn(from.getSkapadAv().getFullstandigtNamn());
-            to.setVardenhetId(from.getSkapadAv().getEnhet().getEnhetsId().getExtension());
-            to.setVardenhetNamn(from.getSkapadAv().getEnhet().getEnhetsnamn());
-            to.setVardgivareId(from.getSkapadAv().getEnhet().getVardgivare().getVardgivarId().getExtension());
-            to.setVardgivareNamn(from.getSkapadAv().getEnhet().getVardgivare().getVardgivarnamn());
-            to.setDiagnosKod(DiagnosKod.create(from.getDiagnoskod()));
-            to.setFormagor(mapFormagor(from.getArbetsformaga().getFormaga()));
-            to.setSigneringsTidpunkt(from.getSigneringsTidpunkt());
-            to.setEnkeltIntyg(from.isEnkeltIntyg());
-            to.setBiDiagnoser(mapDiagnoser(from.getBidiagnoser()));
-            to.setSysselsattning(from.getSysselsattning());
+  private List<DiagnosKod> mapDiagnoser(List<String> from) {
+    return Optional.ofNullable(from).orElse(Collections.emptyList()).stream()
+        .map(DiagnosKod::create)
+        .collect(Collectors.toList());
+  }
 
-        } catch (Exception e) {
-            throw new RuntimeException("Error mapping Intygstjänsten's format to SjukfallEngine format", e);
-        }
+  private List<Formaga> mapFormagor(
+      List<se.riv.clinicalprocess.healthcond.rehabilitation.v1.Formaga> from) {
+    return Optional.ofNullable(from).orElse(Collections.emptyList()).stream()
+        .map(this::createFormaga)
+        .collect(Collectors.toList());
+  }
 
-        return to;
-    }
-
-    private List<DiagnosKod> mapDiagnoser(List<String> from) {
-        return Optional.ofNullable(from).orElse(Collections.emptyList()).stream()
-            .map(DiagnosKod::create)
-            .collect(Collectors.toList());
-    }
-
-    private List<Formaga> mapFormagor(List<se.riv.clinicalprocess.healthcond.rehabilitation.v1.Formaga> from) {
-        return Optional.ofNullable(from).orElse(Collections.emptyList()).stream()
-            .map(this::createFormaga)
-            .collect(Collectors.toList());
-    }
-
-    private Formaga createFormaga(se.riv.clinicalprocess.healthcond.rehabilitation.v1.Formaga from) {
-        return new Formaga(from.getStartdatum(), from.getSlutdatum(), from.getNedsattning());
-    }
+  private Formaga createFormaga(se.riv.clinicalprocess.healthcond.rehabilitation.v1.Formaga from) {
+    return new Formaga(from.getStartdatum(), from.getSlutdatum(), from.getNedsattning());
+  }
 }

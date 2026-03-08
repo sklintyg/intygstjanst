@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.application.certificate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -38,20 +39,20 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import se.inera.intyg.intygstjanst.infrastructure.config.properties.AppProperties;
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.model.CertificateState;
-import se.inera.intyg.intygstjanst.infrastructure.logging.HashUtility;
-import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Certificate;
-import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.CertificateStateHistoryEntry;
 import se.inera.intyg.intygstjanst.application.certificate.service.CertificateService;
-import se.inera.intyg.intygstjanst.infrastructure.logging.MonitoringLogService;
-import se.inera.intyg.intygstjanst.application.recipient.RecipientService;
-import se.inera.intyg.intygstjanst.application.sickleave.services.SjukfallCertificateService;
-import se.inera.intyg.intygstjanst.infrastructure.soap.SoapIntegrationService;
 import se.inera.intyg.intygstjanst.application.recipient.Recipient;
 import se.inera.intyg.intygstjanst.application.recipient.RecipientBuilder;
+import se.inera.intyg.intygstjanst.application.recipient.RecipientService;
+import se.inera.intyg.intygstjanst.application.sickleave.services.SjukfallCertificateService;
+import se.inera.intyg.intygstjanst.infrastructure.config.properties.AppProperties;
+import se.inera.intyg.intygstjanst.infrastructure.logging.HashUtility;
+import se.inera.intyg.intygstjanst.infrastructure.logging.MonitoringLogService;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Certificate;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.CertificateStateHistoryEntry;
+import se.inera.intyg.intygstjanst.infrastructure.soap.SoapIntegrationService;
 import se.inera.intyg.schemas.contract.Personnummer;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateType;
@@ -63,41 +64,37 @@ import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
 @ExtendWith(MockitoExtension.class)
 class RevokeCertificateResponderImplTest {
 
-    @Mock
-    private MonitoringLogService monitoringService;
+  @Mock private MonitoringLogService monitoringService;
 
-    @Mock
-    private CertificateService certificateService;
+  @Mock private CertificateService certificateService;
 
-    @Mock
-    private SjukfallCertificateService sjukfallCertificateService;
+  @Mock private SjukfallCertificateService sjukfallCertificateService;
 
-    @Mock
-    private RecipientService recipientService;
+  @Mock private RecipientService recipientService;
 
-    @Spy
-    private HashUtility hashUtility = new HashUtility(
-        new AppProperties(null, null, null, null, null, null,
-            new AppProperties.Security("salt"), null));
+  @Spy
+  private HashUtility hashUtility =
+      new HashUtility(
+          new AppProperties(
+              null, null, null, null, null, null, new AppProperties.Security("salt"), null));
 
-    @Mock
-    private SoapIntegrationService soapIntegrationService;
+  @Mock private SoapIntegrationService soapIntegrationService;
 
-    @InjectMocks
-    private RevokeCertificateResponderImpl revokeCertificateResponder;
+  @InjectMocks private RevokeCertificateResponderImpl revokeCertificateResponder;
 
-    @BeforeEach
-    void setup() {
-        // no field injection needed — hashUtility initialized with salt directly
-    }
+  @BeforeEach
+  void setup() {
+    // no field injection needed — hashUtility initialized with salt directly
+  }
 
-    @Test
-    void testRevokeCertificate() throws Exception {
-        final String certificateId = "certificateId";
-        final String patientId = "19121212-1212";
-        final String logicalAddress = "logicalAddress";
+  @Test
+  void testRevokeCertificate() throws Exception {
+    final String certificateId = "certificateId";
+    final String patientId = "19121212-1212";
+    final String logicalAddress = "logicalAddress";
 
-        final Recipient recipient = new RecipientBuilder()
+    final Recipient recipient =
+        new RecipientBuilder()
             .setLogicalAddress(logicalAddress)
             .setName("name")
             .setId("id")
@@ -106,118 +103,128 @@ class RevokeCertificateResponderImplTest {
             .setTrusted(true)
             .build();
 
-        final Certificate certificate = createCertificate(
+    final Certificate certificate =
+        createCertificate(
             certificateId,
             new CertificateStateHistoryEntry("target1", CertificateState.SENT, null),
             new CertificateStateHistoryEntry("target2", CertificateState.SENT, null),
             new CertificateStateHistoryEntry("target1", CertificateState.SENT, null));
 
-        when(certificateService.revokeCertificate(any(), eq(certificateId))).thenReturn(certificate);
-        when(recipientService.getRecipient(anyString())).thenReturn(recipient);
+    when(certificateService.revokeCertificate(any(), eq(certificateId))).thenReturn(certificate);
+    when(recipientService.getRecipient(anyString())).thenReturn(recipient);
 
-        RevokeCertificateType request = new RevokeCertificateType();
-        request.setIntygsId(new IntygId());
-        request.getIntygsId().setExtension(certificateId);
-        request.setPatientPersonId(new PersonId());
-        request.getPatientPersonId().setExtension(patientId);
+    RevokeCertificateType request = new RevokeCertificateType();
+    request.setIntygsId(new IntygId());
+    request.getIntygsId().setExtension(certificateId);
+    request.setPatientPersonId(new PersonId());
+    request.getPatientPersonId().setExtension(patientId);
 
-        RevokeCertificateResponseType resp = revokeCertificateResponder.revokeCertificate("initial logical address", request);
+    RevokeCertificateResponseType resp =
+        revokeCertificateResponder.revokeCertificate("initial logical address", request);
 
-        assertEquals(ResultCodeType.OK, resp.getResult().getResultCode());
-        verify(certificateService, times(1)).revokeCertificate(any(), eq(certificateId));
-        verify(certificateService, times(1)).revokeCertificateForStatistics(any());
-        verify(sjukfallCertificateService, times(1)).revoked(any());
-        verify(monitoringService, times(1)).logCertificateRevoked(eq(certificateId), or(isNull(), anyString()), any());
-        verify(soapIntegrationService, times(2)).revokeCertificate(eq(logicalAddress), any());
-    }
+    assertEquals(ResultCodeType.OK, resp.getResult().getResultCode());
+    verify(certificateService, times(1)).revokeCertificate(any(), eq(certificateId));
+    verify(certificateService, times(1)).revokeCertificateForStatistics(any());
+    verify(sjukfallCertificateService, times(1)).revoked(any());
+    verify(monitoringService, times(1))
+        .logCertificateRevoked(eq(certificateId), or(isNull(), anyString()), any());
+    verify(soapIntegrationService, times(2)).revokeCertificate(eq(logicalAddress), any());
+  }
 
-    @Test
-    void testRevokeCertificateNotSent() throws Exception {
-        final String certificateId = "certificateId";
-        final String patientId = "19121212-1212";
-        final String logicalAddress = "logicalAddress";
+  @Test
+  void testRevokeCertificateNotSent() throws Exception {
+    final String certificateId = "certificateId";
+    final String patientId = "19121212-1212";
+    final String logicalAddress = "logicalAddress";
 
-        when(certificateService.revokeCertificate(any(), eq(certificateId))).thenReturn(createCertificate(certificateId));
+    when(certificateService.revokeCertificate(any(), eq(certificateId)))
+        .thenReturn(createCertificate(certificateId));
 
-        RevokeCertificateType request = new RevokeCertificateType();
-        request.setIntygsId(new IntygId());
-        request.getIntygsId().setExtension(certificateId);
-        request.setPatientPersonId(new PersonId());
-        request.getPatientPersonId().setExtension(patientId);
+    RevokeCertificateType request = new RevokeCertificateType();
+    request.setIntygsId(new IntygId());
+    request.getIntygsId().setExtension(certificateId);
+    request.setPatientPersonId(new PersonId());
+    request.getPatientPersonId().setExtension(patientId);
 
-        RevokeCertificateResponseType resp = revokeCertificateResponder.revokeCertificate("initial logical address", request);
+    RevokeCertificateResponseType resp =
+        revokeCertificateResponder.revokeCertificate("initial logical address", request);
 
-        assertEquals(ResultCodeType.OK, resp.getResult().getResultCode());
-        verify(certificateService, times(1)).revokeCertificate(any(), eq(certificateId));
-        verify(certificateService, times(1)).revokeCertificateForStatistics(any());
-        verify(sjukfallCertificateService, times(1)).revoked(any());
-        verify(monitoringService, times(1)).logCertificateRevoked(eq(certificateId), or(isNull(), anyString()), any());
-        verify(soapIntegrationService, times(0)).revokeCertificate(eq(logicalAddress), any());
-    }
+    assertEquals(ResultCodeType.OK, resp.getResult().getResultCode());
+    verify(certificateService, times(1)).revokeCertificate(any(), eq(certificateId));
+    verify(certificateService, times(1)).revokeCertificateForStatistics(any());
+    verify(sjukfallCertificateService, times(1)).revoked(any());
+    verify(monitoringService, times(1))
+        .logCertificateRevoked(eq(certificateId), or(isNull(), anyString()), any());
+    verify(soapIntegrationService, times(0)).revokeCertificate(eq(logicalAddress), any());
+  }
 
-    @Test
-    void testRevokeCertificateNotExisting() throws Exception {
-        final var certificateId = "certificateId";
-        final var patientId = "191212121212";
-        final var logicalAddress = "logicalAddress";
-        final var hashedPnr = hashUtility.hash(createPnr(patientId).getPersonnummer());
+  @Test
+  void testRevokeCertificateNotExisting() throws Exception {
+    final var certificateId = "certificateId";
+    final var patientId = "191212121212";
+    final var logicalAddress = "logicalAddress";
+    final var hashedPnr = hashUtility.hash(createPnr(patientId).getPersonnummer());
 
-        when(certificateService.revokeCertificate(any(), eq(certificateId)))
-            .thenThrow(new InvalidCertificateException(certificateId, hashedPnr));
+    when(certificateService.revokeCertificate(any(), eq(certificateId)))
+        .thenThrow(new InvalidCertificateException(certificateId, hashedPnr));
 
-        RevokeCertificateType request = new RevokeCertificateType();
-        request.setIntygsId(new IntygId());
-        request.getIntygsId().setExtension(certificateId);
-        request.setPatientPersonId(new PersonId());
-        request.getPatientPersonId().setExtension(patientId);
+    RevokeCertificateType request = new RevokeCertificateType();
+    request.setIntygsId(new IntygId());
+    request.getIntygsId().setExtension(certificateId);
+    request.setPatientPersonId(new PersonId());
+    request.getPatientPersonId().setExtension(patientId);
 
-        RevokeCertificateResponseType resp = revokeCertificateResponder.revokeCertificate("initial logical address", request);
+    RevokeCertificateResponseType resp =
+        revokeCertificateResponder.revokeCertificate("initial logical address", request);
 
-        assertEquals(ResultCodeType.ERROR, resp.getResult().getResultCode());
-        assertEquals(ErrorIdType.APPLICATION_ERROR, resp.getResult().getErrorId());
-        verify(certificateService, times(1)).revokeCertificate(any(), eq(certificateId));
-        verify(certificateService, times(0)).revokeCertificateForStatistics(any());
-        verify(sjukfallCertificateService, times(0)).revoked(any());
-        verify(monitoringService, times(0)).logCertificateRevoked(eq(certificateId), or(isNull(), anyString()), any());
-        verify(soapIntegrationService, times(0)).revokeCertificate(eq(logicalAddress), any());
-    }
+    assertEquals(ResultCodeType.ERROR, resp.getResult().getResultCode());
+    assertEquals(ErrorIdType.APPLICATION_ERROR, resp.getResult().getErrorId());
+    verify(certificateService, times(1)).revokeCertificate(any(), eq(certificateId));
+    verify(certificateService, times(0)).revokeCertificateForStatistics(any());
+    verify(sjukfallCertificateService, times(0)).revoked(any());
+    verify(monitoringService, times(0))
+        .logCertificateRevoked(eq(certificateId), or(isNull(), anyString()), any());
+    verify(soapIntegrationService, times(0)).revokeCertificate(eq(logicalAddress), any());
+  }
 
-    @Test
-    void testRevokeCertificateAlreadyRevoked() throws Exception {
-        final String certificateId = "certificateId";
-        final String patientId = "19121212-1212";
-        final String logicalAddress = "logicalAddress";
+  @Test
+  void testRevokeCertificateAlreadyRevoked() throws Exception {
+    final String certificateId = "certificateId";
+    final String patientId = "19121212-1212";
+    final String logicalAddress = "logicalAddress";
 
-        when(certificateService.revokeCertificate(any(), eq(certificateId)))
-            .thenThrow(new CertificateRevokedException(certificateId));
+    when(certificateService.revokeCertificate(any(), eq(certificateId)))
+        .thenThrow(new CertificateRevokedException(certificateId));
 
-        RevokeCertificateType request = new RevokeCertificateType();
-        request.setIntygsId(new IntygId());
-        request.getIntygsId().setExtension(certificateId);
-        request.setPatientPersonId(new PersonId());
-        request.getPatientPersonId().setExtension(patientId);
+    RevokeCertificateType request = new RevokeCertificateType();
+    request.setIntygsId(new IntygId());
+    request.getIntygsId().setExtension(certificateId);
+    request.setPatientPersonId(new PersonId());
+    request.getPatientPersonId().setExtension(patientId);
 
-        RevokeCertificateResponseType resp = revokeCertificateResponder.revokeCertificate("initial logical address", request);
+    RevokeCertificateResponseType resp =
+        revokeCertificateResponder.revokeCertificate("initial logical address", request);
 
-        assertEquals(ResultCodeType.INFO, resp.getResult().getResultCode());
-        assertNotNull(resp.getResult().getResultText());
-        assertNotEquals("", resp.getResult().getResultText());
-        verify(certificateService, times(1)).revokeCertificate(any(), eq(certificateId));
-        verify(certificateService, times(0)).revokeCertificateForStatistics(any());
-        verify(sjukfallCertificateService, times(0)).revoked(any());
-        verify(monitoringService, times(0)).logCertificateRevoked(eq(certificateId), anyString(), any());
-        verify(soapIntegrationService, times(0)).revokeCertificate(eq(logicalAddress), any());
-    }
+    assertEquals(ResultCodeType.INFO, resp.getResult().getResultCode());
+    assertNotNull(resp.getResult().getResultText());
+    assertNotEquals("", resp.getResult().getResultText());
+    verify(certificateService, times(1)).revokeCertificate(any(), eq(certificateId));
+    verify(certificateService, times(0)).revokeCertificateForStatistics(any());
+    verify(sjukfallCertificateService, times(0)).revoked(any());
+    verify(monitoringService, times(0))
+        .logCertificateRevoked(eq(certificateId), anyString(), any());
+    verify(soapIntegrationService, times(0)).revokeCertificate(eq(logicalAddress), any());
+  }
 
-    private Certificate createCertificate(String certificateId, CertificateStateHistoryEntry... entries) {
-        Certificate cert = new Certificate(certificateId);
-        cert.setStates(Arrays.asList(entries));
-        return cert;
-    }
+  private Certificate createCertificate(
+      String certificateId, CertificateStateHistoryEntry... entries) {
+    Certificate cert = new Certificate(certificateId);
+    cert.setStates(Arrays.asList(entries));
+    return cert;
+  }
 
-    private Personnummer createPnr(String pnr) {
-        return Personnummer.createPersonnummer(pnr)
-            .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer"));
-    }
-
+  private Personnummer createPnr(String pnr) {
+    return Personnummer.createPersonnummer(pnr)
+        .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer"));
+  }
 }

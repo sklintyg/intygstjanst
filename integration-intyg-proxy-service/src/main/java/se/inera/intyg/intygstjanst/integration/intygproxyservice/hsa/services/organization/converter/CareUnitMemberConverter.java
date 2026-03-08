@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -34,40 +34,39 @@ import se.inera.intyg.intygstjanst.integration.hsa.model.legacy.Mottagning;
 @RequiredArgsConstructor
 public class CareUnitMemberConverter {
 
-    private final UnitAddressConverter unitAddressConverter;
+  private final UnitAddressConverter unitAddressConverter;
 
-    public Mottagning convert(HealthCareUnitMember hsaCareUnitMember, String parentId, AgandeForm parentAgandeForm) {
-        final var careUnitMember = getCareUnitMember(hsaCareUnitMember);
-        careUnitMember.setParentHsaId(parentId);
-        careUnitMember.setAgandeForm(parentAgandeForm);
-        careUnitMember.setTelefonnummer(String.join(", ", hsaCareUnitMember.getHealthCareUnitMemberTelephoneNumber()));
-        careUnitMember.setArbetsplatskod(getWorkplaceCode(hsaCareUnitMember.getHealthCareUnitMemberPrescriptionCode()));
+  public Mottagning convert(
+      HealthCareUnitMember hsaCareUnitMember, String parentId, AgandeForm parentAgandeForm) {
+    final var careUnitMember = getCareUnitMember(hsaCareUnitMember);
+    careUnitMember.setParentHsaId(parentId);
+    careUnitMember.setAgandeForm(parentAgandeForm);
+    careUnitMember.setTelefonnummer(
+        String.join(", ", hsaCareUnitMember.getHealthCareUnitMemberTelephoneNumber()));
+    careUnitMember.setArbetsplatskod(
+        getWorkplaceCode(hsaCareUnitMember.getHealthCareUnitMemberPrescriptionCode()));
 
-        if (hsaCareUnitMember.getHealthCareUnitMemberpostalAddress() != null) {
-            updateAddress(
-                careUnitMember,
-                hsaCareUnitMember.getHealthCareUnitMemberpostalAddress(),
-                hsaCareUnitMember.getHealthCareUnitMemberpostalCode()
-            );
-
-        }
-
-        return careUnitMember;
+    if (hsaCareUnitMember.getHealthCareUnitMemberpostalAddress() != null) {
+      updateAddress(
+          careUnitMember,
+          hsaCareUnitMember.getHealthCareUnitMemberpostalAddress(),
+          hsaCareUnitMember.getHealthCareUnitMemberpostalCode());
     }
 
-    private Mottagning getCareUnitMember(HealthCareUnitMember hsaCareUnitMember) {
-        return new Mottagning(
-            hsaCareUnitMember.getHealthCareUnitMemberHsaId(),
-            hsaCareUnitMember.getHealthCareUnitMemberName(),
-            hsaCareUnitMember.getHealthCareUnitMemberStartDate(),
-            hsaCareUnitMember.getHealthCareUnitMemberEndDate()
-        );
-    }
+    return careUnitMember;
+  }
 
-    private void updateAddress(Mottagning unit, List<String> address, String postalCode) {
-        unit.setPostadress(unitAddressConverter.convertAddress(address));
-        unit.setPostnummer(unitAddressConverter.convertZipCode(address, postalCode));
-        unit.setPostort(unitAddressConverter.convertCity(address));
-    }
+  private Mottagning getCareUnitMember(HealthCareUnitMember hsaCareUnitMember) {
+    return new Mottagning(
+        hsaCareUnitMember.getHealthCareUnitMemberHsaId(),
+        hsaCareUnitMember.getHealthCareUnitMemberName(),
+        hsaCareUnitMember.getHealthCareUnitMemberStartDate(),
+        hsaCareUnitMember.getHealthCareUnitMemberEndDate());
+  }
 
+  private void updateAddress(Mottagning unit, List<String> address, String postalCode) {
+    unit.setPostadress(unitAddressConverter.convertAddress(address));
+    unit.setPostnummer(unitAddressConverter.convertZipCode(address, postalCode));
+    unit.setPostort(unitAddressConverter.convertCity(address));
+  }
 }

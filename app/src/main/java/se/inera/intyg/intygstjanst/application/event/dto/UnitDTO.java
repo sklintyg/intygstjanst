@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -30,19 +30,16 @@ import se.inera.intyg.intygstjanst.application.event.dto.UnitDTO.UnitDTOBuilder;
 @Builder
 public class UnitDTO {
 
-    String unitId;
-    String unitName;
-    String address;
-    String zipCode;
-    String city;
-    String phoneNumber;
-    String email;
-    String workplaceCode;
-    Boolean inactive;
+  String unitId;
+  String unitName;
+  String address;
+  String zipCode;
+  String city;
+  String phoneNumber;
+  String email;
+  String workplaceCode;
+  Boolean inactive;
 
-    @JsonPOJOBuilder(withPrefix = "")
-    public static class UnitDTOBuilder {
-
-    }
-
+  @JsonPOJOBuilder(withPrefix = "")
+  public static class UnitDTOBuilder {}
 }

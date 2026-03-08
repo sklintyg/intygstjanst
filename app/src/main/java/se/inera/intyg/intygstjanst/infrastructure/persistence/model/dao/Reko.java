@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -27,33 +27,40 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import lombok.Data;
-import org.hibernate.annotations.Type;
 
 @Entity
 @Data
 @Table(name = "REKO")
 public class Reko {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    @Column(name = "STATUS", nullable = false)
-    private String status;
-    @Column(name = "PATIENT_ID", nullable = false)
-    private String patientId;
-    @Column(name = "STAFF_ID", nullable = false)
-    private String staffId;
-    @Column(name = "STAFF_NAME", nullable = false)
-    private String staffName;
-    @Column(name = "CARE_PROVIDER_ID", nullable = false)
-    private String careProviderId;
-    @Column(name = "CARE_UNIT_ID", nullable = false)
-    private String careUnitId;
-    @Column(name = "UNIT_ID")
-    private String unitId;
-    @Column(name = "SICK_LEAVE_TIMESTAMP", nullable = false)
-    private LocalDateTime sickLeaveTimestamp;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @Column(name = "REGISTRATION_TIMESTAMP", nullable = false)
-    private LocalDateTime registrationTimestamp;
+  @Column(name = "STATUS", nullable = false)
+  private String status;
+
+  @Column(name = "PATIENT_ID", nullable = false)
+  private String patientId;
+
+  @Column(name = "STAFF_ID", nullable = false)
+  private String staffId;
+
+  @Column(name = "STAFF_NAME", nullable = false)
+  private String staffName;
+
+  @Column(name = "CARE_PROVIDER_ID", nullable = false)
+  private String careProviderId;
+
+  @Column(name = "CARE_UNIT_ID", nullable = false)
+  private String careUnitId;
+
+  @Column(name = "UNIT_ID")
+  private String unitId;
+
+  @Column(name = "SICK_LEAVE_TIMESTAMP", nullable = false)
+  private LocalDateTime sickLeaveTimestamp;
+
+  @Column(name = "REGISTRATION_TIMESTAMP", nullable = false)
+  private LocalDateTime registrationTimestamp;
 }

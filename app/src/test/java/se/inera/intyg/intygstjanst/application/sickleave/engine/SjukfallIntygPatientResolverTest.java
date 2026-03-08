@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.application.sickleave.engine;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -42,54 +43,51 @@ import se.inera.intyg.intygstjanst.application.sickleave.testdata.SjukfallIntygG
 @ExtendWith(MockitoExtension.class)
 class SjukfallIntygPatientResolverTest {
 
-    private static final String LOCATION_INTYGSDATA = "classpath:Sjukfall/Patient/intygsdata-patient.csv";
+  private static final String LOCATION_INTYGSDATA =
+      "classpath:Sjukfall/Patient/intygsdata-patient.csv";
 
-    private static List<IntygData> intygDataList;
+  private static List<IntygData> intygDataList;
 
-    private LocalDate activeDate = LocalDate.parse("2016-02-16");
+  private LocalDate activeDate = LocalDate.parse("2016-02-16");
 
-    @Spy
-    private SjukfallIntygPatientCreator creatorSpy;
+  @Spy private SjukfallIntygPatientCreator creatorSpy;
 
-    private SjukfallIntygPatientResolver testee;
+  private SjukfallIntygPatientResolver testee;
 
-    @BeforeAll
-    static void initTestData() throws IOException {
-        SjukfallIntygGenerator generator = new SjukfallIntygGenerator(LOCATION_INTYGSDATA);
-        intygDataList = generator.generate().get();
+  @BeforeAll
+  static void initTestData() throws IOException {
+    SjukfallIntygGenerator generator = new SjukfallIntygGenerator(LOCATION_INTYGSDATA);
+    intygDataList = generator.generate().get();
 
-        assertEquals(5, intygDataList.size(), "Expected 5 but was " + intygDataList.size());
-    }
+    assertEquals(5, intygDataList.size(), "Expected 5 but was " + intygDataList.size());
+  }
 
+  @BeforeEach
+  void setup() {
+    testee = new SjukfallIntygPatientResolver(creatorSpy);
+  }
 
-    @BeforeEach
-    void setup() {
-        testee = new SjukfallIntygPatientResolver(creatorSpy);
-    }
+  @Test
+  void testHappyDays() {
+    Map<Integer, List<SjukfallIntyg>> mockedInstance = Mockito.mock(Map.class);
+    Mockito.doReturn(mockedInstance).when(creatorSpy).create(intygDataList, 0, activeDate);
 
-    @Test
-    void testHappyDays() {
-        Map<Integer, List<SjukfallIntyg>> mockedInstance = Mockito.mock(Map.class);
-        Mockito.doReturn(mockedInstance).when(creatorSpy).create(intygDataList, 0, activeDate);
+    // invoke testing method
+    Map<Integer, List<SjukfallIntyg>> actualInstance = testee.resolve(intygDataList, 0, activeDate);
 
-        // invoke testing method
-        Map<Integer, List<SjukfallIntyg>> actualInstance = testee.resolve(intygDataList, 0, activeDate);
+    assertEquals(actualInstance, mockedInstance);
+    Mockito.verify(creatorSpy, Mockito.times(1)).create(intygDataList, 0, activeDate);
+  }
 
-        assertEquals(actualInstance, mockedInstance);
-        Mockito.verify(creatorSpy, Mockito.times(1)).create(intygDataList, 0, activeDate);
-    }
+  @Test
+  void testInvalidArgumentIntygsData() {
+    Map<Integer, List<SjukfallIntyg>> map = testee.resolve(new ArrayList<>(), 0, activeDate);
+    assertEquals(0, map.size(), "Expected 0 but was " + map.size());
+  }
 
-    @Test
-    void testInvalidArgumentIntygsData() {
-        Map<Integer, List<SjukfallIntyg>> map = testee.resolve(new ArrayList<>(), 0, activeDate);
-        assertEquals(0, map.size(), "Expected 0 but was " + map.size());
-    }
-
-    @Test
-    void testInvalidArgumentIntygsGlapp() {
-        Map<Integer, List<SjukfallIntyg>> map = testee.resolve(intygDataList, -1, activeDate);
-        assertEquals(0, map.size(), "Expected 0 but was " + map.size());
-    }
-
-
+  @Test
+  void testInvalidArgumentIntygsGlapp() {
+    Map<Integer, List<SjukfallIntyg>> map = testee.resolve(intygDataList, -1, activeDate);
+    assertEquals(0, map.size(), "Expected 0 but was " + map.size());
+  }
 }

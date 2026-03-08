@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao;
 
 import java.util.List;
@@ -27,25 +28,23 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ArendeRepository extends JpaRepository<Arende, Long> {
 
-    /**
-     * Should return a {@link Arende} matching the search criteria.
-     */
-    Arende findByMeddelandeId(String meddelandeId);
+  /** Should return a {@link Arende} matching the search criteria. */
+  Arende findByMeddelandeId(String meddelandeId);
 
-    /**
-     * Find all messages for a single certificate.
-     *
-     * @param certificateId Id of certificate
-     * @return List of messages
-     */
-    List<Arende> findByIntygsId(String certificateId);
+  /**
+   * Find all messages for a single certificate.
+   *
+   * @param certificateId Id of certificate
+   * @return List of messages
+   */
+  List<Arende> findByIntygsId(String certificateId);
 
-    @Query("select a from Arende a where a.intygsId in :certificateIds")
-    List<Arende> getArendenByCertificateIds(@Param("certificateIds") List<String> certificateIds);
+  @Query("select a from Arende a where a.intygsId in :certificateIds")
+  List<Arende> getArendenByCertificateIds(@Param("certificateIds") List<String> certificateIds);
 
-    default int eraseArendenByCertificateIds(List<String> certificateIds) {
-        final var arendeList = getArendenByCertificateIds(certificateIds);
-        deleteAll(arendeList);
-        return arendeList.size();
-    }
+  default int eraseArendenByCertificateIds(List<String> certificateIds) {
+    final var arendeList = getArendenByCertificateIds(certificateIds);
+    deleteAll(arendeList);
+    return arendeList.size();
+  }
 }

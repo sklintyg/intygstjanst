@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -34,12 +34,12 @@ import se.inera.intyg.intygstjanst.testability.model.WorkCapacity;
 @Builder
 public class TestDataOptionsDTO {
 
-    private List<CareProvider> careProviderIds;
-    private List<CareUnit> careUnitIds;
-    private List<Doctor> doctorIds;
-    private List<Patient> patientIds;
-    private List<Relation> relationCodes;
-    private List<String> diagnosisCodes;
-    private List<Occupation> occupations;
-    private List<WorkCapacity> workCapacity;
+  private List<CareProvider> careProviderIds;
+  private List<CareUnit> careUnitIds;
+  private List<Doctor> doctorIds;
+  private List<Patient> patientIds;
+  private List<Relation> relationCodes;
+  private List<String> diagnosisCodes;
+  private List<Occupation> occupations;
+  private List<WorkCapacity> workCapacity;
 }

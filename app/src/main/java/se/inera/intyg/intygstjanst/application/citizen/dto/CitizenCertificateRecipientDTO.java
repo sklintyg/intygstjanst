@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -19,16 +19,15 @@
 
 package se.inera.intyg.intygstjanst.application.citizen.dto;
 
+import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Data;
-
-import java.time.LocalDateTime;
 
 @Data
 @Builder
 public class CitizenCertificateRecipientDTO {
 
-    String id;
-    String name;
-    LocalDateTime sent;
+  String id;
+  String name;
+  LocalDateTime sent;
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao;
 
 import jakarta.persistence.Basic;
@@ -39,82 +40,76 @@ import java.time.LocalDateTime;
 @Table(name = "ORIGINAL_CERTIFICATE")
 public class OriginalCertificate {
 
-    /**
-     * Just needed for JPA compliance.
-     */
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+  /** Just needed for JPA compliance. */
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private long id;
 
-    /**
-     * Time this certificate was received.
-     */
-    @Column(name = "received", nullable = false)
-    private LocalDateTime received;
+  /** Time this certificate was received. */
+  @Column(name = "received", nullable = false)
+  private LocalDateTime received;
 
-    /**
-     * Certificate JAXB serialization.
-     */
-    @Lob
-    @Basic(fetch = FetchType.LAZY)
-    @Column(name = "DOCUMENT")
-    private byte[] document;
+  /** Certificate JAXB serialization. */
+  @Lob
+  @Basic(fetch = FetchType.LAZY)
+  @Column(name = "DOCUMENT")
+  private byte[] document;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CERTIFICATE_ID")
-    private Certificate certificate;
+  @OneToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "CERTIFICATE_ID")
+  private Certificate certificate;
 
-    public OriginalCertificate() {
-        // default constructor for hibernate
+  public OriginalCertificate() {
+    // default constructor for hibernate
+  }
+
+  public OriginalCertificate(LocalDateTime received, String document, Certificate certificate) {
+    this.received = received;
+    this.document = toBytes(document);
+    this.certificate = certificate;
+  }
+
+  public LocalDateTime getReceived() {
+    return received;
+  }
+
+  public void setReceived(LocalDateTime received) {
+    this.received = received;
+  }
+
+  public void setDocument(String document) {
+    this.document = toBytes(document);
+  }
+
+  public String getDocument() {
+    return fromBytes(this.document);
+  }
+
+  public long getId() {
+    return id;
+  }
+
+  public void setId(long id) {
+    this.id = id;
+  }
+
+  private byte[] toBytes(String data) {
+    if (data == null) {
+      return new byte[0];
     }
 
-    public OriginalCertificate(LocalDateTime received, String document, Certificate certificate) {
-        this.received = received;
-        this.document = toBytes(document);
-        this.certificate = certificate;
-    }
+    return data.getBytes(StandardCharsets.UTF_8);
+  }
 
-    public LocalDateTime getReceived() {
-        return received;
-    }
+  private String fromBytes(byte[] bytes) {
+    return new String(bytes, StandardCharsets.UTF_8);
+  }
 
-    public void setReceived(LocalDateTime received) {
-        this.received = received;
-    }
+  public Certificate getCertificate() {
+    return certificate;
+  }
 
-    public void setDocument(String document) {
-        this.document = toBytes(document);
-    }
-
-    public String getDocument() {
-        return fromBytes(this.document);
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    private byte[] toBytes(String data) {
-        if (data == null) {
-            return new byte[0];
-        }
-
-        return data.getBytes(StandardCharsets.UTF_8);
-    }
-
-    private String fromBytes(byte[] bytes) {
-        return new String(bytes, StandardCharsets.UTF_8);
-    }
-
-    public Certificate getCertificate() {
-        return certificate;
-    }
-
-    public void setCertificate(Certificate certificate) {
-        this.certificate = certificate;
-    }
+  public void setCertificate(Certificate certificate) {
+    this.certificate = certificate;
+  }
 }

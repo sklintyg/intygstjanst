@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.application.export;
 
 import java.util.List;
@@ -26,12 +27,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import se.inera.intyg.intygstjanst.application.export.dto.CertificateExportPageDTO;
+import se.inera.intyg.intygstjanst.application.export.dto.CertificateTextDTO;
+import se.inera.intyg.intygstjanst.application.export.service.CertificateExportService;
 import se.inera.intyg.intygstjanst.infrastructure.logging.MdcLogConstants;
 import se.inera.intyg.intygstjanst.infrastructure.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.infrastructure.security.interceptor.ApiBasePath;
-import se.inera.intyg.intygstjanst.application.export.service.CertificateExportService;
-import se.inera.intyg.intygstjanst.application.export.dto.CertificateExportPageDTO;
-import se.inera.intyg.intygstjanst.application.export.dto.CertificateTextDTO;
 
 @RestController
 @ApiBasePath("/internalapi")
@@ -39,24 +40,32 @@ import se.inera.intyg.intygstjanst.application.export.dto.CertificateTextDTO;
 @RequiredArgsConstructor
 public class CertificateExportController {
 
-    private final CertificateExportService certificateExportService;
+  private final CertificateExportService certificateExportService;
 
-    @GetMapping("/certificatetexts")
-    @PerformanceLogging(eventAction = "retrieve-certificate-texts", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
-    public List<CertificateTextDTO> getCertificateTexts() {
-        return certificateExportService.getCertificateTexts();
-    }
+  @GetMapping("/certificatetexts")
+  @PerformanceLogging(
+      eventAction = "retrieve-certificate-texts",
+      eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
+  public List<CertificateTextDTO> getCertificateTexts() {
+    return certificateExportService.getCertificateTexts();
+  }
 
-    @GetMapping("/certificates/{id}")
-    @PerformanceLogging(eventAction = "list-certificates", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
-    public CertificateExportPageDTO getCertificates(@PathVariable("id") String careProviderId, @RequestParam("batchSize") int batchSize,
-        @RequestParam("collected") int collected) {
-        return certificateExportService.getCertificateExportPage(careProviderId, collected, batchSize);
-    }
+  @GetMapping("/certificates/{id}")
+  @PerformanceLogging(
+      eventAction = "list-certificates",
+      eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
+  public CertificateExportPageDTO getCertificates(
+      @PathVariable("id") String careProviderId,
+      @RequestParam("batchSize") int batchSize,
+      @RequestParam("collected") int collected) {
+    return certificateExportService.getCertificateExportPage(careProviderId, collected, batchSize);
+  }
 
-    @DeleteMapping("/certificates/{id}")
-    @PerformanceLogging(eventAction = "erase-certificates", eventType = MdcLogConstants.EVENT_TYPE_DELETION)
-    public void eraseDataForCareProvider(@PathVariable("id") String careProviderId) {
-        certificateExportService.eraseCertificates(careProviderId);
-    }
+  @DeleteMapping("/certificates/{id}")
+  @PerformanceLogging(
+      eventAction = "erase-certificates",
+      eventType = MdcLogConstants.EVENT_TYPE_DELETION)
+  public void eraseDataForCareProvider(@PathVariable("id") String careProviderId) {
+    certificateExportService.eraseCertificates(careProviderId);
+  }
 }

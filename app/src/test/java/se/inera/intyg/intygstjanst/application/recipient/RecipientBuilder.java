@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,12 +16,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.application.recipient;
 
 import com.google.common.base.Joiner;
 import java.util.List;
-import se.inera.intyg.intygstjanst.application.recipient.CertificateRecipientType;
-import se.inera.intyg.intygstjanst.application.recipient.Recipient;
 
 /**
  * Recipient object.
@@ -30,73 +29,80 @@ import se.inera.intyg.intygstjanst.application.recipient.Recipient;
  */
 public class RecipientBuilder {
 
-    private String logicalAddress;
-    private String name;
-    private String id;
-    private String certificateTypes;
-    private boolean active;
-    private boolean trusted;
+  private String logicalAddress;
+  private String name;
+  private String id;
+  private String certificateTypes;
+  private boolean active;
+  private boolean trusted;
 
-    public Recipient build() {
-        return new Recipient(logicalAddress, name, id, CertificateRecipientType.HUVUDMOTTAGARE.name(), certificateTypes, active, trusted);
-    }
+  public Recipient build() {
+    return new Recipient(
+        logicalAddress,
+        name,
+        id,
+        CertificateRecipientType.HUVUDMOTTAGARE.name(),
+        certificateTypes,
+        active,
+        trusted);
+  }
 
-    public String getLogicalAddress() {
-        return logicalAddress;
-    }
+  public String getLogicalAddress() {
+    return logicalAddress;
+  }
 
-    public RecipientBuilder setLogicalAddress(String logicalAddress) {
-        this.logicalAddress = logicalAddress;
-        return this;
-    }
+  public RecipientBuilder setLogicalAddress(String logicalAddress) {
+    this.logicalAddress = logicalAddress;
+    return this;
+  }
 
-    public String getName() {
-        return name;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public RecipientBuilder setName(String name) {
-        this.name = name;
-        return this;
-    }
+  public RecipientBuilder setName(String name) {
+    this.name = name;
+    return this;
+  }
 
-    public String getId() {
-        return id;
-    }
+  public String getId() {
+    return id;
+  }
 
-    public RecipientBuilder setId(String id) {
-        this.id = id;
-        return this;
-    }
+  public RecipientBuilder setId(String id) {
+    this.id = id;
+    return this;
+  }
 
-    public String getCertificateTypes() {
-        return certificateTypes;
-    }
+  public String getCertificateTypes() {
+    return certificateTypes;
+  }
 
-    public RecipientBuilder setCertificateTypes(String certificateTypes) {
-        this.certificateTypes = certificateTypes;
-        return this;
-    }
+  public RecipientBuilder setCertificateTypes(String certificateTypes) {
+    this.certificateTypes = certificateTypes;
+    return this;
+  }
 
-    public RecipientBuilder setCertificateTypes(List<String> certificateTypes) {
-        this.certificateTypes = Joiner.on(Recipient.SEPARATOR).join(certificateTypes);
-        return this;
-    }
+  public RecipientBuilder setCertificateTypes(List<String> certificateTypes) {
+    this.certificateTypes = Joiner.on(Recipient.SEPARATOR).join(certificateTypes);
+    return this;
+  }
 
-    public boolean isActive() {
-        return active;
-    }
+  public boolean isActive() {
+    return active;
+  }
 
-    public RecipientBuilder setActive(boolean active) {
-        this.active = active;
-        return this;
-    }
+  public RecipientBuilder setActive(boolean active) {
+    this.active = active;
+    return this;
+  }
 
-    public boolean isTrusted() {
-        return trusted;
-    }
+  public boolean isTrusted() {
+    return trusted;
+  }
 
-    public RecipientBuilder setTrusted(boolean trusted) {
-        this.trusted = trusted;
-        return this;
-    }
+  public RecipientBuilder setTrusted(boolean trusted) {
+    this.trusted = trusted;
+    return this;
+  }
 }

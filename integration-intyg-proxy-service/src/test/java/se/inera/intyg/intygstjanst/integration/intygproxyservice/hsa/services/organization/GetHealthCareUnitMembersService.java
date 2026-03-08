@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -32,19 +32,23 @@ import se.inera.intyg.intygstjanst.integration.intygproxyservice.hsa.dto.organiz
 @RequiredArgsConstructor
 public class GetHealthCareUnitMembersService {
 
-    private final HsaIntygProxyServiceHealthCareUnitMembersClient healthCareUnitMembersClient;
+  private final HsaIntygProxyServiceHealthCareUnitMembersClient healthCareUnitMembersClient;
 
-    @Cacheable(cacheNames = HEALTH_CARE_UNIT_MEMBERS_CACHE_NAME, key = "#getHealthCareUnitMembersRequest.hsaId",
-        unless = "#result == null")
-    public HealthCareUnitMembers get(GetHealthCareUnitMembersRequestDTO getHealthCareUnitMembersRequest) {
-        validateRequest(getHealthCareUnitMembersRequest.getHsaId());
-        final var healthCareUnitMembersResponse = healthCareUnitMembersClient.get(getHealthCareUnitMembersRequest);
-        return healthCareUnitMembersResponse.getHealthCareUnitMembers();
-    }
+  @Cacheable(
+      cacheNames = HEALTH_CARE_UNIT_MEMBERS_CACHE_NAME,
+      key = "#getHealthCareUnitMembersRequest.hsaId",
+      unless = "#result == null")
+  public HealthCareUnitMembers get(
+      GetHealthCareUnitMembersRequestDTO getHealthCareUnitMembersRequest) {
+    validateRequest(getHealthCareUnitMembersRequest.getHsaId());
+    final var healthCareUnitMembersResponse =
+        healthCareUnitMembersClient.get(getHealthCareUnitMembersRequest);
+    return healthCareUnitMembersResponse.getHealthCareUnitMembers();
+  }
 
-    private void validateRequest(String hsaId) {
-        if (hsaId == null || hsaId.isEmpty()) {
-            throw new IllegalArgumentException("HsaId for unit was not provided '" + hsaId + "'");
-        }
+  private void validateRequest(String hsaId) {
+    if (hsaId == null || hsaId.isEmpty()) {
+      throw new IllegalArgumentException("HsaId for unit was not provided '" + hsaId + "'");
     }
+  }
 }

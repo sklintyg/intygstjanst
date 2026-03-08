@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.infrastructure.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -35,29 +36,28 @@ import se.inera.intyg.intygstjanst.infrastructure.security.interceptor.ApiBasePa
 @RequiredArgsConstructor
 public class WebMvcConfig implements WebMvcConfigurer {
 
-    private final ObjectMapper objectMapper;
-    private final ApiBasePathEnforcingInterceptor apiBasePathEnforcingInterceptor;
+  private final ObjectMapper objectMapper;
+  private final ApiBasePathEnforcingInterceptor apiBasePathEnforcingInterceptor;
 
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(apiBasePathEnforcingInterceptor);
-    }
+  @Override
+  public void addInterceptors(InterceptorRegistry registry) {
+    registry.addInterceptor(apiBasePathEnforcingInterceptor);
+  }
 
-    @Override
-    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-        final var jackson = new MappingJackson2HttpMessageConverter();
-        jackson.setObjectMapper(objectMapper);
-        converters.add(jackson);
+  @Override
+  public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+    final var jackson = new MappingJackson2HttpMessageConverter();
+    jackson.setObjectMapper(objectMapper);
+    converters.add(jackson);
 
-        final var stringConverter = new StringHttpMessageConverter(StandardCharsets.UTF_8);
-        stringConverter.setSupportedMediaTypes(List.of(
+    final var stringConverter = new StringHttpMessageConverter(StandardCharsets.UTF_8);
+    stringConverter.setSupportedMediaTypes(
+        List.of(
             MediaType.TEXT_PLAIN,
             MediaType.TEXT_HTML,
             MediaType.APPLICATION_XML,
             MediaType.TEXT_XML,
-            MediaType.ALL
-        ));
-        converters.add(stringConverter);
-    }
+            MediaType.ALL));
+    converters.add(stringConverter);
+  }
 }
-

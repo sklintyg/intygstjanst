@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -23,85 +23,92 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
+import se.inera.intyg.intygstjanst.application.sickleave.converter.IntygsDataConverter;
 import se.inera.intyg.intygstjanst.application.sickleave.dto.IntygData;
 import se.inera.intyg.intygstjanst.application.sickleave.dto.IntygParametrar;
 import se.inera.intyg.intygstjanst.application.sickleave.dto.SjukfallEnhet;
-import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.SjukfallCertificateDao;
 import se.inera.intyg.intygstjanst.infrastructure.csintegration.aggregator.ValidSickLeaveAggregator;
-import se.inera.intyg.intygstjanst.application.sickleave.converter.IntygsDataConverter;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.SjukfallCertificateDao;
 
 @Service
 public class GetActiveSickLeaveCertificates {
 
-    private final SjukfallCertificateDao sjukfallCertificateDao;
+  private final SjukfallCertificateDao sjukfallCertificateDao;
 
-    private final IntygsDataConverter intygDataConverter;
+  private final IntygsDataConverter intygDataConverter;
 
-    private final SjukfallEngineService sjukfallEngineService;
+  private final SjukfallEngineService sjukfallEngineService;
 
-    private final ValidSickLeaveAggregator validSickLeaveAggregator;
+  private final ValidSickLeaveAggregator validSickLeaveAggregator;
 
-    public GetActiveSickLeaveCertificates(SjukfallCertificateDao sjukfallCertificateDao,
-        IntygsDataConverter intygDataConverter,
-        SjukfallEngineService sjukfallEngineService, ValidSickLeaveAggregator validSickLeaveAggregator) {
-        this.sjukfallCertificateDao = sjukfallCertificateDao;
-        this.intygDataConverter = intygDataConverter;
-        this.sjukfallEngineService = sjukfallEngineService;
-        this.validSickLeaveAggregator = validSickLeaveAggregator;
-    }
+  public GetActiveSickLeaveCertificates(
+      SjukfallCertificateDao sjukfallCertificateDao,
+      IntygsDataConverter intygDataConverter,
+      SjukfallEngineService sjukfallEngineService,
+      ValidSickLeaveAggregator validSickLeaveAggregator) {
+    this.sjukfallCertificateDao = sjukfallCertificateDao;
+    this.intygDataConverter = intygDataConverter;
+    this.sjukfallEngineService = sjukfallEngineService;
+    this.validSickLeaveAggregator = validSickLeaveAggregator;
+  }
 
-    public List<IntygData> get(String careProviderId, List<String> unitIds, List<String> doctorIds, int maxDaysSinceSickLeaveCompleted) {
-        assertCareProviderId(careProviderId);
-        assertUnitIds(unitIds);
-        assertDoctorIds(doctorIds);
+  public List<IntygData> get(
+      String careProviderId,
+      List<String> unitIds,
+      List<String> doctorIds,
+      int maxDaysSinceSickLeaveCompleted) {
+    assertCareProviderId(careProviderId);
+    assertUnitIds(unitIds);
+    assertDoctorIds(doctorIds);
 
-        final var todayDate = LocalDate.now();
-        final var recentlyClosed = maxDaysSinceSickLeaveCompleted > 0 ? todayDate.minusDays(maxDaysSinceSickLeaveCompleted) : null;
+    final var todayDate = LocalDate.now();
+    final var recentlyClosed =
+        maxDaysSinceSickLeaveCompleted > 0
+            ? todayDate.minusDays(maxDaysSinceSickLeaveCompleted)
+            : null;
 
-        final var sjukfallCertificate = sjukfallCertificateDao.findActiveSjukfallCertificate(
-            careProviderId,
-            unitIds,
-            doctorIds,
-            todayDate,
-            recentlyClosed
-        );
+    final var sjukfallCertificate =
+        sjukfallCertificateDao.findActiveSjukfallCertificate(
+            careProviderId, unitIds, doctorIds, todayDate, recentlyClosed);
 
-        final var sjukfallCertificates = validSickLeaveAggregator.get(sjukfallCertificate);
+    final var sjukfallCertificates = validSickLeaveAggregator.get(sjukfallCertificate);
 
-        final var intygDataList = intygDataConverter.convert(sjukfallCertificates);
+    final var intygDataList = intygDataConverter.convert(sjukfallCertificates);
 
-        final var activeIntygIds = sjukfallEngineService
+    final var activeIntygIds =
+        sjukfallEngineService
             .beraknaSjukfallForEnhet(
-                intygDataList,
-                new IntygParametrar(
-                    0,
-                    maxDaysSinceSickLeaveCompleted,
-                    todayDate
-                )
-            ).stream()
+                intygDataList, new IntygParametrar(0, maxDaysSinceSickLeaveCompleted, todayDate))
+            .stream()
             .map(SjukfallEnhet::getAktivIntygsId)
             .collect(Collectors.toList());
 
-        return intygDataList.stream()
-            .filter(intygData -> activeIntygIds.contains(intygData.getIntygId()))
-            .collect(Collectors.toList());
-    }
+    return intygDataList.stream()
+        .filter(intygData -> activeIntygIds.contains(intygData.getIntygId()))
+        .collect(Collectors.toList());
+  }
 
-    private static void assertCareProviderId(String careProviderId) {
-        if (careProviderId == null || careProviderId.trim().isEmpty()) {
-            throw new IllegalArgumentException(String.format("CareProviderId must have a valid value: '%s'", careProviderId));
-        }
+  private static void assertCareProviderId(String careProviderId) {
+    if (careProviderId == null || careProviderId.trim().isEmpty()) {
+      throw new IllegalArgumentException(
+          String.format("CareProviderId must have a valid value: '%s'", careProviderId));
     }
+  }
 
-    private static void assertUnitIds(List<String> unitIds) {
-        if (unitIds == null || unitIds.isEmpty() || unitIds.stream().anyMatch(unitId -> unitId == null || unitId.trim().isEmpty())) {
-            throw new IllegalArgumentException(String.format("UnitIds must have a valid value: '%s'", unitIds));
-        }
+  private static void assertUnitIds(List<String> unitIds) {
+    if (unitIds == null
+        || unitIds.isEmpty()
+        || unitIds.stream().anyMatch(unitId -> unitId == null || unitId.trim().isEmpty())) {
+      throw new IllegalArgumentException(
+          String.format("UnitIds must have a valid value: '%s'", unitIds));
     }
+  }
 
-    private static void assertDoctorIds(List<String> doctorIds) {
-        if (doctorIds != null && doctorIds.stream().anyMatch(doctorId -> doctorId == null || doctorId.trim().isEmpty())) {
-            throw new IllegalArgumentException(String.format("DoctorIds must have a valid value: '%s'", doctorIds));
-        }
+  private static void assertDoctorIds(List<String> doctorIds) {
+    if (doctorIds != null
+        && doctorIds.stream().anyMatch(doctorId -> doctorId == null || doctorId.trim().isEmpty())) {
+      throw new IllegalArgumentException(
+          String.format("DoctorIds must have a valid value: '%s'", doctorIds));
     }
+  }
 }

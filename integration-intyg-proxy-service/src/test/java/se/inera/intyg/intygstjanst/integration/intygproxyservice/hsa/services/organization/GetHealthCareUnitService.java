@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -32,25 +32,29 @@ import se.inera.intyg.intygstjanst.integration.intygproxyservice.hsa.dto.organiz
 @RequiredArgsConstructor
 public class GetHealthCareUnitService {
 
-    private final HsaIntygProxyServiceHealthCareUnitClient hsaIntygProxyServiceHealthCareUnitClient;
+  private final HsaIntygProxyServiceHealthCareUnitClient hsaIntygProxyServiceHealthCareUnitClient;
 
-    @Cacheable(cacheNames = HEALTH_CARE_UNIT_CACHE_NAME, key = "#getHealthCareUnitRequestDTO.hsaId",
-        unless = "#result == null")
-    public HealthCareUnit get(GetHealthCareUnitRequestDTO getHealthCareUnitRequestDTO) {
-        validateRequestParameters(getHealthCareUnitRequestDTO);
-        final var healthCareUnit = hsaIntygProxyServiceHealthCareUnitClient.getHealthCareUnit(
-            getHealthCareUnitRequestDTO);
-        return healthCareUnit.getHealthCareUnit();
-    }
+  @Cacheable(
+      cacheNames = HEALTH_CARE_UNIT_CACHE_NAME,
+      key = "#getHealthCareUnitRequestDTO.hsaId",
+      unless = "#result == null")
+  public HealthCareUnit get(GetHealthCareUnitRequestDTO getHealthCareUnitRequestDTO) {
+    validateRequestParameters(getHealthCareUnitRequestDTO);
+    final var healthCareUnit =
+        hsaIntygProxyServiceHealthCareUnitClient.getHealthCareUnit(getHealthCareUnitRequestDTO);
+    return healthCareUnit.getHealthCareUnit();
+  }
 
-    private void validateRequestParameters(GetHealthCareUnitRequestDTO getHealthCareUnitRequestDTO) {
-        if (hsaIdIsNullOrEmpty(getHealthCareUnitRequestDTO)) {
-            throw new IllegalArgumentException("Missing required parameters. Must provide careUnitHsaId.");
-        }
+  private void validateRequestParameters(GetHealthCareUnitRequestDTO getHealthCareUnitRequestDTO) {
+    if (hsaIdIsNullOrEmpty(getHealthCareUnitRequestDTO)) {
+      throw new IllegalArgumentException(
+          "Missing required parameters. Must provide careUnitHsaId.");
     }
+  }
 
-    private static boolean hsaIdIsNullOrEmpty(GetHealthCareUnitRequestDTO getHealthCareUnitRequestDTO) {
-        return getHealthCareUnitRequestDTO.getHsaId() == null || getHealthCareUnitRequestDTO.getHsaId()
-            .isEmpty();
-    }
+  private static boolean hsaIdIsNullOrEmpty(
+      GetHealthCareUnitRequestDTO getHealthCareUnitRequestDTO) {
+    return getHealthCareUnitRequestDTO.getHsaId() == null
+        || getHealthCareUnitRequestDTO.getHsaId().isEmpty();
+  }
 }

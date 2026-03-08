@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package se.inera.intyg.intygstjanst.integration.hsa.services;
 
 import java.util.List;
@@ -26,13 +27,12 @@ import se.inera.intyg.intygstjanst.integration.hsa.model.Unit;
 
 public interface HsatkOrganizationService {
 
-    List<HealthCareProvider> getHealthCareProvider(String healthCareProviderHsaId, String healthCareProviderOrgNo);
+  List<HealthCareProvider> getHealthCareProvider(
+      String healthCareProviderHsaId, String healthCareProviderOrgNo);
 
-    HealthCareUnit getHealthCareUnit(String healthCareUnitMemberHsaId);
+  HealthCareUnit getHealthCareUnit(String healthCareUnitMemberHsaId);
 
-    HealthCareUnitMembers getHealthCareUnitMembers(String healtCareUnitHsaId);
+  HealthCareUnitMembers getHealthCareUnitMembers(String healtCareUnitHsaId);
 
-    Unit getUnit(String unitHsaId, String profile);
-
-
+  Unit getUnit(String unitHsaId, String profile);
 }
