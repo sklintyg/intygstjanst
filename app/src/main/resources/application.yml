@@ -1,0 +1,278 @@
+#
+# Copyright (C) 2016 Inera AB (http://www.inera.se)
+#
+# This file is part of sklintyg (https://github.com/sklintyg).
+#
+# sklintyg is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# sklintyg is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+# ============================================================
+# Spring Boot server configuration
+# ============================================================
+server:
+  port: 8080
+  servlet:
+    context-path: /inera-certificate
+
+# Internal REST port (extra Tomcat connector — see TomcatConfig.java)
+internal:
+  api:
+    port: 8081
+
+# Spring Boot Actuator (management) — completely separate port, not affected by any filter
+management:
+  server:
+    port: 8082
+  endpoints:
+    web:
+      exposure:
+        include: "health,info"
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: always
+
+logging:
+  structured:
+    format:
+      console: ecs
+
+# ============================================================
+# Disable Spring Boot auto-config for things we configure manually.
+# Redundant with @SpringBootApplication(exclude=…) but kept here
+# as visible documentation and for safety.
+# ============================================================
+spring:
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration
+
+  datasource:
+    url: "jdbc:mysql://${db.server}:${db.port}/${db.name}?useSSL=false&serverTimezone=Europe/Stockholm&allowPublicKeyRetrieval=true"
+    username: "${db.username}"
+    password: "${db.password}"
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 3
+  jpa:
+    hibernate:
+      ddl-auto: none
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    open-in-view: false
+  liquibase:
+    change-log: classpath:changelog/changelog.xml
+
+  # ============================================================
+  # Spring Boot ActiveMQ configuration (Step 12)
+  # Maps from the legacy activemq.broker.* properties to Spring Boot conventions.
+  # ============================================================
+  activemq:
+    broker-url: "${activemq.broker.url}"
+    user: "${activemq.broker.username}"
+    password: "${activemq.broker.password}"
+    pool:
+      enabled: true
+      max-connections: 8
+
+  # ============================================================
+  # Spring Boot JMS configuration (Step 12)
+  # ============================================================
+  jms:
+    listener:
+      auto-startup: true
+      session-transacted: true
+      concurrency: 1
+      max-concurrency: 10
+    cache:
+      consumers: true
+    template:
+      session-transacted: true
+      default-destination: "${activemq.destination.queue.name}"
+
+  # ============================================================
+  # Spring Boot Redis auto-configuration (Step 14)
+  # Maps from the legacy redis.* properties to Spring Boot conventions.
+  # ============================================================
+  data:
+    redis:
+      host: "${redis.host}"
+      port: "${redis.port}"
+      password: "${redis.password}"
+  cache:
+    type: redis
+    redis:
+      time-to-live: 86400s
+
+db:
+  username: ""
+  password: ""
+  port: 3306
+
+# JMS configuration
+activemq:
+  broker:
+    url: "tcp://localhost:61616?jms.nonBlockingRedelivery=true&jms.redeliveryPolicy.maximumRedeliveries=3&jms.redeliveryPolicy.maximumRedeliveryDelay=6000&jms.redeliveryPolicy.initialRedeliveryDelay=4000&jms.redeliveryPolicy.useExponentialBackOff=true&jms.redeliveryPolicy.backOffMultiplier=2"
+    username: ""
+    password: ""
+  destination:
+    queue:
+      name: certificate.queue
+  internal:
+    notification:
+      queue:
+        name: internal.notification.queue
+
+certificate:
+  event:
+    queue:
+      name: intygstjanst.certificate.event.queue
+
+# NTjP SSL
+ntjp:
+  ws:
+    certificate:
+      file: ""
+      type: PKCS12
+    truststore:
+      file: ""
+      type: JKS
+  base:
+    url: ""
+
+#################################################
+#
+# Dynamic texts
+#
+#################################################
+texts:
+  file:
+    directory: classpath:/texts/
+  update:
+    cron: "0 0 0 * * *"
+
+# Override to disable sending JMS messages to statistik-tjänsten
+statistics:
+  enabled: true
+
+################################################
+#
+# FK-Integration Configurations
+#
+################################################
+registercertificatev1:
+  endpoint:
+    url: "${ntjp.base.url}/clinicalprocess/healthcond/certificate/RegisterCertificate/1/rivtabp21"
+registercertificatev3:
+  endpoint:
+    url: "${ntjp.base.url}/clinicalprocess/healthcond/certificate/RegisterCertificate/3/rivtabp21"
+registermedicalcertificatev3:
+  endpoint:
+    url: "${ntjp.base.url}/RegisterMedicalCertificate/3/rivtabp20"
+revokecertificatev2:
+  endpoint:
+    url: "${ntjp.base.url}/clinicalprocess/healthcond/certificate/RevokeCertificate/2/rivtabp21"
+revokemedicalcertificatev1:
+  endpoint:
+    url: "${ntjp.base.url}/RevokeMedicalCertificate/1/rivtabp20"
+sendmedicalcertificatequestionv1:
+  endpoint:
+    url: "${ntjp.base.url}/SendMedicalCertificateQuestion/1/rivtabp20"
+sendmessagetocarev2:
+  endpoint:
+    url: "${ntjp.base.url}/clinicalprocess/healthcond/certificate/SendMessageToCare/2/rivtabp21"
+sendmessagetorecipientv2:
+  endpoint:
+    url: "${ntjp.base.url}/clinicalprocess/healthcond/certificate/SendMessageToRecipient/2/rivtabp21"
+
+################################################
+#
+# HSA-Integration Configurations
+#
+################################################
+integration:
+  intygproxyservice:
+    credentialinformationforperson:
+      endpoint: /api/v1/credentialinformation
+    employee:
+      endpoint: /api/v2/employee
+    healthcareunit:
+      endpoint: /api/v2/healthcareunit
+    healthcareunitmembers:
+      endpoint: /api/v2/healthcareunitmembers
+    unit:
+      endpoint: /api/v1/unit
+    credentialsforperson:
+      endpoint: /api/v1/credentialsForPerson
+    certificationperson:
+      endpoint: /api/v1/certificationPerson
+    lastupdate:
+      endpoint: /api/v1/lastUpdate
+    provider:
+      endpoint: /api/v1/healthcareprovider
+    ################################################
+    #
+    # PU-Integration Configurations
+    #
+    ################################################
+    person:
+      endpoint: /api/v1/person
+    persons:
+      endpoint: /api/v1/persons
+
+################################################
+#
+# HSA/PU Cache (redis) configuration
+#
+################################################
+
+# Legacy properties kept for backward-compatible property resolution across
+# deployment environments until all configs are updated to spring.data.redis.*.
+redis:
+  host: 127.0.0.1
+  port: 6379
+  password: ""
+
+################################################
+#
+# Recipient update schedule
+#
+################################################
+recipients:
+  update:
+    cron: "0 0 0 * * *"
+
+# Use old format v1 or new v3 when sending TsBas RegisterCertificate to recipient
+tsbas:
+  send:
+    certificate:
+      to:
+        recipient:
+          registercertificate:
+            version: v3
+
+################################################
+#
+# Diagnoskapitel
+#
+################################################
+it:
+  diagnosis:
+    chapters:
+      file: classpath:/diagnoskoder/diagnoskapitel.txt
+  diagnosisCodes:
+    icd10se:
+      file: classpath:/diagnoskoder/icd10se/icd-10-se.tsv
+    ksh97p_kod:
+      file: classpath:/diagnoskoder/KSH97P_KOD.ANS
