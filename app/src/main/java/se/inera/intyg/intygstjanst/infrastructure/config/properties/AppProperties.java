@@ -55,33 +55,33 @@ public record AppProperties(
     }
 
     public record Ntjp(
-        String baseUrl,
+        @NotBlank String baseUrl,
         @Valid Tls tls,
         @Valid Endpoints endpoints,
         @NotBlank String tsBasRegisterCertificateVersion
     ) {
 
         public record Tls(
-            String certificateFile,
-            String certificatePassword,
+            @NotBlank String certificateFile,
+            @NotBlank String certificatePassword,
             @NotBlank String certificateType,
-            String keyManagerPassword,
-            String truststoreFile,
-            String truststorePassword,
+            @NotBlank String keyManagerPassword,
+            @NotBlank String truststoreFile,
+            @NotBlank String truststorePassword,
             @NotBlank String truststoreType
         ) {
 
         }
 
         public record Endpoints(
-            String registerCertificateV1,
-            String registerCertificateV3,
-            String registerMedicalCertificateV3,
-            String revokeCertificateV2,
-            String revokeMedicalCertificateV1,
-            String sendMedicalCertificateQuestionV1,
-            String sendMessageToCareV2,
-            String sendMessageToRecipientV2
+            @NotBlank String registerCertificateV1,
+            @NotBlank String registerCertificateV3,
+            @NotBlank String registerMedicalCertificateV3,
+            @NotBlank String revokeCertificateV2,
+            @NotBlank String revokeMedicalCertificateV1,
+            @NotBlank String sendMedicalCertificateQuestionV1,
+            @NotBlank String sendMessageToCareV2,
+            @NotBlank String sendMessageToRecipientV2
         ) {
 
         }
@@ -101,12 +101,12 @@ public record AppProperties(
         @Valid IntygProxyService intygProxyService
     ) {
 
-        public record CertificateService(String baseUrl) {
+        public record CertificateService(@NotBlank String baseUrl) {
 
         }
 
         public record IntygProxyService(
-            String baseUrl,
+            @NotBlank String baseUrl,
             @Valid Hsa hsa,
             @Valid Pu pu,
             @Valid Cache cache
@@ -154,13 +154,13 @@ public record AppProperties(
     }
 
     public record Recipients(
-        String file,
+        @NotBlank String file,
         @NotBlank String updateCron
     ) {
 
     }
 
-    public record Security(String hashSalt) {
+    public record Security(@NotBlank String hashSalt) {
 
     }
 

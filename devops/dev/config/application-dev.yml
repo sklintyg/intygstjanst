@@ -9,8 +9,10 @@ app:
   ntjp:
     base-url: "http://localhost:8080/inera-certificate/stubs"
     tls:
+      certificate-file: dummy
       certificate-password: dummy
       key-manager-password: dummy
+      truststore-file: dummy
       truststore-password: dummy
 
   integration:
@@ -25,9 +27,6 @@ app:
   security:
     hash-salt: salt
 
-# ============================================================
-# Spring Boot framework overrides for local development.
-# ============================================================
 db:
   server: localhost
   port: 3306

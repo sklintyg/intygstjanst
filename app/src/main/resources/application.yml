@@ -9,14 +9,8 @@ app:
     internal-port: 8081
 
   ntjp:
-    base-url: ""
     tls:
-      certificate-file: ""
-      certificate-password: ""
       certificate-type: PKCS12
-      key-manager-password: ""
-      truststore-file: ""
-      truststore-password: ""
       truststore-type: JKS
     endpoints:
       register-certificate-v1: "${app.ntjp.base-url}/clinicalprocess/healthcond/certificate/RegisterCertificate/1/rivtabp21"
@@ -36,10 +30,7 @@ app:
     statistics-enabled: true
 
   integration:
-    certificate-service:
-      base-url: ""
     intyg-proxy-service:
-      base-url: ""
       hsa:
         employee-endpoint: /api/v2/employee
         credential-information-endpoint: /api/v1/credentialinformation
@@ -66,7 +57,6 @@ app:
     ksh97p-file: classpath:/diagnoskoder/KSH97P_KOD.ANS
 
   recipients:
-    file: ""
     update-cron: "0 0 0 * * *"
 
   security:
@@ -74,6 +64,9 @@ app:
 
   erase:
     page-size: 1000
+
+db:
+  port: 3306
 
 logging:
   structured:
@@ -120,8 +113,6 @@ spring:
 
   activemq:
     broker-url: "tcp://localhost:61616?jms.nonBlockingRedelivery=true&jms.redeliveryPolicy.maximumRedeliveries=3&jms.redeliveryPolicy.maximumRedeliveryDelay=6000&jms.redeliveryPolicy.initialRedeliveryDelay=4000&jms.redeliveryPolicy.useExponentialBackOff=true&jms.redeliveryPolicy.backOffMultiplier=2"
-    user: ""
-    password: ""
     pool:
       enabled: true
       max-connections: 8
@@ -141,16 +132,10 @@ spring:
     redis:
       host: 127.0.0.1
       port: 6379
-      password: ""
   cache:
     type: redis
     redis:
       time-to-live: 86400s
-
-db:
-  username: ""
-  password: ""
-  port: 3306
 
 # ============================================================
 # Required by Common for loading texts from file system or classpath.
