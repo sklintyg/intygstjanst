@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static se.inera.intyg.intygstjanst.integration.intygproxyservice.pu.configuration.PURestClientConfig.LOG_SESSION_ID_HEADER;
 import static se.inera.intyg.intygstjanst.integration.intygproxyservice.pu.configuration.PURestClientConfig.LOG_TRACE_ID_HEADER;
 import static se.inera.intyg.intygstjanst.integration.intygproxyservice.pu.configuration.PURestClientConfig.SESSION_ID_KEY;
@@ -17,8 +18,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.MDC;
 import org.springframework.http.MediaType;
-import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.RestClient;
+import se.inera.intyg.intygstjanst.integration.intygproxyservice.configuration.IntygProxyServiceProperties;
 import se.inera.intyg.intygstjanst.integration.intygproxyservice.pu.dto.PersonRequestDTO;
 import se.inera.intyg.intygstjanst.integration.intygproxyservice.pu.dto.PersonResponseDTO;
 import se.inera.intyg.intygstjanst.integration.pu.model.Person;
@@ -37,12 +38,19 @@ class GetPersonIntygProxyServiceClientTest {
     @Mock
     private RestClient restClient;
 
+    @Mock
+    private IntygProxyServiceProperties properties;
+
+    @Mock
+    private IntygProxyServiceProperties.Pu puProperties;
+
     @InjectMocks
     private GetPersonIntygProxyServiceClient getPersonIntygProxyServiceClient;
 
     @BeforeEach
     void setUp() {
-        ReflectionTestUtils.setField(getPersonIntygProxyServiceClient, "personEndpoint", ENDPOINT);
+        when(properties.pu()).thenReturn(puProperties);
+        when(puProperties.personEndpoint()).thenReturn(ENDPOINT);
         MDC.put(TRACE_ID_KEY, TRACE_ID);
         MDC.put(SESSION_ID_KEY, SESSION_ID);
     }

@@ -27,27 +27,31 @@ import static se.inera.intyg.intygstjanst.integration.intygproxyservice.hsa.conf
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
+import se.inera.intyg.intygstjanst.integration.intygproxyservice.configuration.IntygProxyServiceProperties;
 import se.inera.intyg.intygstjanst.integration.intygproxyservice.hsa.dto.authorization.GetCredentialInformationRequestDTO;
 import se.inera.intyg.intygstjanst.integration.intygproxyservice.hsa.dto.authorization.GetCredentialInformationResponseDTO;
 
 @Service
 public class HsaIntygProxyServiceCredentialInformationForPersonClient {
 
-    @Autowired
-    @Qualifier("hsaIntygProxyServiceRestClient")
-    private RestClient ipsRestClient;
+    private final RestClient ipsRestClient;
+    private final IntygProxyServiceProperties properties;
 
-    @Value("${integration.intygproxyservice.credentialinformationforperson.endpoint}")
-    private String credentialInformationForPerson;
+    @Autowired
+    public HsaIntygProxyServiceCredentialInformationForPersonClient(
+        @Qualifier("hsaIntygProxyServiceRestClient") RestClient ipsRestClient,
+        IntygProxyServiceProperties properties) {
+        this.ipsRestClient = ipsRestClient;
+        this.properties = properties;
+    }
 
     public GetCredentialInformationResponseDTO get(GetCredentialInformationRequestDTO getCredentialInformationRequestDTO) {
         return ipsRestClient
             .post()
-            .uri(credentialInformationForPerson)
+            .uri(properties.hsa().credentialInformationEndpoint())
             .body(getCredentialInformationRequestDTO)
             .header(LOG_TRACE_ID_HEADER, MDC.get(TRACE_ID_KEY))
             .header(LOG_SESSION_ID_HEADER, MDC.get(SESSION_ID_KEY))
