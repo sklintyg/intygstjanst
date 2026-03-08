@@ -43,7 +43,6 @@ public record AppProperties(
     @Valid Jms jms,
     @Valid Integration integration,
     @Valid Diagnosis diagnosis,
-    @Valid Texts texts,
     @Valid Recipients recipients,
     @Valid Security security,
     @Valid Erase erase
@@ -51,7 +50,9 @@ public record AppProperties(
 
     public record Server(
         @Positive int internalPort
-    ) {}
+    ) {
+
+    }
 
     public record Ntjp(
         String baseUrl,
@@ -59,6 +60,7 @@ public record AppProperties(
         @Valid Endpoints endpoints,
         @NotBlank String tsBasRegisterCertificateVersion
     ) {
+
         public record Tls(
             String certificateFile,
             String certificatePassword,
@@ -67,7 +69,9 @@ public record AppProperties(
             String truststoreFile,
             String truststorePassword,
             @NotBlank String truststoreType
-        ) {}
+        ) {
+
+        }
 
         public record Endpoints(
             String registerCertificateV1,
@@ -78,7 +82,9 @@ public record AppProperties(
             String sendMedicalCertificateQuestionV1,
             String sendMessageToCareV2,
             String sendMessageToRecipientV2
-        ) {}
+        ) {
+
+        }
     }
 
     public record Jms(
@@ -86,13 +92,18 @@ public record AppProperties(
         @NotBlank String internalNotificationQueue,
         @NotBlank String certificateEventQueue,
         boolean statisticsEnabled
-    ) {}
+    ) {
+
+    }
 
     public record Integration(
         @Valid CertificateService certificateService,
         @Valid IntygProxyService intygProxyService
     ) {
-        public record CertificateService(String baseUrl) {}
+
+        public record CertificateService(String baseUrl) {
+
+        }
 
         public record IntygProxyService(
             String baseUrl,
@@ -100,6 +111,7 @@ public record AppProperties(
             @Valid Pu pu,
             @Valid Cache cache
         ) {
+
             public record Hsa(
                 @NotBlank String employeeEndpoint,
                 @NotBlank String credentialInformationEndpoint,
@@ -110,12 +122,16 @@ public record AppProperties(
                 @NotBlank String certificationPersonEndpoint,
                 @NotBlank String lastUpdateEndpoint,
                 @NotBlank String healthcareProviderEndpoint
-            ) {}
+            ) {
+
+            }
 
             public record Pu(
                 @NotBlank String personEndpoint,
                 @NotBlank String personsEndpoint
-            ) {}
+            ) {
+
+            }
 
             public record Cache(
                 @Positive long employeeTtlSeconds,
@@ -123,7 +139,9 @@ public record AppProperties(
                 @Positive long healthcareUnitMembersTtlSeconds,
                 @Positive long unitTtlSeconds,
                 @Positive long healthcareProviderTtlSeconds
-            ) {}
+            ) {
+
+            }
         }
     }
 
@@ -131,19 +149,22 @@ public record AppProperties(
         @NotBlank String chaptersFile,
         @NotBlank String icd10seFile,
         @NotBlank String ksh97pFile
-    ) {}
+    ) {
 
-    public record Texts(
-        @NotBlank String fileDirectory,
-        @NotBlank String updateCron
-    ) {}
+    }
 
     public record Recipients(
         String file,
         @NotBlank String updateCron
-    ) {}
+    ) {
 
-    public record Security(String hashSalt) {}
+    }
 
-    public record Erase(@Positive int pageSize) {}
+    public record Security(String hashSalt) {
+
+    }
+
+    public record Erase(@Positive int pageSize) {
+
+    }
 }

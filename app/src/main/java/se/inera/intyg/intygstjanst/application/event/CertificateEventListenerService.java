@@ -32,9 +32,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Service;
-import se.inera.intyg.intygstjanst.infrastructure.logging.MdcHelper;
 import se.inera.intyg.intygstjanst.application.event.service.CertificateEventService;
 import se.inera.intyg.intygstjanst.application.event.validator.CertificateEventValidator;
+import se.inera.intyg.intygstjanst.infrastructure.logging.MdcHelper;
 
 @Service
 @Slf4j
@@ -50,7 +50,7 @@ public class CertificateEventListenerService {
     private static final String MESSAGE_ID = "messageId";
     private static final String ERROR_MESSAGE = "Failure processing certificate event '{}', for certificateId '{}' and messageId '{}'.";
 
-    @JmsListener(destination = "${certificate.event.queue.name}")
+    @JmsListener(destination = "${app.jms.certificate-event-queue}")
     public void processMessage(Message message) {
         String eventType = null;
         String certificateId = null;

@@ -182,10 +182,6 @@ app:
     icd10se-file: classpath:/diagnoskoder/icd10se/icd-10-se.tsv
     ksh97p-file: classpath:/diagnoskoder/KSH97P_KOD.ANS
 
-  texts:
-    file-directory: classpath:/texts/
-    update-cron: "0 0 0 * * *"
-
   recipients:
     file: ""
     update-cron: "0 0 0 * * *"
@@ -196,3 +192,13 @@ app:
   erase:
     page-size: 1000
 
+# ============================================================
+# Required by Common for loading texts from file system or classpath.
+# This cannot be modified until both Intygstjanst and Webcert have
+# been updated to use new properties with app prefix.
+# ============================================================
+texts:
+  file:
+    directory: classpath:/texts/
+  update:
+    cron: "0 0 0 * * *"

@@ -76,7 +76,7 @@ class SetCertificateStatusResponderImplTest {
 
     @Spy
     private HashUtility hashUtility = new HashUtility(
-        new AppProperties(null, null, null, null, null, null, null,
+        new AppProperties(null, null, null, null, null, null,
             new AppProperties.Security("salt"), null));
 
     @InjectMocks
