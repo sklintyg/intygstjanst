@@ -1,120 +1,3 @@
-#
-# Copyright (C) 2016 Inera AB (http://www.inera.se)
-#
-# This file is part of sklintyg (https://github.com/sklintyg).
-#
-# sklintyg is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# sklintyg is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#
-
-# ============================================================
-# Spring Boot server configuration
-# ============================================================
-server:
-  port: 8080
-  servlet:
-    context-path: /inera-certificate
-
-# Spring Boot Actuator (management) — completely separate port, not affected by any filter
-management:
-  server:
-    port: 8082
-  endpoints:
-    web:
-      exposure:
-        include: "health,info"
-  endpoint:
-    health:
-      probes:
-        enabled: true
-      show-details: always
-
-logging:
-  structured:
-    format:
-      console: ecs
-
-# ============================================================
-# Disable Spring Boot auto-config for things we configure manually.
-# ============================================================
-spring:
-  autoconfigure:
-    exclude: org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration
-
-  datasource:
-    url: "jdbc:mysql://${db.server}:${db.port}/${db.name}?useSSL=false&serverTimezone=Europe/Stockholm&allowPublicKeyRetrieval=true"
-    username: "${db.username}"
-    password: "${db.password}"
-    hikari:
-      maximum-pool-size: 20
-      minimum-idle: 3
-  jpa:
-    hibernate:
-      ddl-auto: none
-      naming:
-        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
-    open-in-view: false
-  liquibase:
-    change-log: classpath:changelog/changelog.xml
-
-  activemq:
-    broker-url: "${activemq.broker.url}"
-    user: "${activemq.broker.username}"
-    password: "${activemq.broker.password}"
-    pool:
-      enabled: true
-      max-connections: 8
-
-  jms:
-    listener:
-      auto-startup: true
-      session-transacted: true
-      concurrency: 1
-      max-concurrency: 10
-    cache:
-      consumers: true
-    template:
-      session-transacted: true
-      default-destination: "${app.jms.statistics-queue}"
-
-  data:
-    redis:
-      host: "${redis.host}"
-      port: "${redis.port}"
-      password: "${redis.password}"
-  cache:
-    type: redis
-    redis:
-      time-to-live: 86400s
-
-db:
-  username: ""
-  password: ""
-  port: 3306
-
-# ActiveMQ broker connection — provided by external config / K8s secret in deployed environments.
-activemq:
-  broker:
-    url: "tcp://localhost:61616?jms.nonBlockingRedelivery=true&jms.redeliveryPolicy.maximumRedeliveries=3&jms.redeliveryPolicy.maximumRedeliveryDelay=6000&jms.redeliveryPolicy.initialRedeliveryDelay=4000&jms.redeliveryPolicy.useExponentialBackOff=true&jms.redeliveryPolicy.backOffMultiplier=2"
-    username: ""
-    password: ""
-
-# Redis connection defaults — overridden by external config / K8s secret in deployed environments.
-redis:
-  host: 127.0.0.1
-  port: 6379
-  password: ""
-
 # ============================================================
 # Canonical application properties (app.*)
 # All custom application properties are defined here.
@@ -191,6 +74,83 @@ app:
 
   erase:
     page-size: 1000
+
+logging:
+  structured:
+    format:
+      console: ecs
+
+management:
+  server:
+    port: 8082
+  endpoints:
+    web:
+      exposure:
+        include: "health,info"
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: always
+
+server:
+  port: 8080
+  servlet:
+    context-path: /inera-certificate
+
+spring:
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration
+
+  datasource:
+    url: "jdbc:mysql://${db.server}:${db.port}/${db.name}?useSSL=false&serverTimezone=Europe/Stockholm&allowPublicKeyRetrieval=true"
+    username: "${db.username}"
+    password: "${db.password}"
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 3
+  jpa:
+    hibernate:
+      ddl-auto: none
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    open-in-view: false
+  liquibase:
+    change-log: classpath:changelog/changelog.xml
+
+  activemq:
+    broker-url: "tcp://localhost:61616?jms.nonBlockingRedelivery=true&jms.redeliveryPolicy.maximumRedeliveries=3&jms.redeliveryPolicy.maximumRedeliveryDelay=6000&jms.redeliveryPolicy.initialRedeliveryDelay=4000&jms.redeliveryPolicy.useExponentialBackOff=true&jms.redeliveryPolicy.backOffMultiplier=2"
+    user: ""
+    password: ""
+    pool:
+      enabled: true
+      max-connections: 8
+
+  jms:
+    listener:
+      auto-startup: true
+      session-transacted: true
+      concurrency: 1
+      max-concurrency: 10
+    cache:
+      consumers: true
+    template:
+      session-transacted: true
+
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      password: ""
+  cache:
+    type: redis
+    redis:
+      time-to-live: 86400s
+
+db:
+  username: ""
+  password: ""
+  port: 3306
 
 # ============================================================
 # Required by Common for loading texts from file system or classpath.

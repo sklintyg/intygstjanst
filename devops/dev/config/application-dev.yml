@@ -1,48 +1,3 @@
-#
-# Copyright (C) 2021 Inera AB (http://www.inera.se)
-#
-# This file is part of sklintyg (https://github.com/sklintyg).
-#
-# sklintyg is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# sklintyg is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#
-
-# ============================================================
-# Framework / bridge properties — kept as-is until Spring Boot
-# datasource/ActiveMQ/Redis URL composition is updated.
-# ============================================================
-activemq:
-  broker:
-    username: activemqUser
-    password: activemqPassword
-
-db:
-  server: localhost
-  port: 3306
-  name: intyg
-  username: intyg
-  password: intyg
-  pool:
-    maxSize: 5
-
-logging:
-  structured:
-    format:
-      console: ""
-
-redis:
-  password: redis
-
 # ============================================================
 # Canonical application overrides for local development.
 # These override the empty/default values in application.yml.
@@ -70,4 +25,27 @@ app:
   security:
     hash-salt: salt
 
-#unit.mapping.config.path=${application.dir}/config/care-provider-mapping-config.json
+# ============================================================
+# Spring Boot framework overrides for local development.
+# ============================================================
+db:
+  server: localhost
+  port: 3306
+  name: intyg
+  username: intyg
+  password: intyg
+  pool:
+    maxSize: 5
+
+logging:
+  structured:
+    format:
+      console: ""
+
+spring:
+  activemq:
+    user: activemqUser
+    password: activemqPassword
+  data:
+    redis:
+      password: redis

@@ -82,8 +82,8 @@ unchanged.
 
 ### 1.2 Bridge properties (still required — not yet migrated)
 
-> These properties are still referenced by `application.yml` to compose the datasource URL and
-> connection strings. They must continue to be injected until the bridge is removed in a future step.
+> These properties are still referenced by `application.yml` to compose the datasource URL.
+> They must continue to be injected until the datasource bridge is removed in a future step.
 
 | Property Name | ConfigMap or Secret | Used By |
 |---|---|---|
@@ -92,12 +92,22 @@ unchanged.
 | `db.name` | ConfigMap | `spring.datasource.url` composition |
 | `db.username` | **Secret** | `spring.datasource.username` |
 | `db.password` | **Secret** | `spring.datasource.password` |
-| `activemq.broker.url` | ConfigMap | `spring.activemq.broker-url` |
-| `activemq.broker.username` | **Secret** | `spring.activemq.user` |
-| `activemq.broker.password` | **Secret** | `spring.activemq.password` |
-| `redis.host` | ConfigMap | `spring.data.redis.host` |
-| `redis.port` | ConfigMap | `spring.data.redis.port` (default: `6379`) |
-| `redis.password` | **Secret** | `spring.data.redis.password` |
+
+### 1.3 Framework properties injected directly (ActiveMQ and Redis)
+
+> The `activemq.broker.*` and `redis.*` bridge layers have been removed. Spring Boot's
+> `spring.activemq.*` and `spring.data.redis.*` properties are now set directly in
+> `application.yml` with local defaults and must be overridden in K8s via the standard
+> Spring property key names below (or via env vars using Spring Boot's relaxed binding).
+
+| Spring Property | Env Var equivalent | ConfigMap or Secret | Notes |
+|---|---|---|---|
+| `spring.activemq.broker-url` | `SPRING_ACTIVEMQ_BROKER_URL` | ConfigMap | Full broker URL including redelivery params |
+| `spring.activemq.user` | `SPRING_ACTIVEMQ_USER` | **Secret** | ActiveMQ username |
+| `spring.activemq.password` | `SPRING_ACTIVEMQ_PASSWORD` | **Secret** | ActiveMQ password |
+| `spring.data.redis.host` | `SPRING_DATA_REDIS_HOST` | ConfigMap | Redis hostname |
+| `spring.data.redis.port` | `SPRING_DATA_REDIS_PORT` | ConfigMap | Redis port (default: `6379`) |
+| `spring.data.redis.password` | `SPRING_DATA_REDIS_PASSWORD` | **Secret** | Redis password |
 
 ---
 
@@ -149,12 +159,13 @@ data:
   app.integration.intyg-proxy-service.cache.healthcare-unit-ttl-seconds: "300"
   app.recipients.file: "/config/recipients.json"
   app.erase.page-size: "1000"
-  # Bridge properties — keep until datasource URL is refactored:
+  # datasource bridge — keep until spring.datasource.url is refactored:
   db.server: "mysql.example.se"
   db.name: "intyg"
-  activemq.broker.url: "tcp://activemq.example.se:61616"
-  redis.host: "redis.example.se"
-  redis.port: "6379"
+  # Spring framework properties — set directly (no bridge layer):
+  spring.activemq.broker-url: "tcp://activemq.example.se:61616?jms.nonBlockingRedelivery=true&..."
+  spring.data.redis.host: "redis.example.se"
+  spring.data.redis.port: "6379"
 ```
 
 ---
@@ -196,12 +207,13 @@ spec:
     app.ntjp.tls.key-manager-password: <sealed>
     app.ntjp.tls.truststore-password: <sealed>
     app.security.hash-salt: <sealed>
-    # Bridge secrets — keep until datasource bridge is removed:
+    # datasource bridge secrets — keep until datasource bridge is removed:
     db.username: <sealed>
     db.password: <sealed>
-    activemq.broker.username: <sealed>
-    activemq.broker.password: <sealed>
-    redis.password: <sealed>
+    # Spring framework secrets — set directly (no bridge layer):
+    spring.activemq.user: <sealed>
+    spring.activemq.password: <sealed>
+    spring.data.redis.password: <sealed>
 ```
 
 > **Alternative for secrets:** Instead of injecting as Spring property keys, secrets may be injected
@@ -268,7 +280,9 @@ ConfigMaps unless the default needs to be overridden:
 | `app.recipients.update-cron` | `0 0 0 * * *` |
 | `app.erase.page-size` | `1000` |
 | `db.port` | `3306` |
-| `redis.port` | `6379` |
+| `spring.activemq.broker-url` | Local localhost URL (override in all deployed environments) |
+| `spring.data.redis.host` | `127.0.0.1` |
+| `spring.data.redis.port` | `6379` |
 
 ---
 
@@ -276,8 +290,8 @@ ConfigMaps unless the default needs to be overridden:
 
 Follow this order to update K8s configuration safely:
 
-- [ ] **1. Update ConfigMap** — rename all old property keys to new `app.*` names (see section 1.1). Keep bridge properties (`db.*`, `activemq.broker.*`, `redis.*`) until further notice.
-- [ ] **2. Reseal secrets** — re-encrypt all secrets using the new `app.*` key names (see section 3). The old sealed secrets for `hash.salt`, `ntjp.ws.certificate.password`, `ntjp.ws.key.manager.password`, `ntjp.ws.truststore.password` must be replaced. Bridge secrets (`db.username`, `db.password`, `activemq.broker.*`, `redis.password`) remain unchanged for now.
+- [ ] **1. Update ConfigMap** — rename all old property keys to new `app.*` names (see section 1.1). Replace `activemq.broker.*` and `redis.*` keys with `spring.activemq.*` and `spring.data.redis.*` (see section 1.3). Keep `db.*` bridge properties until further notice.
+- [ ] **2. Reseal secrets** — re-encrypt all secrets. Replace `hash.salt`, `ntjp.ws.certificate.password`, `ntjp.ws.key.manager.password`, `ntjp.ws.truststore.password` with `app.*` keys. Replace `activemq.broker.username`/`activemq.broker.password` with `spring.activemq.user`/`spring.activemq.password`. Replace `redis.password` with `spring.data.redis.password`. Keep `db.username`/`db.password` unchanged.
 - [ ] **3. Deploy new application version** — deploy the refactored application version alongside the updated ConfigMap and sealed secrets.
 - [ ] **4. Verify health probes** — confirm `/actuator/health/liveness` and `/actuator/health/readiness` return `UP` on the new pod.
 - [ ] **5. Verify key behaviours** — confirm certificate registration, statistics queue, recipient loading, and Redis caching work as expected.
@@ -298,6 +312,5 @@ If the new application version fails to start or behaves incorrectly after the C
 ## 8. Future Cleanup (out of scope for this step)
 
 Once deployed and stable, consider:
-- **Remove the datasource bridge**: Replace `${db.server}/${db.port}/${db.name}` in `spring.datasource.url` with environment variable placeholders (e.g. `${DB_HOST}`, `${DB_PORT}`, `${DB_NAME}`), then remove `db.*` from ConfigMap and `db.username`/`db.password` from secrets.
-- **Remove the ActiveMQ bridge**: Replace `${activemq.broker.*}` with `${ACTIVEMQ_BROKER_URL}`, `${ACTIVEMQ_USERNAME}`, `${ACTIVEMQ_PASSWORD}` env vars.
-- **Remove the Redis bridge**: Replace `${redis.host}/${redis.port}/${redis.password}` with `${REDIS_HOST}`, `${REDIS_PORT}`, `${REDIS_PASSWORD}` env vars.
+- **Remove the datasource bridge**: Replace `${db.server}/${db.port}/${db.name}` in `spring.datasource.url` with environment variable placeholders (e.g. `${DB_HOST}`, `${DB_PORT}`, `${DB_NAME}`), then remove `db.*` from ConfigMap and `db.username`/`db.password` from secrets. The ActiveMQ and Redis bridges have already been removed in this step.
+- **Switch to env var injection for secrets**: For tighter security, inject `spring.activemq.user`, `spring.activemq.password`, `spring.data.redis.password`, and `app.ntjp.tls.*` passwords as environment variables using Spring Boot's relaxed binding (e.g. `SPRING_ACTIVEMQ_USER`) rather than as plain Spring property keys in sealed secrets.
