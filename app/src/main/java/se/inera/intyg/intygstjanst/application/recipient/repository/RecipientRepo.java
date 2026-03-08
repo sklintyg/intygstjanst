@@ -113,7 +113,7 @@ public class RecipientRepo {
         recipientMap.clear();
     }
 
-    @Scheduled(cron = "${recipients.update.cron}")
+    @Scheduled(cron = "${app.recipients.update-cron}")
     public void update() {
         try (MdcCloseableMap mdc =
             MdcCloseableMap.builder()
