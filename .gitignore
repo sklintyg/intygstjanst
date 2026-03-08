@@ -21,3 +21,5 @@ build
 .gradle
 activemq-data
 out
+
+.java-version
