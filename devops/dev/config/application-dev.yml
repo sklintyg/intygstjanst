@@ -17,6 +17,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+# ============================================================
+# Framework / bridge properties — kept as-is until Spring Boot
+# datasource/ActiveMQ/Redis URL composition is updated.
+# ============================================================
 activemq:
   broker:
     username: activemqUser
@@ -31,21 +35,6 @@ db:
   pool:
     maxSize: 5
 
-certificateservice:
-  base:
-    url: "http://localhost:18030"
-
-hash:
-  salt: salt
-
-integration:
-  intygproxyservice:
-    baseurl: "http://localhost:18020"
-
-internal:
-  api:
-    port: 8180
-
 logging:
   structured:
     format:
@@ -54,24 +43,31 @@ logging:
 redis:
   password: redis
 
-spring:
-  data:
-    redis:
-      password: "${redis.password}"
+# ============================================================
+# Canonical application overrides for local development.
+# These override the empty/default values in application.yml.
+# ============================================================
+app:
+  server:
+    internal-port: 8180
 
-ntjp:
-  base:
-    url: "http://localhost:8080/inera-certificate/stubs"
-  ws:
-    certificate:
-      password: dummy
-    key:
-      manager:
-        password: dummy
-    truststore:
-      password: dummy
+  ntjp:
+    base-url: "http://localhost:8080/inera-certificate/stubs"
+    tls:
+      certificate-password: dummy
+      key-manager-password: dummy
+      truststore-password: dummy
 
-recipient:
-  file: "${application.dir}/config/recipients-dev.json"
+  integration:
+    certificate-service:
+      base-url: "http://localhost:18030"
+    intyg-proxy-service:
+      base-url: "http://localhost:18020"
+
+  recipients:
+    file: "${application.dir}/config/recipients-dev.json"
+
+  security:
+    hash-salt: salt
 
 #unit.mapping.config.path=${application.dir}/config/care-provider-mapping-config.json

@@ -26,9 +26,10 @@ server:
     context-path: /inera-certificate
 
 # Internal REST port (extra Tomcat connector — see TomcatConfig.java)
+# Legacy alias — remove after all @Value sites migrate to AppProperties
 internal:
   api:
-    port: 8081
+    port: "${app.server.internal-port}"
 
 # Spring Boot Actuator (management) — completely separate port, not affected by any filter
 management:
@@ -99,7 +100,7 @@ spring:
       consumers: true
     template:
       session-transacted: true
-      default-destination: "${activemq.destination.queue.name}"
+      default-destination: "${app.jms.statistics-queue}"
 
   # ============================================================
   # Spring Boot Redis auto-configuration (Step 14)
@@ -121,6 +122,7 @@ db:
   port: 3306
 
 # JMS configuration
+# Legacy aliases — remove after all @Value sites migrate to AppProperties
 activemq:
   broker:
     url: "tcp://localhost:61616?jms.nonBlockingRedelivery=true&jms.redeliveryPolicy.maximumRedeliveries=3&jms.redeliveryPolicy.maximumRedeliveryDelay=6000&jms.redeliveryPolicy.initialRedeliveryDelay=4000&jms.redeliveryPolicy.useExponentialBackOff=true&jms.redeliveryPolicy.backOffMultiplier=2"
@@ -128,114 +130,142 @@ activemq:
     password: ""
   destination:
     queue:
-      name: certificate.queue
+      name: "${app.jms.statistics-queue}"
   internal:
     notification:
       queue:
-        name: internal.notification.queue
+        name: "${app.jms.internal-notification-queue}"
 
 certificate:
   event:
     queue:
-      name: intygstjanst.certificate.event.queue
+      name: "${app.jms.certificate-event-queue}"
 
 # NTjP SSL
+# Legacy aliases — remove after all @Value sites migrate to AppProperties
 ntjp:
   ws:
     certificate:
-      file: ""
-      type: PKCS12
+      file: "${app.ntjp.tls.certificate-file}"
+      type: "${app.ntjp.tls.certificate-type}"
+      password: "${app.ntjp.tls.certificate-password}"
+    key:
+      manager:
+        password: "${app.ntjp.tls.key-manager-password}"
     truststore:
-      file: ""
-      type: JKS
+      file: "${app.ntjp.tls.truststore-file}"
+      type: "${app.ntjp.tls.truststore-type}"
+      password: "${app.ntjp.tls.truststore-password}"
   base:
-    url: ""
+    url: "${app.ntjp.base-url}"
 
 #################################################
 #
 # Dynamic texts
 #
 #################################################
+# Legacy aliases — remove after consumer code migrates to app.texts.*
 texts:
   file:
-    directory: classpath:/texts/
+    directory: "${app.texts.file-directory}"
   update:
-    cron: "0 0 0 * * *"
+    cron: "${app.texts.update-cron}"
 
-# Override to disable sending JMS messages to statistik-tjänsten
+# Legacy alias — remove after StatisticsService migrates to AppProperties
 statistics:
-  enabled: true
+  enabled: "${app.jms.statistics-enabled}"
 
 ################################################
 #
 # FK-Integration Configurations
 #
 ################################################
+# Legacy aliases — remove after CXF config classes migrate to AppProperties
 registercertificatev1:
   endpoint:
-    url: "${ntjp.base.url}/clinicalprocess/healthcond/certificate/RegisterCertificate/1/rivtabp21"
+    url: "${app.ntjp.endpoints.register-certificate-v1}"
 registercertificatev3:
   endpoint:
-    url: "${ntjp.base.url}/clinicalprocess/healthcond/certificate/RegisterCertificate/3/rivtabp21"
+    url: "${app.ntjp.endpoints.register-certificate-v3}"
 registermedicalcertificatev3:
   endpoint:
-    url: "${ntjp.base.url}/RegisterMedicalCertificate/3/rivtabp20"
+    url: "${app.ntjp.endpoints.register-medical-certificate-v3}"
 revokecertificatev2:
   endpoint:
-    url: "${ntjp.base.url}/clinicalprocess/healthcond/certificate/RevokeCertificate/2/rivtabp21"
+    url: "${app.ntjp.endpoints.revoke-certificate-v2}"
 revokemedicalcertificatev1:
   endpoint:
-    url: "${ntjp.base.url}/RevokeMedicalCertificate/1/rivtabp20"
+    url: "${app.ntjp.endpoints.revoke-medical-certificate-v1}"
 sendmedicalcertificatequestionv1:
   endpoint:
-    url: "${ntjp.base.url}/SendMedicalCertificateQuestion/1/rivtabp20"
+    url: "${app.ntjp.endpoints.send-medical-certificate-question-v1}"
 sendmessagetocarev2:
   endpoint:
-    url: "${ntjp.base.url}/clinicalprocess/healthcond/certificate/SendMessageToCare/2/rivtabp21"
+    url: "${app.ntjp.endpoints.send-message-to-care-v2}"
 sendmessagetorecipientv2:
   endpoint:
-    url: "${ntjp.base.url}/clinicalprocess/healthcond/certificate/SendMessageToRecipient/2/rivtabp21"
+    url: "${app.ntjp.endpoints.send-message-to-recipient-v2}"
 
 ################################################
 #
 # HSA-Integration Configurations
 #
 ################################################
+# Legacy aliases — remove after integration module migrates to IntygProxyServiceProperties
 integration:
   intygproxyservice:
     credentialinformationforperson:
-      endpoint: /api/v1/credentialinformation
+      endpoint: "${app.integration.intyg-proxy-service.hsa.credential-information-endpoint}"
     employee:
-      endpoint: /api/v2/employee
+      endpoint: "${app.integration.intyg-proxy-service.hsa.employee-endpoint}"
     healthcareunit:
-      endpoint: /api/v2/healthcareunit
+      endpoint: "${app.integration.intyg-proxy-service.hsa.healthcare-unit-endpoint}"
     healthcareunitmembers:
-      endpoint: /api/v2/healthcareunitmembers
+      endpoint: "${app.integration.intyg-proxy-service.hsa.healthcare-unit-members-endpoint}"
     unit:
-      endpoint: /api/v1/unit
+      endpoint: "${app.integration.intyg-proxy-service.hsa.unit-endpoint}"
     credentialsforperson:
-      endpoint: /api/v1/credentialsForPerson
+      endpoint: "${app.integration.intyg-proxy-service.hsa.credentials-for-person-endpoint}"
     certificationperson:
-      endpoint: /api/v1/certificationPerson
+      endpoint: "${app.integration.intyg-proxy-service.hsa.certification-person-endpoint}"
     lastupdate:
-      endpoint: /api/v1/lastUpdate
+      endpoint: "${app.integration.intyg-proxy-service.hsa.last-update-endpoint}"
     provider:
-      endpoint: /api/v1/healthcareprovider
+      endpoint: "${app.integration.intyg-proxy-service.hsa.healthcare-provider-endpoint}"
     ################################################
     #
     # PU-Integration Configurations
     #
     ################################################
     person:
-      endpoint: /api/v1/person
+      endpoint: "${app.integration.intyg-proxy-service.pu.person-endpoint}"
     persons:
-      endpoint: /api/v1/persons
+      endpoint: "${app.integration.intyg-proxy-service.pu.persons-endpoint}"
+    baseurl: "${app.integration.intyg-proxy-service.base-url}"
 
 ################################################
 #
 # HSA/PU Cache (redis) configuration
 #
 ################################################
+# Legacy aliases — remove after RedisCacheConfig migrates to AppProperties
+hsa:
+  intygproxyservice:
+    getemployee:
+      cache:
+        expiry: "${app.integration.intyg-proxy-service.cache.employee-ttl-seconds}"
+    gethealthcareunit:
+      cache:
+        expiry: "${app.integration.intyg-proxy-service.cache.healthcare-unit-ttl-seconds}"
+    gethealthcareunitmembers:
+      cache:
+        expiry: "${app.integration.intyg-proxy-service.cache.healthcare-unit-members-ttl-seconds}"
+    getunit:
+      cache:
+        expiry: "${app.integration.intyg-proxy-service.cache.unit-ttl-seconds}"
+    gethealthcareprovider:
+      cache:
+        expiry: "${app.integration.intyg-proxy-service.cache.healthcare-provider-ttl-seconds}"
 
 # Legacy properties kept for backward-compatible property resolution across
 # deployment environments until all configs are updated to spring.data.redis.*.
@@ -249,30 +279,128 @@ redis:
 # Recipient update schedule
 #
 ################################################
+# Legacy aliases — remove after RecipientRepo migrates to AppProperties
 recipients:
   update:
-    cron: "0 0 0 * * *"
+    cron: "${app.recipients.update-cron}"
+recipient:
+  file: "${app.recipients.file}"
 
-# Use old format v1 or new v3 when sending TsBas RegisterCertificate to recipient
+# Legacy alias — remove after TsBasItCxfConfig migrates to AppProperties
 tsbas:
   send:
     certificate:
       to:
         recipient:
           registercertificate:
-            version: v3
+            version: "${app.ntjp.ts-bas-register-certificate-version}"
 
 ################################################
 #
 # Diagnoskapitel
 #
 ################################################
+# Legacy aliases — remove after DiagnosisChapterProvider / DiagnosisDescriptionProvider migrate to AppProperties
 it:
   diagnosis:
     chapters:
-      file: classpath:/diagnoskoder/diagnoskapitel.txt
+      file: "${app.diagnosis.chapters-file}"
   diagnosisCodes:
     icd10se:
-      file: classpath:/diagnoskoder/icd10se/icd-10-se.tsv
+      file: "${app.diagnosis.icd10se-file}"
     ksh97p_kod:
-      file: classpath:/diagnoskoder/KSH97P_KOD.ANS
+      file: "${app.diagnosis.ksh97p-file}"
+
+# Legacy aliases — remove after ITRestClientConfig and HashUtility migrate to AppProperties
+certificateservice:
+  base:
+    url: "${app.integration.certificate-service.base-url}"
+hash:
+  salt: "${app.security.hash-salt}"
+
+# Legacy alias — remove after EraseCertificatesFromIT migrates to AppProperties
+erase:
+  certificates:
+    page:
+      size: "${app.erase.page-size}"
+
+# ============================================================
+# Canonical application properties (app.*)
+# All custom application properties are defined here.
+# Legacy aliases above delegate to these values.
+# Remove legacy aliases in Phase 6 after K8s configs are updated.
+# ============================================================
+app:
+  server:
+    internal-port: 8081
+
+  ntjp:
+    base-url: ""
+    tls:
+      certificate-file: ""
+      certificate-password: ""
+      certificate-type: PKCS12
+      key-manager-password: ""
+      truststore-file: ""
+      truststore-password: ""
+      truststore-type: JKS
+    endpoints:
+      register-certificate-v1: "${app.ntjp.base-url}/clinicalprocess/healthcond/certificate/RegisterCertificate/1/rivtabp21"
+      register-certificate-v3: "${app.ntjp.base-url}/clinicalprocess/healthcond/certificate/RegisterCertificate/3/rivtabp21"
+      register-medical-certificate-v3: "${app.ntjp.base-url}/RegisterMedicalCertificate/3/rivtabp20"
+      revoke-certificate-v2: "${app.ntjp.base-url}/clinicalprocess/healthcond/certificate/RevokeCertificate/2/rivtabp21"
+      revoke-medical-certificate-v1: "${app.ntjp.base-url}/RevokeMedicalCertificate/1/rivtabp20"
+      send-medical-certificate-question-v1: "${app.ntjp.base-url}/SendMedicalCertificateQuestion/1/rivtabp20"
+      send-message-to-care-v2: "${app.ntjp.base-url}/clinicalprocess/healthcond/certificate/SendMessageToCare/2/rivtabp21"
+      send-message-to-recipient-v2: "${app.ntjp.base-url}/clinicalprocess/healthcond/certificate/SendMessageToRecipient/2/rivtabp21"
+    ts-bas-register-certificate-version: v3
+
+  jms:
+    statistics-queue: certificate.queue
+    internal-notification-queue: internal.notification.queue
+    certificate-event-queue: intygstjanst.certificate.event.queue
+    statistics-enabled: true
+
+  integration:
+    certificate-service:
+      base-url: ""
+    intyg-proxy-service:
+      base-url: ""
+      hsa:
+        employee-endpoint: /api/v2/employee
+        credential-information-endpoint: /api/v1/credentialinformation
+        healthcare-unit-endpoint: /api/v2/healthcareunit
+        healthcare-unit-members-endpoint: /api/v2/healthcareunitmembers
+        unit-endpoint: /api/v1/unit
+        credentials-for-person-endpoint: /api/v1/credentialsForPerson
+        certification-person-endpoint: /api/v1/certificationPerson
+        last-update-endpoint: /api/v1/lastUpdate
+        healthcare-provider-endpoint: /api/v1/healthcareprovider
+      pu:
+        person-endpoint: /api/v1/person
+        persons-endpoint: /api/v1/persons
+      cache:
+        employee-ttl-seconds: 60
+        healthcare-unit-ttl-seconds: 60
+        healthcare-unit-members-ttl-seconds: 60
+        unit-ttl-seconds: 60
+        healthcare-provider-ttl-seconds: 60
+
+  diagnosis:
+    chapters-file: classpath:/diagnoskoder/diagnoskapitel.txt
+    icd10se-file: classpath:/diagnoskoder/icd10se/icd-10-se.tsv
+    ksh97p-file: classpath:/diagnoskoder/KSH97P_KOD.ANS
+
+  texts:
+    file-directory: classpath:/texts/
+    update-cron: "0 0 0 * * *"
+
+  recipients:
+    file: ""
+    update-cron: "0 0 0 * * *"
+
+  security:
+    hash-salt: ""
+
+  erase:
+    page-size: 1000
