@@ -40,7 +40,7 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-import org.springframework.test.util.ReflectionTestUtils;
+import se.inera.intyg.intygstjanst.infrastructure.config.properties.AppProperties;
 import org.w3.wsaddressing10.AttributedURIType;
 import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.LakarutlatandeEnkelType;
 import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.VardAdresseringsType;
@@ -96,14 +96,16 @@ class SendMedicalCertificateResponderImplTest {
     private StatisticsService statisticsService;
 
     @Spy
-    private HashUtility hashUtility;
+    private HashUtility hashUtility = new HashUtility(
+        new AppProperties(null, null, null, null, null, null, null,
+            new AppProperties.Security("salt"), null));
 
     @InjectMocks
     private SendMedicalCertificateResponderImpl responder;
 
     @BeforeEach
     void setupPrimaryRecipient() {
-        ReflectionTestUtils.setField(hashUtility, "salt", "salt");
+        // no field injection needed — hashUtility initialized with salt directly
         when(recipientService.getPrimaryRecipientFkassa()).thenReturn(createFkRecipient());
     }
 

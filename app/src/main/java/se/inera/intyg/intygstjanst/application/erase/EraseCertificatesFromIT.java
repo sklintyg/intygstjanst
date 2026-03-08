@@ -3,12 +3,12 @@ package se.inera.intyg.intygstjanst.application.erase;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
+import se.inera.intyg.intygstjanst.infrastructure.config.properties.AppProperties;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.ApprovedReceiverDao;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.ArendeRepository;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.CertificateDao;
@@ -21,9 +21,7 @@ import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Sjukfall
 @RequiredArgsConstructor
 public class EraseCertificatesFromIT {
 
-    @Value("${erase.certificates.page.size:1000}")
-    private int eraseCertificatesPageSize;
-
+    private final AppProperties appProperties;
     private final CertificateRepository certificateRepository;
     private final ArendeRepository arendeRepository;
     private final ApprovedReceiverDao approvedReceiverDao;
@@ -32,7 +30,7 @@ public class EraseCertificatesFromIT {
     private final CertificateDao certificateDao;
 
     public void eraseCertificates(String careProviderId) {
-        final var erasePageable = PageRequest.of(0, eraseCertificatesPageSize, Sort.by(Direction.ASC, "signedDate", "id"));
+        final var erasePageable = PageRequest.of(0, appProperties.erase().pageSize(), Sort.by(Direction.ASC, "signedDate", "id"));
         Page<String> certificateIdPage = Page.empty();
         int erasedMessagesTotal = 0;
         int erasedSjukfallTotal = 0;

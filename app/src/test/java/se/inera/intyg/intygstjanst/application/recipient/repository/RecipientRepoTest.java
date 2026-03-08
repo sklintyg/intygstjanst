@@ -23,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
@@ -40,8 +41,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.test.util.ReflectionTestUtils;
 import se.inera.intyg.intygstjanst.application.recipient.repository.RecipientRepo;
+import se.inera.intyg.intygstjanst.infrastructure.config.properties.AppProperties;
 import se.inera.intyg.intygstjanst.infrastructure.logging.MdcHelper;
 import se.inera.intyg.intygstjanst.application.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.application.exception.ServerException;
@@ -53,6 +54,9 @@ public class RecipientRepoTest {
 
     @Mock
     private MdcHelper mdcHelper;
+
+    @Mock
+    private AppProperties appProperties;
 
     @InjectMocks
     private RecipientRepo repo;
@@ -80,7 +84,7 @@ public class RecipientRepoTest {
 
     private void injectRecipientFile(String file) throws IOException {
         String path = new ClassPathResource("/RecipientRepoTest/" + file).getURI().getPath();
-        ReflectionTestUtils.setField(repo, "recipientFile", path);
+        when(appProperties.recipients()).thenReturn(new AppProperties.Recipients(path, "0 0 0 * * *"));
     }
 
     @Test

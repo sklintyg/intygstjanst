@@ -18,12 +18,13 @@
  */
 package se.inera.intyg.intygstjanst.infrastructure.config;
 
+import lombok.RequiredArgsConstructor;
 import org.apache.catalina.connector.Connector;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import se.inera.intyg.intygstjanst.infrastructure.config.properties.AppProperties;
 import se.inera.intyg.intygstjanst.infrastructure.security.filter.InternalApiFilter;
 
 /**
@@ -39,16 +40,16 @@ import se.inera.intyg.intygstjanst.infrastructure.security.filter.InternalApiFil
  * {@code ManagementServerConfiguration} — it does NOT go through this customizer.</p>
  */
 @Configuration
+@RequiredArgsConstructor
 public class TomcatConfig {
 
-    @Value("${internal.api.port}")
-    private int internalApiPort;
+    private final AppProperties appProperties;
 
     @Bean
     public WebServerFactoryCustomizer<TomcatServletWebServerFactory> internalApiConnectorCustomizer() {
         return factory -> {
             final var connector = new Connector(TomcatServletWebServerFactory.DEFAULT_PROTOCOL);
-            connector.setPort(internalApiPort);
+            connector.setPort(appProperties.server().internalPort());
             factory.addAdditionalTomcatConnectors(connector);
         };
     }

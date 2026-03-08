@@ -21,17 +21,18 @@ package se.inera.intyg.intygstjanst.application.citizen.service;
 import static java.lang.invoke.MethodHandles.lookup;
 
 import jakarta.jms.TextMessage;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jms.JmsException;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import org.springframework.stereotype.Service;
+import se.inera.intyg.intygstjanst.infrastructure.config.properties.AppProperties;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Certificate;
 
 @Service
+@RequiredArgsConstructor
 public class InternalNotificationService {
 
     private static final String ACTION = "action";
@@ -44,11 +45,8 @@ public class InternalNotificationService {
 
     private static final Logger LOG = LoggerFactory.getLogger(lookup().getClass());
 
-    @Autowired
-    private JmsTemplate jmsTemplate;
-
-    @Value("${activemq.internal.notification.queue.name}")
-    private String internalNotificationQueueName;
+    private final JmsTemplate jmsTemplate;
+    private final AppProperties appProperties;
 
     public void notifyCareIfSentByCitizen(Certificate certificate, String personId, String hsaId) {
         if (personId != null && hsaId == null) {
@@ -104,7 +102,7 @@ public class InternalNotificationService {
     }
 
     private boolean send(final MessageCreator messageCreator) {
-        jmsTemplate.send(internalNotificationQueueName, messageCreator);
+        jmsTemplate.send(appProperties.jms().internalNotificationQueue(), messageCreator);
         return true;
     }
 }

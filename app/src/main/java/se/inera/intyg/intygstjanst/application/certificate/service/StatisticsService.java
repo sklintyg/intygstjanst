@@ -21,17 +21,18 @@ package se.inera.intyg.intygstjanst.application.certificate.service;
 import static java.lang.invoke.MethodHandles.lookup;
 
 import jakarta.jms.TextMessage;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jms.JmsException;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import org.springframework.stereotype.Service;
+import se.inera.intyg.intygstjanst.infrastructure.config.properties.AppProperties;
 import se.inera.intyg.intygstjanst.infrastructure.logging.MonitoringLogService;
 
 @Service
+@RequiredArgsConstructor
 public class StatisticsService {
 
     private static final String ACTION = "action";
@@ -47,21 +48,13 @@ public class StatisticsService {
 
     private static final Logger LOG = LoggerFactory.getLogger(lookup().getClass());
 
-    @Autowired
-    private JmsTemplate jmsTemplate;
-
-    @Autowired
-    private MonitoringLogService monitoringLogService;
-
-    @Value("${activemq.destination.queue.name}")
-    private String destinationQueueName;
-
-    @Value("${statistics.enabled}")
-    private boolean enabled;
+    private final JmsTemplate jmsTemplate;
+    private final MonitoringLogService monitoringLogService;
+    private final AppProperties appProperties;
 
     public boolean created(String certificateXml, String certificateId, String certificateType, String careUnitId) {
         boolean rc = true;
-        if (enabled) {
+        if (appProperties.jms().statisticsEnabled()) {
             rc = sendIntygDataPointToStatistik(CREATED, certificateXml, certificateId, certificateType);
             if (rc) {
                 monitoringLogService.logStatisticsCreated(certificateId, certificateType, careUnitId);
@@ -72,7 +65,7 @@ public class StatisticsService {
 
     public boolean revoked(String certificateXml, String certificateId, String certificateType, String careUnitId) {
         boolean rc = true;
-        if (enabled) {
+        if (appProperties.jms().statisticsEnabled()) {
             rc = sendIntygDataPointToStatistik(REVOKED, certificateXml, certificateId, certificateType);
             if (rc) {
                 monitoringLogService.logStatisticsRevoked(certificateId, certificateType, careUnitId);
@@ -88,7 +81,7 @@ public class StatisticsService {
         final String recipientId) {
 
         boolean rc = true;
-        if (enabled) {
+        if (appProperties.jms().statisticsEnabled()) {
             rc = sendIntygDataPointToStatistik(SENT, null, certificateId, certificateType, recipientId);
         }
         if (rc) {
@@ -99,7 +92,7 @@ public class StatisticsService {
 
     public boolean messageSent(String xml, String messageId, String topic) {
         boolean rc = true;
-        if (enabled) {
+        if (appProperties.jms().statisticsEnabled()) {
             rc = sendFkMessageDataPointToStatistik(MESSAGE_SENT, xml, messageId);
         }
         if (rc) {
@@ -161,7 +154,7 @@ public class StatisticsService {
     }
 
     boolean send(final MessageCreator messageCreator) {
-        jmsTemplate.send(destinationQueueName, messageCreator);
+        jmsTemplate.send(appProperties.jms().statisticsQueue(), messageCreator);
         return true;
     }
 }

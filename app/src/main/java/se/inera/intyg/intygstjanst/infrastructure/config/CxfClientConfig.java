@@ -18,8 +18,8 @@
  */
 package se.inera.intyg.intygstjanst.infrastructure.config;
 
+import lombok.RequiredArgsConstructor;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificate.rivtabp20.v1.RevokeMedicalCertificateResponderInterface;
@@ -28,61 +28,59 @@ import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.Regi
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.SendMessageToCareResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientResponderInterface;
+import se.inera.intyg.intygstjanst.infrastructure.config.properties.AppProperties;
 
 @Configuration
+@RequiredArgsConstructor
 public class CxfClientConfig {
 
+    private final AppProperties appProperties;
+
     @Bean("revokeMedicalCertificateClient")
-    public RevokeMedicalCertificateResponderInterface revokeMedicalCertificateClient(
-        @Value("${revokemedicalcertificatev1.endpoint.url}") String address) {
+    public RevokeMedicalCertificateResponderInterface revokeMedicalCertificateClient() {
         final var factory = new JaxWsProxyFactoryBean();
         factory.setServiceClass(RevokeMedicalCertificateResponderInterface.class);
-        factory.setAddress(address);
+        factory.setAddress(appProperties.ntjp().endpoints().revokeMedicalCertificateV1());
         return (RevokeMedicalCertificateResponderInterface) factory.create();
     }
 
     @Bean("sendMedicalCertificateQuestionClient")
-    public SendMedicalCertificateQuestionResponderInterface sendMedicalCertificateQuestionClient(
-        @Value("${sendmedicalcertificatequestionv1.endpoint.url}") String address) {
+    public SendMedicalCertificateQuestionResponderInterface sendMedicalCertificateQuestionClient() {
         final var factory = new JaxWsProxyFactoryBean();
         factory.setServiceClass(SendMedicalCertificateQuestionResponderInterface.class);
-        factory.setAddress(address);
+        factory.setAddress(appProperties.ntjp().endpoints().sendMedicalCertificateQuestionV1());
         return (SendMedicalCertificateQuestionResponderInterface) factory.create();
     }
 
     @Bean("sendMessageToCareClient")
-    public SendMessageToCareResponderInterface sendMessageToCareClient(
-        @Value("${sendmessagetocarev2.endpoint.url}") String address) {
+    public SendMessageToCareResponderInterface sendMessageToCareClient() {
         final var factory = new JaxWsProxyFactoryBean();
         factory.setServiceClass(SendMessageToCareResponderInterface.class);
-        factory.setAddress(address);
+        factory.setAddress(appProperties.ntjp().endpoints().sendMessageToCareV2());
         return (SendMessageToCareResponderInterface) factory.create();
     }
 
     @Bean("sendMessageToRecipientClient")
-    public SendMessageToRecipientResponderInterface sendMessageToRecipientClient(
-        @Value("${sendmessagetorecipientv2.endpoint.url}") String address) {
+    public SendMessageToRecipientResponderInterface sendMessageToRecipientClient() {
         final var factory = new JaxWsProxyFactoryBean();
         factory.setServiceClass(SendMessageToRecipientResponderInterface.class);
-        factory.setAddress(address);
+        factory.setAddress(appProperties.ntjp().endpoints().sendMessageToRecipientV2());
         return (SendMessageToRecipientResponderInterface) factory.create();
     }
 
     @Bean("revokeCertificateClient")
-    public RevokeCertificateResponderInterface revokeCertificateClient(
-        @Value("${revokecertificatev2.endpoint.url}") String address) {
+    public RevokeCertificateResponderInterface revokeCertificateClient() {
         final var factory = new JaxWsProxyFactoryBean();
         factory.setServiceClass(RevokeCertificateResponderInterface.class);
-        factory.setAddress(address);
+        factory.setAddress(appProperties.ntjp().endpoints().revokeCertificateV2());
         return (RevokeCertificateResponderInterface) factory.create();
     }
 
     @Bean("registerCertificateClient")
-    public RegisterCertificateResponderInterface registerCertificateClient(
-        @Value("${registercertificatev3.endpoint.url}") String address) {
+    public RegisterCertificateResponderInterface registerCertificateClient() {
         final var factory = new JaxWsProxyFactoryBean();
         factory.setServiceClass(RegisterCertificateResponderInterface.class);
-        factory.setAddress(address);
+        factory.setAddress(appProperties.ntjp().endpoints().registerCertificateV3());
         return (RegisterCertificateResponderInterface) factory.create();
     }
 }

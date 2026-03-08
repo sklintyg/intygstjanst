@@ -29,16 +29,17 @@ import java.util.List;
 import java.util.regex.Pattern;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.TrustManagerFactory;
+import lombok.RequiredArgsConstructor;
 import org.apache.cxf.configuration.jsse.TLSClientParameters;
 import org.apache.cxf.configuration.security.FiltersType;
 import org.apache.cxf.transport.http.HTTPConduit;
 import org.apache.cxf.transport.http.HTTPConduitConfigurer;
 import org.apache.cxf.transports.http.configuration.ConnectionType;
 import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import se.inera.intyg.intygstjanst.infrastructure.config.properties.AppProperties;
 
 /**
  * Configures CXF outbound HTTP conduits for mutual TLS (mTLS) against NTJP.
@@ -51,35 +52,13 @@ import org.springframework.context.annotation.Profile;
  */
 @Configuration
 @Profile("!dev")
+@RequiredArgsConstructor
 public class CxfTlsConfig {
 
-    /**
-     * Matches CXF conduit names for RIV-TA services routed via NTJP.
-     * Corresponds to the XML conduit {@code name} selector pattern.
-     */
     private static final Pattern NTJP_CONDUIT_NAME_PATTERN =
         Pattern.compile("\\{urn:riv:(clinicalprocess:healthcond|insuranceprocess:healthreporting):.*\\.http-conduit");
 
-    @Value("${ntjp.ws.certificate.file}")
-    private String certFile;
-
-    @Value("${ntjp.ws.certificate.password}")
-    private String certPassword;
-
-    @Value("${ntjp.ws.certificate.type}")
-    private String certType;
-
-    @Value("${ntjp.ws.key.manager.password}")
-    private String keyManagerPassword;
-
-    @Value("${ntjp.ws.truststore.file}")
-    private String truststoreFile;
-
-    @Value("${ntjp.ws.truststore.password}")
-    private String truststorePassword;
-
-    @Value("${ntjp.ws.truststore.type}")
-    private String truststoreType;
+    private final AppProperties appProperties;
 
     /**
      * Returns a {@link HTTPConduitConfigurer} that CXF invokes for every outbound conduit.
@@ -115,12 +94,13 @@ public class CxfTlsConfig {
         tls.setDisableCNCheck(true);
 
         try {
-            final var keyStore = loadKeyStore(certFile, certPassword, certType);
+            final var tls2 = appProperties.ntjp().tls();
+            final var keyStore = loadKeyStore(tls2.certificateFile(), tls2.certificatePassword(), tls2.certificateType());
             final var kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
-            kmf.init(keyStore, keyManagerPassword.toCharArray());
+            kmf.init(keyStore, tls2.keyManagerPassword().toCharArray());
             tls.setKeyManagers(kmf.getKeyManagers());
 
-            final var trustStore = loadKeyStore(truststoreFile, truststorePassword, truststoreType);
+            final var trustStore = loadKeyStore(tls2.truststoreFile(), tls2.truststorePassword(), tls2.truststoreType());
             final var tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
             tmf.init(trustStore);
             tls.setTrustManagers(tmf.getTrustManagers());

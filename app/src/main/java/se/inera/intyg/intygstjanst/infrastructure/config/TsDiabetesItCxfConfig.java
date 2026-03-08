@@ -23,7 +23,6 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.apache.cxf.Bus;
 import org.apache.cxf.jaxws.EndpointImpl;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import se.inera.intyg.common.support.modules.support.api.ModuleContainerApi;
@@ -34,12 +33,14 @@ import se.inera.intyg.common.ts_parent.integration.RegisterCertificateV1Client;
 import se.inera.intyg.common.util.integration.interceptor.SoapFaultToSoapResponseTransformerInterceptor;
 import se.inera.intygstjanster.ts.services.GetTSDiabetesResponder.v1.GetTSDiabetesResponderInterface;
 import se.inera.intygstjanster.ts.services.RegisterTSDiabetesResponder.v1.RegisterTSDiabetesResponderInterface;
+import se.inera.intyg.intygstjanst.infrastructure.config.properties.AppProperties;
 
 @Configuration
 @RequiredArgsConstructor
 public class TsDiabetesItCxfConfig {
 
     private final Bus bus;
+    private final AppProperties appProperties;
 
     @Bean
     public GetTSDiabetesResponderInterface getTSDiabetesResponder(ModuleContainerApi moduleContainer) {
@@ -144,8 +145,7 @@ public class TsDiabetesItCxfConfig {
      * }</pre>
      */
     @Bean("sendTsDiabetesClient")
-    public RegisterCertificateV1Client sendTsDiabetesClient(
-        @Value("${registercertificatev1.endpoint.url}") String url) {
-        return new RegisterCertificateV1Client(url);
+    public RegisterCertificateV1Client sendTsDiabetesClient() {
+        return new RegisterCertificateV1Client(appProperties.ntjp().endpoints().registerCertificateV1());
     }
 }

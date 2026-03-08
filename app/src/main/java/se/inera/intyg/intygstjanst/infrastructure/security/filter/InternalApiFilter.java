@@ -23,26 +23,27 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import se.inera.intyg.intygstjanst.infrastructure.config.properties.AppProperties;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class InternalApiFilter extends OncePerRequestFilter {
 
     private static final int FORBIDDEN = 403;
 
-    @Value("${internal.api.port}")
-    private int internalApiPort;
+    private final AppProperties appProperties;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
         throws ServletException, IOException {
 
         final var localPort = request.getLocalPort();
-        if (localPort == internalApiPort) {
+        if (localPort == appProperties.server().internalPort()) {
             filterChain.doFilter(request, response);
         } else {
             final String path = getRequestPath(request);

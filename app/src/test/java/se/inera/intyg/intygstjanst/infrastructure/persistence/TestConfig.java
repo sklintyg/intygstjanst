@@ -20,13 +20,16 @@ package se.inera.intyg.intygstjanst.infrastructure.persistence;
 
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import se.inera.intyg.intygstjanst.infrastructure.config.properties.AppProperties;
 
 @Configuration
 @EnableAutoConfiguration()
+@EnableConfigurationProperties(AppProperties.class)
 @EntityScan("se.inera.intyg.intygstjanst.infrastructure.persistence.model")
 @EnableJpaRepositories("se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao")
 @ComponentScan(basePackages = {"se.inera.intyg.intygstjanst.infrastructure.persistence",

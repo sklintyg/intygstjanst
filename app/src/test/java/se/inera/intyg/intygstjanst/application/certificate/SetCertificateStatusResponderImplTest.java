@@ -37,7 +37,7 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-import org.springframework.test.util.ReflectionTestUtils;
+import se.inera.intyg.intygstjanst.infrastructure.config.properties.AppProperties;
 import se.inera.ifv.insuranceprocess.certificate.v1.StatusType;
 import se.inera.ifv.insuranceprocess.healthreporting.setcertificatestatus.rivtabp20.v1.SetCertificateStatusResponderInterface;
 import se.inera.ifv.insuranceprocess.healthreporting.setcertificatestatusresponder.v1.SetCertificateStatusRequestType;
@@ -75,14 +75,16 @@ class SetCertificateStatusResponderImplTest {
     private RecipientService recipientService;
 
     @Spy
-    private HashUtility hashUtility;
+    private HashUtility hashUtility = new HashUtility(
+        new AppProperties(null, null, null, null, null, null, null,
+            new AppProperties.Security("salt"), null));
 
     @InjectMocks
     private SetCertificateStatusResponderInterface responder = new SetCertificateStatusResponderImpl();
 
     @BeforeEach
     void init() throws RecipientUnknownException {
-        ReflectionTestUtils.setField(hashUtility, "salt", "salt");
+        // no field injection needed — hashUtility initialized with salt directly
         Recipient recipient = new Recipient("logicalAddress", "name", RECIPIENT_FKASSA, CertificateRecipientType.HUVUDMOTTAGARE.name(),
             "fk7263", true, true);
         when(recipientService.getPrimaryRecipientFkassa()).thenReturn(recipient);

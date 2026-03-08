@@ -24,14 +24,15 @@ import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 import com.google.common.io.BaseEncoding;
 import java.nio.charset.StandardCharsets;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import se.inera.intyg.intygstjanst.infrastructure.config.properties.AppProperties;
 
 @Component
+@RequiredArgsConstructor
 public class HashUtility {
 
-    @Value("${hash.salt}")
-    private String salt;
+    private final AppProperties appProperties;
 
     public static final String EMPTY = "EMPTY";
     private static final HashFunction hf = Hashing.sha256();
@@ -41,7 +42,7 @@ public class HashUtility {
             return EMPTY;
         }
 
-        final var saltedPayload = salt + payload;
+        final var saltedPayload = appProperties.security().hashSalt() + payload;
         final var digest = hf.hashString(saltedPayload, StandardCharsets.UTF_8).asBytes();
         return BaseEncoding.base16().lowerCase().encode(digest);
     }
