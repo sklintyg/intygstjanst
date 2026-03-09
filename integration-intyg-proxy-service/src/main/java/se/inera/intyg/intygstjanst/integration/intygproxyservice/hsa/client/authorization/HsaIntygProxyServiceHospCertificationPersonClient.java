@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package se.inera.intyg.intygstjanst.integration.intygproxyservice.hsa.client.authorization;
 
 import static se.inera.intyg.intygstjanst.integration.intygproxyservice.hsa.configuration.HsaRestClientConfig.LOG_SESSION_ID_HEADER;
@@ -37,26 +36,27 @@ import se.inera.intyg.intygstjanst.integration.intygproxyservice.hsa.dto.authori
 @Service
 public class HsaIntygProxyServiceHospCertificationPersonClient {
 
-    private final RestClient ipsRestClient;
-    private final IntygProxyServiceProperties properties;
+  private final RestClient ipsRestClient;
+  private final IntygProxyServiceProperties properties;
 
-    @Autowired
-    public HsaIntygProxyServiceHospCertificationPersonClient(
-        @Qualifier("hsaIntygProxyServiceRestClient") RestClient ipsRestClient,
-        IntygProxyServiceProperties properties) {
-        this.ipsRestClient = ipsRestClient;
-        this.properties = properties;
-    }
+  @Autowired
+  public HsaIntygProxyServiceHospCertificationPersonClient(
+      @Qualifier("hsaIntygProxyServiceRestClient") RestClient ipsRestClient,
+      IntygProxyServiceProperties properties) {
+    this.ipsRestClient = ipsRestClient;
+    this.properties = properties;
+  }
 
-    public GetHospCertificationPersonResponseDTO get(GetHospCertificationPersonRequestDTO getHospCertificationPersonRequestDTO) {
-        return ipsRestClient
-            .post()
-            .uri(properties.hsa().certificationPersonEndpoint())
-            .body(getHospCertificationPersonRequestDTO)
-            .header(LOG_TRACE_ID_HEADER, MDC.get(TRACE_ID_KEY))
-            .header(LOG_SESSION_ID_HEADER, MDC.get(SESSION_ID_KEY))
-            .contentType(MediaType.APPLICATION_JSON)
-            .retrieve()
-            .body(GetHospCertificationPersonResponseDTO.class);
-    }
+  public GetHospCertificationPersonResponseDTO get(
+      GetHospCertificationPersonRequestDTO getHospCertificationPersonRequestDTO) {
+    return ipsRestClient
+        .post()
+        .uri(properties.hsa().certificationPersonEndpoint())
+        .body(getHospCertificationPersonRequestDTO)
+        .header(LOG_TRACE_ID_HEADER, MDC.get(TRACE_ID_KEY))
+        .header(LOG_SESSION_ID_HEADER, MDC.get(SESSION_ID_KEY))
+        .contentType(MediaType.APPLICATION_JSON)
+        .retrieve()
+        .body(GetHospCertificationPersonResponseDTO.class);
+  }
 }

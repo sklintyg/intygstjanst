@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package se.inera.intyg.intygstjanst.application.sickleave.services;
 
 import java.time.LocalDate;
@@ -26,41 +25,43 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
-import se.inera.intyg.intygstjanst.application.sickleave.dto.Formaga;
-import se.inera.intyg.intygstjanst.application.sickleave.dto.IntygData;
-import se.inera.intyg.intygstjanst.application.sickleave.dto.Lakare;
-import se.inera.intyg.intygstjanst.infrastructure.diagnosis.DiagnosisChapterService;
-import se.inera.intyg.intygstjanst.application.sickleave.dto.GetSickLeaveFilterServiceResponse;
-import se.inera.intyg.intygstjanst.application.sickleave.dto.OccupationType;
-import se.inera.intyg.intygstjanst.application.sickleave.dto.OccupationTypeDTO;
 import se.inera.intyg.intygstjanst.application.reko.dto.RekoStatusType;
 import se.inera.intyg.intygstjanst.application.reko.dto.RekoStatusTypeDTO;
+import se.inera.intyg.intygstjanst.application.sickleave.dto.Formaga;
+import se.inera.intyg.intygstjanst.application.sickleave.dto.GetSickLeaveFilterServiceResponse;
+import se.inera.intyg.intygstjanst.application.sickleave.dto.IntygData;
+import se.inera.intyg.intygstjanst.application.sickleave.dto.Lakare;
+import se.inera.intyg.intygstjanst.application.sickleave.dto.OccupationType;
+import se.inera.intyg.intygstjanst.application.sickleave.dto.OccupationTypeDTO;
+import se.inera.intyg.intygstjanst.infrastructure.diagnosis.DiagnosisChapterService;
 
 @Service
 public class CreateSickLeaveFilter {
 
-    private final DiagnosisChapterService diagnosisChapterService;
+  private final DiagnosisChapterService diagnosisChapterService;
 
-    public CreateSickLeaveFilter(DiagnosisChapterService diagnosisChapterService) {
-        this.diagnosisChapterService = diagnosisChapterService;
+  public CreateSickLeaveFilter(DiagnosisChapterService diagnosisChapterService) {
+    this.diagnosisChapterService = diagnosisChapterService;
+  }
+
+  public GetSickLeaveFilterServiceResponse create(List<IntygData> intygDataList) {
+    if (intygDataList.isEmpty()) {
+      return GetSickLeaveFilterServiceResponse.builder()
+          .rekoStatusTypes(getRekoStatuses())
+          .occupationTypes(getOccupationTypeDTOList())
+          .build();
     }
 
-    public GetSickLeaveFilterServiceResponse create(List<IntygData> intygDataList) {
-        if (intygDataList.isEmpty()) {
-            return GetSickLeaveFilterServiceResponse.builder()
-                .rekoStatusTypes(getRekoStatuses())
-                .occupationTypes(getOccupationTypeDTOList())
-                .build();
-        }
-
-        final var doctorsForCareUnit = intygDataList.stream()
+    final var doctorsForCareUnit =
+        intygDataList.stream()
             .map(IntygData::getLakareId)
             .distinct()
             .filter(Objects::nonNull)
             .map(doctorId -> Lakare.create(doctorId, doctorId))
             .collect(Collectors.toList());
 
-        final var diagnosisChaptersForCareUnit = intygDataList.stream()
+    final var diagnosisChaptersForCareUnit =
+        intygDataList.stream()
             .map(IntygData::getDiagnosKod)
             .distinct()
             .filter(Objects::nonNull)
@@ -69,41 +70,41 @@ public class CreateSickLeaveFilter {
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
 
-        final var containsOngoingSickLeaves = intygDataList.stream()
+    final var containsOngoingSickLeaves =
+        intygDataList.stream()
             .map(IntygData::getFormagor)
             .filter(Objects::nonNull)
             .map(CreateSickLeaveFilter::getEndDate)
-            .anyMatch(endDate -> endDate.isAfter(LocalDate.now()) || endDate.isEqual(LocalDate.now()));
+            .anyMatch(
+                endDate -> endDate.isAfter(LocalDate.now()) || endDate.isEqual(LocalDate.now()));
 
-        final var occupationTypeDTOList = getOccupationTypeDTOList();
+    final var occupationTypeDTOList = getOccupationTypeDTOList();
 
-        final var rekoStatuses = getRekoStatuses();
+    final var rekoStatuses = getRekoStatuses();
 
-        return GetSickLeaveFilterServiceResponse.builder()
-            .activeDoctors(doctorsForCareUnit)
-            .diagnosisChapters(diagnosisChaptersForCareUnit)
-            .nbrOfSickLeaves(intygDataList.size())
-            .rekoStatusTypes(rekoStatuses)
-            .occupationTypes(occupationTypeDTOList)
-            .hasOngoingSickLeaves(containsOngoingSickLeaves)
-            .build();
-    }
+    return GetSickLeaveFilterServiceResponse.builder()
+        .activeDoctors(doctorsForCareUnit)
+        .diagnosisChapters(diagnosisChaptersForCareUnit)
+        .nbrOfSickLeaves(intygDataList.size())
+        .rekoStatusTypes(rekoStatuses)
+        .occupationTypes(occupationTypeDTOList)
+        .hasOngoingSickLeaves(containsOngoingSickLeaves)
+        .build();
+  }
 
-    private static List<OccupationTypeDTO> getOccupationTypeDTOList() {
-        return Arrays
-            .stream(OccupationType.values())
-            .map(status -> new OccupationTypeDTO(status.toString(), status.getName()))
-            .collect(Collectors.toList());
-    }
+  private static List<OccupationTypeDTO> getOccupationTypeDTOList() {
+    return Arrays.stream(OccupationType.values())
+        .map(status -> new OccupationTypeDTO(status.toString(), status.getName()))
+        .collect(Collectors.toList());
+  }
 
-    private static List<RekoStatusTypeDTO> getRekoStatuses() {
-        return Arrays
-            .stream(RekoStatusType.values())
-            .map((status) -> new RekoStatusTypeDTO(status.toString(), status.getName()))
-            .collect(Collectors.toList());
-    }
+  private static List<RekoStatusTypeDTO> getRekoStatuses() {
+    return Arrays.stream(RekoStatusType.values())
+        .map((status) -> new RekoStatusTypeDTO(status.toString(), status.getName()))
+        .collect(Collectors.toList());
+  }
 
-    private static LocalDate getEndDate(List<Formaga> abilities) {
-        return abilities.stream().max(Comparator.comparing(Formaga::getSlutdatum)).get().getSlutdatum();
-    }
+  private static LocalDate getEndDate(List<Formaga> abilities) {
+    return abilities.stream().max(Comparator.comparing(Formaga::getSlutdatum)).get().getSlutdatum();
+  }
 }

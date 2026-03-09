@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package se.inera.intyg.intygstjanst.application.citizen.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -26,14 +25,11 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import se.inera.intyg.intygstjanst.application.citizen.service.CitizenCertificateDTOConverter;
-import se.inera.intyg.intygstjanst.application.citizen.service.CitizenCertificateRecipientConverter;
 import se.inera.intyg.intygstjanst.application.citizen.dto.CitizenCertificateIssuerDTO;
 import se.inera.intyg.intygstjanst.application.citizen.dto.CitizenCertificateRecipientDTO;
 import se.inera.intyg.intygstjanst.application.citizen.dto.CitizenCertificateRelationDTO;
@@ -45,131 +41,134 @@ import se.inera.intyg.intygstjanst.application.citizen.repository.model.CitizenC
 @ExtendWith(MockitoExtension.class)
 class CitizenCertificateDTOConverterTest {
 
-    @Mock
-    private CitizenCertificateRecipientConverter citizenCertificateRecipientConverter;
+  @Mock private CitizenCertificateRecipientConverter citizenCertificateRecipientConverter;
 
-    @InjectMocks
-    private CitizenCertificateDTOConverter citizenCertificateDTOConverter;
+  @InjectMocks private CitizenCertificateDTOConverter citizenCertificateDTOConverter;
 
-    private static final String CERTIFICATE_ID = "Id";
-    private static final String TYPE_NAME = "Type";
-    private static final String CERTIFICATE_TYPE = "Certificate type";
-    private static final String TYPE_VERSION = "Type version";
-    private static final String SUMMARY_LABEL = "Summary label";
-    private static final String SUMMARY_VALUE = "Summary value";
-    private static final String ISSUER_NAME = "Issuer name";
-    private static final String UNIT_ID = "Unit id";
-    private static final String UNIT_NAME = "Unit name";
-    private static final LocalDateTime ISSUED_DATE = LocalDateTime.now();
-    private static final String RECIPIENT_NAME = "Recipient name";
-    private static final LocalDateTime SENT_DATE = LocalDateTime.now();
-    private static final List<CitizenCertificateRelationDTO> RELATIONS = Collections.emptyList();
+  private static final String CERTIFICATE_ID = "Id";
+  private static final String TYPE_NAME = "Type";
+  private static final String CERTIFICATE_TYPE = "Certificate type";
+  private static final String TYPE_VERSION = "Type version";
+  private static final String SUMMARY_LABEL = "Summary label";
+  private static final String SUMMARY_VALUE = "Summary value";
+  private static final String ISSUER_NAME = "Issuer name";
+  private static final String UNIT_ID = "Unit id";
+  private static final String UNIT_NAME = "Unit name";
+  private static final LocalDateTime ISSUED_DATE = LocalDateTime.now();
+  private static final String RECIPIENT_NAME = "Recipient name";
+  private static final LocalDateTime SENT_DATE = LocalDateTime.now();
+  private static final List<CitizenCertificateRelationDTO> RELATIONS = Collections.emptyList();
 
-    private CitizenCertificate getCitizenCertificate() {
-        return CitizenCertificate.builder()
-            .id(CERTIFICATE_ID)
-            .issued(ISSUED_DATE)
-            .type(CERTIFICATE_TYPE)
-            .typeVersion(TYPE_VERSION)
-            .additionalInfo(SUMMARY_VALUE)
-            .issuerName(ISSUER_NAME)
-            .unitId(UNIT_ID)
-            .unitName(UNIT_NAME)
-            .relations(RELATIONS)
-            .sentDate(SENT_DATE)
-            .build();
-    }
+  private CitizenCertificate getCitizenCertificate() {
+    return CitizenCertificate.builder()
+        .id(CERTIFICATE_ID)
+        .issued(ISSUED_DATE)
+        .type(CERTIFICATE_TYPE)
+        .typeVersion(TYPE_VERSION)
+        .additionalInfo(SUMMARY_VALUE)
+        .issuerName(ISSUER_NAME)
+        .unitId(UNIT_ID)
+        .unitName(UNIT_NAME)
+        .relations(RELATIONS)
+        .sentDate(SENT_DATE)
+        .build();
+  }
 
-    @Test
-    void shouldConvertToCorrectFormatForId() {
-        final var citizenCertificate = getCitizenCertificate();
-        final var actualResult = citizenCertificateDTOConverter.convert(citizenCertificate, TYPE_NAME, SUMMARY_LABEL);
+  @Test
+  void shouldConvertToCorrectFormatForId() {
+    final var citizenCertificate = getCitizenCertificate();
+    final var actualResult =
+        citizenCertificateDTOConverter.convert(citizenCertificate, TYPE_NAME, SUMMARY_LABEL);
 
-        assertEquals(CERTIFICATE_ID, actualResult.getId());
-    }
+    assertEquals(CERTIFICATE_ID, actualResult.getId());
+  }
 
-    @Test
-    void shouldConvertToCorrectFormatForType() {
-        final var expectedType = CitizenCertificateTypeDTO.builder()
+  @Test
+  void shouldConvertToCorrectFormatForType() {
+    final var expectedType =
+        CitizenCertificateTypeDTO.builder()
             .id(CERTIFICATE_TYPE)
             .name(TYPE_NAME)
             .version(TYPE_VERSION)
             .build();
 
-        final var citizenCertificate = getCitizenCertificate();
+    final var citizenCertificate = getCitizenCertificate();
 
-        final var actualResult = citizenCertificateDTOConverter.convert(citizenCertificate, TYPE_NAME, SUMMARY_LABEL);
-        assertEquals(expectedType, actualResult.getType());
-    }
+    final var actualResult =
+        citizenCertificateDTOConverter.convert(citizenCertificate, TYPE_NAME, SUMMARY_LABEL);
+    assertEquals(expectedType, actualResult.getType());
+  }
 
-    @Test
-    void shouldConvertToCorrectFormatForSummary() {
-        final var expectedType = CitizenCertificateSummaryDTO.builder()
-            .value(SUMMARY_VALUE)
-            .label(SUMMARY_LABEL)
-            .build();
+  @Test
+  void shouldConvertToCorrectFormatForSummary() {
+    final var expectedType =
+        CitizenCertificateSummaryDTO.builder().value(SUMMARY_VALUE).label(SUMMARY_LABEL).build();
 
-        final var citizenCertificate = getCitizenCertificate();
+    final var citizenCertificate = getCitizenCertificate();
 
-        final var actualResult = citizenCertificateDTOConverter.convert(citizenCertificate, TYPE_NAME, SUMMARY_LABEL);
-        assertEquals(expectedType, actualResult.getSummary());
-    }
+    final var actualResult =
+        citizenCertificateDTOConverter.convert(citizenCertificate, TYPE_NAME, SUMMARY_LABEL);
+    assertEquals(expectedType, actualResult.getSummary());
+  }
 
-    @Test
-    void shouldConvertToCorrectFormatForIssuer() {
-        final var expectedType = CitizenCertificateIssuerDTO.builder()
-            .name(ISSUER_NAME)
-            .build();
+  @Test
+  void shouldConvertToCorrectFormatForIssuer() {
+    final var expectedType = CitizenCertificateIssuerDTO.builder().name(ISSUER_NAME).build();
 
-        final var citizenCertificate = getCitizenCertificate();
+    final var citizenCertificate = getCitizenCertificate();
 
-        final var actualResult = citizenCertificateDTOConverter.convert(citizenCertificate, TYPE_NAME, SUMMARY_LABEL);
-        assertEquals(expectedType, actualResult.getIssuer());
-    }
+    final var actualResult =
+        citizenCertificateDTOConverter.convert(citizenCertificate, TYPE_NAME, SUMMARY_LABEL);
+    assertEquals(expectedType, actualResult.getIssuer());
+  }
 
-    @Test
-    void shouldConvertToCorrectFormatForUnit() {
-        final var expectedType = CitizenCertificateUnitDTO.builder()
-            .id(UNIT_ID)
-            .name(UNIT_NAME)
-            .build();
+  @Test
+  void shouldConvertToCorrectFormatForUnit() {
+    final var expectedType =
+        CitizenCertificateUnitDTO.builder().id(UNIT_ID).name(UNIT_NAME).build();
 
-        final var citizenCertificate = getCitizenCertificate();
+    final var citizenCertificate = getCitizenCertificate();
 
-        final var actualResult = citizenCertificateDTOConverter.convert(citizenCertificate, TYPE_NAME, SUMMARY_LABEL);
-        assertEquals(expectedType, actualResult.getUnit());
-    }
+    final var actualResult =
+        citizenCertificateDTOConverter.convert(citizenCertificate, TYPE_NAME, SUMMARY_LABEL);
+    assertEquals(expectedType, actualResult.getUnit());
+  }
 
-    @Test
-    void shouldConvertToCorrectFormatForRecipient() {
-        final var expectedResult = CitizenCertificateRecipientDTO.builder()
+  @Test
+  void shouldConvertToCorrectFormatForRecipient() {
+    final var expectedResult =
+        CitizenCertificateRecipientDTO.builder()
             .id(CERTIFICATE_ID)
             .name(RECIPIENT_NAME)
             .sent(SENT_DATE)
             .build();
 
-        final var citizenCertificate = getCitizenCertificate();
+    final var citizenCertificate = getCitizenCertificate();
 
-        when(citizenCertificateRecipientConverter.convert(citizenCertificate.getType(), citizenCertificate.getSentDate()))
-            .thenReturn(Optional.of(expectedResult));
+    when(citizenCertificateRecipientConverter.convert(
+            citizenCertificate.getType(), citizenCertificate.getSentDate()))
+        .thenReturn(Optional.of(expectedResult));
 
-        final var actualResult = citizenCertificateDTOConverter.convert(citizenCertificate, TYPE_NAME, SUMMARY_LABEL);
-        assertEquals(expectedResult, actualResult.getRecipient());
-    }
+    final var actualResult =
+        citizenCertificateDTOConverter.convert(citizenCertificate, TYPE_NAME, SUMMARY_LABEL);
+    assertEquals(expectedResult, actualResult.getRecipient());
+  }
 
-    @Test
-    void shouldConvertToCorrectFormatForIssued() {
-        final var citizenCertificate = getCitizenCertificate();
-        final var actualResult = citizenCertificateDTOConverter.convert(citizenCertificate, TYPE_NAME, SUMMARY_LABEL);
+  @Test
+  void shouldConvertToCorrectFormatForIssued() {
+    final var citizenCertificate = getCitizenCertificate();
+    final var actualResult =
+        citizenCertificateDTOConverter.convert(citizenCertificate, TYPE_NAME, SUMMARY_LABEL);
 
-        assertEquals(ISSUED_DATE, actualResult.getIssued());
-    }
+    assertEquals(ISSUED_DATE, actualResult.getIssued());
+  }
 
-    @Test
-    void shouldConvertToCorrectFormatForRelations() {
-        final var citizenCertificate = getCitizenCertificate();
-        final var actualResult = citizenCertificateDTOConverter.convert(citizenCertificate, TYPE_NAME, SUMMARY_LABEL);
+  @Test
+  void shouldConvertToCorrectFormatForRelations() {
+    final var citizenCertificate = getCitizenCertificate();
+    final var actualResult =
+        citizenCertificateDTOConverter.convert(citizenCertificate, TYPE_NAME, SUMMARY_LABEL);
 
-        assertEquals(RELATIONS, actualResult.getRelations());
-    }
+    assertEquals(RELATIONS, actualResult.getRelations());
+  }
 }

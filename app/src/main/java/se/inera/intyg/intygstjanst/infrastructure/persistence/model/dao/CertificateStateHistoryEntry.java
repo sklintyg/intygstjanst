@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -34,64 +34,74 @@ import se.inera.intyg.common.support.model.CertificateState;
 @Embeddable
 public class CertificateStateHistoryEntry {
 
-    @Column(name = "TARGET", nullable = false)
-    private String target;
+  @Column(name = "TARGET", nullable = false)
+  private String target;
 
-    @Column(name = "STATE")
-    @Enumerated(EnumType.STRING)
-    private CertificateState state;
+  @Column(name = "STATE")
+  @Enumerated(EnumType.STRING)
+  private CertificateState state;
 
-    @Column(name = "TIMESTAMP")
-    private LocalDateTime timestamp;
+  @Column(name = "TIMESTAMP")
+  private LocalDateTime timestamp;
 
-    private static final Ordering<LocalDateTime> ORDERING_DESC_TIME_NULL_LAST = Ordering.<LocalDateTime>natural().reverse().nullsFirst();
+  private static final Ordering<LocalDateTime> ORDERING_DESC_TIME_NULL_LAST =
+      Ordering.<LocalDateTime>natural().reverse().nullsFirst();
 
-    static final Ordering<CertificateStateHistoryEntry> BY_TIMESTAMP_DESC = new Ordering<>() {
+  static final Ordering<CertificateStateHistoryEntry> BY_TIMESTAMP_DESC =
+      new Ordering<>() {
         @Override
-        public int compare(@Nonnull CertificateStateHistoryEntry left, @Nonnull CertificateStateHistoryEntry right) {
-            return ORDERING_DESC_TIME_NULL_LAST.compare(left.timestamp, right.timestamp);
+        public int compare(
+            @Nonnull CertificateStateHistoryEntry left,
+            @Nonnull CertificateStateHistoryEntry right) {
+          return ORDERING_DESC_TIME_NULL_LAST.compare(left.timestamp, right.timestamp);
         }
-    };
+      };
 
-    public CertificateStateHistoryEntry() {
-        // default constructor for hibernate
-    }
+  public CertificateStateHistoryEntry() {
+    // default constructor for hibernate
+  }
 
-    public CertificateStateHistoryEntry(String target, CertificateState state, LocalDateTime timestamp) {
-        this.target = target;
-        this.state = state;
-        this.timestamp = Objects.requireNonNullElseGet(timestamp, LocalDateTime::now);
-    }
+  public CertificateStateHistoryEntry(
+      String target, CertificateState state, LocalDateTime timestamp) {
+    this.target = target;
+    this.state = state;
+    this.timestamp = Objects.requireNonNullElseGet(timestamp, LocalDateTime::now);
+  }
 
-    public String getTarget() {
-        return target;
-    }
+  public String getTarget() {
+    return target;
+  }
 
-    public void setTarget(String target) {
-        this.target = target;
-    }
+  public void setTarget(String target) {
+    this.target = target;
+  }
 
-    public CertificateState getState() {
-        return state;
-    }
+  public CertificateState getState() {
+    return state;
+  }
 
-    public void setState(CertificateState state) {
-        this.state = state;
-    }
+  public void setState(CertificateState state) {
+    this.state = state;
+  }
 
-    public LocalDateTime getTimestamp() {
-        return timestamp;
-    }
+  public LocalDateTime getTimestamp() {
+    return timestamp;
+  }
 
-    public void setTimestamp(LocalDateTime timestamp) {
-        this.timestamp = timestamp;
-    }
+  public void setTimestamp(LocalDateTime timestamp) {
+    this.timestamp = timestamp;
+  }
 
-    @Override
-    public String toString() {
-        return "CertificateStateHistoryEntry{"
-            + "target='" + target + '\''
-            + ", state=" + state + ", timestamp="
-            + timestamp + '}';
-    }
+  @Override
+  public String toString() {
+    return "CertificateStateHistoryEntry{"
+        + "target='"
+        + target
+        + '\''
+        + ", state="
+        + state
+        + ", timestamp="
+        + timestamp
+        + '}';
+  }
 }

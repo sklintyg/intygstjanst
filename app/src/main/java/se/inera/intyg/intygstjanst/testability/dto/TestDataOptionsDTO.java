@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package se.inera.intyg.intygstjanst.testability.dto;
 
 import java.util.List;
@@ -34,12 +33,12 @@ import se.inera.intyg.intygstjanst.testability.model.WorkCapacity;
 @Builder
 public class TestDataOptionsDTO {
 
-    private List<CareProvider> careProviderIds;
-    private List<CareUnit> careUnitIds;
-    private List<Doctor> doctorIds;
-    private List<Patient> patientIds;
-    private List<Relation> relationCodes;
-    private List<String> diagnosisCodes;
-    private List<Occupation> occupations;
-    private List<WorkCapacity> workCapacity;
+  private List<CareProvider> careProviderIds;
+  private List<CareUnit> careUnitIds;
+  private List<Doctor> doctorIds;
+  private List<Patient> patientIds;
+  private List<Relation> relationCodes;
+  private List<String> diagnosisCodes;
+  private List<Occupation> occupations;
+  private List<WorkCapacity> workCapacity;
 }

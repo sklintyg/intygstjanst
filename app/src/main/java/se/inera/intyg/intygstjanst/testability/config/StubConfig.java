@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -27,8 +27,8 @@ import se.inera.intyg.common.support.stub.MedicalCertificatesStore;
 @Profile({"dev", "testability-api", "it-fk-stub"})
 public class StubConfig {
 
-    @Bean
-    public MedicalCertificatesStore medicalCertificateStore() {
-        return new MedicalCertificatesStore();
-    }
+  @Bean
+  public MedicalCertificatesStore medicalCertificateStore() {
+    return new MedicalCertificatesStore();
+  }
 }

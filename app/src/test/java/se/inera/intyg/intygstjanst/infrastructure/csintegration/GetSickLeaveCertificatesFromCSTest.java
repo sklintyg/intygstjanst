@@ -1,3 +1,21 @@
+/*
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
+ *
+ * This file is part of sklintyg (https://github.com/sklintyg).
+ *
+ * sklintyg is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * sklintyg is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package se.inera.intyg.intygstjanst.infrastructure.csintegration;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -15,127 +33,128 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.intygstjanst.application.certificate.dto.SickLeaveCertificate;
-import se.inera.intyg.intygstjanst.infrastructure.csintegration.dto.SickLeaveCertificatesRequestDTO;
 import se.inera.intyg.intygstjanst.application.sickleave.dto.PersonIdTypeDTO;
+import se.inera.intyg.intygstjanst.infrastructure.csintegration.dto.SickLeaveCertificatesRequestDTO;
 import se.inera.intyg.schemas.contract.Personnummer;
 
 @ExtendWith(MockitoExtension.class)
 class GetSickLeaveCertificatesFromCSTest {
 
-    @Mock
-    private CSIntegrationService csIntegrationService;
-    @InjectMocks
-    private GetSickLeaveCertificatesFromCS getSickLeaveCertificatesFromCS;
+  @Mock private CSIntegrationService csIntegrationService;
+  @InjectMocks private GetSickLeaveCertificatesFromCS getSickLeaveCertificatesFromCS;
 
-    @Test
-    void shallIncludePersonIdentityNumberWhenProvided() {
-        final var expected = "19121212-1212";
+  @Test
+  void shallIncludePersonIdentityNumberWhenProvided() {
+    final var expected = "19121212-1212";
 
-        final var captor = ArgumentCaptor.forClass(SickLeaveCertificatesRequestDTO.class);
+    final var captor = ArgumentCaptor.forClass(SickLeaveCertificatesRequestDTO.class);
 
-        getSickLeaveCertificatesFromCS.get(Personnummer.createPersonnummer(expected).orElseThrow(), null, null, null, null, null);
+    getSickLeaveCertificatesFromCS.get(
+        Personnummer.createPersonnummer(expected).orElseThrow(), null, null, null, null, null);
 
-        verify(csIntegrationService).getSickLeaveCertificates(captor.capture());
+    verify(csIntegrationService).getSickLeaveCertificates(captor.capture());
 
-        assertAll(
-            () -> assertEquals(expected, captor.getValue().getPersonId().getId()),
-            () -> assertEquals(PersonIdTypeDTO.PERSONAL_IDENTITY_NUMBER, captor.getValue().getPersonId().getType())
-        );
-    }
+    assertAll(
+        () -> assertEquals(expected, captor.getValue().getPersonId().getId()),
+        () ->
+            assertEquals(
+                PersonIdTypeDTO.PERSONAL_IDENTITY_NUMBER,
+                captor.getValue().getPersonId().getType()));
+  }
 
-    @Test
-    void shallIncludeCoordinationNumberWhenProvided() {
-        final var expected = "19121272-1212";
+  @Test
+  void shallIncludeCoordinationNumberWhenProvided() {
+    final var expected = "19121272-1212";
 
-        final var captor = ArgumentCaptor.forClass(SickLeaveCertificatesRequestDTO.class);
+    final var captor = ArgumentCaptor.forClass(SickLeaveCertificatesRequestDTO.class);
 
-        getSickLeaveCertificatesFromCS.get(Personnummer.createPersonnummer(expected).orElseThrow(), null, null, null, null, null);
+    getSickLeaveCertificatesFromCS.get(
+        Personnummer.createPersonnummer(expected).orElseThrow(), null, null, null, null, null);
 
-        verify(csIntegrationService).getSickLeaveCertificates(captor.capture());
+    verify(csIntegrationService).getSickLeaveCertificates(captor.capture());
 
-        assertAll(
-            () -> assertEquals(expected, captor.getValue().getPersonId().getId()),
-            () -> assertEquals(PersonIdTypeDTO.COORDINATION_NUMBER, captor.getValue().getPersonId().getType())
-        );
-    }
+    assertAll(
+        () -> assertEquals(expected, captor.getValue().getPersonId().getId()),
+        () ->
+            assertEquals(
+                PersonIdTypeDTO.COORDINATION_NUMBER, captor.getValue().getPersonId().getType()));
+  }
 
-    @Test
-    void shallContainCertificateTypeListWhenProvided() {
-        final var expected = List.of("A", "B", "C");
+  @Test
+  void shallContainCertificateTypeListWhenProvided() {
+    final var expected = List.of("A", "B", "C");
 
-        final var captor = ArgumentCaptor.forClass(SickLeaveCertificatesRequestDTO.class);
+    final var captor = ArgumentCaptor.forClass(SickLeaveCertificatesRequestDTO.class);
 
-        getSickLeaveCertificatesFromCS.get(null, expected, null, null, null, null);
+    getSickLeaveCertificatesFromCS.get(null, expected, null, null, null, null);
 
-        verify(csIntegrationService).getSickLeaveCertificates(captor.capture());
+    verify(csIntegrationService).getSickLeaveCertificates(captor.capture());
 
-        assertEquals(expected, captor.getValue().getCertificateTypes());
-    }
+    assertEquals(expected, captor.getValue().getCertificateTypes());
+  }
 
-    @Test
-    void shallContainSignedFromDateWhenProvided() {
-        final var expected = LocalDate.now();
+  @Test
+  void shallContainSignedFromDateWhenProvided() {
+    final var expected = LocalDate.now();
 
-        final var captor = ArgumentCaptor.forClass(SickLeaveCertificatesRequestDTO.class);
+    final var captor = ArgumentCaptor.forClass(SickLeaveCertificatesRequestDTO.class);
 
-        getSickLeaveCertificatesFromCS.get(null, null, expected, null, null, null);
+    getSickLeaveCertificatesFromCS.get(null, null, expected, null, null, null);
 
-        verify(csIntegrationService).getSickLeaveCertificates(captor.capture());
+    verify(csIntegrationService).getSickLeaveCertificates(captor.capture());
 
-        assertEquals(expected, captor.getValue().getSignedFrom());
-    }
+    assertEquals(expected, captor.getValue().getSignedFrom());
+  }
 
-    @Test
-    void shallContainSignedToDateWhenProvided() {
-        final var expected = LocalDate.now();
+  @Test
+  void shallContainSignedToDateWhenProvided() {
+    final var expected = LocalDate.now();
 
-        final var captor = ArgumentCaptor.forClass(SickLeaveCertificatesRequestDTO.class);
+    final var captor = ArgumentCaptor.forClass(SickLeaveCertificatesRequestDTO.class);
 
-        getSickLeaveCertificatesFromCS.get(null, null, null, expected, null, null);
+    getSickLeaveCertificatesFromCS.get(null, null, null, expected, null, null);
 
-        verify(csIntegrationService).getSickLeaveCertificates(captor.capture());
+    verify(csIntegrationService).getSickLeaveCertificates(captor.capture());
 
-        assertEquals(expected, captor.getValue().getSignedTo());
-    }
+    assertEquals(expected, captor.getValue().getSignedTo());
+  }
 
-    @Test
-    void shallContainIssuedByUnitIdsListWhenProvided() {
-        final var expected = List.of("A", "B", "C");
+  @Test
+  void shallContainIssuedByUnitIdsListWhenProvided() {
+    final var expected = List.of("A", "B", "C");
 
-        final var captor = ArgumentCaptor.forClass(SickLeaveCertificatesRequestDTO.class);
+    final var captor = ArgumentCaptor.forClass(SickLeaveCertificatesRequestDTO.class);
 
-        getSickLeaveCertificatesFromCS.get(null, null, null, null, expected, null);
+    getSickLeaveCertificatesFromCS.get(null, null, null, null, expected, null);
 
-        verify(csIntegrationService).getSickLeaveCertificates(captor.capture());
+    verify(csIntegrationService).getSickLeaveCertificates(captor.capture());
 
-        assertEquals(expected, captor.getValue().getIssuedByUnitIds());
-    }
+    assertEquals(expected, captor.getValue().getIssuedByUnitIds());
+  }
 
-    @Test
-    void shallContainIssuedByStaffIdsListWhenProvided() {
-        final var expected = List.of("A", "B", "C");
+  @Test
+  void shallContainIssuedByStaffIdsListWhenProvided() {
+    final var expected = List.of("A", "B", "C");
 
-        final var captor = ArgumentCaptor.forClass(SickLeaveCertificatesRequestDTO.class);
+    final var captor = ArgumentCaptor.forClass(SickLeaveCertificatesRequestDTO.class);
 
-        getSickLeaveCertificatesFromCS.get(null, null, null, null, null, expected);
+    getSickLeaveCertificatesFromCS.get(null, null, null, null, null, expected);
 
-        verify(csIntegrationService).getSickLeaveCertificates(captor.capture());
+    verify(csIntegrationService).getSickLeaveCertificates(captor.capture());
 
-        assertEquals(expected, captor.getValue().getIssuedByStaffIds());
-    }
+    assertEquals(expected, captor.getValue().getIssuedByStaffIds());
+  }
 
-    @Test
-    void shallReturnSickLeaveCertificatesFromCS() {
-        final var expected = List.of(
-            new SickLeaveCertificate(),
-            new SickLeaveCertificate(),
-            new SickLeaveCertificate()
-        );
+  @Test
+  void shallReturnSickLeaveCertificatesFromCS() {
+    final var expected =
+        List.of(new SickLeaveCertificate(), new SickLeaveCertificate(), new SickLeaveCertificate());
 
-        when(csIntegrationService.getSickLeaveCertificates(any(SickLeaveCertificatesRequestDTO.class))).thenReturn(expected);
+    when(csIntegrationService.getSickLeaveCertificates(any(SickLeaveCertificatesRequestDTO.class)))
+        .thenReturn(expected);
 
-        final var actual = getSickLeaveCertificatesFromCS.get(null, null, null, null, null, null);
+    final var actual = getSickLeaveCertificatesFromCS.get(null, null, null, null, null, null);
 
-        assertEquals(expected, actual);
-    }
+    assertEquals(expected, actual);
+  }
 }

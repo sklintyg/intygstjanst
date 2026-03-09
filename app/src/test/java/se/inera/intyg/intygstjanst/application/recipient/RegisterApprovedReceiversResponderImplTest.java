@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -42,145 +42,155 @@ import se.inera.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.registerapprovedreceivers.v1.ReceiverApprovalStatus;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.registerapprovedreceivers.v1.RegisterApprovedReceiversResponseType;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.registerapprovedreceivers.v1.RegisterApprovedReceiversType;
-import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.ApprovedReceiver;
 import se.inera.intyg.intygstjanst.application.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.infrastructure.logging.MonitoringLogService;
-
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.ApprovedReceiver;
 
 @ExtendWith(MockitoExtension.class)
 class RegisterApprovedReceiversResponderImplTest {
 
-    private static final String LOGICAL_ADDRESS = "logical-address";
-    private static final String INTYG_ID = "intyg-123";
+  private static final String LOGICAL_ADDRESS = "logical-address";
+  private static final String INTYG_ID = "intyg-123";
 
-    @Mock
-    private ReceiverService receiverService;
+  @Mock private ReceiverService receiverService;
 
-    @Mock
-    private RecipientService recipientService;
+  @Mock private RecipientService recipientService;
 
-    @Mock
-    private MonitoringLogService monitoringLogService;
+  @Mock private MonitoringLogService monitoringLogService;
 
-    @InjectMocks
-    private RegisterApprovedReceiversResponderImpl testee;
+  @InjectMocks private RegisterApprovedReceiversResponderImpl testee;
 
-    @Test
-    void testRegister() throws RecipientUnknownException {
-        Recipient recipientFk = new Recipient(LOGICAL_ADDRESS, "name", "FKASSA", "HUVUDMOTTAGARE", "lisjp", true, true);
-        Recipient recipientAf = new Recipient(LOGICAL_ADDRESS, "name", "AF", "MOTTAGARE", "lisjp", true, true);
+  @Test
+  void testRegister() throws RecipientUnknownException {
+    Recipient recipientFk =
+        new Recipient(LOGICAL_ADDRESS, "name", "FKASSA", "HUVUDMOTTAGARE", "lisjp", true, true);
+    Recipient recipientAf =
+        new Recipient(LOGICAL_ADDRESS, "name", "AF", "MOTTAGARE", "lisjp", true, true);
 
-        when(recipientService.getRecipient("FKASSA")).thenReturn(recipientFk);
-        when(recipientService.getRecipient("AF")).thenReturn(recipientAf);
+    when(recipientService.getRecipient("FKASSA")).thenReturn(recipientFk);
+    when(recipientService.getRecipient("AF")).thenReturn(recipientAf);
 
-        when(recipientService.listRecipients(new CertificateType("lisjp")))
-            .thenReturn(Arrays.asList(recipientFk, recipientAf));
+    when(recipientService.listRecipients(new CertificateType("lisjp")))
+        .thenReturn(Arrays.asList(recipientFk, recipientAf));
 
-        RegisterApprovedReceiversResponseType response = testee.registerApprovedReceivers(LOGICAL_ADDRESS, buildReq("FKASSA", "AF"));
-        assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
-        verify(receiverService, times(2)).registerApprovedReceiver(any(ApprovedReceiver.class));
-        verify(recipientService, times(2)).getRecipient(anyString());
+    RegisterApprovedReceiversResponseType response =
+        testee.registerApprovedReceivers(LOGICAL_ADDRESS, buildReq("FKASSA", "AF"));
+    assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
+    verify(receiverService, times(2)).registerApprovedReceiver(any(ApprovedReceiver.class));
+    verify(recipientService, times(2)).getRecipient(anyString());
 
-        ArgumentCaptor<String> receiversArgument = ArgumentCaptor.forClass(String.class);
-        verify(monitoringLogService, times(1)).logApprovedReceiversRegistered(receiversArgument.capture(), anyString());
+    ArgumentCaptor<String> receiversArgument = ArgumentCaptor.forClass(String.class);
+    verify(monitoringLogService, times(1))
+        .logApprovedReceiversRegistered(receiversArgument.capture(), anyString());
 
-        assertEquals("FKASSA: YES, AF: YES", receiversArgument.getValue());
-    }
+    assertEquals("FKASSA: YES, AF: YES", receiversArgument.getValue());
+  }
 
-    @Test
-    void testHuvudmottagareIsAddedIfOmittedRegister() throws RecipientUnknownException {
-        Recipient recipientFk = new Recipient(LOGICAL_ADDRESS, "name", "FKASSA", "HUVUDMOTTAGARE", "lisjp", true, true);
-        Recipient recipientAf = new Recipient(LOGICAL_ADDRESS, "name", "AF", "MOTTAGARE", "lisjp", true, true);
+  @Test
+  void testHuvudmottagareIsAddedIfOmittedRegister() throws RecipientUnknownException {
+    Recipient recipientFk =
+        new Recipient(LOGICAL_ADDRESS, "name", "FKASSA", "HUVUDMOTTAGARE", "lisjp", true, true);
+    Recipient recipientAf =
+        new Recipient(LOGICAL_ADDRESS, "name", "AF", "MOTTAGARE", "lisjp", true, true);
 
-        when(recipientService.getRecipient("AF")).thenReturn(recipientAf);
+    when(recipientService.getRecipient("AF")).thenReturn(recipientAf);
 
-        when(recipientService.listRecipients(new CertificateType("lisjp")))
-            .thenReturn(Arrays.asList(recipientFk, recipientAf));
+    when(recipientService.listRecipients(new CertificateType("lisjp")))
+        .thenReturn(Arrays.asList(recipientFk, recipientAf));
 
-        RegisterApprovedReceiversResponseType response = testee.registerApprovedReceivers(LOGICAL_ADDRESS, buildReq("AF"));
-        assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
-        verify(recipientService, times(1)).getRecipient(anyString());
+    RegisterApprovedReceiversResponseType response =
+        testee.registerApprovedReceivers(LOGICAL_ADDRESS, buildReq("AF"));
+    assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
+    verify(recipientService, times(1)).getRecipient(anyString());
 
-        ArgumentCaptor<ApprovedReceiver> approvedReceiverCaptor = ArgumentCaptor.forClass(ApprovedReceiver.class);
-        verify(receiverService, times(2)).registerApprovedReceiver(approvedReceiverCaptor.capture());
-        List<ApprovedReceiver> approvedReceivers = approvedReceiverCaptor.getAllValues();
+    ArgumentCaptor<ApprovedReceiver> approvedReceiverCaptor =
+        ArgumentCaptor.forClass(ApprovedReceiver.class);
+    verify(receiverService, times(2)).registerApprovedReceiver(approvedReceiverCaptor.capture());
+    List<ApprovedReceiver> approvedReceivers = approvedReceiverCaptor.getAllValues();
 
-        // This assert proves that FKASSA was added even though it wasn't part of the request.
-        assertTrue(approvedReceivers.stream().anyMatch(ar -> "FKASSA".equals(ar.getReceiverId())));
+    // This assert proves that FKASSA was added even though it wasn't part of the request.
+    assertTrue(approvedReceivers.stream().anyMatch(ar -> "FKASSA".equals(ar.getReceiverId())));
 
-        verify(monitoringLogService, times(1)).logApprovedReceiversRegistered(anyString(), anyString());
-    }
+    verify(monitoringLogService, times(1)).logApprovedReceiversRegistered(anyString(), anyString());
+  }
 
-    @Test
-    void testReturnsErrorWhenNullIntygId() {
-        RegisterApprovedReceiversType req = buildReq("FKASSA");
-        req.getIntygId().setExtension(null);
-        RegisterApprovedReceiversResponseType response = testee.registerApprovedReceivers(LOGICAL_ADDRESS, req);
+  @Test
+  void testReturnsErrorWhenNullIntygId() {
+    RegisterApprovedReceiversType req = buildReq("FKASSA");
+    req.getIntygId().setExtension(null);
+    RegisterApprovedReceiversResponseType response =
+        testee.registerApprovedReceivers(LOGICAL_ADDRESS, req);
 
-        assertEquals(ResultCodeType.ERROR, response.getResult().getResultCode());
-        verifyNoInteractions(receiverService);
-        verifyNoInteractions(monitoringLogService);
-    }
+    assertEquals(ResultCodeType.ERROR, response.getResult().getResultCode());
+    verifyNoInteractions(receiverService);
+    verifyNoInteractions(monitoringLogService);
+  }
 
-    @Test
-    void testReturnsErrorWhenBlankIntygId() {
-        RegisterApprovedReceiversType req = buildReq("FKASSA");
-        req.getIntygId().setExtension("");
-        RegisterApprovedReceiversResponseType response = testee.registerApprovedReceivers(LOGICAL_ADDRESS, req);
+  @Test
+  void testReturnsErrorWhenBlankIntygId() {
+    RegisterApprovedReceiversType req = buildReq("FKASSA");
+    req.getIntygId().setExtension("");
+    RegisterApprovedReceiversResponseType response =
+        testee.registerApprovedReceivers(LOGICAL_ADDRESS, req);
 
-        assertEquals(ResultCodeType.ERROR, response.getResult().getResultCode());
-        verifyNoInteractions(receiverService);
+    assertEquals(ResultCodeType.ERROR, response.getResult().getResultCode());
+    verifyNoInteractions(receiverService);
 
-        verifyNoInteractions(monitoringLogService);
-    }
+    verifyNoInteractions(monitoringLogService);
+  }
 
-    @Test
-    void testReturnsErrorWhenBlankIntygsTyp() {
-        RegisterApprovedReceiversType req = buildReq("FKASSA");
-        req.getTypAvIntyg().setCode("");
-        RegisterApprovedReceiversResponseType response = testee.registerApprovedReceivers(LOGICAL_ADDRESS, req);
+  @Test
+  void testReturnsErrorWhenBlankIntygsTyp() {
+    RegisterApprovedReceiversType req = buildReq("FKASSA");
+    req.getTypAvIntyg().setCode("");
+    RegisterApprovedReceiversResponseType response =
+        testee.registerApprovedReceivers(LOGICAL_ADDRESS, req);
 
-        assertEquals(ResultCodeType.ERROR, response.getResult().getResultCode());
-        verifyNoInteractions(receiverService);
-        verifyNoInteractions(monitoringLogService);
-    }
+    assertEquals(ResultCodeType.ERROR, response.getResult().getResultCode());
+    verifyNoInteractions(receiverService);
+    verifyNoInteractions(monitoringLogService);
+  }
 
-    @Test
-    void testReturnsErrorWhenBlankReceiverId() {
-        RegisterApprovedReceiversResponseType response = testee.registerApprovedReceivers(LOGICAL_ADDRESS, buildReq(""));
+  @Test
+  void testReturnsErrorWhenBlankReceiverId() {
+    RegisterApprovedReceiversResponseType response =
+        testee.registerApprovedReceivers(LOGICAL_ADDRESS, buildReq(""));
 
-        assertEquals(ResultCodeType.ERROR, response.getResult().getResultCode());
-        verifyNoInteractions(receiverService);
-        verifyNoInteractions(monitoringLogService);
-    }
+    assertEquals(ResultCodeType.ERROR, response.getResult().getResultCode());
+    verifyNoInteractions(receiverService);
+    verifyNoInteractions(monitoringLogService);
+  }
 
-    @Test
-    void testReturnsErrorWhenUnknownReceiverId() throws RecipientUnknownException {
-        when(recipientService.getRecipient(anyString())).thenThrow(new RecipientUnknownException(""));
-        RegisterApprovedReceiversResponseType response = testee.registerApprovedReceivers(LOGICAL_ADDRESS, buildReq("OKAND"));
+  @Test
+  void testReturnsErrorWhenUnknownReceiverId() throws RecipientUnknownException {
+    when(recipientService.getRecipient(anyString())).thenThrow(new RecipientUnknownException(""));
+    RegisterApprovedReceiversResponseType response =
+        testee.registerApprovedReceivers(LOGICAL_ADDRESS, buildReq("OKAND"));
 
-        assertEquals(ResultCodeType.ERROR, response.getResult().getResultCode());
-        verifyNoInteractions(receiverService);
-        verifyNoInteractions(monitoringLogService);
-    }
+    assertEquals(ResultCodeType.ERROR, response.getResult().getResultCode());
+    verifyNoInteractions(receiverService);
+    verifyNoInteractions(monitoringLogService);
+  }
 
-    private RegisterApprovedReceiversType buildReq(String... receivers) {
-        RegisterApprovedReceiversType req = new RegisterApprovedReceiversType();
-        IntygId intygId = new IntygId();
-        intygId.setExtension(INTYG_ID);
-        req.setIntygId(intygId);
+  private RegisterApprovedReceiversType buildReq(String... receivers) {
+    RegisterApprovedReceiversType req = new RegisterApprovedReceiversType();
+    IntygId intygId = new IntygId();
+    intygId.setExtension(INTYG_ID);
+    req.setIntygId(intygId);
 
-        TypAvIntyg typAvIntyg = new TypAvIntyg();
-        typAvIntyg.setCode("lisjp");
-        req.setTypAvIntyg(typAvIntyg);
+    TypAvIntyg typAvIntyg = new TypAvIntyg();
+    typAvIntyg.setCode("lisjp");
+    req.setTypAvIntyg(typAvIntyg);
 
-        Arrays.stream(receivers).forEach(rec -> {
-            ReceiverApprovalStatus receiverApprovalStatus = new ReceiverApprovalStatus();
-            receiverApprovalStatus.setReceiverId(rec);
-            receiverApprovalStatus.setApprovalStatus(ApprovalStatusType.YES);
-            req.getApprovedReceivers().add(receiverApprovalStatus);
-        });
+    Arrays.stream(receivers)
+        .forEach(
+            rec -> {
+              ReceiverApprovalStatus receiverApprovalStatus = new ReceiverApprovalStatus();
+              receiverApprovalStatus.setReceiverId(rec);
+              receiverApprovalStatus.setApprovalStatus(ApprovalStatusType.YES);
+              req.getApprovedReceivers().add(receiverApprovalStatus);
+            });
 
-        return req;
-    }
+    return req;
+  }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,15 +16,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package se.inera.intyg.intygstjanst.testability.service;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
-import se.inera.intyg.intygstjanst.application.exception.TestCertificateException;
 import se.inera.intyg.intygstjanst.application.certificate.service.CertificateService;
+import se.inera.intyg.intygstjanst.application.exception.TestCertificateException;
 import se.inera.intyg.intygstjanst.application.sickleave.services.SjukfallCertificateService;
 import se.inera.intyg.schemas.contract.Personnummer;
 
@@ -32,23 +31,28 @@ import se.inera.intyg.schemas.contract.Personnummer;
 @Transactional
 public class TestabilityRevokeCertificate {
 
-    private final CertificateService certificateService;
+  private final CertificateService certificateService;
 
-    private final SjukfallCertificateService sjukfallCertificateService;
+  private final SjukfallCertificateService sjukfallCertificateService;
 
-    public TestabilityRevokeCertificate(CertificateService certificateService, SjukfallCertificateService sjukfallCertificateService) {
-        this.certificateService = certificateService;
-        this.sjukfallCertificateService = sjukfallCertificateService;
+  public TestabilityRevokeCertificate(
+      CertificateService certificateService,
+      SjukfallCertificateService sjukfallCertificateService) {
+    this.certificateService = certificateService;
+    this.sjukfallCertificateService = sjukfallCertificateService;
+  }
+
+  public void revokeCertificate(String patientId, String certificateId) {
+    try {
+      final var certificate =
+          certificateService.revokeCertificate(
+              Personnummer.createPersonnummer(patientId).orElse(null), certificateId);
+      sjukfallCertificateService.revoked(certificate);
+      certificateService.revokeCertificateForStatistics(certificate);
+    } catch (TestCertificateException
+        | CertificateRevokedException
+        | InvalidCertificateException e) {
+      throw new RuntimeException(e);
     }
-
-    public void revokeCertificate(String patientId, String certificateId) {
-        try {
-            final var certificate = certificateService.revokeCertificate(Personnummer.createPersonnummer(patientId).orElse(null),
-                certificateId);
-            sjukfallCertificateService.revoked(certificate);
-            certificateService.revokeCertificateForStatistics(certificate);
-        } catch (TestCertificateException | CertificateRevokedException | InvalidCertificateException e) {
-            throw new RuntimeException(e);
-        }
-    }
+  }
 }

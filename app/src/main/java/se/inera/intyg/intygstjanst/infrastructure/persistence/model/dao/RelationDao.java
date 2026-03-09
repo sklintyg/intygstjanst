@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -34,123 +34,123 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 public class RelationDao {
 
-    private static final Logger LOG = LoggerFactory.getLogger(RelationDao.class);
+  private static final Logger LOG = LoggerFactory.getLogger(RelationDao.class);
 
-    @PersistenceContext
-    private EntityManager entityManager;
+  @PersistenceContext private EntityManager entityManager;
 
-    public List<Relation> getChildren(String intygsId) {
-        return entityManager.createQuery("SELECT r FROM Relation r WHERE r.toIntygsId = :intygsId", Relation.class)
-            .setParameter("intygsId", intygsId)
-            .getResultList();
-    }
+  public List<Relation> getChildren(String intygsId) {
+    return entityManager
+        .createQuery("SELECT r FROM Relation r WHERE r.toIntygsId = :intygsId", Relation.class)
+        .setParameter("intygsId", intygsId)
+        .getResultList();
+  }
 
-    public List<Relation> getParent(String intygsId) {
-        return entityManager.createQuery("SELECT r FROM Relation r WHERE r.fromIntygsId = :intygsId", Relation.class)
-            .setParameter("intygsId", intygsId)
-            .getResultList();
-    }
+  public List<Relation> getParent(String intygsId) {
+    return entityManager
+        .createQuery("SELECT r FROM Relation r WHERE r.fromIntygsId = :intygsId", Relation.class)
+        .setParameter("intygsId", intygsId)
+        .getResultList();
+  }
 
-    public Map<String, List<Relation>> getRelations(List<String> certificateIds, List<String> revokedCertificateIds) {
-        final var query = entityManager.createQuery(
+  public Map<String, List<Relation>> getRelations(
+      List<String> certificateIds, List<String> revokedCertificateIds) {
+    final var query =
+        entityManager
+            .createQuery(
                 "SELECT r FROM Relation r "
                     + "WHERE r.toIntygsId IN :certificateIds OR r.fromIntygsId IN :certificateIds",
-                Relation.class
-            )
+                Relation.class)
             .setParameter("certificateIds", certificateIds);
 
-        final var relations = query.getResultList()
-            .stream()
-            .filter((relation) ->
-                !revokedCertificateIds.contains(relation.getToIntygsId())
-                    && !revokedCertificateIds.contains(relation.getFromIntygsId()))
-            .collect(Collectors.toList());
-
-        return certificateIds
-            .stream()
-            .filter((id) -> !revokedCertificateIds.contains(id))
-            .collect(
-                Collectors.toMap(id -> id, id -> getRelationsForCertificate(relations, id))
-            );
-    }
-
-    private List<Relation> getRelationsForCertificate(List<Relation> relations, String certificateId) {
-        return relations
-            .stream()
+    final var relations =
+        query.getResultList().stream()
             .filter(
-                (relation) -> relation.getToIntygsId().equals(certificateId)
-                    || relation.getFromIntygsId().equals(certificateId)
-            )
+                (relation) ->
+                    !revokedCertificateIds.contains(relation.getToIntygsId())
+                        && !revokedCertificateIds.contains(relation.getFromIntygsId()))
             .collect(Collectors.toList());
+
+    return certificateIds.stream()
+        .filter((id) -> !revokedCertificateIds.contains(id))
+        .collect(Collectors.toMap(id -> id, id -> getRelationsForCertificate(relations, id)));
+  }
+
+  private List<Relation> getRelationsForCertificate(
+      List<Relation> relations, String certificateId) {
+    return relations.stream()
+        .filter(
+            (relation) ->
+                relation.getToIntygsId().equals(certificateId)
+                    || relation.getFromIntygsId().equals(certificateId))
+        .collect(Collectors.toList());
+  }
+
+  public List<Relation> getGraph(String intygsId) {
+    List<Relation> graph = new ArrayList<>();
+    buildChildGraph(intygsId, graph);
+    buildParentGraph(intygsId, graph);
+
+    return graph.stream()
+        .sorted(Comparator.comparing(Relation::getCreated))
+        .collect(Collectors.toList());
+  }
+
+  public void store(Relation relation) {
+    entityManager.persist(relation);
+  }
+
+  public Optional<Relation> getParentRelation(String intygsId) {
+    List<Relation> parentRelations = getParent(intygsId);
+    if (parentRelations.size() >= 1) {
+      return Optional.of(parentRelations.get(0));
+    } else {
+      return Optional.empty();
     }
+  }
 
-    public List<Relation> getGraph(String intygsId) {
-        List<Relation> graph = new ArrayList<>();
-        buildChildGraph(intygsId, graph);
-        buildParentGraph(intygsId, graph);
-
-        return graph.stream()
-            .sorted(Comparator.comparing(Relation::getCreated))
-            .collect(Collectors.toList());
+  public void eraseTestCertificates(List<String> ids) {
+    for (var id : ids) {
+      final var relationList = getGraph(id);
+      for (var relation : relationList) {
+        entityManager.remove(relation);
+      }
     }
+  }
 
-    public void store(Relation relation) {
-        entityManager.persist(relation);
+  @Transactional
+  public void eraseCertificateRelations(List<String> certificateIds, String careProviderId) {
+    for (final var certificateId : certificateIds) {
+      final var relationList = new ArrayList<Relation>();
+      relationList.addAll(getParent(certificateId));
+      relationList.addAll(getChildren(certificateId));
+      for (var relation : relationList) {
+        entityManager.remove(relation);
+        LOG.debug(
+            "Relation with id {} for certificate id {} from care provider {} was successfully erased.",
+            relation.getId(),
+            certificateId,
+            careProviderId);
+      }
     }
+  }
 
-    public Optional<Relation> getParentRelation(String intygsId) {
-        List<Relation> parentRelations = getParent(intygsId);
-        if (parentRelations.size() >= 1) {
-            return Optional.of(parentRelations.get(0));
-        } else {
-            return Optional.empty();
-        }
+  /** Starting with a given intyg, builds a graph of descendants. */
+  private void buildChildGraph(String intygsId, List<Relation> graph) {
+
+    List<Relation> children = getChildren(intygsId);
+    for (Relation child : children) {
+      graph.add(child);
+      buildChildGraph(child.getFromIntygsId(), graph);
     }
+  }
 
-    public void eraseTestCertificates(List<String> ids) {
-        for (var id : ids) {
-            final var relationList = getGraph(id);
-            for (var relation : relationList) {
-                entityManager.remove(relation);
-            }
-        }
+  /** Builds a graph of ancestors direction. */
+  private void buildParentGraph(String intygsId, List<Relation> graph) {
+
+    List<Relation> parents = getParent(intygsId);
+    for (Relation parent : parents) {
+      graph.add(parent);
+      buildParentGraph(parent.getToIntygsId(), graph);
     }
-
-    @Transactional
-    public void eraseCertificateRelations(List<String> certificateIds, String careProviderId) {
-        for (final var certificateId : certificateIds) {
-            final var relationList = new ArrayList<Relation>();
-            relationList.addAll(getParent(certificateId));
-            relationList.addAll(getChildren(certificateId));
-            for (var relation : relationList) {
-                entityManager.remove(relation);
-                LOG.debug("Relation with id {} for certificate id {} from care provider {} was successfully erased.", relation.getId(),
-                    certificateId, careProviderId);
-            }
-        }
-    }
-
-    /**
-     * Starting with a given intyg, builds a graph of descendants.
-     */
-    private void buildChildGraph(String intygsId, List<Relation> graph) {
-
-        List<Relation> children = getChildren(intygsId);
-        for (Relation child : children) {
-            graph.add(child);
-            buildChildGraph(child.getFromIntygsId(), graph);
-        }
-    }
-
-    /**
-     * Builds a graph of ancestors direction.
-     */
-    private void buildParentGraph(String intygsId, List<Relation> graph) {
-
-        List<Relation> parents = getParent(intygsId);
-        for (Relation parent : parents) {
-            graph.add(parent);
-            buildParentGraph(parent.getToIntygsId(), graph);
-        }
-    }
+  }
 }

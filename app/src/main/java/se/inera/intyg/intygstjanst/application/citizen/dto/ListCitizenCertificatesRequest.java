@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package se.inera.intyg.intygstjanst.application.citizen.dto;
 
 import java.util.List;
@@ -28,9 +27,9 @@ import se.inera.intyg.schemas.contract.Personnummer;
 @Builder
 public class ListCitizenCertificatesRequest {
 
-    private Personnummer personnummer;
-    private List<CitizenCertificateStatusTypeDTO> statuses;
-    private List<String> units;
-    private List<String> certificateTypes;
-    private List<String> years;
+  private Personnummer personnummer;
+  private List<CitizenCertificateStatusTypeDTO> statuses;
+  private List<String> units;
+  private List<String> certificateTypes;
+  private List<String> years;
 }

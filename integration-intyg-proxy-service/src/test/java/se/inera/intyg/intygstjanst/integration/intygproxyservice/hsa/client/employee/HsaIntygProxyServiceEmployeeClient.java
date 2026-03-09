@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,9 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package se.inera.intyg.intygstjanst.integration.intygproxyservice.hsa.client.employee;
-
 
 import static se.inera.intyg.intygstjanst.integration.intygproxyservice.hsa.configuration.HsaRestClientConfig.LOG_SESSION_ID_HEADER;
 import static se.inera.intyg.intygstjanst.integration.intygproxyservice.hsa.configuration.HsaRestClientConfig.LOG_TRACE_ID_HEADER;
@@ -38,26 +36,26 @@ import se.inera.intyg.intygstjanst.integration.intygproxyservice.hsa.dto.employe
 @Service
 public class HsaIntygProxyServiceEmployeeClient {
 
-    private final RestClient ipsRestClient;
-    private final IntygProxyServiceProperties properties;
+  private final RestClient ipsRestClient;
+  private final IntygProxyServiceProperties properties;
 
-    @Autowired
-    public HsaIntygProxyServiceEmployeeClient(
-        @Qualifier("hsaIntygProxyServiceRestClient") RestClient ipsRestClient,
-        IntygProxyServiceProperties properties) {
-        this.ipsRestClient = ipsRestClient;
-        this.properties = properties;
-    }
+  @Autowired
+  public HsaIntygProxyServiceEmployeeClient(
+      @Qualifier("hsaIntygProxyServiceRestClient") RestClient ipsRestClient,
+      IntygProxyServiceProperties properties) {
+    this.ipsRestClient = ipsRestClient;
+    this.properties = properties;
+  }
 
-    public GetEmployeeResponseDTO getEmployee(GetEmployeeRequestDTO getEmployeeRequestDTO) {
-        return ipsRestClient
-            .post()
-            .uri(properties.hsa().employeeEndpoint())
-            .body(getEmployeeRequestDTO)
-            .header(LOG_TRACE_ID_HEADER, MDC.get(TRACE_ID_KEY))
-            .header(LOG_SESSION_ID_HEADER, MDC.get(SESSION_ID_KEY))
-            .contentType(MediaType.APPLICATION_JSON)
-            .retrieve()
-            .body(GetEmployeeResponseDTO.class);
-    }
+  public GetEmployeeResponseDTO getEmployee(GetEmployeeRequestDTO getEmployeeRequestDTO) {
+    return ipsRestClient
+        .post()
+        .uri(properties.hsa().employeeEndpoint())
+        .body(getEmployeeRequestDTO)
+        .header(LOG_TRACE_ID_HEADER, MDC.get(TRACE_ID_KEY))
+        .header(LOG_SESSION_ID_HEADER, MDC.get(SESSION_ID_KEY))
+        .contentType(MediaType.APPLICATION_JSON)
+        .retrieve()
+        .body(GetEmployeeResponseDTO.class);
+  }
 }

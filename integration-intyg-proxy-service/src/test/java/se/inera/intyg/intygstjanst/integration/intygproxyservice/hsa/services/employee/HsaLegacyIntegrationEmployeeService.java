@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package se.inera.intyg.intygstjanst.integration.intygproxyservice.hsa.services.employee;
 
 import jakarta.xml.ws.WebServiceException;
@@ -33,27 +32,29 @@ import se.inera.intyg.intygstjanst.integration.intygproxyservice.hsa.dto.employe
 @RequiredArgsConstructor
 public class HsaLegacyIntegrationEmployeeService implements HsaEmployeeService {
 
-    private final GetEmployeeService getEmployeeService;
+  private final GetEmployeeService getEmployeeService;
 
-    @Override
-    public List<PersonInformation> getEmployee(String personHsaId, String personalIdentityNumber) throws WebServiceException {
-        return getEmployee(personHsaId, personalIdentityNumber, null);
-    }
+  @Override
+  public List<PersonInformation> getEmployee(String personHsaId, String personalIdentityNumber)
+      throws WebServiceException {
+    return getEmployee(personHsaId, personalIdentityNumber, null);
+  }
 
-    @Override
-    public List<PersonInformation> getEmployee(String personHsaId, String personalIdentityNumber, String searchBase)
-        throws WebServiceException {
-        final var personInformations = getEmployeeService.get(
+  @Override
+  public List<PersonInformation> getEmployee(
+      String personHsaId, String personalIdentityNumber, String searchBase)
+      throws WebServiceException {
+    final var personInformations =
+        getEmployeeService.get(
             GetEmployeeRequestDTO.builder()
                 .hsaId(personHsaId)
                 .personId(personalIdentityNumber)
-                .build()
-        );
+                .build());
 
-        if (personInformations.isEmpty()) {
-            log.warn("Could not find any 'personInformation' for employee with hsaId '{}'", personHsaId);
-            throw new WebServiceException("Could not find any 'personInformation' for employee");
-        }
-        return personInformations;
+    if (personInformations.isEmpty()) {
+      log.warn("Could not find any 'personInformation' for employee with hsaId '{}'", personHsaId);
+      throw new WebServiceException("Could not find any 'personInformation' for employee");
     }
+    return personInformations;
+  }
 }

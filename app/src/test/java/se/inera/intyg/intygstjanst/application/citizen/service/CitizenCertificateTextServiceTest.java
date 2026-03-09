@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,8 +16,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package se.inera.intyg.intygstjanst.application.citizen.service;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -31,61 +35,53 @@ import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
 import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
 import se.inera.intyg.common.support.modules.support.ModuleEntryPoint;
 import se.inera.intyg.common.support.modules.support.api.ModuleApi;
-import se.inera.intyg.intygstjanst.application.citizen.service.CitizenCertificateTextService;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
 
 @ExtendWith(MockitoExtension.class)
 class CitizenCertificateTextServiceTest {
 
-    private static final String TYPE_NAME = "TYPE_NAME";
-    private static final String ADDITIONAL_INFO_LABEL = "Additional info label";
+  private static final String TYPE_NAME = "TYPE_NAME";
+  private static final String ADDITIONAL_INFO_LABEL = "Additional info label";
 
+  @Mock IntygModuleRegistry intygModuleRegistry;
 
-    @Mock
-    IntygModuleRegistry intygModuleRegistry;
+  @InjectMocks CitizenCertificateTextService citizenCertificateTextService;
 
-    @InjectMocks
-    CitizenCertificateTextService citizenCertificateTextService;
+  @Nested
+  class TypeName {
 
-    @Nested
-    class TypeName {
+    private final ModuleEntryPoint entryPoint = mock(ModuleEntryPoint.class);
 
-        private final ModuleEntryPoint entryPoint = mock(ModuleEntryPoint.class);
-
-        @BeforeEach
-        void setup() throws ModuleNotFoundException {
-            Mockito.when(intygModuleRegistry.getModuleEntryPoint(any())).thenReturn(entryPoint);
-            Mockito.when(entryPoint.getModuleName()).thenReturn(TYPE_NAME);
-        }
-
-        @Test
-        void shouldReturnValue() throws ModuleNotFoundException {
-            final var result = citizenCertificateTextService.getTypeName("id");
-
-            assertEquals(TYPE_NAME, result);
-        }
+    @BeforeEach
+    void setup() throws ModuleNotFoundException {
+      Mockito.when(intygModuleRegistry.getModuleEntryPoint(any())).thenReturn(entryPoint);
+      Mockito.when(entryPoint.getModuleName()).thenReturn(TYPE_NAME);
     }
 
-    @Nested
-    class AdditionalInfoLabel {
+    @Test
+    void shouldReturnValue() throws ModuleNotFoundException {
+      final var result = citizenCertificateTextService.getTypeName("id");
 
-        private final ModuleApi moduleApi = mock(ModuleApi.class);
-
-        @BeforeEach
-        void setup() throws ModuleNotFoundException {
-            Mockito.when(intygModuleRegistry.getModuleApi(anyString(), anyString())).thenReturn(moduleApi);
-            Mockito.when(moduleApi.getAdditionalInfoLabel()).thenReturn(ADDITIONAL_INFO_LABEL);
-        }
-
-        @Test
-        void shouldReturnValue() throws ModuleNotFoundException {
-            final var result = citizenCertificateTextService.getAdditionalInfoLabel("id", "version");
-
-            assertEquals(ADDITIONAL_INFO_LABEL, result);
-        }
+      assertEquals(TYPE_NAME, result);
     }
+  }
+
+  @Nested
+  class AdditionalInfoLabel {
+
+    private final ModuleApi moduleApi = mock(ModuleApi.class);
+
+    @BeforeEach
+    void setup() throws ModuleNotFoundException {
+      Mockito.when(intygModuleRegistry.getModuleApi(anyString(), anyString()))
+          .thenReturn(moduleApi);
+      Mockito.when(moduleApi.getAdditionalInfoLabel()).thenReturn(ADDITIONAL_INFO_LABEL);
+    }
+
+    @Test
+    void shouldReturnValue() throws ModuleNotFoundException {
+      final var result = citizenCertificateTextService.getAdditionalInfoLabel("id", "version");
+
+      assertEquals(ADDITIONAL_INFO_LABEL, result);
+    }
+  }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -30,54 +30,51 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 class ArendeRepositoryTest extends TestSupport {
 
-    private static String ENHET_1_ID = "ENHET_1_ID";
-    private static String ENHET_2_ID = "ENHET_2_ID";
-    private static String ENHET_3_ID = "ENHET_3_ID";
-    private static String ENHET_4_ID = "ENHET_4_ID";
+  private static String ENHET_1_ID = "ENHET_1_ID";
+  private static String ENHET_2_ID = "ENHET_2_ID";
+  private static String ENHET_3_ID = "ENHET_3_ID";
+  private static String ENHET_4_ID = "ENHET_4_ID";
 
-    @PersistenceContext
-    private EntityManager entityManager;
+  @PersistenceContext private EntityManager entityManager;
 
-    @Autowired
-    private ArendeRepository sendMessageToCareRepository;
+  @Autowired private ArendeRepository sendMessageToCareRepository;
 
-    @Test
-    void testFindOne() {
-        Arende saved = buildFragaSvarFraga(ENHET_1_ID);
-        sendMessageToCareRepository.save(saved);
-        Arende read = sendMessageToCareRepository.findById(saved.getInternReferens()).orElse(null);
-        assertEquals(read.getInternReferens(), saved.getInternReferens());
-    }
+  @Test
+  void testFindOne() {
+    Arende saved = buildFragaSvarFraga(ENHET_1_ID);
+    sendMessageToCareRepository.save(saved);
+    Arende read = sendMessageToCareRepository.findById(saved.getInternReferens()).orElse(null);
+    assertEquals(read.getInternReferens(), saved.getInternReferens());
+  }
 
-    @Test
-    void testFindByMeddelandeId() {
-        Arende saved = buildFragaSvarFraga(ENHET_1_ID);
-        sendMessageToCareRepository.save(saved);
-        Arende read = sendMessageToCareRepository.findByMeddelandeId(saved.getMeddelandeId());
-        assertEquals(read.getInternReferens(), saved.getInternReferens());
-    }
+  @Test
+  void testFindByMeddelandeId() {
+    Arende saved = buildFragaSvarFraga(ENHET_1_ID);
+    sendMessageToCareRepository.save(saved);
+    Arende read = sendMessageToCareRepository.findByMeddelandeId(saved.getMeddelandeId());
+    assertEquals(read.getInternReferens(), saved.getInternReferens());
+  }
 
-    @Test
-    void testFindAll() {
-        sendMessageToCareRepository.save(buildFragaSvarFraga(ENHET_1_ID));
-        sendMessageToCareRepository.save(buildFragaSvarFraga(ENHET_2_ID));
-        sendMessageToCareRepository.save(buildFragaSvarFraga(ENHET_3_ID));
-        sendMessageToCareRepository.save(buildFragaSvarFraga(ENHET_3_ID));
-        sendMessageToCareRepository.save(buildFragaSvarFraga(ENHET_4_ID));
-        List<Arende> read = sendMessageToCareRepository.findAll();
-        assertEquals(5, read.size());
-    }
+  @Test
+  void testFindAll() {
+    sendMessageToCareRepository.save(buildFragaSvarFraga(ENHET_1_ID));
+    sendMessageToCareRepository.save(buildFragaSvarFraga(ENHET_2_ID));
+    sendMessageToCareRepository.save(buildFragaSvarFraga(ENHET_3_ID));
+    sendMessageToCareRepository.save(buildFragaSvarFraga(ENHET_3_ID));
+    sendMessageToCareRepository.save(buildFragaSvarFraga(ENHET_4_ID));
+    List<Arende> read = sendMessageToCareRepository.findAll();
+    assertEquals(5, read.size());
+  }
 
-    private Arende buildFragaSvarFraga(String logiskMottagare) {
-        Arende sendMessageToCare = new Arende();
-        sendMessageToCare.setIntygsId("intygsID");
-        sendMessageToCare.setMeddelandeId(UUID.randomUUID().toString());
-        sendMessageToCare.setReferens(ENHET_2_ID);
-        sendMessageToCare.setTimeStamp(LocalDateTime.now());
-        sendMessageToCare.setMeddelande("Meddelande");
-        sendMessageToCare.setLogiskAdressmottagare(ENHET_3_ID);
-        sendMessageToCare.setAmne("OVRIGT");
-        return sendMessageToCare;
-    }
-
+  private Arende buildFragaSvarFraga(String logiskMottagare) {
+    Arende sendMessageToCare = new Arende();
+    sendMessageToCare.setIntygsId("intygsID");
+    sendMessageToCare.setMeddelandeId(UUID.randomUUID().toString());
+    sendMessageToCare.setReferens(ENHET_2_ID);
+    sendMessageToCare.setTimeStamp(LocalDateTime.now());
+    sendMessageToCare.setMeddelande("Meddelande");
+    sendMessageToCare.setLogiskAdressmottagare(ENHET_3_ID);
+    sendMessageToCare.setAmne("OVRIGT");
+    return sendMessageToCare;
+  }
 }

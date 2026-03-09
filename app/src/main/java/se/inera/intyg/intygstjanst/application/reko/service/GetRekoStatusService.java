@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,38 +16,35 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package se.inera.intyg.intygstjanst.application.reko.service;
 
+import java.time.LocalDate;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.intygstjanst.application.sickleave.dto.RekoStatusDTO;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.RekoRepository;
 
-import java.time.LocalDate;
-
 @Service
 public class GetRekoStatusService {
 
-    private final RekoRepository rekoRepository;
-    private final RekoStatusFilter rekoStatusFilter;
-    private final RekoStatusConverter rekoStatusConverter;
+  private final RekoRepository rekoRepository;
+  private final RekoStatusFilter rekoStatusFilter;
+  private final RekoStatusConverter rekoStatusConverter;
 
-    public GetRekoStatusService(RekoRepository rekoRepository,
-        RekoStatusFilter rekoStatusFilter,
-        RekoStatusConverter rekoStatusConverter) {
-        this.rekoRepository = rekoRepository;
-        this.rekoStatusFilter = rekoStatusFilter;
-        this.rekoStatusConverter = rekoStatusConverter;
-    }
+  public GetRekoStatusService(
+      RekoRepository rekoRepository,
+      RekoStatusFilter rekoStatusFilter,
+      RekoStatusConverter rekoStatusConverter) {
+    this.rekoRepository = rekoRepository;
+    this.rekoStatusFilter = rekoStatusFilter;
+    this.rekoStatusConverter = rekoStatusConverter;
+  }
 
-    public RekoStatusDTO get(
-        String patientId,
-        LocalDate endDate,
-        LocalDate startDate,
-        String careUnitId) {
+  public RekoStatusDTO get(
+      String patientId, LocalDate endDate, LocalDate startDate, String careUnitId) {
 
-        final var rekoStatuses = rekoRepository.findByPatientIdAndCareUnitId(patientId, careUnitId);
-        final var filteredRekoStatus = rekoStatusFilter.filter(rekoStatuses, patientId, endDate, startDate);
-        return filteredRekoStatus.map(rekoStatusConverter::convert).orElse(null);
-    }
+    final var rekoStatuses = rekoRepository.findByPatientIdAndCareUnitId(patientId, careUnitId);
+    final var filteredRekoStatus =
+        rekoStatusFilter.filter(rekoStatuses, patientId, endDate, startDate);
+    return filteredRekoStatus.map(rekoStatusConverter::convert).orElse(null);
+  }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -40,11 +40,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.verification.VerificationMode;
 import se.inera.intyg.common.support.integration.converter.util.ResultTypeUtil;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
-import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Arende;
-import se.inera.intyg.intygstjanst.application.message.validator.SendMessageToRecipientValidator;
-import se.inera.intyg.intygstjanst.application.message.service.ArendeService;
 import se.inera.intyg.intygstjanst.application.certificate.service.CertificateService;
+import se.inera.intyg.intygstjanst.application.message.service.ArendeService;
+import se.inera.intyg.intygstjanst.application.message.validator.SendMessageToRecipientValidator;
 import se.inera.intyg.intygstjanst.infrastructure.logging.MonitoringLogService;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Arende;
 import se.inera.intyg.intygstjanst.infrastructure.soap.SoapIntegrationService;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientType;
@@ -57,127 +57,136 @@ import se.riv.clinicalprocess.healthcond.certificate.v3.ResultType;
 @ExtendWith(MockitoExtension.class)
 class SendMessageToRecipientResponderImplTest {
 
-    private static final String LOGICAL_ADDRESS = "123";
-    private static final String LOGICAL_ADDRESS_RECIPIENT = "456";
+  private static final String LOGICAL_ADDRESS = "123";
+  private static final String LOGICAL_ADDRESS_RECIPIENT = "456";
 
-    @Mock
-    private MonitoringLogService monitoringLog;
+  @Mock private MonitoringLogService monitoringLog;
 
-    @Mock
-    private SendMessageToRecipientValidator validator;
+  @Mock private SendMessageToRecipientValidator validator;
 
-    @Mock
-    private ArendeService arendeService;
+  @Mock private ArendeService arendeService;
 
-    @Mock
-    private CertificateService certificateService;
+  @Mock private CertificateService certificateService;
 
-    @Mock
-    private SoapIntegrationService soapIntegrationService;
+  @Mock private SoapIntegrationService soapIntegrationService;
 
-    @InjectMocks
-    private SendMessageToRecipientResponderImpl responder;
+  @InjectMocks private SendMessageToRecipientResponderImpl responder;
 
-    @BeforeEach
-    void setup() throws InvalidCertificateException {
-        lenient().when(certificateService.isTestCertificate(any())).thenReturn(false);
-    }
+  @BeforeEach
+  void setup() throws InvalidCertificateException {
+    lenient().when(certificateService.isTestCertificate(any())).thenReturn(false);
+  }
 
-    @Test
-    void sendMessageToRecipientTest() throws Exception {
-        setupClientResponse(ResultTypeUtil.okResult());
-        SendMessageToRecipientResponseType res = responder.sendMessageToRecipient(LOGICAL_ADDRESS, createParameters());
-        assertEquals(ResultCodeType.OK, res.getResult().getResultCode());
-        assertInvocations(times(1), times(1), times(1));
-    }
+  @Test
+  void sendMessageToRecipientTest() throws Exception {
+    setupClientResponse(ResultTypeUtil.okResult());
+    SendMessageToRecipientResponseType res =
+        responder.sendMessageToRecipient(LOGICAL_ADDRESS, createParameters());
+    assertEquals(ResultCodeType.OK, res.getResult().getResultCode());
+    assertInvocations(times(1), times(1), times(1));
+  }
 
-    @Test
-    void sendMessageToRecipientOnTestCertificate() throws Exception {
-        when(certificateService.isTestCertificate(any())).thenReturn(true);
-        setupClientResponse(ResultTypeUtil.okResult());
-        SendMessageToRecipientResponseType res = responder.sendMessageToRecipient(LOGICAL_ADDRESS, createParameters());
-        assertEquals(ResultCodeType.OK, res.getResult().getResultCode());
-        assertInvocations(times(1), times(1), times(0));
-    }
+  @Test
+  void sendMessageToRecipientOnTestCertificate() throws Exception {
+    when(certificateService.isTestCertificate(any())).thenReturn(true);
+    setupClientResponse(ResultTypeUtil.okResult());
+    SendMessageToRecipientResponseType res =
+        responder.sendMessageToRecipient(LOGICAL_ADDRESS, createParameters());
+    assertEquals(ResultCodeType.OK, res.getResult().getResultCode());
+    assertInvocations(times(1), times(1), times(0));
+  }
 
-    @Test
-    void sendMessageToRecipientClientInfoTest() throws Exception {
-        final String clientInfoText = "info here";
-        setupClientResponse(ResultTypeUtil.infoResult(clientInfoText));
-        SendMessageToRecipientResponseType res = responder.sendMessageToRecipient(LOGICAL_ADDRESS, createParameters());
-        assertEquals(ResultCodeType.INFO, res.getResult().getResultCode());
-        assertEquals(clientInfoText, res.getResult().getResultText());
-        assertInvocations(times(1), times(1), times(1));
-    }
+  @Test
+  void sendMessageToRecipientClientInfoTest() throws Exception {
+    final String clientInfoText = "info here";
+    setupClientResponse(ResultTypeUtil.infoResult(clientInfoText));
+    SendMessageToRecipientResponseType res =
+        responder.sendMessageToRecipient(LOGICAL_ADDRESS, createParameters());
+    assertEquals(ResultCodeType.INFO, res.getResult().getResultCode());
+    assertEquals(clientInfoText, res.getResult().getResultText());
+    assertInvocations(times(1), times(1), times(1));
+  }
 
-    @Test
-    void sendMessageToRecipientValidationErrorTest() throws Exception {
-        setupValidatorError();
-        SendMessageToRecipientResponseType res = responder.sendMessageToRecipient(LOGICAL_ADDRESS, createParameters());
-        assertEquals(ResultCodeType.ERROR, res.getResult().getResultCode());
-        assertEquals(ErrorIdType.VALIDATION_ERROR, res.getResult().getErrorId());
-        assertInvocations(never(), never(), never());
-    }
+  @Test
+  void sendMessageToRecipientValidationErrorTest() throws Exception {
+    setupValidatorError();
+    SendMessageToRecipientResponseType res =
+        responder.sendMessageToRecipient(LOGICAL_ADDRESS, createParameters());
+    assertEquals(ResultCodeType.ERROR, res.getResult().getResultCode());
+    assertEquals(ErrorIdType.VALIDATION_ERROR, res.getResult().getErrorId());
+    assertInvocations(never(), never(), never());
+  }
 
-    @Test
-    void sendMessageToRecipientCertificateDoesNotExistTest() throws Exception {
-        when(validator.validate(any(SendMessageToRecipientType.class))).thenThrow(new InvalidCertificateException("intygId", null));
-        SendMessageToRecipientResponseType res = responder.sendMessageToRecipient(LOGICAL_ADDRESS, createParameters());
-        assertEquals(ResultCodeType.ERROR, res.getResult().getResultCode());
-        assertEquals(ErrorIdType.APPLICATION_ERROR, res.getResult().getErrorId());
-        assertInvocations(never(), never(), never());
-    }
+  @Test
+  void sendMessageToRecipientCertificateDoesNotExistTest() throws Exception {
+    when(validator.validate(any(SendMessageToRecipientType.class)))
+        .thenThrow(new InvalidCertificateException("intygId", null));
+    SendMessageToRecipientResponseType res =
+        responder.sendMessageToRecipient(LOGICAL_ADDRESS, createParameters());
+    assertEquals(ResultCodeType.ERROR, res.getResult().getResultCode());
+    assertEquals(ErrorIdType.APPLICATION_ERROR, res.getResult().getErrorId());
+    assertInvocations(never(), never(), never());
+  }
 
-    @Test
-    void sendMessageToRecipientResponderClientErrorTest() throws Exception {
-        final String clientErrorText = "something wrong";
-        setupClientResponse(ResultTypeUtil.errorResult(ErrorIdType.APPLICATION_ERROR, clientErrorText));
-        SendMessageToRecipientResponseType res = responder.sendMessageToRecipient(LOGICAL_ADDRESS, createParameters());
-        assertEquals(ResultCodeType.ERROR, res.getResult().getResultCode());
-        assertEquals(ErrorIdType.APPLICATION_ERROR, res.getResult().getErrorId());
-        assertEquals(clientErrorText, res.getResult().getResultText());
-        assertInvocations(never(), never(), times(1));
-    }
+  @Test
+  void sendMessageToRecipientResponderClientErrorTest() throws Exception {
+    final String clientErrorText = "something wrong";
+    setupClientResponse(ResultTypeUtil.errorResult(ErrorIdType.APPLICATION_ERROR, clientErrorText));
+    SendMessageToRecipientResponseType res =
+        responder.sendMessageToRecipient(LOGICAL_ADDRESS, createParameters());
+    assertEquals(ResultCodeType.ERROR, res.getResult().getResultCode());
+    assertEquals(ErrorIdType.APPLICATION_ERROR, res.getResult().getErrorId());
+    assertEquals(clientErrorText, res.getResult().getResultText());
+    assertInvocations(never(), never(), times(1));
+  }
 
-    @Test
-    void sendMessageToRecipientArendeServiceThrowsExceptionTest() throws Exception {
-        setupClientResponse(ResultTypeUtil.okResult());
+  @Test
+  void sendMessageToRecipientArendeServiceThrowsExceptionTest() throws Exception {
+    setupClientResponse(ResultTypeUtil.okResult());
 
-        when(arendeService.processIncomingMessage(or(isNull(), any(Arende.class)))).thenThrow(new RuntimeException("error"));
+    when(arendeService.processIncomingMessage(or(isNull(), any(Arende.class))))
+        .thenThrow(new RuntimeException("error"));
 
-        SendMessageToRecipientResponseType res = responder.sendMessageToRecipient(LOGICAL_ADDRESS, createParameters());
-        assertEquals(ResultCodeType.OK, res.getResult().getResultCode());
-        assertInvocations(times(1), times(1), times(1));
-    }
+    SendMessageToRecipientResponseType res =
+        responder.sendMessageToRecipient(LOGICAL_ADDRESS, createParameters());
+    assertEquals(ResultCodeType.OK, res.getResult().getResultCode());
+    assertInvocations(times(1), times(1), times(1));
+  }
 
-    private SendMessageToRecipientType createParameters() {
-        SendMessageToRecipientType parameters = new SendMessageToRecipientType();
-        parameters.setLogiskAdressMottagare(LOGICAL_ADDRESS_RECIPIENT);
-        parameters.setAmne(new Amneskod());
-        parameters.setIntygsId(new IntygId());
-        return parameters;
-    }
+  private SendMessageToRecipientType createParameters() {
+    SendMessageToRecipientType parameters = new SendMessageToRecipientType();
+    parameters.setLogiskAdressMottagare(LOGICAL_ADDRESS_RECIPIENT);
+    parameters.setAmne(new Amneskod());
+    parameters.setIntygsId(new IntygId());
+    return parameters;
+  }
 
-    private void setupValidatorError() throws InvalidCertificateException {
-        when(validator.validate(any(SendMessageToRecipientType.class))).thenReturn(List.of(""));
-    }
+  private void setupValidatorError() throws InvalidCertificateException {
+    when(validator.validate(any(SendMessageToRecipientType.class))).thenReturn(List.of(""));
+  }
 
-    private void setupClientResponse(ResultType result) {
-        SendMessageToRecipientResponseType response = new SendMessageToRecipientResponseType();
-        response.setResult(result);
-        lenient().when(soapIntegrationService.sendMessageToRecipient(anyString(), any(SendMessageToRecipientType.class)))
-            .thenReturn(response);
-    }
+  private void setupClientResponse(ResultType result) {
+    SendMessageToRecipientResponseType response = new SendMessageToRecipientResponseType();
+    response.setResult(result);
+    lenient()
+        .when(
+            soapIntegrationService.sendMessageToRecipient(
+                anyString(), any(SendMessageToRecipientType.class)))
+        .thenReturn(response);
+  }
 
-    private void assertInvocations(
-        VerificationMode monitoringLogInvocation,
-        VerificationMode arendeServiceInvocation,
-        VerificationMode sendMessageToRecipient) throws InvalidCertificateException {
+  private void assertInvocations(
+      VerificationMode monitoringLogInvocation,
+      VerificationMode arendeServiceInvocation,
+      VerificationMode sendMessageToRecipient)
+      throws InvalidCertificateException {
 
-        verify(validator).validate(any(SendMessageToRecipientType.class)); // always call validator
-        verify(arendeService, arendeServiceInvocation).processIncomingMessage(any(Arende.class));
-        verify(monitoringLog, monitoringLogInvocation).logSendMessageToRecipient(or(isNull(), anyString()), anyString());
-        verify(soapIntegrationService, sendMessageToRecipient)
-            .sendMessageToRecipient(eq(LOGICAL_ADDRESS_RECIPIENT), any(SendMessageToRecipientType.class));
-    }
+    verify(validator).validate(any(SendMessageToRecipientType.class)); // always call validator
+    verify(arendeService, arendeServiceInvocation).processIncomingMessage(any(Arende.class));
+    verify(monitoringLog, monitoringLogInvocation)
+        .logSendMessageToRecipient(or(isNull(), anyString()), anyString());
+    verify(soapIntegrationService, sendMessageToRecipient)
+        .sendMessageToRecipient(
+            eq(LOGICAL_ADDRESS_RECIPIENT), any(SendMessageToRecipientType.class));
+  }
 }

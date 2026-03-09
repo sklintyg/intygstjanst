@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -35,74 +35,87 @@ import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Certific
 @RequiredArgsConstructor
 public class InternalNotificationService {
 
-    private static final String ACTION = "action";
-    private static final String SENT = "sent";
+  private static final String ACTION = "action";
+  private static final String SENT = "sent";
 
-    private static final String CERTIFICATE_ID = "certificate-id";
-    private static final String CERTIFICATE_TYPE = "certificate-type";
-    private static final String CERTIFICATE_TYPE_VERSION = "certificate-type-version";
-    private static final String CARE_UNIT_ID = "care-unit-id";
+  private static final String CERTIFICATE_ID = "certificate-id";
+  private static final String CERTIFICATE_TYPE = "certificate-type";
+  private static final String CERTIFICATE_TYPE_VERSION = "certificate-type-version";
+  private static final String CARE_UNIT_ID = "care-unit-id";
 
-    private static final Logger LOG = LoggerFactory.getLogger(lookup().getClass());
+  private static final Logger LOG = LoggerFactory.getLogger(lookup().getClass());
 
-    private final JmsTemplate jmsTemplate;
-    private final AppProperties appProperties;
+  private final JmsTemplate jmsTemplate;
+  private final AppProperties appProperties;
 
-    public void notifyCareIfSentByCitizen(Certificate certificate, String personId, String hsaId) {
-        if (personId != null && hsaId == null) {
-            notifyCertificateSentByCitizenToRecipient(
-                certificate.getId(), certificate.getType(), certificate.getTypeVersion(), certificate.getCareUnitId()
-            );
-        }
+  public void notifyCareIfSentByCitizen(Certificate certificate, String personId, String hsaId) {
+    if (personId != null && hsaId == null) {
+      notifyCertificateSentByCitizenToRecipient(
+          certificate.getId(),
+          certificate.getType(),
+          certificate.getTypeVersion(),
+          certificate.getCareUnitId());
     }
+  }
 
-    public void notifyCareIfSentByCitizen(
-        se.inera.intyg.common.support.facade.model.Certificate certificate, String personId,
-        String hsaId) {
-        if (personId != null && hsaId == null) {
-            notifyCertificateSentByCitizenToRecipient(
-                certificate.getMetadata().getId(), certificate.getMetadata().getType(), certificate.getMetadata().getTypeVersion(),
-                certificate.getMetadata().getUnit().getUnitId()
-            );
-        }
+  public void notifyCareIfSentByCitizen(
+      se.inera.intyg.common.support.facade.model.Certificate certificate,
+      String personId,
+      String hsaId) {
+    if (personId != null && hsaId == null) {
+      notifyCertificateSentByCitizenToRecipient(
+          certificate.getMetadata().getId(),
+          certificate.getMetadata().getType(),
+          certificate.getMetadata().getTypeVersion(),
+          certificate.getMetadata().getUnit().getUnitId());
     }
+  }
 
-    private void notifyCertificateSentByCitizenToRecipient(String certificateId, String certificateType, String certificateTypeVersion,
-        String careUnitId) {
-        boolean rc = sendCertificateSentByCitizienToInternalNotificationQueue(SENT, certificateId, certificateType, certificateTypeVersion,
-            careUnitId);
-        if (rc) {
-            LOG.debug("Internal notification was sent");
-        } else {
-            LOG.error("An error occured sending internal notification");
-        }
+  private void notifyCertificateSentByCitizenToRecipient(
+      String certificateId,
+      String certificateType,
+      String certificateTypeVersion,
+      String careUnitId) {
+    boolean rc =
+        sendCertificateSentByCitizienToInternalNotificationQueue(
+            SENT, certificateId, certificateType, certificateTypeVersion, careUnitId);
+    if (rc) {
+      LOG.debug("Internal notification was sent");
+    } else {
+      LOG.error("An error occured sending internal notification");
     }
+  }
 
-    private boolean sendCertificateSentByCitizienToInternalNotificationQueue(
-        final String actionType,
-        final String certificateId,
-        final String certificateType,
-        final String certificateTypeVersion,
-        final String careUnitId) {
+  private boolean sendCertificateSentByCitizienToInternalNotificationQueue(
+      final String actionType,
+      final String certificateId,
+      final String certificateType,
+      final String certificateTypeVersion,
+      final String careUnitId) {
 
-        try {
-            return send(session -> {
-                TextMessage message = session.createTextMessage("");
-                message.setStringProperty(ACTION, actionType);
-                message.setStringProperty(CERTIFICATE_ID, certificateId);
-                message.setStringProperty(CERTIFICATE_TYPE, certificateType);
-                message.setStringProperty(CERTIFICATE_TYPE_VERSION, certificateTypeVersion);
-                message.setStringProperty(CARE_UNIT_ID, careUnitId);
-                return message;
-            });
-        } catch (JmsException e) {
-            LOG.error("Failure sending '{}' type with certificate id '{}'to statistics", actionType, certificateId, e);
-            return false;
-        }
+    try {
+      return send(
+          session -> {
+            TextMessage message = session.createTextMessage("");
+            message.setStringProperty(ACTION, actionType);
+            message.setStringProperty(CERTIFICATE_ID, certificateId);
+            message.setStringProperty(CERTIFICATE_TYPE, certificateType);
+            message.setStringProperty(CERTIFICATE_TYPE_VERSION, certificateTypeVersion);
+            message.setStringProperty(CARE_UNIT_ID, careUnitId);
+            return message;
+          });
+    } catch (JmsException e) {
+      LOG.error(
+          "Failure sending '{}' type with certificate id '{}'to statistics",
+          actionType,
+          certificateId,
+          e);
+      return false;
     }
+  }
 
-    private boolean send(final MessageCreator messageCreator) {
-        jmsTemplate.send(appProperties.jms().internalNotificationQueue(), messageCreator);
-        return true;
-    }
+  private boolean send(final MessageCreator messageCreator) {
+    jmsTemplate.send(appProperties.jms().internalNotificationQueue(), messageCreator);
+    return true;
+  }
 }

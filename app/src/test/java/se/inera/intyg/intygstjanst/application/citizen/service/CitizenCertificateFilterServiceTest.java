@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package se.inera.intyg.intygstjanst.application.citizen.service;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -36,352 +35,299 @@ import se.inera.intyg.intygstjanst.application.citizen.dto.CitizenCertificateSta
 import se.inera.intyg.intygstjanst.application.citizen.dto.CitizenCertificateTypeDTO;
 import se.inera.intyg.intygstjanst.application.citizen.dto.CitizenCertificateUnitDTO;
 import se.inera.intyg.intygstjanst.application.citizen.dto.ListCitizenCertificatesRequest;
-import se.inera.intyg.intygstjanst.application.citizen.service.CitizenCertificateFilterService;
 
 @ExtendWith(MockitoExtension.class)
 class CitizenCertificateFilterServiceTest {
 
-    private static final CitizenCertificateDTO CITIZEN_CERTIFICATE = CitizenCertificateDTO
-        .builder()
-        .issued(LocalDateTime.of(2020, 1, 20, 20, 20, 20))
-        .type(
-            CitizenCertificateTypeDTO
-                .builder()
-                .id("TYPE_ID")
-                .build()
-        )
-        .unit(CitizenCertificateUnitDTO
-            .builder()
-            .id("UNIT_ID")
-            .build())
-        .build();
+  private static final CitizenCertificateDTO CITIZEN_CERTIFICATE =
+      CitizenCertificateDTO.builder()
+          .issued(LocalDateTime.of(2020, 1, 20, 20, 20, 20))
+          .type(CitizenCertificateTypeDTO.builder().id("TYPE_ID").build())
+          .unit(CitizenCertificateUnitDTO.builder().id("UNIT_ID").build())
+          .build();
 
-    @InjectMocks
-    CitizenCertificateFilterService citizenCertificateFilterService;
+  @InjectMocks CitizenCertificateFilterService citizenCertificateFilterService;
+
+  @Nested
+  class FilterYears {
+
+    @Test
+    void shouldReturnTrueIfIncludedInList() {
+      final var response =
+          citizenCertificateFilterService.filter(
+              CITIZEN_CERTIFICATE,
+              ListCitizenCertificatesRequest.builder().years(List.of("2020", "2021")).build());
+
+      assertTrue(response);
+    }
+
+    @Test
+    void shouldReturnFalseIfIncludedInList() {
+      final var response =
+          citizenCertificateFilterService.filter(
+              CITIZEN_CERTIFICATE,
+              ListCitizenCertificatesRequest.builder().years(List.of("2019", "2021")).build());
+      assertFalse(response);
+    }
+
+    @Test
+    void shouldReturnTrueIfEmptyList() {
+      final var response =
+          citizenCertificateFilterService.filter(
+              CITIZEN_CERTIFICATE, ListCitizenCertificatesRequest.builder().build());
+      assertTrue(response);
+    }
+  }
+
+  @Nested
+  class FilterUnitId {
+
+    @Test
+    void shouldReturnTrueIfIncludedInList() {
+
+      final var response =
+          citizenCertificateFilterService.filter(
+              CITIZEN_CERTIFICATE,
+              ListCitizenCertificatesRequest.builder()
+                  .units(List.of("UNIT_ID", "NON_UNIT_ID"))
+                  .build());
+
+      assertTrue(response);
+    }
+
+    @Test
+    void shouldReturnFalseIfIncludedInList() {
+      final var response =
+          citizenCertificateFilterService.filter(
+              CITIZEN_CERTIFICATE,
+              ListCitizenCertificatesRequest.builder().units(List.of("NON_UNIT_ID")).build());
+
+      assertFalse(response);
+    }
+
+    @Test
+    void shouldReturnTrueIfEmptyList() {
+      final var response =
+          citizenCertificateFilterService.filter(
+              CITIZEN_CERTIFICATE, ListCitizenCertificatesRequest.builder().build());
+
+      assertTrue(response);
+    }
+  }
+
+  @Nested
+  class FilterCertificateType {
+
+    @Test
+    void shouldReturnTrueIfIncludedInList() {
+
+      final var response =
+          citizenCertificateFilterService.filter(
+              CITIZEN_CERTIFICATE,
+              ListCitizenCertificatesRequest.builder()
+                  .certificateTypes(List.of("TYPE_ID", "NON_TYPE_ID"))
+                  .build());
+
+      assertTrue(response);
+    }
+
+    @Test
+    void shouldReturnFalseIfIncludedInList() {
+      final var response =
+          citizenCertificateFilterService.filter(
+              CITIZEN_CERTIFICATE,
+              ListCitizenCertificatesRequest.builder().units(List.of("NON_TYPE_ID")).build());
+
+      assertFalse(response);
+    }
+
+    @Test
+    void shouldReturnTrueIfEmptyList() {
+      final var response =
+          citizenCertificateFilterService.filter(
+              CITIZEN_CERTIFICATE, ListCitizenCertificatesRequest.builder().build());
+
+      assertTrue(response);
+    }
+  }
+
+  @Nested
+  class FilterStatuses {
 
     @Nested
-    class FilterYears {
+    class RecipientIsNull {
 
-        @Test
-        void shouldReturnTrueIfIncludedInList() {
-            final var response = citizenCertificateFilterService.filter(
-                CITIZEN_CERTIFICATE,
-                ListCitizenCertificatesRequest
-                    .builder()
-                    .years(List.of("2020", "2021"))
-                    .build()
-            );
+      final CitizenCertificateDTO certificate =
+          CitizenCertificateDTO.builder().recipient(null).build();
 
-            assertTrue(response);
-        }
+      @Test
+      void shouldReturnTrueIfListIsEmpty() {
+        final var response =
+            citizenCertificateFilterService.filter(
+                certificate, ListCitizenCertificatesRequest.builder().build());
 
-        @Test
-        void shouldReturnFalseIfIncludedInList() {
-            final var response = citizenCertificateFilterService.filter(
-                CITIZEN_CERTIFICATE,
-                ListCitizenCertificatesRequest
-                    .builder()
-                    .years(List.of("2019", "2021"))
-                    .build()
-            );
-            assertFalse(response);
-        }
+        assertTrue(response);
+      }
 
-        @Test
-        void shouldReturnTrueIfEmptyList() {
-            final var response = citizenCertificateFilterService.filter(
-                CITIZEN_CERTIFICATE,
-                ListCitizenCertificatesRequest
-                    .builder()
-                    .build()
-            );
-            assertTrue(response);
-        }
+      @Test
+      void shouldReturnFalseIfFilteringOnSent() {
+        final var response =
+            citizenCertificateFilterService.filter(
+                certificate,
+                ListCitizenCertificatesRequest.builder()
+                    .statuses(List.of(CitizenCertificateStatusTypeDTO.SENT))
+                    .build());
+
+        assertFalse(response);
+      }
+
+      @Test
+      void shouldReturnFalseIfFilteringOnBothStatuses() {
+        final var response =
+            citizenCertificateFilterService.filter(
+                certificate,
+                ListCitizenCertificatesRequest.builder()
+                    .statuses(
+                        List.of(
+                            CitizenCertificateStatusTypeDTO.SENT,
+                            CitizenCertificateStatusTypeDTO.NOT_SENT))
+                    .build());
+
+        assertFalse(response);
+      }
+
+      @Test
+      void shouldReturnFalseIfFilteringOnNotSent() {
+        final var response =
+            citizenCertificateFilterService.filter(
+                certificate,
+                ListCitizenCertificatesRequest.builder()
+                    .statuses(List.of(CitizenCertificateStatusTypeDTO.NOT_SENT))
+                    .build());
+
+        assertFalse(response);
+      }
     }
 
     @Nested
-    class FilterUnitId {
+    class RecipientExistsAndSent {
 
-        @Test
-        void shouldReturnTrueIfIncludedInList() {
+      final CitizenCertificateDTO certificate =
+          CitizenCertificateDTO.builder()
+              .recipient(
+                  CitizenCertificateRecipientDTO.builder()
+                      .name("Name")
+                      .id("Id")
+                      .sent(LocalDateTime.now())
+                      .build())
+              .build();
 
-            final var response = citizenCertificateFilterService.filter(
-                CITIZEN_CERTIFICATE,
-                ListCitizenCertificatesRequest
-                    .builder()
-                    .units(List.of("UNIT_ID", "NON_UNIT_ID"))
-                    .build()
-            );
+      @Test
+      void shouldReturnTrueIfListIsEmpty() {
+        final var response =
+            citizenCertificateFilterService.filter(
+                certificate, ListCitizenCertificatesRequest.builder().build());
 
-            assertTrue(response);
-        }
+        assertTrue(response);
+      }
 
-        @Test
-        void shouldReturnFalseIfIncludedInList() {
-            final var response = citizenCertificateFilterService.filter(
-                CITIZEN_CERTIFICATE,
-                ListCitizenCertificatesRequest
-                    .builder()
-                    .units(List.of("NON_UNIT_ID"))
-                    .build()
-            );
+      @Test
+      void shouldReturnTrueIfFilteringOnSent() {
+        final var response =
+            citizenCertificateFilterService.filter(
+                certificate,
+                ListCitizenCertificatesRequest.builder()
+                    .statuses(List.of(CitizenCertificateStatusTypeDTO.SENT))
+                    .build());
 
-            assertFalse(response);
-        }
+        assertTrue(response);
+      }
 
-        @Test
-        void shouldReturnTrueIfEmptyList() {
-            final var response = citizenCertificateFilterService.filter(
-                CITIZEN_CERTIFICATE,
-                ListCitizenCertificatesRequest
-                    .builder()
-                    .build()
-            );
+      @Test
+      void shouldReturnFalseIfFilteringOnNotSent() {
+        final var response =
+            citizenCertificateFilterService.filter(
+                certificate,
+                ListCitizenCertificatesRequest.builder()
+                    .statuses(List.of(CitizenCertificateStatusTypeDTO.NOT_SENT))
+                    .build());
 
-            assertTrue(response);
-        }
+        assertFalse(response);
+      }
+
+      @Test
+      void shouldReturnTrueIfFilteringOnAllStatuses() {
+        final var response =
+            citizenCertificateFilterService.filter(
+                certificate,
+                ListCitizenCertificatesRequest.builder()
+                    .statuses(
+                        List.of(
+                            CitizenCertificateStatusTypeDTO.SENT,
+                            CitizenCertificateStatusTypeDTO.NOT_SENT))
+                    .build());
+
+        assertTrue(response);
+      }
     }
 
     @Nested
-    class FilterCertificateType {
+    class RecipientExistsAndNotSent {
 
-        @Test
-        void shouldReturnTrueIfIncludedInList() {
+      final CitizenCertificateDTO certificate =
+          CitizenCertificateDTO.builder()
+              .recipient(
+                  CitizenCertificateRecipientDTO.builder().name("Name").id("Id").sent(null).build())
+              .build();
 
-            final var response = citizenCertificateFilterService.filter(
-                CITIZEN_CERTIFICATE,
-                ListCitizenCertificatesRequest
-                    .builder()
-                    .certificateTypes(List.of("TYPE_ID", "NON_TYPE_ID"))
-                    .build()
-            );
+      @Test
+      void shouldReturnTrueIfListIsEmpty() {
+        final var response =
+            citizenCertificateFilterService.filter(
+                certificate,
+                ListCitizenCertificatesRequest.builder().statuses(Collections.emptyList()).build());
 
-            assertTrue(response);
-        }
+        assertTrue(response);
+      }
 
-        @Test
-        void shouldReturnFalseIfIncludedInList() {
-            final var response = citizenCertificateFilterService.filter(
-                CITIZEN_CERTIFICATE,
-                ListCitizenCertificatesRequest
-                    .builder()
-                    .units(List.of("NON_TYPE_ID"))
-                    .build()
-            );
+      @Test
+      void shouldReturnFalseIfFilteringOnSent() {
+        final var response =
+            citizenCertificateFilterService.filter(
+                certificate,
+                ListCitizenCertificatesRequest.builder()
+                    .statuses(List.of(CitizenCertificateStatusTypeDTO.SENT))
+                    .build());
 
-            assertFalse(response);
-        }
+        assertFalse(response);
+      }
 
-        @Test
-        void shouldReturnTrueIfEmptyList() {
-            final var response = citizenCertificateFilterService.filter(
-                CITIZEN_CERTIFICATE,
-                ListCitizenCertificatesRequest
-                    .builder()
-                    .build()
-            );
+      @Test
+      void shouldReturnTrueIfFilteringOnNotSent() {
+        final var response =
+            citizenCertificateFilterService.filter(
+                certificate,
+                ListCitizenCertificatesRequest.builder()
+                    .statuses(List.of(CitizenCertificateStatusTypeDTO.NOT_SENT))
+                    .build());
 
-            assertTrue(response);
-        }
+        assertTrue(response);
+      }
+
+      @Test
+      void shouldReturnTrueIfFilteringOnAllStatuses() {
+        final var response =
+            citizenCertificateFilterService.filter(
+                certificate,
+                ListCitizenCertificatesRequest.builder()
+                    .statuses(
+                        List.of(
+                            CitizenCertificateStatusTypeDTO.SENT,
+                            CitizenCertificateStatusTypeDTO.NOT_SENT))
+                    .build());
+
+        assertTrue(response);
+      }
     }
-
-    @Nested
-    class FilterStatuses {
-
-        @Nested
-        class RecipientIsNull {
-
-            final CitizenCertificateDTO certificate = CitizenCertificateDTO
-                .builder()
-                .recipient(null)
-                .build();
-
-            @Test
-            void shouldReturnTrueIfListIsEmpty() {
-                final var response = citizenCertificateFilterService.filter(
-                    certificate,
-                    ListCitizenCertificatesRequest
-                        .builder()
-                        .build()
-                );
-
-                assertTrue(response);
-            }
-
-            @Test
-            void shouldReturnFalseIfFilteringOnSent() {
-                final var response = citizenCertificateFilterService.filter(
-                    certificate,
-                    ListCitizenCertificatesRequest
-                        .builder()
-                        .statuses(List.of(CitizenCertificateStatusTypeDTO.SENT))
-                        .build()
-                );
-
-                assertFalse(response);
-            }
-
-            @Test
-            void shouldReturnFalseIfFilteringOnBothStatuses() {
-                final var response = citizenCertificateFilterService.filter(
-                    certificate,
-                    ListCitizenCertificatesRequest
-                        .builder()
-                        .statuses(List.of(CitizenCertificateStatusTypeDTO.SENT, CitizenCertificateStatusTypeDTO.NOT_SENT))
-                        .build()
-                );
-
-                assertFalse(response);
-            }
-
-            @Test
-            void shouldReturnFalseIfFilteringOnNotSent() {
-                final var response = citizenCertificateFilterService.filter(
-                    certificate,
-                    ListCitizenCertificatesRequest
-                        .builder()
-                        .statuses(List.of(CitizenCertificateStatusTypeDTO.NOT_SENT))
-                        .build()
-                );
-
-                assertFalse(response);
-            }
-        }
-
-        @Nested
-        class RecipientExistsAndSent {
-
-            final CitizenCertificateDTO certificate = CitizenCertificateDTO
-                .builder()
-                .recipient(
-                    CitizenCertificateRecipientDTO
-                        .builder()
-                        .name("Name")
-                        .id("Id")
-                        .sent(LocalDateTime.now())
-                        .build()
-                )
-                .build();
-
-            @Test
-            void shouldReturnTrueIfListIsEmpty() {
-                final var response = citizenCertificateFilterService.filter(
-                    certificate,
-                    ListCitizenCertificatesRequest
-                        .builder()
-                        .build()
-                );
-
-                assertTrue(response);
-            }
-
-            @Test
-            void shouldReturnTrueIfFilteringOnSent() {
-                final var response = citizenCertificateFilterService.filter(
-                    certificate,
-                    ListCitizenCertificatesRequest
-                        .builder()
-                        .statuses(List.of(CitizenCertificateStatusTypeDTO.SENT))
-                        .build()
-                );
-
-                assertTrue(response);
-            }
-
-            @Test
-            void shouldReturnFalseIfFilteringOnNotSent() {
-                final var response = citizenCertificateFilterService.filter(
-                    certificate,
-                    ListCitizenCertificatesRequest
-                        .builder()
-                        .statuses(List.of(CitizenCertificateStatusTypeDTO.NOT_SENT))
-                        .build()
-                );
-
-                assertFalse(response);
-            }
-
-            @Test
-            void shouldReturnTrueIfFilteringOnAllStatuses() {
-                final var response = citizenCertificateFilterService.filter(
-                    certificate,
-                    ListCitizenCertificatesRequest
-                        .builder()
-                        .statuses(List.of(CitizenCertificateStatusTypeDTO.SENT, CitizenCertificateStatusTypeDTO.NOT_SENT))
-                        .build()
-                );
-
-                assertTrue(response);
-            }
-        }
-
-        @Nested
-        class RecipientExistsAndNotSent {
-
-            final CitizenCertificateDTO certificate = CitizenCertificateDTO
-                .builder()
-                .recipient(
-                    CitizenCertificateRecipientDTO
-                        .builder()
-                        .name("Name")
-                        .id("Id")
-                        .sent(null)
-                        .build()
-                )
-                .build();
-
-            @Test
-            void shouldReturnTrueIfListIsEmpty() {
-                final var response = citizenCertificateFilterService.filter(
-                    certificate,
-                    ListCitizenCertificatesRequest
-                        .builder()
-                        .statuses(Collections.emptyList())
-                        .build()
-                );
-
-                assertTrue(response);
-            }
-
-            @Test
-            void shouldReturnFalseIfFilteringOnSent() {
-                final var response = citizenCertificateFilterService.filter(
-                    certificate,
-                    ListCitizenCertificatesRequest
-                        .builder()
-                        .statuses(List.of(CitizenCertificateStatusTypeDTO.SENT))
-                        .build()
-                );
-
-                assertFalse(response);
-            }
-
-            @Test
-            void shouldReturnTrueIfFilteringOnNotSent() {
-                final var response = citizenCertificateFilterService.filter(
-                    certificate,
-                    ListCitizenCertificatesRequest
-                        .builder()
-                        .statuses(List.of(CitizenCertificateStatusTypeDTO.NOT_SENT))
-                        .build()
-                );
-
-                assertTrue(response);
-            }
-
-            @Test
-            void shouldReturnTrueIfFilteringOnAllStatuses() {
-                final var response = citizenCertificateFilterService.filter(
-                    certificate,
-                    ListCitizenCertificatesRequest
-                        .builder()
-                        .statuses(List.of(CitizenCertificateStatusTypeDTO.SENT, CitizenCertificateStatusTypeDTO.NOT_SENT))
-                        .build()
-                );
-
-                assertTrue(response);
-            }
-        }
-    }
-
+  }
 }

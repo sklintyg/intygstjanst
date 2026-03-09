@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -32,33 +32,35 @@ import se.inera.intyg.clinicalprocess.healthcond.certificate.listpossiblereceive
 @Service
 public class ListPossibleReceiversResponderImpl implements ListPossibleReceiversResponderInterface {
 
-    @Autowired
-    private RecipientService recipientService;
+  @Autowired private RecipientService recipientService;
 
-    @Override
-    public ListPossibleReceiversResponseType listPossibleReceivers(String s, ListPossibleReceiversType listPossibleReceiversType) {
-        TypAvIntyg intygTyp = listPossibleReceiversType.getIntygTyp();
-        if (intygTyp == null || Strings.isNullOrEmpty(intygTyp.getCode())) {
-            throw new IllegalArgumentException("Request to ListPossibleReceivers is missing required parameter 'intygTyp'");
-        }
-
-        CertificateType certificateType = new CertificateType(intygTyp.getCode());
-        List<Recipient> recipients = recipientService.listRecipients(certificateType);
-
-        ListPossibleReceiversResponseType response = new ListPossibleReceiversResponseType();
-        for (Recipient possibleRecipient : recipients) {
-
-            CertificateReceiverType certificateReceiverType = new CertificateReceiverType();
-            certificateReceiverType.setReceiverId(possibleRecipient.getId());
-            certificateReceiverType.setReceiverName(possibleRecipient.getName());
-            certificateReceiverType.setReceiverType(toSchemaType(possibleRecipient.getRecipientType()));
-            certificateReceiverType.setTrusted(possibleRecipient.isTrusted());
-            response.getReceiverList().add(certificateReceiverType);
-        }
-        return response;
+  @Override
+  public ListPossibleReceiversResponseType listPossibleReceivers(
+      String s, ListPossibleReceiversType listPossibleReceiversType) {
+    TypAvIntyg intygTyp = listPossibleReceiversType.getIntygTyp();
+    if (intygTyp == null || Strings.isNullOrEmpty(intygTyp.getCode())) {
+      throw new IllegalArgumentException(
+          "Request to ListPossibleReceivers is missing required parameter 'intygTyp'");
     }
 
-    private CertificateReceiverTypeType toSchemaType(CertificateRecipientType certificateRecipientType) {
-        return CertificateReceiverTypeType.valueOf(certificateRecipientType.name());
+    CertificateType certificateType = new CertificateType(intygTyp.getCode());
+    List<Recipient> recipients = recipientService.listRecipients(certificateType);
+
+    ListPossibleReceiversResponseType response = new ListPossibleReceiversResponseType();
+    for (Recipient possibleRecipient : recipients) {
+
+      CertificateReceiverType certificateReceiverType = new CertificateReceiverType();
+      certificateReceiverType.setReceiverId(possibleRecipient.getId());
+      certificateReceiverType.setReceiverName(possibleRecipient.getName());
+      certificateReceiverType.setReceiverType(toSchemaType(possibleRecipient.getRecipientType()));
+      certificateReceiverType.setTrusted(possibleRecipient.isTrusted());
+      response.getReceiverList().add(certificateReceiverType);
     }
+    return response;
+  }
+
+  private CertificateReceiverTypeType toSchemaType(
+      CertificateRecipientType certificateRecipientType) {
+    return CertificateReceiverTypeType.valueOf(certificateRecipientType.name());
+  }
 }

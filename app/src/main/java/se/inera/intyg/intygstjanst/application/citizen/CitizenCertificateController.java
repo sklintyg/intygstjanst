@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package se.inera.intyg.intygstjanst.application.citizen;
 
 import lombok.RequiredArgsConstructor;
@@ -26,16 +25,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import se.inera.intyg.intygstjanst.application.certificate.dto.SendCertificateRequestDTO;
+import se.inera.intyg.intygstjanst.application.certificate.service.SendCertificateService;
 import se.inera.intyg.intygstjanst.application.citizen.dto.CitizenCertificateSendRequestDTO;
 import se.inera.intyg.intygstjanst.application.citizen.dto.CitizenCertificatesRequestDTO;
+import se.inera.intyg.intygstjanst.application.citizen.dto.ListCitizenCertificatesRequest;
 import se.inera.intyg.intygstjanst.application.citizen.dto.ListCitizenCertificatesResponseDTO;
+import se.inera.intyg.intygstjanst.application.citizen.service.ListCitizenCertificatesService;
 import se.inera.intyg.intygstjanst.infrastructure.logging.MdcLogConstants;
 import se.inera.intyg.intygstjanst.infrastructure.logging.PerformanceLogging;
-import se.inera.intyg.intygstjanst.application.citizen.service.ListCitizenCertificatesService;
-import se.inera.intyg.intygstjanst.application.certificate.service.SendCertificateService;
-import se.inera.intyg.intygstjanst.application.certificate.dto.SendCertificateRequestDTO;
 import se.inera.intyg.intygstjanst.infrastructure.security.interceptor.ApiBasePath;
-import se.inera.intyg.intygstjanst.application.citizen.dto.ListCitizenCertificatesRequest;
 import se.inera.intyg.schemas.contract.Personnummer;
 
 @RestController
@@ -44,55 +43,54 @@ import se.inera.intyg.schemas.contract.Personnummer;
 @RequiredArgsConstructor
 public class CitizenCertificateController {
 
-    private static final Logger LOG = LoggerFactory.getLogger(CitizenCertificateController.class);
+  private static final Logger LOG = LoggerFactory.getLogger(CitizenCertificateController.class);
 
-    private final ListCitizenCertificatesService listCitizenCertificatesService;
-    private final SendCertificateService citizenSendCertificateAggregator;
+  private final ListCitizenCertificatesService listCitizenCertificatesService;
+  private final SendCertificateService citizenSendCertificateAggregator;
 
-    @PostMapping()
-    @PerformanceLogging(eventAction = "list-certificates", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED, isActive = false)
-    public ListCitizenCertificatesResponseDTO getCitizenCertificates(
-        @RequestBody CitizenCertificatesRequestDTO request) {
+  @PostMapping()
+  @PerformanceLogging(
+      eventAction = "list-certificates",
+      eventType = MdcLogConstants.EVENT_TYPE_ACCESSED,
+      isActive = false)
+  public ListCitizenCertificatesResponseDTO getCitizenCertificates(
+      @RequestBody CitizenCertificatesRequestDTO request) {
 
-        LOG.debug("Getting list of citizen certificates");
-        final var response = listCitizenCertificatesService.get(
-            ListCitizenCertificatesRequest
-                .builder()
+    LOG.debug("Getting list of citizen certificates");
+    final var response =
+        listCitizenCertificatesService.get(
+            ListCitizenCertificatesRequest.builder()
                 .personnummer(Personnummer.createPersonnummer(request.getPatientId()).orElseThrow())
                 .certificateTypes(request.getCertificateTypes())
                 .units(request.getUnits())
                 .years(request.getYears())
                 .statuses(request.getStatuses())
-                .build()
-        );
+                .build());
 
-        return ListCitizenCertificatesResponseDTO
-            .builder()
-            .content(response)
-            .build();
+    return ListCitizenCertificatesResponseDTO.builder().content(response).build();
+  }
+
+  @PostMapping("/send")
+  @PerformanceLogging(
+      eventAction = "send-certificate",
+      eventType = MdcLogConstants.EVENT_TYPE_CHANGE,
+      isActive = false)
+  public void sendCitizenCertificate(@RequestBody CitizenCertificateSendRequestDTO request) {
+
+    LOG.debug("Sending citizen certificate");
+
+    final var convertedPatientId =
+        Personnummer.createPersonnummer(request.getPatientId()).orElseThrow();
+
+    try {
+      citizenSendCertificateAggregator.send(
+          SendCertificateRequestDTO.builder()
+              .certificateId(request.getCertificateId())
+              .patientId(convertedPatientId)
+              .recipientId(request.getRecipient())
+              .build());
+    } catch (Exception e) {
+      throw new IllegalStateException(e);
     }
-
-
-    @PostMapping("/send")
-    @PerformanceLogging(eventAction = "send-certificate", eventType = MdcLogConstants.EVENT_TYPE_CHANGE, isActive = false)
-    public void sendCitizenCertificate(
-        @RequestBody CitizenCertificateSendRequestDTO request) {
-
-        LOG.debug("Sending citizen certificate");
-
-        final var convertedPatientId = Personnummer.createPersonnummer(request.getPatientId()).orElseThrow();
-
-        try {
-            citizenSendCertificateAggregator.send(
-                SendCertificateRequestDTO
-                    .builder()
-                    .certificateId(request.getCertificateId())
-                    .patientId(convertedPatientId)
-                    .recipientId(request.getRecipient())
-                    .build()
-            );
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
-        }
-    }
+  }
 }

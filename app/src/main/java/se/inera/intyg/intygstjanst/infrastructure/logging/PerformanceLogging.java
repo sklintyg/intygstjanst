@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -29,12 +29,11 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface PerformanceLogging {
 
-    String eventType();
+  String eventType();
 
-    String eventAction();
+  String eventAction();
 
-    String eventCategory() default EVENT_CATEGORY_API;
+  String eventCategory() default EVENT_CATEGORY_API;
 
-    boolean isActive() default true;
-
+  boolean isActive() default true;
 }

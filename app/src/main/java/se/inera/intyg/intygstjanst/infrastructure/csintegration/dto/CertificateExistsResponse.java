@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package se.inera.intyg.intygstjanst.infrastructure.csintegration.dto;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -30,10 +29,8 @@ import se.inera.intyg.intygstjanst.infrastructure.csintegration.dto.CertificateE
 @Builder
 public class CertificateExistsResponse {
 
-    boolean exists;
+  boolean exists;
 
-    @JsonPOJOBuilder(withPrefix = "")
-    public static class CertificateExistsResponseBuilder {
-
-    }
+  @JsonPOJOBuilder(withPrefix = "")
+  public static class CertificateExistsResponseBuilder {}
 }

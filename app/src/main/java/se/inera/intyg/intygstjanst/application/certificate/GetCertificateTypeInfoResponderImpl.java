@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -24,44 +24,52 @@ import org.springframework.stereotype.Service;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.getcertificatetypeinfo.v1.GetCertificateTypeInfoResponderInterface;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.getcertificatetypeinfo.v1.GetCertificateTypeInfoResponseType;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.getcertificatetypeinfo.v1.GetCertificateTypeInfoType;
+import se.inera.intyg.intygstjanst.application.certificate.service.CertificateService;
+import se.inera.intyg.intygstjanst.application.exception.ServerException;
+import se.inera.intyg.intygstjanst.application.recipient.CertificateTypeInfo;
 import se.inera.intyg.intygstjanst.infrastructure.logging.MdcLogConstants;
 import se.inera.intyg.intygstjanst.infrastructure.logging.PerformanceLogging;
-import se.inera.intyg.intygstjanst.application.exception.ServerException;
-import se.inera.intyg.intygstjanst.application.certificate.service.CertificateService;
-import se.inera.intyg.intygstjanst.application.recipient.CertificateTypeInfo;
 
-/**
- * Created by eriklupander on 2017-05-11.
- */
+/** Created by eriklupander on 2017-05-11. */
 @Service
 @SchemaValidation
-public class GetCertificateTypeInfoResponderImpl implements GetCertificateTypeInfoResponderInterface {
+public class GetCertificateTypeInfoResponderImpl
+    implements GetCertificateTypeInfoResponderInterface {
 
-    @Autowired
-    private CertificateService certificateService;
+  @Autowired private CertificateService certificateService;
 
-    @Override
+  @Override
+  @PerformanceLogging(
+      eventAction = "retrieve-certificate-type-info",
+      eventType = MdcLogConstants.EVENT_TYPE_ACCESSED,
+      isActive = false)
+  public GetCertificateTypeInfoResponseType getCertificateTypeInfo(
+      String logicalAddress, GetCertificateTypeInfoType request) {
 
-    @PerformanceLogging(eventAction = "retrieve-certificate-type-info", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED, isActive = false)
-    public GetCertificateTypeInfoResponseType getCertificateTypeInfo(String logicalAddress, GetCertificateTypeInfoType request) {
-
-        if (isNullOrEmpty(request)) {
-            throw new IllegalArgumentException("Request to GetCertificateType is missing required parameter 'intygs-id'");
-        }
-
-        final CertificateTypeInfo certificateTypeInfo = certificateService.getCertificateTypeInfo(request.getIntygsId());
-        if (certificateTypeInfo == null) {
-            throw new ServerException("Failed to get certificate's type. "
-                + "Certificate with id " + request.getIntygsId() + " is invalid or does not exist");
-        }
-
-        GetCertificateTypeInfoResponseType response = new GetCertificateTypeInfoResponseType();
-        response.setTyp(certificateTypeInfo.getTypAvIntyg());
-        response.setTypVersion(certificateTypeInfo.getVersion());
-        return response;
+    if (isNullOrEmpty(request)) {
+      throw new IllegalArgumentException(
+          "Request to GetCertificateType is missing required parameter 'intygs-id'");
     }
 
-    private boolean isNullOrEmpty(GetCertificateTypeInfoType request) {
-        return request == null || request.getIntygsId() == null || request.getIntygsId().trim().isEmpty();
+    final CertificateTypeInfo certificateTypeInfo =
+        certificateService.getCertificateTypeInfo(request.getIntygsId());
+    if (certificateTypeInfo == null) {
+      throw new ServerException(
+          "Failed to get certificate's type. "
+              + "Certificate with id "
+              + request.getIntygsId()
+              + " is invalid or does not exist");
     }
+
+    GetCertificateTypeInfoResponseType response = new GetCertificateTypeInfoResponseType();
+    response.setTyp(certificateTypeInfo.getTypAvIntyg());
+    response.setTypVersion(certificateTypeInfo.getVersion());
+    return response;
+  }
+
+  private boolean isNullOrEmpty(GetCertificateTypeInfoType request) {
+    return request == null
+        || request.getIntygsId() == null
+        || request.getIntygsId().trim().isEmpty();
+  }
 }

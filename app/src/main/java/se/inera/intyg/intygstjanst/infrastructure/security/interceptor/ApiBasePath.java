@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -24,15 +24,15 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Declares which servlet base path(s) a REST controller is accessible on.
- * Enforced by {@link ApiBasePathEnforcingInterceptor}.
+ * Declares which servlet base path(s) a REST controller is accessible on. Enforced by {@link
+ * ApiBasePathEnforcingInterceptor}.
  *
- * <p>Example: {@code @ApiBasePath("/internalapi")} restricts the controller to
- * requests arriving via the {@code /internalapi/*} servlet mapping.</p>
+ * <p>Example: {@code @ApiBasePath("/internalapi")} restricts the controller to requests arriving
+ * via the {@code /internalapi/*} servlet mapping.
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ApiBasePath {
 
-    String[] value();
+  String[] value();
 }

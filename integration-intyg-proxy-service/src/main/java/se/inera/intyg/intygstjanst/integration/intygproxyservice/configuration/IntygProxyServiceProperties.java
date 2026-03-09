@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package se.inera.intyg.intygstjanst.integration.intygproxyservice.configuration;
 
 import jakarta.validation.Valid;
@@ -26,40 +25,31 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
 /**
- * Immutable configuration record for the Intyg Proxy Service integration module.
- * Bound to the {@code app.integration.intyg-proxy-service.*} prefix.
+ * Immutable configuration record for the Intyg Proxy Service integration module. Bound to the
+ * {@code app.integration.intyg-proxy-service.*} prefix.
  */
 @Validated
 @ConfigurationProperties(prefix = "app.integration.intyg-proxy-service")
 public record IntygProxyServiceProperties(
-    String baseUrl,
-    @Valid Hsa hsa,
-    @Valid Pu pu,
-    @Valid Cache cache
-) {
+    String baseUrl, @Valid Hsa hsa, @Valid Pu pu, @Valid Cache cache) {
 
-    public record Hsa(
-        @NotBlank String employeeEndpoint,
-        @NotBlank String credentialInformationEndpoint,
-        @NotBlank String healthcareUnitEndpoint,
-        @NotBlank String healthcareUnitMembersEndpoint,
-        @NotBlank String unitEndpoint,
-        @NotBlank String credentialsForPersonEndpoint,
-        @NotBlank String certificationPersonEndpoint,
-        @NotBlank String lastUpdateEndpoint,
-        @NotBlank String healthcareProviderEndpoint
-    ) {}
+  public record Hsa(
+      @NotBlank String employeeEndpoint,
+      @NotBlank String credentialInformationEndpoint,
+      @NotBlank String healthcareUnitEndpoint,
+      @NotBlank String healthcareUnitMembersEndpoint,
+      @NotBlank String unitEndpoint,
+      @NotBlank String credentialsForPersonEndpoint,
+      @NotBlank String certificationPersonEndpoint,
+      @NotBlank String lastUpdateEndpoint,
+      @NotBlank String healthcareProviderEndpoint) {}
 
-    public record Pu(
-        @NotBlank String personEndpoint,
-        @NotBlank String personsEndpoint
-    ) {}
+  public record Pu(@NotBlank String personEndpoint, @NotBlank String personsEndpoint) {}
 
-    public record Cache(
-        @Positive long employeeTtlSeconds,
-        @Positive long healthcareUnitTtlSeconds,
-        @Positive long healthcareUnitMembersTtlSeconds,
-        @Positive long unitTtlSeconds,
-        @Positive long healthcareProviderTtlSeconds
-    ) {}
+  public record Cache(
+      @Positive long employeeTtlSeconds,
+      @Positive long healthcareUnitTtlSeconds,
+      @Positive long healthcareUnitMembersTtlSeconds,
+      @Positive long unitTtlSeconds,
+      @Positive long healthcareProviderTtlSeconds) {}
 }

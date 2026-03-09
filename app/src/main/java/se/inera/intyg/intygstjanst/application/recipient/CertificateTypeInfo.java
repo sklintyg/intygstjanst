@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -20,24 +20,22 @@ package se.inera.intyg.intygstjanst.application.recipient;
 
 import se.inera.clinicalprocess.healthcond.certificate.types.v3.TypAvIntyg;
 
-/**
- * Created by marced on 2018-09-17.
- */
+/** Created by marced on 2018-09-17. */
 public class CertificateTypeInfo {
 
-    private TypAvIntyg typAvIntyg;
-    private String version;
+  private TypAvIntyg typAvIntyg;
+  private String version;
 
-    public CertificateTypeInfo(TypAvIntyg typAvIntyg, String version) {
-        this.typAvIntyg = typAvIntyg;
-        this.version = version;
-    }
+  public CertificateTypeInfo(TypAvIntyg typAvIntyg, String version) {
+    this.typAvIntyg = typAvIntyg;
+    this.version = version;
+  }
 
-    public TypAvIntyg getTypAvIntyg() {
-        return typAvIntyg;
-    }
+  public TypAvIntyg getTypAvIntyg() {
+    return typAvIntyg;
+  }
 
-    public String getVersion() {
-        return version;
-    }
+  public String getVersion() {
+    return version;
+  }
 }

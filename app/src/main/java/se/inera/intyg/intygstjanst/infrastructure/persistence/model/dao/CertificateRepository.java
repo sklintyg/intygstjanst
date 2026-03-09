@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -28,17 +28,20 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CertificateRepository extends JpaRepository<Certificate, String> {
 
-    @Query("select c from Certificate c where c.careGiverId = :careProviderId")
-    Page<Certificate> findCertificatesForCareProvider(@Param("careProviderId") String careProviderId, Pageable pageable);
+  @Query("select c from Certificate c where c.careGiverId = :careProviderId")
+  Page<Certificate> findCertificatesForCareProvider(
+      @Param("careProviderId") String careProviderId, Pageable pageable);
 
-    @Query("select c.id from Certificate c where c.careGiverId = :careProviderId")
-    Page<String> findCertificateIdsForCareProvider(@Param("careProviderId") String careProviderId, Pageable pageable);
+  @Query("select c.id from Certificate c where c.careGiverId = :careProviderId")
+  Page<String> findCertificateIdsForCareProvider(
+      @Param("careProviderId") String careProviderId, Pageable pageable);
 
-    @Query("select count(c.id) FROM Certificate c "
-        + "join CertificateMetaData cm on c.id = cm.certificateId "
-        + "where c.careGiverId = :careProviderId and cm.isRevoked = true")
-    long findTotalRevokedForCareProvider(@Param("careProviderId") String careProviderId);
+  @Query(
+      "select count(c.id) FROM Certificate c "
+          + "join CertificateMetaData cm on c.id = cm.certificateId "
+          + "where c.careGiverId = :careProviderId and cm.isRevoked = true")
+  long findTotalRevokedForCareProvider(@Param("careProviderId") String careProviderId);
 
-    @Query("select count(c.id) from Certificate c where c.careGiverId = :careProviderId")
-    Long getCertificateCountForCareProvider(@Param("careProviderId") String careProviderId);
+  @Query("select count(c.id) from Certificate c where c.careGiverId = :careProviderId")
+  Long getCertificateCountForCareProvider(@Param("careProviderId") String careProviderId);
 }

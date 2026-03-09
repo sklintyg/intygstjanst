@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,25 +16,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package se.inera.intyg.intygstjanst.infrastructure.csintegration.dto;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import lombok.Builder;
 import lombok.Value;
-import se.inera.intyg.intygstjanst.infrastructure.csintegration.dto.GetCitizenCertificatesRequest.GetCitizenCertificatesRequestBuilder;
 import se.inera.intyg.intygstjanst.application.sickleave.dto.PersonIdDTO;
+import se.inera.intyg.intygstjanst.infrastructure.csintegration.dto.GetCitizenCertificatesRequest.GetCitizenCertificatesRequestBuilder;
 
 @JsonDeserialize(builder = GetCitizenCertificatesRequestBuilder.class)
 @Value
 @Builder
 public class GetCitizenCertificatesRequest {
 
-    PersonIdDTO personId;
+  PersonIdDTO personId;
 
-    @JsonPOJOBuilder(withPrefix = "")
-    public static class GetCitizenCertificatesRequestBuilder {
-
-    }
+  @JsonPOJOBuilder(withPrefix = "")
+  public static class GetCitizenCertificatesRequestBuilder {}
 }

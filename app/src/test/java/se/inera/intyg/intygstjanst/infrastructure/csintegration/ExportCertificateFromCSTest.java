@@ -1,3 +1,21 @@
+/*
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
+ *
+ * This file is part of sklintyg (https://github.com/sklintyg).
+ *
+ * sklintyg is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * sklintyg is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package se.inera.intyg.intygstjanst.infrastructure.csintegration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -21,102 +39,122 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import se.inera.intyg.intygstjanst.application.export.dto.CertificateExportPageDTO;
+import se.inera.intyg.intygstjanst.application.export.dto.CertificateXmlDTO;
 import se.inera.intyg.intygstjanst.infrastructure.csintegration.dto.ExportCertificateInternalResponseDTO;
 import se.inera.intyg.intygstjanst.infrastructure.csintegration.dto.ExportCertificatesRequestDTO;
 import se.inera.intyg.intygstjanst.infrastructure.csintegration.dto.ExportInternalResponseDTO;
 import se.inera.intyg.intygstjanst.infrastructure.csintegration.dto.TotalExportsInternalResponseDTO;
-import se.inera.intyg.intygstjanst.application.export.dto.CertificateExportPageDTO;
-import se.inera.intyg.intygstjanst.application.export.dto.CertificateXmlDTO;
 
 @ExtendWith(MockitoExtension.class)
 class ExportCertificateFromCSTest {
 
-    private static final String CARE_PROVIDER_ID = "careProviderId";
-    private static final String ENCODED_XML = "xml";
-    private static final ExportInternalResponseDTO EXPORT_INTERNAL_RESPONSE_DTO = ExportInternalResponseDTO.builder()
-        .exports(
-            List.of(
-                ExportCertificateInternalResponseDTO.builder()
-                    .certificateId("id")
-                    .revoked(false)
-                    .xml(ENCODED_XML)
-                    .build()
-            )
-        )
-        .build();
-    private static final String DECODED_XML = new String(Base64.getDecoder().decode(ENCODED_XML), StandardCharsets.UTF_8);
-    @Mock
-    CSIntegrationService csIntegrationService;
-    @InjectMocks
-    ExportCertificateFromCS exportCertificateFromCS;
+  private static final String CARE_PROVIDER_ID = "careProviderId";
+  private static final String ENCODED_XML = "xml";
+  private static final ExportInternalResponseDTO EXPORT_INTERNAL_RESPONSE_DTO =
+      ExportInternalResponseDTO.builder()
+          .exports(
+              List.of(
+                  ExportCertificateInternalResponseDTO.builder()
+                      .certificateId("id")
+                      .revoked(false)
+                      .xml(ENCODED_XML)
+                      .build()))
+          .build();
+  private static final String DECODED_XML =
+      new String(Base64.getDecoder().decode(ENCODED_XML), StandardCharsets.UTF_8);
+  @Mock CSIntegrationService csIntegrationService;
+  @InjectMocks ExportCertificateFromCS exportCertificateFromCS;
 
-    @Nested
-    class CalculatePageNumber {
+  @Nested
+  class CalculatePageNumber {
 
-        @BeforeEach
-        void setUp() {
-            doReturn(TotalExportsInternalResponseDTO.builder().totalCertificates(10).totalRevokedCertificates(0).build())
-                .when(csIntegrationService).getInternalTotalExportForCareProvider(CARE_PROVIDER_ID);
-        }
-
-        private static Stream<Arguments> providePageNumberArguments() {
-            return Stream.of(
-                Arguments.of(10L, 10, 5, 0),
-                Arguments.of(10L, 15, 5, 1),
-                Arguments.of(10L, 19, 5, 1),
-                Arguments.of(10L, 22, 5, 2),
-                Arguments.of(10L, 27, 5, 3),
-                Arguments.of(10L, 32, 5, 4),
-                Arguments.of(10L, 35, 5, 5)
-            );
-        }
-
-        @ParameterizedTest
-        @MethodSource("providePageNumberArguments")
-        void shallCalculatePageNumber(long totalFromIT, int collected, int batchSize, int expectedPageNumber) {
-            final var argumentCaptor = ArgumentCaptor.forClass(ExportCertificatesRequestDTO.class);
-            final var exportPageDTO = CertificateExportPageDTO.of(CARE_PROVIDER_ID, 0, totalFromIT, 0, Collections.emptyList());
-
-            doReturn(EXPORT_INTERNAL_RESPONSE_DTO.getExports()).when(csIntegrationService)
-                .getInternalExportCertificatesForCareProvider(argumentCaptor.capture(), eq(CARE_PROVIDER_ID));
-
-            exportCertificateFromCS.addCertificatesFromCS(exportPageDTO, CARE_PROVIDER_ID, collected, batchSize);
-            assertEquals(expectedPageNumber, argumentCaptor.getValue().getPage());
-        }
+    @BeforeEach
+    void setUp() {
+      doReturn(
+              TotalExportsInternalResponseDTO.builder()
+                  .totalCertificates(10)
+                  .totalRevokedCertificates(0)
+                  .build())
+          .when(csIntegrationService)
+          .getInternalTotalExportForCareProvider(CARE_PROVIDER_ID);
     }
 
-    @Test
-    void shallReturnCertificateExportPageWithUpdatedTotalAndRevoked() {
-        final var totalExportsInternalResponseDTO = TotalExportsInternalResponseDTO.builder()
+    private static Stream<Arguments> providePageNumberArguments() {
+      return Stream.of(
+          Arguments.of(10L, 10, 5, 0),
+          Arguments.of(10L, 15, 5, 1),
+          Arguments.of(10L, 19, 5, 1),
+          Arguments.of(10L, 22, 5, 2),
+          Arguments.of(10L, 27, 5, 3),
+          Arguments.of(10L, 32, 5, 4),
+          Arguments.of(10L, 35, 5, 5));
+    }
+
+    @ParameterizedTest
+    @MethodSource("providePageNumberArguments")
+    void shallCalculatePageNumber(
+        long totalFromIT, int collected, int batchSize, int expectedPageNumber) {
+      final var argumentCaptor = ArgumentCaptor.forClass(ExportCertificatesRequestDTO.class);
+      final var exportPageDTO =
+          CertificateExportPageDTO.of(CARE_PROVIDER_ID, 0, totalFromIT, 0, Collections.emptyList());
+
+      doReturn(EXPORT_INTERNAL_RESPONSE_DTO.getExports())
+          .when(csIntegrationService)
+          .getInternalExportCertificatesForCareProvider(
+              argumentCaptor.capture(), eq(CARE_PROVIDER_ID));
+
+      exportCertificateFromCS.addCertificatesFromCS(
+          exportPageDTO, CARE_PROVIDER_ID, collected, batchSize);
+      assertEquals(expectedPageNumber, argumentCaptor.getValue().getPage());
+    }
+  }
+
+  @Test
+  void shallReturnCertificateExportPageWithUpdatedTotalAndRevoked() {
+    final var totalExportsInternalResponseDTO =
+        TotalExportsInternalResponseDTO.builder()
             .totalCertificates(10)
             .totalRevokedCertificates(5)
             .build();
 
-        doReturn(totalExportsInternalResponseDTO).when(csIntegrationService).getInternalTotalExportForCareProvider(CARE_PROVIDER_ID);
+    doReturn(totalExportsInternalResponseDTO)
+        .when(csIntegrationService)
+        .getInternalTotalExportForCareProvider(CARE_PROVIDER_ID);
 
-        final var exportPageDTO = CertificateExportPageDTO.of(CARE_PROVIDER_ID, 0, 0, 0, List.of(CertificateXmlDTO.of("id", false, "xml")));
-        final var result = exportCertificateFromCS.addCertificatesFromCS(exportPageDTO, CARE_PROVIDER_ID, 0, 5);
+    final var exportPageDTO =
+        CertificateExportPageDTO.of(
+            CARE_PROVIDER_ID, 0, 0, 0, List.of(CertificateXmlDTO.of("id", false, "xml")));
+    final var result =
+        exportCertificateFromCS.addCertificatesFromCS(exportPageDTO, CARE_PROVIDER_ID, 0, 5);
 
-        assertEquals(10, result.getTotal());
-        assertEquals(5, result.getTotalRevoked());
-    }
+    assertEquals(10, result.getTotal());
+    assertEquals(5, result.getTotalRevoked());
+  }
 
-    @Test
-    void shallReturnCertificateExportPageWithUpdatedValues() {
-        final var totalExportsInternalResponseDTO = TotalExportsInternalResponseDTO.builder()
+  @Test
+  void shallReturnCertificateExportPageWithUpdatedValues() {
+    final var totalExportsInternalResponseDTO =
+        TotalExportsInternalResponseDTO.builder()
             .totalCertificates(10)
             .totalRevokedCertificates(5)
             .build();
 
-        doReturn(EXPORT_INTERNAL_RESPONSE_DTO.getExports()).when(csIntegrationService)
-            .getInternalExportCertificatesForCareProvider(any(ExportCertificatesRequestDTO.class), eq(CARE_PROVIDER_ID));
-        doReturn(totalExportsInternalResponseDTO).when(csIntegrationService).getInternalTotalExportForCareProvider(CARE_PROVIDER_ID);
+    doReturn(EXPORT_INTERNAL_RESPONSE_DTO.getExports())
+        .when(csIntegrationService)
+        .getInternalExportCertificatesForCareProvider(
+            any(ExportCertificatesRequestDTO.class), eq(CARE_PROVIDER_ID));
+    doReturn(totalExportsInternalResponseDTO)
+        .when(csIntegrationService)
+        .getInternalTotalExportForCareProvider(CARE_PROVIDER_ID);
 
-        final var exportPageDTO = CertificateExportPageDTO.of(CARE_PROVIDER_ID, 0, 0, 0, Collections.emptyList());
-        final var result = exportCertificateFromCS.addCertificatesFromCS(exportPageDTO, CARE_PROVIDER_ID, 0, 5);
+    final var exportPageDTO =
+        CertificateExportPageDTO.of(CARE_PROVIDER_ID, 0, 0, 0, Collections.emptyList());
+    final var result =
+        exportCertificateFromCS.addCertificatesFromCS(exportPageDTO, CARE_PROVIDER_ID, 0, 5);
 
-        assertEquals(10, result.getTotal());
-        assertEquals(5, result.getTotalRevoked());
-        assertEquals(DECODED_XML, result.getCertificateXmls().getFirst().getXml());
-    }
+    assertEquals(10, result.getTotal());
+    assertEquals(5, result.getTotalRevoked());
+    assertEquals(DECODED_XML, result.getCertificateXmls().getFirst().getXml());
+  }
 }

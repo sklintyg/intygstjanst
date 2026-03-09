@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -28,10 +28,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import se.inera.intyg.intygstjanst.infrastructure.security.interceptor.ApiBasePath;
 import se.inera.intyg.intygstjanst.testability.dto.CreateSickLeaveRequestDTO;
 import se.inera.intyg.intygstjanst.testability.dto.CreateSickLeaveResponseDTO;
 import se.inera.intyg.intygstjanst.testability.dto.TestDataOptionsDTO;
-import se.inera.intyg.intygstjanst.infrastructure.security.interceptor.ApiBasePath;
 import se.inera.intyg.intygstjanst.testability.service.TestabilityService;
 
 @RestController
@@ -41,25 +41,28 @@ import se.inera.intyg.intygstjanst.testability.service.TestabilityService;
 @RequiredArgsConstructor
 public class TestabilityController {
 
-    private final TestabilityService testabilityService;
+  private final TestabilityService testabilityService;
 
-    private static final String VERIFICATION_MESSAGE = String.format("Test data successfully created for units: %s & %s",
-        ALFA_MEDICINCENTRUM, ALFA_MEDICINCENTRUM_INFEKTIONSMOTTAGNINGEN);
+  private static final String VERIFICATION_MESSAGE =
+      String.format(
+          "Test data successfully created for units: %s & %s",
+          ALFA_MEDICINCENTRUM, ALFA_MEDICINCENTRUM_INFEKTIONSMOTTAGNINGEN);
 
-    @PostMapping("/createDefault")
-    public String createDefaultTestData() {
-        testabilityService.createDefaultTestData();
-        return VERIFICATION_MESSAGE;
-    }
+  @PostMapping("/createDefault")
+  public String createDefaultTestData() {
+    testabilityService.createDefaultTestData();
+    return VERIFICATION_MESSAGE;
+  }
 
-    @PostMapping("/createSickLeave")
-    public CreateSickLeaveResponseDTO createSickLeave(@RequestBody CreateSickLeaveRequestDTO createSickLeaveRequestDTO) {
-        final var certificateId = testabilityService.create(createSickLeaveRequestDTO);
-        return new CreateSickLeaveResponseDTO(certificateId);
-    }
+  @PostMapping("/createSickLeave")
+  public CreateSickLeaveResponseDTO createSickLeave(
+      @RequestBody CreateSickLeaveRequestDTO createSickLeaveRequestDTO) {
+    final var certificateId = testabilityService.create(createSickLeaveRequestDTO);
+    return new CreateSickLeaveResponseDTO(certificateId);
+  }
 
-    @GetMapping("/testDataOptions")
-    public TestDataOptionsDTO getAvailableTestDataOptions() {
-        return testabilityService.getTestDataOptions();
-    }
+  @GetMapping("/testDataOptions")
+  public TestDataOptionsDTO getAvailableTestDataOptions() {
+    return testabilityService.getTestDataOptions();
+  }
 }

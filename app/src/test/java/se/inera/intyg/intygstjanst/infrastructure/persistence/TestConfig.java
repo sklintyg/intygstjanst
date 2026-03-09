@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -32,9 +32,10 @@ import se.inera.intyg.intygstjanst.infrastructure.config.properties.AppPropertie
 @EnableConfigurationProperties(AppProperties.class)
 @EntityScan("se.inera.intyg.intygstjanst.infrastructure.persistence.model")
 @EnableJpaRepositories("se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao")
-@ComponentScan(basePackages = {"se.inera.intyg.intygstjanst.infrastructure.persistence",
-    "se.inera.intyg.intygstjanst.infrastructure.logging"})
+@ComponentScan(
+    basePackages = {
+      "se.inera.intyg.intygstjanst.infrastructure.persistence",
+      "se.inera.intyg.intygstjanst.infrastructure.logging"
+    })
 @PropertySource("classpath:test.properties")
-public class TestConfig {
-
-}
+public class TestConfig {}

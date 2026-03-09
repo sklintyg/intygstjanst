@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,9 +16,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package se.inera.intyg.intygstjanst.application.reko.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.time.LocalDate;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -27,169 +39,153 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import se.inera.intyg.intygstjanst.application.reko.service.GetRekoStatusService;
 import se.inera.intyg.intygstjanst.application.sickleave.dto.RekoStatusDTO;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Reko;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.RekoRepository;
-import se.inera.intyg.intygstjanst.application.reko.service.RekoStatusConverter;
-import se.inera.intyg.intygstjanst.application.reko.service.RekoStatusFilter;
-
-import java.time.LocalDate;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class GetRekoStatusServiceTest {
 
-    private static final String PATIENT_ID = "PATIENT_ID";
-    private static final LocalDate END_DATE = LocalDate.now();
-    private static final LocalDate START_DATE = LocalDate.now();
-    private static final List<Reko> REKO_STATUSES = Collections.emptyList();
-    private static final Optional<Reko> FILTERED_REKO = Optional.of(new Reko());
-    private static final String CARE_UNIT_ID = "Care-unit-id";
+  private static final String PATIENT_ID = "PATIENT_ID";
+  private static final LocalDate END_DATE = LocalDate.now();
+  private static final LocalDate START_DATE = LocalDate.now();
+  private static final List<Reko> REKO_STATUSES = Collections.emptyList();
+  private static final Optional<Reko> FILTERED_REKO = Optional.of(new Reko());
+  private static final String CARE_UNIT_ID = "Care-unit-id";
 
-    @Mock
-    private RekoRepository rekoRepository;
-    @Mock
-    private RekoStatusConverter rekoStatusConverter;
-    @Mock
-    private RekoStatusFilter rekoStatusFilter;
-    @InjectMocks
-    private GetRekoStatusService getRekoStatusService;
+  @Mock private RekoRepository rekoRepository;
+  @Mock private RekoStatusConverter rekoStatusConverter;
+  @Mock private RekoStatusFilter rekoStatusFilter;
+  @InjectMocks private GetRekoStatusService getRekoStatusService;
 
-    @Nested
-    class TestRekoRepository {
+  @Nested
+  class TestRekoRepository {
 
-        @Test
-        void shouldCallRepositoryWithPatientId() {
-            getRekoStatusService.get(PATIENT_ID, END_DATE, START_DATE, CARE_UNIT_ID);
+    @Test
+    void shouldCallRepositoryWithPatientId() {
+      getRekoStatusService.get(PATIENT_ID, END_DATE, START_DATE, CARE_UNIT_ID);
 
-            final var captor = ArgumentCaptor.forClass(String.class);
+      final var captor = ArgumentCaptor.forClass(String.class);
 
-            verify(rekoRepository).findByPatientIdAndCareUnitId(captor.capture(), anyString());
-            assertEquals(PATIENT_ID, captor.getValue());
-        }
-
-        @Test
-        void shouldCallRepositoryWithCareUnitId() {
-            getRekoStatusService.get(PATIENT_ID, END_DATE, START_DATE, CARE_UNIT_ID);
-
-            final var captor = ArgumentCaptor.forClass(String.class);
-
-            verify(rekoRepository).findByPatientIdAndCareUnitId(anyString(), captor.capture());
-            assertEquals(CARE_UNIT_ID, captor.getValue());
-        }
+      verify(rekoRepository).findByPatientIdAndCareUnitId(captor.capture(), anyString());
+      assertEquals(PATIENT_ID, captor.getValue());
     }
 
-    @Nested
-    class TestRekoStatusFilter {
+    @Test
+    void shouldCallRepositoryWithCareUnitId() {
+      getRekoStatusService.get(PATIENT_ID, END_DATE, START_DATE, CARE_UNIT_ID);
 
-        @BeforeEach
-        void setup() {
-            when(rekoRepository.findByPatientIdAndCareUnitId(anyString(), anyString()))
-                .thenReturn(REKO_STATUSES);
-        }
+      final var captor = ArgumentCaptor.forClass(String.class);
 
-        @Test
-        void shouldCallFilterWithRekoStatuses() {
-            getRekoStatusService.get(PATIENT_ID, END_DATE, START_DATE, CARE_UNIT_ID);
+      verify(rekoRepository).findByPatientIdAndCareUnitId(anyString(), captor.capture());
+      assertEquals(CARE_UNIT_ID, captor.getValue());
+    }
+  }
 
-            final var captor = ArgumentCaptor.forClass(List.class);
-            verify(rekoStatusFilter).filter(captor.capture(), any(), any(), any());
+  @Nested
+  class TestRekoStatusFilter {
 
-            assertEquals(REKO_STATUSES, captor.getValue());
-        }
-
-        @Test
-        void shouldCallFilterWithPatientId() {
-            getRekoStatusService.get(PATIENT_ID, END_DATE, START_DATE, CARE_UNIT_ID);
-
-            final var captor = ArgumentCaptor.forClass(String.class);
-            verify(rekoStatusFilter).filter(any(), captor.capture(), any(), any());
-
-            assertEquals(PATIENT_ID, captor.getValue());
-        }
-
-        @Test
-        void shouldCallFilterWithEndDate() {
-            getRekoStatusService.get(PATIENT_ID, END_DATE, START_DATE, CARE_UNIT_ID);
-
-            final var captor = ArgumentCaptor.forClass(LocalDate.class);
-            verify(rekoStatusFilter).filter(any(), any(), captor.capture(), any());
-
-            assertEquals(END_DATE, captor.getValue());
-        }
-
-        @Test
-        void shouldCallFilterWithStartDate() {
-            getRekoStatusService.get(PATIENT_ID, END_DATE, START_DATE, CARE_UNIT_ID);
-
-            final var captor = ArgumentCaptor.forClass(LocalDate.class);
-            verify(rekoStatusFilter).filter(any(), any(), any(), captor.capture());
-
-            assertEquals(START_DATE, captor.getValue());
-        }
+    @BeforeEach
+    void setup() {
+      when(rekoRepository.findByPatientIdAndCareUnitId(anyString(), anyString()))
+          .thenReturn(REKO_STATUSES);
     }
 
-    @Nested
-    class TestRekoStatusConverter {
+    @Test
+    void shouldCallFilterWithRekoStatuses() {
+      getRekoStatusService.get(PATIENT_ID, END_DATE, START_DATE, CARE_UNIT_ID);
 
-        @BeforeEach
-        void setup() {
-            when(rekoRepository.findByPatientIdAndCareUnitId(anyString(), anyString()))
-                .thenReturn(REKO_STATUSES);
-        }
+      final var captor = ArgumentCaptor.forClass(List.class);
+      verify(rekoStatusFilter).filter(captor.capture(), any(), any(), any());
 
-        @Test
-        void shouldCallConverterWithRekoReturnedFromFilter() {
-            when(rekoStatusFilter.filter(anyList(), anyString(), any(LocalDate.class), any(LocalDate.class)))
-                .thenReturn(FILTERED_REKO);
-            getRekoStatusService.get(PATIENT_ID, END_DATE, START_DATE, CARE_UNIT_ID);
-
-            final var captor = ArgumentCaptor.forClass(Reko.class);
-
-            verify(rekoStatusConverter).convert(captor.capture());
-            assertEquals(FILTERED_REKO.get(), captor.getValue());
-        }
-
-        @Test
-        void shouldNotCallConverterIfFilteredRekoIsEmpty() {
-            when(rekoStatusFilter.filter(anyList(), anyString(), any(LocalDate.class), any(LocalDate.class)))
-                .thenReturn(Optional.empty());
-            getRekoStatusService.get(PATIENT_ID, END_DATE, START_DATE, CARE_UNIT_ID);
-
-            verify(rekoStatusConverter, times(0)).convert(any());
-        }
+      assertEquals(REKO_STATUSES, captor.getValue());
     }
 
-    @Nested
-    class TestResponse {
+    @Test
+    void shouldCallFilterWithPatientId() {
+      getRekoStatusService.get(PATIENT_ID, END_DATE, START_DATE, CARE_UNIT_ID);
 
-        @Test
-        void shouldReturnNullIfRekoStatusIsNotFound() {
-            when(rekoStatusFilter.filter(any(), any(), any(), any())).thenReturn(Optional.empty());
+      final var captor = ArgumentCaptor.forClass(String.class);
+      verify(rekoStatusFilter).filter(any(), captor.capture(), any(), any());
 
-            final var response = getRekoStatusService.get(PATIENT_ID, END_DATE, START_DATE, CARE_UNIT_ID);
-
-            assertNull(response);
-        }
-
-        @Test
-        void shouldReturnStatusReturnedFromConverter() {
-            final var expectedResponse = new RekoStatusDTO();
-            when(rekoStatusFilter.filter(any(), any(), any(), any())).thenReturn(Optional.of(new Reko()));
-            when(rekoStatusConverter.convert(any())).thenReturn(expectedResponse);
-
-            final var response = getRekoStatusService.get(PATIENT_ID, END_DATE, START_DATE, CARE_UNIT_ID);
-
-            assertEquals(expectedResponse, response);
-        }
+      assertEquals(PATIENT_ID, captor.getValue());
     }
+
+    @Test
+    void shouldCallFilterWithEndDate() {
+      getRekoStatusService.get(PATIENT_ID, END_DATE, START_DATE, CARE_UNIT_ID);
+
+      final var captor = ArgumentCaptor.forClass(LocalDate.class);
+      verify(rekoStatusFilter).filter(any(), any(), captor.capture(), any());
+
+      assertEquals(END_DATE, captor.getValue());
+    }
+
+    @Test
+    void shouldCallFilterWithStartDate() {
+      getRekoStatusService.get(PATIENT_ID, END_DATE, START_DATE, CARE_UNIT_ID);
+
+      final var captor = ArgumentCaptor.forClass(LocalDate.class);
+      verify(rekoStatusFilter).filter(any(), any(), any(), captor.capture());
+
+      assertEquals(START_DATE, captor.getValue());
+    }
+  }
+
+  @Nested
+  class TestRekoStatusConverter {
+
+    @BeforeEach
+    void setup() {
+      when(rekoRepository.findByPatientIdAndCareUnitId(anyString(), anyString()))
+          .thenReturn(REKO_STATUSES);
+    }
+
+    @Test
+    void shouldCallConverterWithRekoReturnedFromFilter() {
+      when(rekoStatusFilter.filter(
+              anyList(), anyString(), any(LocalDate.class), any(LocalDate.class)))
+          .thenReturn(FILTERED_REKO);
+      getRekoStatusService.get(PATIENT_ID, END_DATE, START_DATE, CARE_UNIT_ID);
+
+      final var captor = ArgumentCaptor.forClass(Reko.class);
+
+      verify(rekoStatusConverter).convert(captor.capture());
+      assertEquals(FILTERED_REKO.get(), captor.getValue());
+    }
+
+    @Test
+    void shouldNotCallConverterIfFilteredRekoIsEmpty() {
+      when(rekoStatusFilter.filter(
+              anyList(), anyString(), any(LocalDate.class), any(LocalDate.class)))
+          .thenReturn(Optional.empty());
+      getRekoStatusService.get(PATIENT_ID, END_DATE, START_DATE, CARE_UNIT_ID);
+
+      verify(rekoStatusConverter, times(0)).convert(any());
+    }
+  }
+
+  @Nested
+  class TestResponse {
+
+    @Test
+    void shouldReturnNullIfRekoStatusIsNotFound() {
+      when(rekoStatusFilter.filter(any(), any(), any(), any())).thenReturn(Optional.empty());
+
+      final var response = getRekoStatusService.get(PATIENT_ID, END_DATE, START_DATE, CARE_UNIT_ID);
+
+      assertNull(response);
+    }
+
+    @Test
+    void shouldReturnStatusReturnedFromConverter() {
+      final var expectedResponse = new RekoStatusDTO();
+      when(rekoStatusFilter.filter(any(), any(), any(), any())).thenReturn(Optional.of(new Reko()));
+      when(rekoStatusConverter.convert(any())).thenReturn(expectedResponse);
+
+      final var response = getRekoStatusService.get(PATIENT_ID, END_DATE, START_DATE, CARE_UNIT_ID);
+
+      assertEquals(expectedResponse, response);
+    }
+  }
 }
-

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -28,34 +28,34 @@ import org.springframework.web.servlet.HandlerInterceptor;
 /**
  * Enforces base-path access control declared via {@link ApiBasePath}.
  *
- * <p>When a controller class carries {@code @ApiBasePath}, only requests
- * whose {@code servletPath} matches one of the declared values are allowed.
- * All other requests receive a 404 response, mirroring the old JAX-RS
- * per-address server configuration.</p>
+ * <p>When a controller class carries {@code @ApiBasePath}, only requests whose {@code servletPath}
+ * matches one of the declared values are allowed. All other requests receive a 404 response,
+ * mirroring the old JAX-RS per-address server configuration.
  *
- * <p>Controllers without {@code @ApiBasePath} are not restricted.</p>
+ * <p>Controllers without {@code @ApiBasePath} are not restricted.
  */
 @Component
 public class ApiBasePathEnforcingInterceptor implements HandlerInterceptor {
 
-    @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        if (!(handler instanceof HandlerMethod handlerMethod)) {
-            return true;
-        }
-
-        final var annotation = handlerMethod.getBeanType().getAnnotation(ApiBasePath.class);
-        if (annotation == null) {
-            return true;
-        }
-
-        final var servletPath = request.getServletPath();
-        final var allowed = Arrays.asList(annotation.value());
-        if (allowed.contains(servletPath)) {
-            return true;
-        }
-
-        response.sendError(HttpServletResponse.SC_NOT_FOUND);
-        return false;
+  @Override
+  public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+      throws Exception {
+    if (!(handler instanceof HandlerMethod handlerMethod)) {
+      return true;
     }
+
+    final var annotation = handlerMethod.getBeanType().getAnnotation(ApiBasePath.class);
+    if (annotation == null) {
+      return true;
+    }
+
+    final var servletPath = request.getServletPath();
+    final var allowed = Arrays.asList(annotation.value());
+    if (allowed.contains(servletPath)) {
+      return true;
+    }
+
+    response.sendError(HttpServletResponse.SC_NOT_FOUND);
+    return false;
+  }
 }

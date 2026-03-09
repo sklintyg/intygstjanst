@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -27,8 +27,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CertificateTextDTO {
 
-    private String type;
-    private String version;
-    private String xml;
-
+  private String type;
+  private String version;
+  private String xml;
 }

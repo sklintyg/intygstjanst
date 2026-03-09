@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,51 +16,48 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package se.inera.intyg.intygstjanst.application.citizen.repository.model;
 
+import java.util.Optional;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.common.support.common.enumerations.RelationKod;
-import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Relation;
 import se.inera.intyg.intygstjanst.application.citizen.dto.CitizenCertificateRelationDTO;
 import se.inera.intyg.intygstjanst.application.citizen.dto.CitizenCertificateRelationType;
-
-import java.util.Optional;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Relation;
 
 @Service
 public class CitizenCertificateRelationConverter {
 
-    public Optional<CitizenCertificateRelationDTO> convert(String certificateId, Relation relation) {
-        if (!certificateId.equals(relation.getToIntygsId()) && !certificateId.equals(relation.getFromIntygsId())) {
-            return Optional.empty();
-        }
-
-        if (!isRelationCodeIncluded(relation.getRelationKod())) {
-            return Optional.empty();
-        }
-
-        return Optional.of(
-            CitizenCertificateRelationDTO
-                .builder()
-                .certificateId(getRelatedId(certificateId, relation.getToIntygsId(), relation.getFromIntygsId()))
-                .timestamp(relation.getCreated())
-                .type(getType(certificateId, relation.getToIntygsId()))
-                .build()
-        );
+  public Optional<CitizenCertificateRelationDTO> convert(String certificateId, Relation relation) {
+    if (!certificateId.equals(relation.getToIntygsId())
+        && !certificateId.equals(relation.getFromIntygsId())) {
+      return Optional.empty();
     }
 
-    private String getRelatedId(String id, String toId, String fromId) {
-        return id.equals(toId) ? fromId : toId;
+    if (!isRelationCodeIncluded(relation.getRelationKod())) {
+      return Optional.empty();
     }
 
-    private boolean isRelationCodeIncluded(String code) {
-        return code.equals(RelationKod.ERSATT.toString())
-            || code.equals(RelationKod.KOMPLT.toString());
-    }
+    return Optional.of(
+        CitizenCertificateRelationDTO.builder()
+            .certificateId(
+                getRelatedId(certificateId, relation.getToIntygsId(), relation.getFromIntygsId()))
+            .timestamp(relation.getCreated())
+            .type(getType(certificateId, relation.getToIntygsId()))
+            .build());
+  }
 
-    private CitizenCertificateRelationType getType(String certificateId, String toCertificateId) {
-        return certificateId.equals(toCertificateId)
-            ? CitizenCertificateRelationType.REPLACED
-            : CitizenCertificateRelationType.REPLACES;
-    }
+  private String getRelatedId(String id, String toId, String fromId) {
+    return id.equals(toId) ? fromId : toId;
+  }
+
+  private boolean isRelationCodeIncluded(String code) {
+    return code.equals(RelationKod.ERSATT.toString()) || code.equals(RelationKod.KOMPLT.toString());
+  }
+
+  private CitizenCertificateRelationType getType(String certificateId, String toCertificateId) {
+    return certificateId.equals(toCertificateId)
+        ? CitizenCertificateRelationType.REPLACED
+        : CitizenCertificateRelationType.REPLACES;
+  }
 }

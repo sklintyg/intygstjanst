@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,14 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package se.inera.intyg.intygstjanst.application.sickleave.services;
 
 import java.util.List;
-import se.inera.intyg.intygstjanst.application.sickleave.dto.SjukfallEnhet;
 import se.inera.intyg.intygstjanst.application.sickleave.dto.SickLeaveRequestDTO;
+import se.inera.intyg.intygstjanst.application.sickleave.dto.SjukfallEnhet;
 
 public interface SickLeavesForCareUnitService {
 
-    List<SjukfallEnhet> getActiveSickLeavesForCareUnit(SickLeaveRequestDTO sickLeaveRequestDTO);
+  List<SjukfallEnhet> getActiveSickLeavesForCareUnit(SickLeaveRequestDTO sickLeaveRequestDTO);
 }

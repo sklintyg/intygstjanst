@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package se.inera.intyg.intygstjanst.infrastructure.diagnosis;
 
 import java.io.IOException;
@@ -32,37 +31,41 @@ import se.inera.intyg.intygstjanst.infrastructure.config.properties.AppPropertie
 @Component
 public class DiagnosisDescriptionProvider {
 
-    private final ResourceLoader resourceLoader;
-    private final IcdCodeConverter icdCodeConverter;
-    private final AppProperties appProperties;
+  private final ResourceLoader resourceLoader;
+  private final IcdCodeConverter icdCodeConverter;
+  private final AppProperties appProperties;
 
-    public DiagnosisDescriptionProvider(IcdCodeConverter icdCodeConverter, ResourceLoader resourceLoader, AppProperties appProperties) {
-        this.icdCodeConverter = icdCodeConverter;
-        this.resourceLoader = resourceLoader;
-        this.appProperties = appProperties;
-    }
+  public DiagnosisDescriptionProvider(
+      IcdCodeConverter icdCodeConverter,
+      ResourceLoader resourceLoader,
+      AppProperties appProperties) {
+    this.icdCodeConverter = icdCodeConverter;
+    this.resourceLoader = resourceLoader;
+    this.appProperties = appProperties;
+  }
 
-    public Map<String, String> getDiagnosisDescription() throws IOException {
-        final var diagnosisDescriptionMap = new HashMap<String, String>();
-        diagnosisDescriptionMap.putAll(icdCodeConverter.convert(appProperties.diagnosis().icd10seFile()));
-        diagnosisDescriptionMap.putAll(loadDiagnosFile(appProperties.diagnosis().ksh97pFile()));
-        return diagnosisDescriptionMap;
-    }
+  public Map<String, String> getDiagnosisDescription() throws IOException {
+    final var diagnosisDescriptionMap = new HashMap<String, String>();
+    diagnosisDescriptionMap.putAll(
+        icdCodeConverter.convert(appProperties.diagnosis().icd10seFile()));
+    diagnosisDescriptionMap.putAll(loadDiagnosFile(appProperties.diagnosis().ksh97pFile()));
+    return diagnosisDescriptionMap;
+  }
 
-    private Map<String, String> loadDiagnosFile(final String file) throws IOException {
-        final var resource = resourceLoader.getResource(file);
-        final var diagnosisDescriptionMap = new HashMap<String, String>();
-        try (LineIterator it = IOUtils.lineIterator(resource.getInputStream(), StandardCharsets.ISO_8859_1)) {
-            while (it.hasNext()) {
-                final String line = it.next();
-                final var diagnosisCode = new DiagnosisFromFile(line, diagnosisDescriptionMap.isEmpty());
-                if (diagnosisCode.getCode() != null) {
-                    diagnosisDescriptionMap.put(diagnosisCode.getCode(), diagnosisCode.getName());
-                }
-            }
+  private Map<String, String> loadDiagnosFile(final String file) throws IOException {
+    final var resource = resourceLoader.getResource(file);
+    final var diagnosisDescriptionMap = new HashMap<String, String>();
+    try (LineIterator it =
+        IOUtils.lineIterator(resource.getInputStream(), StandardCharsets.ISO_8859_1)) {
+      while (it.hasNext()) {
+        final String line = it.next();
+        final var diagnosisCode = new DiagnosisFromFile(line, diagnosisDescriptionMap.isEmpty());
+        if (diagnosisCode.getCode() != null) {
+          diagnosisDescriptionMap.put(diagnosisCode.getCode(), diagnosisCode.getName());
         }
-
-        return diagnosisDescriptionMap;
+      }
     }
 
+    return diagnosisDescriptionMap;
+  }
 }

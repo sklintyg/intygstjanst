@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package se.inera.intyg.intygstjanst.application.certificate.dto;
 
 import lombok.Builder;
@@ -27,8 +26,8 @@ import se.inera.intyg.schemas.contract.Personnummer;
 @Builder
 public class SendCertificateRequestDTO {
 
-    String certificateId;
-    Personnummer patientId;
-    String hsaId;
-    String recipientId;
+  String certificateId;
+  Personnummer patientId;
+  String hsaId;
+  String recipientId;
 }

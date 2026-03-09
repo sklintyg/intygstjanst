@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,37 +16,35 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package se.inera.intyg.intygstjanst.application.reko.dto;
 
 public enum RekoStatusType {
+  REKO_1("-"),
+  REKO_2("Kontaktad"),
+  REKO_3("Aktiv"),
+  REKO_4("Uppföljning"),
+  REKO_5("Avslutad"),
+  REKO_6("Avböjt"),
+  REKO_7("Lämnas utan åtgärd"),
+  REKO_8("Medicinsk rehab");
 
-    REKO_1("-"),
-    REKO_2("Kontaktad"),
-    REKO_3("Aktiv"),
-    REKO_4("Uppföljning"),
-    REKO_5("Avslutad"),
-    REKO_6("Avböjt"),
-    REKO_7("Lämnas utan åtgärd"),
-    REKO_8("Medicinsk rehab");
+  private final String name;
 
-    private final String name;
+  RekoStatusType(String name) {
+    this.name = name;
+  }
 
-    RekoStatusType(String name) {
-        this.name = name;
+  public String getName() {
+    return name;
+  }
+
+  public static RekoStatusType fromId(String id) {
+    for (final var type : values()) {
+      if (type.toString().equals(id)) {
+        return type;
+      }
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public static RekoStatusType fromId(String id) {
-        for (final var type : values()) {
-            if (type.toString().equals(id)) {
-                return type;
-            }
-        }
-
-        return REKO_1;
-    }
+    return REKO_1;
+  }
 }

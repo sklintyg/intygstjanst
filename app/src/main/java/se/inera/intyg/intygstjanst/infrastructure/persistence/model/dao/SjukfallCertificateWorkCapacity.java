@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -25,61 +25,53 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
-/**
- * Created by eriklupander on 2016-02-02.
- */
+/** Created by eriklupander on 2016-02-02. */
 @Entity
 @Table(name = "SJUKFALL_CERT_WORK_CAPACITY")
 public class SjukfallCertificateWorkCapacity {
 
-    /**
-     * Just needed for JPA compliance.
-     */
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID", nullable = false)
-    private long id;
+  /** Just needed for JPA compliance. */
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "ID", nullable = false)
+  private long id;
 
-    @Column(name = "CAPACITY_PERCENTAGE", nullable = false)
-    private Integer capacityPercentage;
+  @Column(name = "CAPACITY_PERCENTAGE", nullable = false)
+  private Integer capacityPercentage;
 
-    /**
-     * Time from which this certificate is valid.
-     */
-    @Column(name = "FROM_DATE", nullable = false)
-    private String fromDate;
+  /** Time from which this certificate is valid. */
+  @Column(name = "FROM_DATE", nullable = false)
+  private String fromDate;
 
-    /**
-     * Time to which this certificate is valid.
-     */
-    @Column(name = "TO_DATE", nullable = false)
-    private String toDate;
+  /** Time to which this certificate is valid. */
+  @Column(name = "TO_DATE", nullable = false)
+  private String toDate;
 
-    public long getId() {
-        return id;
-    }
+  public long getId() {
+    return id;
+  }
 
-    public Integer getCapacityPercentage() {
-        return capacityPercentage;
-    }
+  public Integer getCapacityPercentage() {
+    return capacityPercentage;
+  }
 
-    public void setCapacityPercentage(Integer capacityPercentage) {
-        this.capacityPercentage = capacityPercentage;
-    }
+  public void setCapacityPercentage(Integer capacityPercentage) {
+    this.capacityPercentage = capacityPercentage;
+  }
 
-    public String getFromDate() {
-        return fromDate;
-    }
+  public String getFromDate() {
+    return fromDate;
+  }
 
-    public void setFromDate(String fromDate) {
-        this.fromDate = fromDate;
-    }
+  public void setFromDate(String fromDate) {
+    this.fromDate = fromDate;
+  }
 
-    public String getToDate() {
-        return toDate;
-    }
+  public String getToDate() {
+    return toDate;
+  }
 
-    public void setToDate(String toDate) {
-        this.toDate = toDate;
-    }
+  public void setToDate(String toDate) {
+    this.toDate = toDate;
+  }
 }

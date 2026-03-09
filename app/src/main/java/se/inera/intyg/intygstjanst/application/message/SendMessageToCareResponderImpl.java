@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -25,15 +25,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.common.support.integration.converter.util.ResultTypeUtil;
+import se.inera.intyg.intygstjanst.application.certificate.service.StatisticsService;
+import se.inera.intyg.intygstjanst.application.message.converter.ArendeConverter;
+import se.inera.intyg.intygstjanst.application.message.service.ArendeService;
+import se.inera.intyg.intygstjanst.application.message.validator.SendMessageToCareValidator;
 import se.inera.intyg.intygstjanst.infrastructure.logging.MdcLogConstants;
+import se.inera.intyg.intygstjanst.infrastructure.logging.MonitoringLogService;
 import se.inera.intyg.intygstjanst.infrastructure.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Arende;
-import se.inera.intyg.intygstjanst.application.message.converter.ArendeConverter;
-import se.inera.intyg.intygstjanst.application.message.validator.SendMessageToCareValidator;
-import se.inera.intyg.intygstjanst.application.message.service.ArendeService;
-import se.inera.intyg.intygstjanst.infrastructure.logging.MonitoringLogService;
 import se.inera.intyg.intygstjanst.infrastructure.soap.SoapIntegrationService;
-import se.inera.intyg.intygstjanst.application.certificate.service.StatisticsService;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.SendMessageToCareResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.SendMessageToCareResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToCare.v2.SendMessageToCareType;
@@ -44,61 +44,69 @@ import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
 @SchemaValidation
 public class SendMessageToCareResponderImpl implements SendMessageToCareResponderInterface {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SendMessageToCareResponderImpl.class);
+  private static final Logger LOGGER =
+      LoggerFactory.getLogger(SendMessageToCareResponderImpl.class);
 
-    @Autowired
-    private MonitoringLogService logService;
+  @Autowired private MonitoringLogService logService;
 
-    @Autowired
-    private ArendeService arendeService;
+  @Autowired private ArendeService arendeService;
 
-    @Autowired
-    protected StatisticsService statisticsService;
+  @Autowired protected StatisticsService statisticsService;
 
-    @Autowired
-    private SendMessageToCareValidator validator;
+  @Autowired private SendMessageToCareValidator validator;
 
-    @Autowired
-    private SoapIntegrationService soapIntegrationService;
+  @Autowired private SoapIntegrationService soapIntegrationService;
 
-    @Override
-
-    @PerformanceLogging(eventAction = "send-message-to-care", eventType = MdcLogConstants.EVENT_TYPE_CHANGE)
-    public SendMessageToCareResponseType sendMessageToCare(String logicalAddress, SendMessageToCareType parameters) {
-        List<String> validationErrors = validator.validateSendMessageToCare(parameters);
-        if (!validationErrors.isEmpty()) {
-            SendMessageToCareResponseType response = new SendMessageToCareResponseType();
-            String resultText = "Validation of SendMessageToCare failed for message with question id " + parameters.getMeddelandeId()
-                + " and certificate id " + parameters.getIntygsId().getExtension() + ". " + validationErrors;
-            response.setResult(ResultTypeUtil.errorResult(ErrorIdType.VALIDATION_ERROR, resultText));
-            LOGGER.error(resultText);
-            return response;
-        }
-
-        SendMessageToCareResponseType response = soapIntegrationService.sendMessageToCare(parameters.getLogiskAdressMottagare(),
-            parameters);
-
-        if (response.getResult().getResultCode() != ResultCodeType.ERROR) {
-            logService.logSendMessageToCareReceived(parameters.getMeddelandeId(), parameters.getLogiskAdressMottagare());
-            try {
-                Arende arende = ArendeConverter.convertSendMessageToCare(parameters);
-                statisticsService.messageSent(arende.getMeddelande(), arende.getMeddelandeId(), arende.getAmne());
-                arendeService.processIncomingMessage(arende);
-            } catch (Exception e) {
-                LOGGER.error("Could not save information about request of type SendMessageToCare with question id "
-                        + "{} and certificate id {}. {}", parameters.getMeddelandeId(), parameters.getIntygsId().getExtension(),
-                    e.getMessage());
-            }
-        } else {
-            LOGGER.error("SendMessageToCare failed for message with question id {} and certificate id {}. {} {} {}",
-                parameters.getMeddelandeId(),
-                parameters.getIntygsId().getExtension(),
-                response.getResult().getResultCode(),
-                response.getResult().getErrorId(),
-                response.getResult().getResultText());
-        }
-
-        return response;
+  @Override
+  @PerformanceLogging(
+      eventAction = "send-message-to-care",
+      eventType = MdcLogConstants.EVENT_TYPE_CHANGE)
+  public SendMessageToCareResponseType sendMessageToCare(
+      String logicalAddress, SendMessageToCareType parameters) {
+    List<String> validationErrors = validator.validateSendMessageToCare(parameters);
+    if (!validationErrors.isEmpty()) {
+      SendMessageToCareResponseType response = new SendMessageToCareResponseType();
+      String resultText =
+          "Validation of SendMessageToCare failed for message with question id "
+              + parameters.getMeddelandeId()
+              + " and certificate id "
+              + parameters.getIntygsId().getExtension()
+              + ". "
+              + validationErrors;
+      response.setResult(ResultTypeUtil.errorResult(ErrorIdType.VALIDATION_ERROR, resultText));
+      LOGGER.error(resultText);
+      return response;
     }
 
+    SendMessageToCareResponseType response =
+        soapIntegrationService.sendMessageToCare(parameters.getLogiskAdressMottagare(), parameters);
+
+    if (response.getResult().getResultCode() != ResultCodeType.ERROR) {
+      logService.logSendMessageToCareReceived(
+          parameters.getMeddelandeId(), parameters.getLogiskAdressMottagare());
+      try {
+        Arende arende = ArendeConverter.convertSendMessageToCare(parameters);
+        statisticsService.messageSent(
+            arende.getMeddelande(), arende.getMeddelandeId(), arende.getAmne());
+        arendeService.processIncomingMessage(arende);
+      } catch (Exception e) {
+        LOGGER.error(
+            "Could not save information about request of type SendMessageToCare with question id "
+                + "{} and certificate id {}. {}",
+            parameters.getMeddelandeId(),
+            parameters.getIntygsId().getExtension(),
+            e.getMessage());
+      }
+    } else {
+      LOGGER.error(
+          "SendMessageToCare failed for message with question id {} and certificate id {}. {} {} {}",
+          parameters.getMeddelandeId(),
+          parameters.getIntygsId().getExtension(),
+          response.getResult().getResultCode(),
+          response.getResult().getErrorId(),
+          response.getResult().getResultText());
+    }
+
+    return response;
+  }
 }

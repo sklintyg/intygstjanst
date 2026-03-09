@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -28,58 +28,57 @@ import jakarta.persistence.Table;
 /**
  * Relation entity. Forms an association between two Certificates of a given type.
  *
- * Created by eriklupander on 2017-05-09.
+ * <p>Created by eriklupander on 2017-05-09.
  */
 @Entity
 @Table(name = "APPROVED_RECEIVER")
 public class ApprovedReceiver {
 
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Id
-    @Column(name = "ID", nullable = false)
-    private Long id;
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Id
+  @Column(name = "ID", nullable = false)
+  private Long id;
 
-    @Column(name = "CERTIFICATE_ID", nullable = false)
-    private String certificateId;
+  @Column(name = "CERTIFICATE_ID", nullable = false)
+  private String certificateId;
 
-    @Column(name = "RECEIVER_ID", nullable = false)
-    private String receiverId;
+  @Column(name = "RECEIVER_ID", nullable = false)
+  private String receiverId;
 
-    @Column(name = "APPROVED", nullable = false)
-    private boolean approved;
+  @Column(name = "APPROVED", nullable = false)
+  private boolean approved;
 
-    public ApprovedReceiver() {
-    }
+  public ApprovedReceiver() {}
 
-    public Long getId() {
-        return id;
-    }
+  public Long getId() {
+    return id;
+  }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-    public String getCertificateId() {
-        return certificateId;
-    }
+  public String getCertificateId() {
+    return certificateId;
+  }
 
-    public void setCertificateId(String certificateId) {
-        this.certificateId = certificateId;
-    }
+  public void setCertificateId(String certificateId) {
+    this.certificateId = certificateId;
+  }
 
-    public String getReceiverId() {
-        return receiverId;
-    }
+  public String getReceiverId() {
+    return receiverId;
+  }
 
-    public void setReceiverId(String receiverId) {
-        this.receiverId = receiverId;
-    }
+  public void setReceiverId(String receiverId) {
+    this.receiverId = receiverId;
+  }
 
-    public boolean isApproved() {
-        return approved;
-    }
+  public boolean isApproved() {
+    return approved;
+  }
 
-    public void setApproved(boolean approved) {
-        this.approved = approved;
-    }
+  public void setApproved(boolean approved) {
+    this.approved = approved;
+  }
 }

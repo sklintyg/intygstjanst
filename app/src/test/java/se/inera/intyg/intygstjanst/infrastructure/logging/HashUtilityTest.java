@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package se.inera.intyg.intygstjanst.infrastructure.logging;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -25,36 +24,35 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import se.inera.intyg.intygstjanst.infrastructure.config.properties.AppProperties;
-import se.inera.intyg.intygstjanst.infrastructure.logging.HashUtility;
 
 class HashUtilityTest {
 
-    private final AppProperties appProperties = Mockito.mock(AppProperties.class);
-    private HashUtility hashUtility;
+  private final AppProperties appProperties = Mockito.mock(AppProperties.class);
+  private HashUtility hashUtility;
 
-    @BeforeEach
-    void setUp() {
-        Mockito.when(appProperties.security()).thenReturn(new AppProperties.Security("salt"));
-        hashUtility = new HashUtility(appProperties);
-    }
+  @BeforeEach
+  void setUp() {
+    Mockito.when(appProperties.security()).thenReturn(new AppProperties.Security("salt"));
+    hashUtility = new HashUtility(appProperties);
+  }
 
-    @Test
-    void shouldReturnHashedValue() {
-        final var payload = "123123123";
-        final var hashedPayload = hashUtility.hash(payload);
-        assertEquals("f0b9a3394c4a24871d26ed9e0b7e81dc08714204caafe9821e7fb141ae410286", hashedPayload);
-    }
+  @Test
+  void shouldReturnHashedValue() {
+    final var payload = "123123123";
+    final var hashedPayload = hashUtility.hash(payload);
+    assertEquals("f0b9a3394c4a24871d26ed9e0b7e81dc08714204caafe9821e7fb141ae410286", hashedPayload);
+  }
 
-    @Test
-    void shouldReturnEmptyHashConstantWhenPayloadIsNull() {
-        final var hashedPayload = hashUtility.hash(null);
-        assertEquals(HashUtility.EMPTY, hashedPayload);
-    }
+  @Test
+  void shouldReturnEmptyHashConstantWhenPayloadIsNull() {
+    final var hashedPayload = hashUtility.hash(null);
+    assertEquals(HashUtility.EMPTY, hashedPayload);
+  }
 
-    @Test
-    void shouldReturnEmptyHashConstantWhenPayloadIsEmpty() {
-        final var payload = "";
-        final var hashedPayload = hashUtility.hash(payload);
-        assertEquals(HashUtility.EMPTY, hashedPayload);
-    }
+  @Test
+  void shouldReturnEmptyHashConstantWhenPayloadIsEmpty() {
+    final var payload = "";
+    final var hashedPayload = hashUtility.hash(payload);
+    assertEquals(HashUtility.EMPTY, hashedPayload);
+  }
 }

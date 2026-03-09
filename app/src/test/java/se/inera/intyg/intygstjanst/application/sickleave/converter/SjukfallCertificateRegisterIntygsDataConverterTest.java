@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -25,18 +25,17 @@ import org.junit.jupiter.api.Test;
 import se.inera.intyg.intygstjanst.application.sickleave.SjukfallCertTestHelper;
 import se.riv.clinicalprocess.healthcond.rehabilitation.v1.IntygsData;
 
-/**
- * Created by eriklupander on 2016-02-04.
- */
+/** Created by eriklupander on 2016-02-04. */
 class SjukfallCertificateRegisterIntygsDataConverterTest {
 
-    private SjukfallCertTestHelper testHelper = new SjukfallCertTestHelper();
-    private SjukfallCertificateIntygsDataConverter testee = new SjukfallCertificateIntygsDataConverter();
+  private SjukfallCertTestHelper testHelper = new SjukfallCertTestHelper();
+  private SjukfallCertificateIntygsDataConverter testee =
+      new SjukfallCertificateIntygsDataConverter();
 
-    @Test
-    void testConvert() {
-        List<IntygsData> intygsDataList = testee.buildIntygsData(testHelper.intygsList());
-        assertEquals(1, intygsDataList.size());
-        assertEquals(2, intygsDataList.get(0).getArbetsformaga().getFormaga().size());
-    }
+  @Test
+  void testConvert() {
+    List<IntygsData> intygsDataList = testee.buildIntygsData(testHelper.intygsList());
+    assertEquals(1, intygsDataList.size());
+    assertEquals(2, intygsDataList.get(0).getArbetsformaga().getFormaga().size());
+  }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -27,28 +27,30 @@ import se.inera.intyg.common.support.validate.CertificateValidationException;
 
 public class RevokeRequestValidator {
 
-    private RevokeType revokeRequest = null;
-    private List<String> validationErrors = new ArrayList<>();
+  private RevokeType revokeRequest = null;
+  private List<String> validationErrors = new ArrayList<>();
 
-    public RevokeRequestValidator(RevokeType revokeRequest) {
-        this.revokeRequest = revokeRequest;
+  public RevokeRequestValidator(RevokeType revokeRequest) {
+    this.revokeRequest = revokeRequest;
+  }
+
+  public void validateAndCorrect() throws CertificateValidationException {
+    // First, validate properties at Revoke request level
+    if (Strings.isNullOrEmpty(revokeRequest.getVardReferensId())) {
+      validationErrors.add("No vardReferens found!");
+    }
+    if (revokeRequest.getAvsantTidpunkt() == null) {
+      validationErrors.add("No avsantTidpunkt found!");
     }
 
-    public void validateAndCorrect() throws CertificateValidationException {
-        // First, validate properties at Revoke request level
-        if (Strings.isNullOrEmpty(revokeRequest.getVardReferensId())) {
-            validationErrors.add("No vardReferens found!");
-        }
-        if (revokeRequest.getAvsantTidpunkt() == null) {
-            validationErrors.add("No avsantTidpunkt found!");
-        }
+    // use commmon validators for common elements
+    new LakarutlatandeEnkelTypeValidator(revokeRequest.getLakarutlatande(), validationErrors)
+        .validateAndCorrect();
+    new VardAdresseringsTypeValidator(revokeRequest.getAdressVard(), validationErrors)
+        .validateAndCorrect();
 
-        // use commmon validators for common elements
-        new LakarutlatandeEnkelTypeValidator(revokeRequest.getLakarutlatande(), validationErrors).validateAndCorrect();
-        new VardAdresseringsTypeValidator(revokeRequest.getAdressVard(), validationErrors).validateAndCorrect();
-
-        if (!validationErrors.isEmpty()) {
-            throw new CertificateValidationException(validationErrors);
-        }
+    if (!validationErrors.isEmpty()) {
+      throw new CertificateValidationException(validationErrors);
     }
+  }
 }

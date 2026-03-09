@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -30,13 +30,13 @@ import se.inera.ifv.insuranceprocess.healthreporting.setcertificatestatusrespond
 import se.inera.intyg.common.schemas.insuranceprocess.healthreporting.utils.ResultOfCallUtil;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
 import se.inera.intyg.common.support.model.CertificateState;
-import se.inera.intyg.intygstjanst.infrastructure.logging.MdcLogConstants;
-import se.inera.intyg.intygstjanst.infrastructure.logging.PerformanceLogging;
+import se.inera.intyg.intygstjanst.application.certificate.service.CertificateService;
 import se.inera.intyg.intygstjanst.application.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.application.exception.TestCertificateException;
-import se.inera.intyg.intygstjanst.application.certificate.service.CertificateService;
-import se.inera.intyg.intygstjanst.infrastructure.logging.MonitoringLogService;
 import se.inera.intyg.intygstjanst.application.recipient.RecipientService;
+import se.inera.intyg.intygstjanst.infrastructure.logging.MdcLogConstants;
+import se.inera.intyg.intygstjanst.infrastructure.logging.MonitoringLogService;
+import se.inera.intyg.intygstjanst.infrastructure.logging.PerformanceLogging;
 import se.inera.intyg.schemas.contract.Personnummer;
 
 /**
@@ -46,58 +46,61 @@ import se.inera.intyg.schemas.contract.Personnummer;
 @SchemaValidation
 public class SetCertificateStatusResponderImpl implements SetCertificateStatusResponderInterface {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SetCertificateStatusResponderImpl.class);
+  private static final Logger LOGGER =
+      LoggerFactory.getLogger(SetCertificateStatusResponderImpl.class);
 
-    @Autowired
-    private CertificateService certificateService;
+  @Autowired private CertificateService certificateService;
 
-    @Autowired
-    private MonitoringLogService monitoringLogService;
+  @Autowired private MonitoringLogService monitoringLogService;
 
-    @Autowired
-    private RecipientService recipientService;
+  @Autowired private RecipientService recipientService;
 
-    @Override
+  @Override
+  @PerformanceLogging(
+      eventAction = "set-certificate-status",
+      eventType = MdcLogConstants.EVENT_TYPE_CHANGE)
+  public SetCertificateStatusResponseType setCertificateStatus(
+      AttributedURIType logicalAddress, SetCertificateStatusRequestType request) {
 
-    @PerformanceLogging(eventAction = "set-certificate-status", eventType = MdcLogConstants.EVENT_TYPE_CHANGE)
-    public SetCertificateStatusResponseType setCertificateStatus(AttributedURIType logicalAddress,
-        SetCertificateStatusRequestType request) {
+    SetCertificateStatusResponseType response = new SetCertificateStatusResponseType();
 
-        SetCertificateStatusResponseType response = new SetCertificateStatusResponseType();
-
-        String target = request.getTarget();
-        // We need to translate FK->FKASSA as Försäkringskassan are still sending statuses with FK as target
-        if ("FK".equals(target)) {
-            target = recipientService.getPrimaryRecipientFkassa().getId();
-        }
-
-        try {
-            target = recipientService.getRecipient(target).getId();
-
-            certificateService.setCertificateState(
-                createPnr(request.getNationalIdentityNumber()),
-                request.getCertificateId(),
-                target,
-                CertificateState.valueOf(request.getStatus().name()),
-                request.getTimestamp());
-
-            response.setResult(ResultOfCallUtil.okResult());
-            monitoringLogService.logCertificateStatusChanged(request.getCertificateId(), request.getStatus().name());
-
-        } catch (RecipientUnknownException | InvalidCertificateException e) {
-            response.setResult(ResultOfCallUtil.failResult(e.getMessage()));
-        } catch (TestCertificateException e) {
-            LOGGER.error("Certificate '{}' couldn't be sent to recipient because it is a test certificate", request.getCertificateId());
-            response.setResult(ResultOfCallUtil.failResult(
-                "Cannot set the certificate to SENT as it is flagged as a test certificate"));
-        }
-
-        return response;
+    String target = request.getTarget();
+    // We need to translate FK->FKASSA as Försäkringskassan are still sending statuses with FK as
+    // target
+    if ("FK".equals(target)) {
+      target = recipientService.getPrimaryRecipientFkassa().getId();
     }
 
-    private Personnummer createPnr(String personId) {
-        return Personnummer.createPersonnummer(personId)
-            .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer"));
+    try {
+      target = recipientService.getRecipient(target).getId();
+
+      certificateService.setCertificateState(
+          createPnr(request.getNationalIdentityNumber()),
+          request.getCertificateId(),
+          target,
+          CertificateState.valueOf(request.getStatus().name()),
+          request.getTimestamp());
+
+      response.setResult(ResultOfCallUtil.okResult());
+      monitoringLogService.logCertificateStatusChanged(
+          request.getCertificateId(), request.getStatus().name());
+
+    } catch (RecipientUnknownException | InvalidCertificateException e) {
+      response.setResult(ResultOfCallUtil.failResult(e.getMessage()));
+    } catch (TestCertificateException e) {
+      LOGGER.error(
+          "Certificate '{}' couldn't be sent to recipient because it is a test certificate",
+          request.getCertificateId());
+      response.setResult(
+          ResultOfCallUtil.failResult(
+              "Cannot set the certificate to SENT as it is flagged as a test certificate"));
     }
 
+    return response;
+  }
+
+  private Personnummer createPnr(String personId) {
+    return Personnummer.createPersonnummer(personId)
+        .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer"));
+  }
 }

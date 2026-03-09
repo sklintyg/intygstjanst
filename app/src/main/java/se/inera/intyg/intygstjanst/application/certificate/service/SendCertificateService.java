@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,18 +16,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package se.inera.intyg.intygstjanst.application.certificate.service;
 
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
+import se.inera.intyg.intygstjanst.application.certificate.dto.SendCertificateRequestDTO;
+import se.inera.intyg.intygstjanst.application.certificate.service.CertificateService.SendStatus;
 import se.inera.intyg.intygstjanst.application.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.application.exception.TestCertificateException;
-import se.inera.intyg.intygstjanst.application.certificate.service.CertificateService.SendStatus;
-import se.inera.intyg.intygstjanst.application.certificate.dto.SendCertificateRequestDTO;
 
 public interface SendCertificateService {
 
-    SendStatus send(SendCertificateRequestDTO request)
-        throws InvalidCertificateException, TestCertificateException, CertificateRevokedException, RecipientUnknownException;
+  SendStatus send(SendCertificateRequestDTO request)
+      throws InvalidCertificateException,
+          TestCertificateException,
+          CertificateRevokedException,
+          RecipientUnknownException;
 }

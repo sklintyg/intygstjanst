@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -45,8 +45,14 @@ import se.inera.intyg.common.support.modules.support.api.ModuleContainerApi;
 import se.inera.intyg.common.support.modules.support.api.dto.AdditionalMetaData;
 import se.inera.intyg.common.support.modules.support.api.dto.CertificateRelation;
 import se.inera.intyg.common.support.modules.support.api.exception.ModuleException;
-import se.inera.intyg.intygstjanst.integration.pu.services.PUService;
+import se.inera.intyg.intygstjanst.application.certificate.converter.ConverterUtil;
+import se.inera.intyg.intygstjanst.application.exception.RecipientUnknownException;
+import se.inera.intyg.intygstjanst.application.exception.TestCertificateException;
+import se.inera.intyg.intygstjanst.application.recipient.CertificateTypeInfo;
+import se.inera.intyg.intygstjanst.application.recipient.RecipientService;
+import se.inera.intyg.intygstjanst.application.sickleave.services.SjukfallCertificateService;
 import se.inera.intyg.intygstjanst.infrastructure.logging.HashUtility;
+import se.inera.intyg.intygstjanst.infrastructure.logging.MonitoringLogService;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.exception.PersistenceException;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.CertificateDao;
@@ -54,13 +60,7 @@ import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Certific
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.CertificateStateHistoryEntry;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.OriginalCertificate;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Relation;
-import se.inera.intyg.intygstjanst.application.exception.RecipientUnknownException;
-import se.inera.intyg.intygstjanst.application.exception.TestCertificateException;
-import se.inera.intyg.intygstjanst.application.certificate.converter.ConverterUtil;
-import se.inera.intyg.intygstjanst.infrastructure.logging.MonitoringLogService;
-import se.inera.intyg.intygstjanst.application.recipient.RecipientService;
-import se.inera.intyg.intygstjanst.application.sickleave.services.SjukfallCertificateService;
-import se.inera.intyg.intygstjanst.application.recipient.CertificateTypeInfo;
+import se.inera.intyg.intygstjanst.integration.pu.services.PUService;
 import se.inera.intyg.schemas.contract.Personnummer;
 
 /**
@@ -69,382 +69,468 @@ import se.inera.intyg.schemas.contract.Personnummer;
 @Service
 public class CertificateService implements ModuleContainerApi {
 
-    public enum SendStatus {
-        ALREADY_SENT,
-        OK
+  public enum SendStatus {
+    ALREADY_SENT,
+    OK
+  }
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(CertificateService.class);
+
+  private static final String GET_CERTIFICATE_NO_PART = "N/A";
+
+  @Autowired private RecipientService recipientService;
+
+  @Autowired private CertificateDao certificateDao;
+
+  @Autowired private RelationService relationService;
+
+  @Autowired private IntygModuleRegistryImpl moduleRegistry;
+
+  @Autowired private CertificateSenderService senderService;
+
+  @Autowired private StatisticsService statisticsService;
+
+  @Autowired private MonitoringLogService monitoringLogService;
+
+  @Autowired private SjukfallCertificateService sjukfallCertificateService;
+
+  @Autowired private PUService puService;
+
+  @Autowired private HashUtility hashUtility;
+
+  @Transactional(readOnly = true)
+  public List<Certificate> listCertificatesForCitizen(
+      Personnummer civicRegistrationNumber,
+      List<String> certificateTypes,
+      LocalDate fromDate,
+      LocalDate toDate) {
+    assertPersonnummer(civicRegistrationNumber);
+
+    return certificateDao.findCertificate(
+        civicRegistrationNumber, certificateTypes, fromDate, toDate, null);
+  }
+
+  @Transactional(readOnly = true)
+  public List<Certificate> listCertificatesForCare(
+      Personnummer civicRegistrationNumber, List<String> careUnits) {
+    return certificateDao.findCertificate(civicRegistrationNumber, null, null, null, careUnits);
+  }
+
+  @Transactional(
+      readOnly = true,
+      noRollbackFor = {PersistenceException.class})
+  public Certificate getCertificateForCitizen(
+      Personnummer civicRegistrationNumber, String certificateId)
+      throws InvalidCertificateException, CertificateRevokedException {
+
+    assertPersonnummer(civicRegistrationNumber);
+
+    Certificate certificate = null;
+    try {
+      certificate = getCertificateInternal(civicRegistrationNumber, certificateId);
+    } catch (PersistenceException e) {
+      throw new InvalidCertificateException(
+          certificateId, hashUtility.hash(civicRegistrationNumber.getPersonnummer()));
     }
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CertificateService.class);
-
-    private static final String GET_CERTIFICATE_NO_PART = "N/A";
-
-    @Autowired
-    private RecipientService recipientService;
-
-    @Autowired
-    private CertificateDao certificateDao;
-
-    @Autowired
-    private RelationService relationService;
-
-    @Autowired
-    private IntygModuleRegistryImpl moduleRegistry;
-
-    @Autowired
-    private CertificateSenderService senderService;
-
-    @Autowired
-    private StatisticsService statisticsService;
-
-    @Autowired
-    private MonitoringLogService monitoringLogService;
-
-    @Autowired
-    private SjukfallCertificateService sjukfallCertificateService;
-
-    @Autowired
-    private PUService puService;
-
-    @Autowired
-    private HashUtility hashUtility;
-
-    @Transactional(readOnly = true)
-    public List<Certificate> listCertificatesForCitizen(Personnummer civicRegistrationNumber, List<String> certificateTypes,
-        LocalDate fromDate, LocalDate toDate) {
-        assertPersonnummer(civicRegistrationNumber);
-
-        return certificateDao.findCertificate(civicRegistrationNumber, certificateTypes, fromDate, toDate, null);
+    if (certificate == null) {
+      throw new InvalidCertificateException(
+          certificateId, hashUtility.hash(civicRegistrationNumber.getPersonnummer()));
     }
 
-    @Transactional(readOnly = true)
-    public List<Certificate> listCertificatesForCare(Personnummer civicRegistrationNumber, List<String> careUnits) {
-        return certificateDao.findCertificate(civicRegistrationNumber, null, null, null, careUnits);
+    if (certificate.isRevoked()) {
+      throw new CertificateRevokedException(certificateId);
     }
 
-    @Transactional(readOnly = true, noRollbackFor = {PersistenceException.class})
-    public Certificate getCertificateForCitizen(Personnummer civicRegistrationNumber, String certificateId)
-        throws InvalidCertificateException,
-        CertificateRevokedException {
+    return certificate;
+  }
 
-        assertPersonnummer(civicRegistrationNumber);
+  @Transactional(
+      readOnly = true,
+      noRollbackFor = {PersistenceException.class})
+  public Certificate getCertificateForCare(String certificateId)
+      throws InvalidCertificateException {
 
-        Certificate certificate = null;
-        try {
-            certificate = getCertificateInternal(civicRegistrationNumber, certificateId);
-        } catch (PersistenceException e) {
-            throw new InvalidCertificateException(certificateId, hashUtility.hash(civicRegistrationNumber.getPersonnummer()));
-        }
-
-        if (certificate == null) {
-            throw new InvalidCertificateException(certificateId, hashUtility.hash(civicRegistrationNumber.getPersonnummer()));
-        }
-
-        if (certificate.isRevoked()) {
-            throw new CertificateRevokedException(certificateId);
-        }
-
-        return certificate;
+    Certificate certificate = null;
+    try {
+      certificate = getCertificateInternal(null, certificateId);
+    } catch (PersistenceException e) {
+      throw new InvalidCertificateException(certificateId, null);
     }
 
-    @Transactional(readOnly = true, noRollbackFor = {PersistenceException.class})
-    public Certificate getCertificateForCare(String certificateId) throws InvalidCertificateException {
-
-        Certificate certificate = null;
-        try {
-            certificate = getCertificateInternal(null, certificateId);
-        } catch (PersistenceException e) {
-            throw new InvalidCertificateException(certificateId, null);
-        }
-
-        if (certificate == null) {
-            throw new InvalidCertificateException(certificateId, null);
-        }
-
-        return certificate;
+    if (certificate == null) {
+      throw new InvalidCertificateException(certificateId, null);
     }
 
-    public CertificateTypeInfo getCertificateTypeInfo(String certificateId) {
-        Certificate cert = null;
+    return certificate;
+  }
 
-        try {
-            cert = getCertificateForCare(certificateId);
-        } catch (InvalidCertificateException e) {
-            LOGGER.error("Certificate with id {} is invalid or does not exist", certificateId);
-            return null;
-        }
+  public CertificateTypeInfo getCertificateTypeInfo(String certificateId) {
+    Certificate cert = null;
 
-        TypAvIntyg typAvIntyg = new TypAvIntyg();
-        typAvIntyg.setCode(cert.getType());
-        typAvIntyg.setCodeSystem(KV_INTYGSTYP_CODE_SYSTEM);
-
-        return new CertificateTypeInfo(typAvIntyg, cert.getTypeVersion());
+    try {
+      cert = getCertificateForCare(certificateId);
+    } catch (InvalidCertificateException e) {
+      LOGGER.error("Certificate with id {} is invalid or does not exist", certificateId);
+      return null;
     }
 
-    @Transactional
-    public SendStatus sendCertificate(Personnummer civicRegistrationNumber, String certificateId, String recipientId)
-        throws InvalidCertificateException, CertificateRevokedException, RecipientUnknownException, TestCertificateException {
+    TypAvIntyg typAvIntyg = new TypAvIntyg();
+    typAvIntyg.setCode(cert.getType());
+    typAvIntyg.setCodeSystem(KV_INTYGSTYP_CODE_SYSTEM);
 
-        Certificate certificate = null;
-        try {
-            certificate = getCertificateInternal(civicRegistrationNumber, certificateId);
-        } catch (PersistenceException e) {
-            throw new InvalidCertificateException(certificateId, civicRegistrationNumber == null ? null
-                : hashUtility.hash(civicRegistrationNumber.getPersonnummer()));
-        }
+    return new CertificateTypeInfo(typAvIntyg, cert.getTypeVersion());
+  }
 
-        if (certificate == null) {
-            throw new InvalidCertificateException(certificateId, civicRegistrationNumber == null ? null
-                : hashUtility.hash(civicRegistrationNumber.getPersonnummer()));
-        }
+  @Transactional
+  public SendStatus sendCertificate(
+      Personnummer civicRegistrationNumber, String certificateId, String recipientId)
+      throws InvalidCertificateException,
+          CertificateRevokedException,
+          RecipientUnknownException,
+          TestCertificateException {
 
-        if (certificate.isRevoked()) {
-            throw new CertificateRevokedException(certificateId);
-        }
-
-        if (certificate.isAlreadySent(recipientId)) {
-            return SendStatus.ALREADY_SENT;
-        }
-
-        assertIfTestCertificate(certificate);
-
-        // Do send the certificate
-        senderService.sendCertificate(certificate, recipientId);
-
-        // Update the certificate
-        setCertificateState(civicRegistrationNumber, certificateId, recipientId, CertificateState.SENT, null);
-
-        return SendStatus.OK;
+    Certificate certificate = null;
+    try {
+      certificate = getCertificateInternal(civicRegistrationNumber, certificateId);
+    } catch (PersistenceException e) {
+      throw new InvalidCertificateException(
+          certificateId,
+          civicRegistrationNumber == null
+              ? null
+              : hashUtility.hash(civicRegistrationNumber.getPersonnummer()));
     }
 
-    @Transactional(noRollbackFor = {InvalidCertificateException.class, PersistenceException.class, TestCertificateException.class})
-    public void setCertificateState(Personnummer civicRegistrationNumber, String certificateId, String target,
-        CertificateState state, LocalDateTime timestamp) throws InvalidCertificateException, TestCertificateException {
-        try {
-            assertStateChangeSentIfTestCertificate(getCertificateForCare(certificateId), state);
-
-            certificateDao.updateStatus(certificateId, civicRegistrationNumber, state, target, timestamp);
-        } catch (PersistenceException e) {
-            throw new InvalidCertificateException(certificateId, hashUtility.hash(civicRegistrationNumber.getPersonnummer()));
-        }
+    if (certificate == null) {
+      throw new InvalidCertificateException(
+          certificateId,
+          civicRegistrationNumber == null
+              ? null
+              : hashUtility.hash(civicRegistrationNumber.getPersonnummer()));
     }
 
-    @Transactional(noRollbackFor = {InvalidCertificateException.class, PersistenceException.class, TestCertificateException.class})
-    public void setCertificateState(String certificateId, String target,
-        CertificateState state, LocalDateTime timestamp) throws InvalidCertificateException, TestCertificateException {
-        try {
-            assertStateChangeSentIfTestCertificate(getCertificateForCare(certificateId), state);
-
-            certificateDao.updateStatus(certificateId, state, target, timestamp);
-        } catch (PersistenceException e) {
-            throw new InvalidCertificateException(certificateId, null);
-        }
+    if (certificate.isRevoked()) {
+      throw new CertificateRevokedException(certificateId);
     }
 
-    @Transactional(propagation = Propagation.MANDATORY, noRollbackFor = {InvalidCertificateException.class,
-        CertificateRevokedException.class, TestCertificateException.class})
-    public Certificate revokeCertificate(Personnummer civicRegistrationNumber, String certificateId)
-        throws InvalidCertificateException, CertificateRevokedException, TestCertificateException {
-
-        Certificate certificate = null;
-        try {
-            certificate = getCertificateInternal(civicRegistrationNumber, certificateId);
-        } catch (PersistenceException e) {
-            throw new InvalidCertificateException(certificateId, civicRegistrationNumber == null ? null
-                : hashUtility.hash(civicRegistrationNumber.getPersonnummer()));
-        }
-
-        if (certificate == null) {
-            throw new InvalidCertificateException(certificateId, civicRegistrationNumber == null ? null
-                : hashUtility.hash(civicRegistrationNumber.getPersonnummer()));
-        }
-
-        if (certificate.isRevoked()) {
-            throw new CertificateRevokedException(certificateId);
-        }
-
-        setCertificateState(civicRegistrationNumber, certificateId,
-            recipientService.getPrimaryRecipientHsvard().getId(), CertificateState.CANCELLED, null);
-
-        setCertificateMetadataRevoked(certificate);
-
-        return certificate;
+    if (certificate.isAlreadySent(recipientId)) {
+      return SendStatus.ALREADY_SENT;
     }
 
-    private void setCertificateMetadataRevoked(Certificate certificate) {
-        var certificateMetaData = certificate.getCertificateMetaData();
-        if (certificateMetaData != null) {
-            certificateMetaData.setRevoked(true);
-        }
+    assertIfTestCertificate(certificate);
+
+    // Do send the certificate
+    senderService.sendCertificate(certificate, recipientId);
+
+    // Update the certificate
+    setCertificateState(
+        civicRegistrationNumber, certificateId, recipientId, CertificateState.SENT, null);
+
+    return SendStatus.OK;
+  }
+
+  @Transactional(
+      noRollbackFor = {
+        InvalidCertificateException.class,
+        PersistenceException.class,
+        TestCertificateException.class
+      })
+  public void setCertificateState(
+      Personnummer civicRegistrationNumber,
+      String certificateId,
+      String target,
+      CertificateState state,
+      LocalDateTime timestamp)
+      throws InvalidCertificateException, TestCertificateException {
+    try {
+      assertStateChangeSentIfTestCertificate(getCertificateForCare(certificateId), state);
+
+      certificateDao.updateStatus(certificateId, civicRegistrationNumber, state, target, timestamp);
+    } catch (PersistenceException e) {
+      throw new InvalidCertificateException(
+          certificateId, hashUtility.hash(civicRegistrationNumber.getPersonnummer()));
+    }
+  }
+
+  @Transactional(
+      noRollbackFor = {
+        InvalidCertificateException.class,
+        PersistenceException.class,
+        TestCertificateException.class
+      })
+  public void setCertificateState(
+      String certificateId, String target, CertificateState state, LocalDateTime timestamp)
+      throws InvalidCertificateException, TestCertificateException {
+    try {
+      assertStateChangeSentIfTestCertificate(getCertificateForCare(certificateId), state);
+
+      certificateDao.updateStatus(certificateId, state, target, timestamp);
+    } catch (PersistenceException e) {
+      throw new InvalidCertificateException(certificateId, null);
+    }
+  }
+
+  @Transactional(
+      propagation = Propagation.MANDATORY,
+      noRollbackFor = {
+        InvalidCertificateException.class,
+        CertificateRevokedException.class,
+        TestCertificateException.class
+      })
+  public Certificate revokeCertificate(Personnummer civicRegistrationNumber, String certificateId)
+      throws InvalidCertificateException, CertificateRevokedException, TestCertificateException {
+
+    Certificate certificate = null;
+    try {
+      certificate = getCertificateInternal(civicRegistrationNumber, certificateId);
+    } catch (PersistenceException e) {
+      throw new InvalidCertificateException(
+          certificateId,
+          civicRegistrationNumber == null
+              ? null
+              : hashUtility.hash(civicRegistrationNumber.getPersonnummer()));
     }
 
-    @Override
-    @Transactional
-    public void certificateReceived(CertificateHolder certificateHolder)
-        throws CertificateAlreadyExistsException, InvalidCertificateException {
-        LOGGER.debug("Certificate received {}", certificateHolder.getId());
-        Certificate certificate = storeCertificate(certificateHolder);
-
-        LOGGER.debug("Certificate stored {}", certificateHolder.getId());
-        monitoringLogService.logCertificateRegistered(certificate.getId(), certificate.getType(), certificate.getCareUnitId());
-
-        if (!certificate.isTestCertificate()) {
-            String transformedXml = certificateReceivedForStatistics(certificateHolder);
-            statisticsService.created(transformedXml, certificate.getId(), certificate.getType(), certificate.getCareUnitId());
-        }
-        sjukfallCertificateService.created(certificate);
+    if (certificate == null) {
+      throw new InvalidCertificateException(
+          certificateId,
+          civicRegistrationNumber == null
+              ? null
+              : hashUtility.hash(civicRegistrationNumber.getPersonnummer()));
     }
 
-    private String certificateReceivedForStatistics(CertificateHolder certificateHolder) {
-        try {
-            ModuleApi moduleApi = moduleRegistry.getModuleApi(certificateHolder.getType(), certificateHolder.getTypeVersion());
-            return moduleApi.transformToStatisticsService(certificateHolder.getOriginalCertificate());
-        } catch (ModuleNotFoundException | ModuleException e) {
-            LOGGER.error("Module not found for certificate of type {}", certificateHolder.getType());
-            throw new RuntimeException(e);
-        }
+    if (certificate.isRevoked()) {
+      throw new CertificateRevokedException(certificateId);
     }
 
-    public void revokeCertificateForStatistics(Certificate certificate) {
-        if (certificate.isTestCertificate()) {
-            return;
-        }
+    setCertificateState(
+        civicRegistrationNumber,
+        certificateId,
+        recipientService.getPrimaryRecipientHsvard().getId(),
+        CertificateState.CANCELLED,
+        null);
 
-        String certificateXml;
-        try {
-            ModuleApi moduleApi = moduleRegistry.getModuleApi(certificate.getType(), certificate.getTypeVersion());
-            certificateXml = moduleApi.transformToStatisticsService(certificate.getOriginalCertificate().getDocument());
-        } catch (ModuleNotFoundException | ModuleException e) {
-            LOGGER.error("Module not found for certificate of type {}", certificate.getType());
-            throw new RuntimeException(e);
-        }
-        statisticsService.revoked(certificateXml, certificate.getId(), certificate.getType(), certificate.getCareUnitId());
+    setCertificateMetadataRevoked(certificate);
+
+    return certificate;
+  }
+
+  private void setCertificateMetadataRevoked(Certificate certificate) {
+    var certificateMetaData = certificate.getCertificateMetaData();
+    if (certificateMetaData != null) {
+      certificateMetaData.setRevoked(true);
+    }
+  }
+
+  @Override
+  @Transactional
+  public void certificateReceived(CertificateHolder certificateHolder)
+      throws CertificateAlreadyExistsException, InvalidCertificateException {
+    LOGGER.debug("Certificate received {}", certificateHolder.getId());
+    Certificate certificate = storeCertificate(certificateHolder);
+
+    LOGGER.debug("Certificate stored {}", certificateHolder.getId());
+    monitoringLogService.logCertificateRegistered(
+        certificate.getId(), certificate.getType(), certificate.getCareUnitId());
+
+    if (!certificate.isTestCertificate()) {
+      String transformedXml = certificateReceivedForStatistics(certificateHolder);
+      statisticsService.created(
+          transformedXml, certificate.getId(), certificate.getType(), certificate.getCareUnitId());
+    }
+    sjukfallCertificateService.created(certificate);
+  }
+
+  private String certificateReceivedForStatistics(CertificateHolder certificateHolder) {
+    try {
+      ModuleApi moduleApi =
+          moduleRegistry.getModuleApi(
+              certificateHolder.getType(), certificateHolder.getTypeVersion());
+      return moduleApi.transformToStatisticsService(certificateHolder.getOriginalCertificate());
+    } catch (ModuleNotFoundException | ModuleException e) {
+      LOGGER.error("Module not found for certificate of type {}", certificateHolder.getType());
+      throw new RuntimeException(e);
+    }
+  }
+
+  public void revokeCertificateForStatistics(Certificate certificate) {
+    if (certificate.isTestCertificate()) {
+      return;
     }
 
-    @VisibleForTesting
-    Certificate storeCertificate(CertificateHolder certificateHolder) throws CertificateAlreadyExistsException,
-        InvalidCertificateException {
-        Certificate certificate = ConverterUtil.toCertificate(certificateHolder);
+    String certificateXml;
+    try {
+      ModuleApi moduleApi =
+          moduleRegistry.getModuleApi(certificate.getType(), certificate.getTypeVersion());
+      certificateXml =
+          moduleApi.transformToStatisticsService(
+              certificate.getOriginalCertificate().getDocument());
+    } catch (ModuleNotFoundException | ModuleException e) {
+      LOGGER.error("Module not found for certificate of type {}", certificate.getType());
+      throw new RuntimeException(e);
+    }
+    statisticsService.revoked(
+        certificateXml, certificate.getId(), certificate.getType(), certificate.getCareUnitId());
+  }
 
-        // ensure that certificate does not exist yet
-        try {
-            checkForExistingCertificate(certificate.getId(), certificate.getCivicRegistrationNumber());
-        } catch (PersistenceException e) {
-            throw new InvalidCertificateException(certificate.getId(), certificate.getCivicRegistrationNumber() == null ? null
-                : hashUtility.hash(certificate.getCivicRegistrationNumber().getPersonnummer()));
-        }
+  @VisibleForTesting
+  Certificate storeCertificate(CertificateHolder certificateHolder)
+      throws CertificateAlreadyExistsException, InvalidCertificateException {
+    Certificate certificate = ConverterUtil.toCertificate(certificateHolder);
 
-        // add initial RECEIVED state using current time as receiving timestamp
-        CertificateStateHistoryEntry state = new CertificateStateHistoryEntry(
-            recipientService.getPrimaryRecipientHsvard().getId(), CertificateState.RECEIVED, LocalDateTime.now());
-        certificate.addState(state);
-
-        addTestCertificateFlagIfPatientIsTestIndicated(certificate);
-
-        certificateDao.store(certificate);
-        storeOriginalCertificate(certificateHolder.getOriginalCertificate(), certificate);
-
-        storeCertificateMetadata(certificateHolder, certificate);
-
-        if (certificateHolder.getCertificateRelation() != null) {
-            CertificateRelation rel = certificateHolder.getCertificateRelation();
-            relationService.storeRelation(
-                new Relation(certificateHolder.getId(), rel.getToIntygsId(), rel.getRelationKod().value(), LocalDateTime.now()));
-        }
-
-        return certificate;
+    // ensure that certificate does not exist yet
+    try {
+      checkForExistingCertificate(certificate.getId(), certificate.getCivicRegistrationNumber());
+    } catch (PersistenceException e) {
+      throw new InvalidCertificateException(
+          certificate.getId(),
+          certificate.getCivicRegistrationNumber() == null
+              ? null
+              : hashUtility.hash(certificate.getCivicRegistrationNumber().getPersonnummer()));
     }
 
-    @Override
-    @Transactional(readOnly = true, noRollbackFor = {PersistenceException.class})
-    public CertificateHolder getCertificate(String certificateId, Personnummer personId, boolean checkConsent)
-        throws InvalidCertificateException {
+    // add initial RECEIVED state using current time as receiving timestamp
+    CertificateStateHistoryEntry state =
+        new CertificateStateHistoryEntry(
+            recipientService.getPrimaryRecipientHsvard().getId(),
+            CertificateState.RECEIVED,
+            LocalDateTime.now());
+    certificate.addState(state);
 
-        Certificate certificate = null;
-        try {
-            certificate = getCertificateInternal(personId, certificateId);
-        } catch (PersistenceException e) {
-            throw new InvalidCertificateException(certificateId, personId == null ? null : hashUtility.hash(personId.getPersonnummer()));
-        }
+    addTestCertificateFlagIfPatientIsTestIndicated(certificate);
 
-        if (certificate == null) {
-            throw new InvalidCertificateException(certificateId, personId == null ? null : hashUtility.hash(personId.getPersonnummer()));
-        }
+    certificateDao.store(certificate);
+    storeOriginalCertificate(certificateHolder.getOriginalCertificate(), certificate);
 
-        return ConverterUtil.toCertificateHolder(certificate);
+    storeCertificateMetadata(certificateHolder, certificate);
+
+    if (certificateHolder.getCertificateRelation() != null) {
+      CertificateRelation rel = certificateHolder.getCertificateRelation();
+      relationService.storeRelation(
+          new Relation(
+              certificateHolder.getId(),
+              rel.getToIntygsId(),
+              rel.getRelationKod().value(),
+              LocalDateTime.now()));
     }
 
-    public boolean isTestCertificate(String certificateId) throws InvalidCertificateException {
-        return getCertificateForCare(certificateId).isTestCertificate();
+    return certificate;
+  }
+
+  @Override
+  @Transactional(
+      readOnly = true,
+      noRollbackFor = {PersistenceException.class})
+  public CertificateHolder getCertificate(
+      String certificateId, Personnummer personId, boolean checkConsent)
+      throws InvalidCertificateException {
+
+    Certificate certificate = null;
+    try {
+      certificate = getCertificateInternal(personId, certificateId);
+    } catch (PersistenceException e) {
+      throw new InvalidCertificateException(
+          certificateId, personId == null ? null : hashUtility.hash(personId.getPersonnummer()));
     }
 
-    @Override
-    public void logCertificateRetrieved(String certificateId, String certificateType, String careUnit, String partId) {
-        monitoringLogService.logCertificateRetrieved(certificateId, certificateType, careUnit,
-            StringUtils.isEmpty(partId) ? GET_CERTIFICATE_NO_PART : partId);
+    if (certificate == null) {
+      throw new InvalidCertificateException(
+          certificateId, personId == null ? null : hashUtility.hash(personId.getPersonnummer()));
     }
 
-    private void assertPersonnummer(Personnummer civicRegistrationNumber) {
-        if (civicRegistrationNumber == null || Strings.isNullOrEmpty(civicRegistrationNumber.getPersonnummer())) {
-            throw new IllegalArgumentException("Invalid/missing civicRegistrationNumber");
-        }
+    return ConverterUtil.toCertificateHolder(certificate);
+  }
+
+  public boolean isTestCertificate(String certificateId) throws InvalidCertificateException {
+    return getCertificateForCare(certificateId).isTestCertificate();
+  }
+
+  @Override
+  public void logCertificateRetrieved(
+      String certificateId, String certificateType, String careUnit, String partId) {
+    monitoringLogService.logCertificateRetrieved(
+        certificateId,
+        certificateType,
+        careUnit,
+        StringUtils.isEmpty(partId) ? GET_CERTIFICATE_NO_PART : partId);
+  }
+
+  private void assertPersonnummer(Personnummer civicRegistrationNumber) {
+    if (civicRegistrationNumber == null
+        || Strings.isNullOrEmpty(civicRegistrationNumber.getPersonnummer())) {
+      throw new IllegalArgumentException("Invalid/missing civicRegistrationNumber");
+    }
+  }
+
+  private void checkForExistingCertificate(String certificateId, Personnummer personnummer)
+      throws CertificateAlreadyExistsException, PersistenceException {
+    if (certificateDao.getCertificate(personnummer, certificateId) != null) {
+      throw new CertificateAlreadyExistsException(certificateId);
+    }
+  }
+
+  private Certificate getCertificateInternal(
+      Personnummer civicRegistrationNumber, String certificateId) throws PersistenceException {
+    return certificateDao.getCertificate(civicRegistrationNumber, certificateId);
+  }
+
+  /**
+   * @param utlatandeXml the received certificate utlatande xml
+   * @param certificate the {@link Certificate} generated from the utlatandeXml, or <code>null
+   *     </code> if unknown.
+   */
+  private void storeOriginalCertificate(String utlatandeXml, Certificate certificate) {
+    OriginalCertificate original =
+        new OriginalCertificate(LocalDateTime.now(), utlatandeXml, certificate);
+    certificateDao.storeOriginalCertificate(original);
+    certificate.setOriginalCertificate(original);
+  }
+
+  private void storeCertificateMetadata(
+      CertificateHolder certificateHolder, Certificate certificate) {
+    final var diagnoses = getDiagnoses(certificateHolder.getAdditionalMetaData());
+
+    final var metadata =
+        new CertificateMetaData(
+            certificate,
+            certificateHolder.getSigningDoctorId(),
+            certificateHolder.getSigningDoctorName(),
+            certificateHolder.isRevoked(),
+            diagnoses);
+
+    certificateDao.storeCertificateMetadata(metadata);
+    certificate.setCertificateMetaData(metadata);
+  }
+
+  private String getDiagnoses(AdditionalMetaData additionalMetaData) {
+    if (additionalMetaData == null
+        || additionalMetaData.getDiagnoses() == null
+        || additionalMetaData.getDiagnoses().isEmpty()) {
+      return null;
     }
 
-    private void checkForExistingCertificate(String certificateId, Personnummer personnummer) throws CertificateAlreadyExistsException,
-        PersistenceException {
-        if (certificateDao.getCertificate(personnummer, certificateId) != null) {
-            throw new CertificateAlreadyExistsException(certificateId);
-        }
+    return org.apache.commons.lang3.StringUtils.join(additionalMetaData.getDiagnoses());
+  }
+
+  private boolean isPatientTestIndicated(Personnummer civicRegistrationNumber) {
+    return puService.getPerson(civicRegistrationNumber).getPerson().testIndicator();
+  }
+
+  private void addTestCertificateFlagIfPatientIsTestIndicated(Certificate certificate) {
+    certificate.setTestCertificate(
+        isPatientTestIndicated(certificate.getCivicRegistrationNumber()));
+  }
+
+  private void assertStateChangeSentIfTestCertificate(
+      Certificate certificate, CertificateState state) throws TestCertificateException {
+    if (state.equals(CertificateState.SENT)) {
+      assertIfTestCertificate(certificate);
     }
+  }
 
-    private Certificate getCertificateInternal(Personnummer civicRegistrationNumber, String certificateId) throws PersistenceException {
-        return certificateDao.getCertificate(civicRegistrationNumber, certificateId);
+  private void assertIfTestCertificate(Certificate certificate) throws TestCertificateException {
+    if (certificate.isTestCertificate()) {
+      throw new TestCertificateException(certificate.getId());
     }
-
-    /**
-     * @param utlatandeXml the received certificate utlatande xml
-     * @param certificate the {@link Certificate} generated from the utlatandeXml, or <code>null</code> if unknown.
-     */
-    private void storeOriginalCertificate(String utlatandeXml, Certificate certificate) {
-        OriginalCertificate original = new OriginalCertificate(LocalDateTime.now(), utlatandeXml, certificate);
-        certificateDao.storeOriginalCertificate(original);
-        certificate.setOriginalCertificate(original);
-    }
-
-    private void storeCertificateMetadata(CertificateHolder certificateHolder, Certificate certificate) {
-        final var diagnoses = getDiagnoses(certificateHolder.getAdditionalMetaData());
-
-        final var metadata = new CertificateMetaData(certificate, certificateHolder.getSigningDoctorId(),
-            certificateHolder.getSigningDoctorName(), certificateHolder.isRevoked(), diagnoses);
-
-        certificateDao.storeCertificateMetadata(metadata);
-        certificate.setCertificateMetaData(metadata);
-    }
-
-    private String getDiagnoses(AdditionalMetaData additionalMetaData) {
-        if (additionalMetaData == null || additionalMetaData.getDiagnoses() == null || additionalMetaData.getDiagnoses().isEmpty()) {
-            return null;
-        }
-
-        return org.apache.commons.lang3.StringUtils.join(additionalMetaData.getDiagnoses());
-    }
-
-    private boolean isPatientTestIndicated(Personnummer civicRegistrationNumber) {
-        return puService.getPerson(civicRegistrationNumber).getPerson().testIndicator();
-    }
-
-    private void addTestCertificateFlagIfPatientIsTestIndicated(Certificate certificate) {
-        certificate.setTestCertificate(isPatientTestIndicated(certificate.getCivicRegistrationNumber()));
-    }
-
-    private void assertStateChangeSentIfTestCertificate(Certificate certificate, CertificateState state) throws TestCertificateException {
-        if (state.equals(CertificateState.SENT)) {
-            assertIfTestCertificate(certificate);
-        }
-    }
-
-    private void assertIfTestCertificate(Certificate certificate) throws TestCertificateException {
-        if (certificate.isTestCertificate()) {
-            throw new TestCertificateException(certificate.getId());
-        }
-    }
+  }
 }

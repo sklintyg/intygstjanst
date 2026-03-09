@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -25,13 +25,13 @@ import se.inera.intyg.schemas.contract.Personnummer;
 
 public class PersonIdTypeEvaluator {
 
-    private PersonIdTypeEvaluator() {
-        throw new IllegalStateException("Utility class");
-    }
+  private PersonIdTypeEvaluator() {
+    throw new IllegalStateException("Utility class");
+  }
 
-    public static PersonIdTypeDTO getType(Personnummer personId) {
-        return SamordningsnummerValidator.isSamordningsNummer(
-            Optional.of(personId)) ? PersonIdTypeDTO.COORDINATION_NUMBER
-            : PersonIdTypeDTO.PERSONAL_IDENTITY_NUMBER;
-    }
+  public static PersonIdTypeDTO getType(Personnummer personId) {
+    return SamordningsnummerValidator.isSamordningsNummer(Optional.of(personId))
+        ? PersonIdTypeDTO.COORDINATION_NUMBER
+        : PersonIdTypeDTO.PERSONAL_IDENTITY_NUMBER;
+  }
 }

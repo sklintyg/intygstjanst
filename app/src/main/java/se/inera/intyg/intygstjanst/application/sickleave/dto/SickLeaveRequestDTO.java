@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package se.inera.intyg.intygstjanst.application.sickleave.dto;
 
 import java.time.LocalDate;
@@ -26,20 +25,19 @@ import lombok.Data;
 @Data
 public class SickLeaveRequestDTO {
 
-    private String unitId;
-    private String careUnitId;
-    private List<String> doctorIds;
-    private int maxCertificateGap;
-    private int maxDaysSinceSickLeaveCompleted;
-    private List<SickLeaveLengthInterval> sickLeaveLengthIntervals;
-    private List<DiagnosKapitel> diagnosisChapters;
-    private Integer fromPatientAge;
-    private Integer toPatientAge;
-    private String protectedPersonFilterId;
-    private LocalDate fromSickLeaveEndDate;
-    private LocalDate toSickLeaveEndDate;
-    private List<String> rekoStatusTypeIds;
-    private List<String> occupationTypeIds;
-    private String textSearch;
-
+  private String unitId;
+  private String careUnitId;
+  private List<String> doctorIds;
+  private int maxCertificateGap;
+  private int maxDaysSinceSickLeaveCompleted;
+  private List<SickLeaveLengthInterval> sickLeaveLengthIntervals;
+  private List<DiagnosKapitel> diagnosisChapters;
+  private Integer fromPatientAge;
+  private Integer toPatientAge;
+  private String protectedPersonFilterId;
+  private LocalDate fromSickLeaveEndDate;
+  private LocalDate toSickLeaveEndDate;
+  private List<String> rekoStatusTypeIds;
+  private List<String> occupationTypeIds;
+  private String textSearch;
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -24,35 +24,37 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import se.inera.intyg.intygstjanst.application.testcertificate.dto.TestCertificateEraseRequest;
-import se.inera.intyg.intygstjanst.infrastructure.security.interceptor.ApiBasePath;
 import se.inera.intyg.intygstjanst.application.testcertificate.dto.TestCertificateEraseResult;
+import se.inera.intyg.intygstjanst.application.testcertificate.service.TestCertificateService;
 import se.inera.intyg.intygstjanst.infrastructure.logging.MdcLogConstants;
 import se.inera.intyg.intygstjanst.infrastructure.logging.PerformanceLogging;
-import se.inera.intyg.intygstjanst.application.testcertificate.service.TestCertificateService;
+import se.inera.intyg.intygstjanst.infrastructure.security.interceptor.ApiBasePath;
 
-/**
- * Internal REST endpoint for managing test certificates.
- */
+/** Internal REST endpoint for managing test certificates. */
 @RestController
 @ApiBasePath("/internalapi")
 @RequestMapping("/testCertificate")
 @RequiredArgsConstructor
 public class TestCertificateController {
 
-    private final TestCertificateService testCertificateService;
+  private final TestCertificateService testCertificateService;
 
-    @PostMapping("/erase")
-    @PerformanceLogging(eventAction = "erase-test-certificate", eventType = MdcLogConstants.EVENT_TYPE_DELETION)
-    public TestCertificateEraseResult eraseTestCertificates(@RequestBody TestCertificateEraseRequest eraseRequest) {
+  @PostMapping("/erase")
+  @PerformanceLogging(
+      eventAction = "erase-test-certificate",
+      eventType = MdcLogConstants.EVENT_TYPE_DELETION)
+  public TestCertificateEraseResult eraseTestCertificates(
+      @RequestBody TestCertificateEraseRequest eraseRequest) {
 
-        if (eraseRequest.getTo() == null) {
-            throw new IllegalArgumentException("Missing date to");
-        }
-
-        if (eraseRequest.getFrom() != null && eraseRequest.getFrom().isAfter(eraseRequest.getTo())) {
-            throw new IllegalArgumentException("From date is after to date");
-        }
-
-        return testCertificateService.eraseTestCertificates(eraseRequest.getFrom(), eraseRequest.getTo());
+    if (eraseRequest.getTo() == null) {
+      throw new IllegalArgumentException("Missing date to");
     }
+
+    if (eraseRequest.getFrom() != null && eraseRequest.getFrom().isAfter(eraseRequest.getTo())) {
+      throw new IllegalArgumentException("From date is after to date");
+    }
+
+    return testCertificateService.eraseTestCertificates(
+        eraseRequest.getFrom(), eraseRequest.getTo());
+  }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -37,13 +37,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import se.inera.intyg.intygstjanst.application.sickleave.services.SjukfallEngineService;
-import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.SjukfallCertificate;
-import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.SjukfallCertificateDao;
-import se.inera.intyg.intygstjanst.infrastructure.csintegration.aggregator.ValidSickLeaveAggregator;
 import se.inera.intyg.intygstjanst.application.sickleave.converter.SjukfallCertificateConverter;
 import se.inera.intyg.intygstjanst.application.sickleave.converter.SjukfallConverter;
 import se.inera.intyg.intygstjanst.application.sickleave.services.HsaService;
+import se.inera.intyg.intygstjanst.application.sickleave.services.SjukfallEngineService;
+import se.inera.intyg.intygstjanst.infrastructure.csintegration.aggregator.ValidSickLeaveAggregator;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.SjukfallCertificate;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.SjukfallCertificateDao;
 import se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.ListSickLeavesForCareResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.ListSickLeavesForCareType;
 import se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.Sjukfall;
@@ -55,166 +55,174 @@ import se.riv.clinicalprocess.healthcond.certificate.types.v3.HsaId;
 @ExtendWith(MockitoExtension.class)
 class ListSickLeavesForCareResponderImplTest {
 
-    @Mock
-    private ValidSickLeaveAggregator validSickLeaveAggregator;
+  @Mock private ValidSickLeaveAggregator validSickLeaveAggregator;
 
-    @Mock
-    private HsaService hsaService;
+  @Mock private HsaService hsaService;
 
-    @Spy
-    private SjukfallEngineService sjukfallEngineService = new SjukfallEngineService();
+  @Spy private SjukfallEngineService sjukfallEngineService = new SjukfallEngineService();
 
-    @Mock
-    private SjukfallCertificateDao sjukfallCertificateDao;
+  @Mock private SjukfallCertificateDao sjukfallCertificateDao;
 
-    @Spy
-    private SjukfallConverter sjukfallConverter;
+  @Spy private SjukfallConverter sjukfallConverter;
 
-    @Spy
-    private SjukfallCertificateConverter sjukfallCertificateConverter;
+  @Spy private SjukfallCertificateConverter sjukfallCertificateConverter;
 
-    @InjectMocks
-    private ListSickLeavesForCareResponderImpl testee = new ListSickLeavesForCareResponderImpl();
+  @InjectMocks
+  private ListSickLeavesForCareResponderImpl testee = new ListSickLeavesForCareResponderImpl();
 
-    private HsaId enhetsId;
-    private HsaId lakareId;
+  private HsaId enhetsId;
+  private HsaId lakareId;
 
-    private SjukfallCertTestHelper testHelper = new SjukfallCertTestHelper();
+  private SjukfallCertTestHelper testHelper = new SjukfallCertTestHelper();
 
-    @BeforeEach
-    void init() {
-        enhetsId = new HsaId();
-        enhetsId.setExtension(SjukfallCertTestHelper.CARE_UNIT_1_ID);
+  @BeforeEach
+  void init() {
+    enhetsId = new HsaId();
+    enhetsId.setExtension(SjukfallCertTestHelper.CARE_UNIT_1_ID);
 
-        lakareId = new HsaId();
-        lakareId.setExtension(SjukfallCertTestHelper.DOCTOR_HSA_ID);
-    }
+    lakareId = new HsaId();
+    lakareId.setExtension(SjukfallCertTestHelper.DOCTOR_HSA_ID);
+  }
 
-    @Test
-    void testListSickLeavesForCare() {
-        final var sjukfallCertificates = buildSjukfallCertificates();
-        when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(or(isNull(), anyString()), anyList(), anyInt()))
-            .thenReturn(sjukfallCertificates);
-        when(validSickLeaveAggregator.get(sjukfallCertificates)).thenReturn(sjukfallCertificates);
+  @Test
+  void testListSickLeavesForCare() {
+    final var sjukfallCertificates = buildSjukfallCertificates();
+    when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(
+            or(isNull(), anyString()), anyList(), anyInt()))
+        .thenReturn(sjukfallCertificates);
+    when(validSickLeaveAggregator.get(sjukfallCertificates)).thenReturn(sjukfallCertificates);
 
-        ListSickLeavesForCareResponseType response = testee.listSickLeavesForCare("", buildParams(100, enhetsId, null));
-        assertEquals(1, response.getSjukfallLista().getSjukfall().size());
-        Sjukfall sjukfall = response.getSjukfallLista().getSjukfall().getFirst();
+    ListSickLeavesForCareResponseType response =
+        testee.listSickLeavesForCare("", buildParams(100, enhetsId, null));
+    assertEquals(1, response.getSjukfallLista().getSjukfall().size());
+    Sjukfall sjukfall = response.getSjukfallLista().getSjukfall().getFirst();
 
-        assertEquals(SjukfallCertTestHelper.CARE_UNIT_1_ID, sjukfall.getEnhetsId().getExtension());
-        assertEquals(SjukfallCertTestHelper.DOCTOR_HSA_ID, sjukfall.getPersonalId().getExtension());
-        assertEquals(SjukfallCertTestHelper.PERSONNUMMER, sjukfall.getPersonId().getExtension());
-        assertEquals(SjukfallCertTestHelper.PATIENT_NAME, sjukfall.getPatientFullstandigtNamn());
-        assertEquals(SjukfallCertTestHelper.DIAGNOSE_CODE, sjukfall.getDiagnoskod().getCode());
-        assertEquals(1, sjukfall.getAntalIntyg());
-        assertEquals(75, sjukfall.getSjukskrivningsgrad().getAktivGrad());
-        assertEquals(2, sjukfall.getSjukskrivningsgrad().getGrader().getGrad().size());
+    assertEquals(SjukfallCertTestHelper.CARE_UNIT_1_ID, sjukfall.getEnhetsId().getExtension());
+    assertEquals(SjukfallCertTestHelper.DOCTOR_HSA_ID, sjukfall.getPersonalId().getExtension());
+    assertEquals(SjukfallCertTestHelper.PERSONNUMMER, sjukfall.getPersonId().getExtension());
+    assertEquals(SjukfallCertTestHelper.PATIENT_NAME, sjukfall.getPatientFullstandigtNamn());
+    assertEquals(SjukfallCertTestHelper.DIAGNOSE_CODE, sjukfall.getDiagnoskod().getCode());
+    assertEquals(1, sjukfall.getAntalIntyg());
+    assertEquals(75, sjukfall.getSjukskrivningsgrad().getAktivGrad());
+    assertEquals(2, sjukfall.getSjukskrivningsgrad().getGrader().getGrad().size());
 
-        // Order is important
-        assertEquals(100, sjukfall.getSjukskrivningsgrad().getGrader().getGrad().get(0).intValue());
-        assertEquals(75, sjukfall.getSjukskrivningsgrad().getGrader().getGrad().get(1).intValue());
+    // Order is important
+    assertEquals(100, sjukfall.getSjukskrivningsgrad().getGrader().getGrad().get(0).intValue());
+    assertEquals(75, sjukfall.getSjukskrivningsgrad().getGrader().getGrad().get(1).intValue());
 
-        assertEquals(LocalDate.now().minusWeeks(3), sjukfall.getStartdatum());
-        assertEquals(LocalDate.now().plusWeeks(1), sjukfall.getSlutdatum());
+    assertEquals(LocalDate.now().minusWeeks(3), sjukfall.getStartdatum());
+    assertEquals(LocalDate.now().plusWeeks(1), sjukfall.getSlutdatum());
 
-        // The test data is minus three weeks -> plus one week, which including "today" is 4 weeks + 1 day
-        assertEquals(29, sjukfall.getSjukskrivningslangd());
-    }
+    // The test data is minus three weeks -> plus one week, which including "today" is 4 weeks + 1
+    // day
+    assertEquals(29, sjukfall.getSjukskrivningslangd());
+  }
 
-    @Test
-    void testListSickLeavesForCareForCorrectDoctor() {
-        final var sjukfallCertificates = buildSjukfallCertificates();
-        when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(or(isNull(), anyString()), anyList(), anyInt()))
-            .thenReturn(sjukfallCertificates);
-        when(validSickLeaveAggregator.get(sjukfallCertificates)).thenReturn(sjukfallCertificates);
+  @Test
+  void testListSickLeavesForCareForCorrectDoctor() {
+    final var sjukfallCertificates = buildSjukfallCertificates();
+    when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(
+            or(isNull(), anyString()), anyList(), anyInt()))
+        .thenReturn(sjukfallCertificates);
+    when(validSickLeaveAggregator.get(sjukfallCertificates)).thenReturn(sjukfallCertificates);
 
-        ListSickLeavesForCareResponseType response = testee.listSickLeavesForCare("", buildParams(100, enhetsId, lakareId));
-        assertEquals(1, response.getSjukfallLista().getSjukfall().size());
-    }
+    ListSickLeavesForCareResponseType response =
+        testee.listSickLeavesForCare("", buildParams(100, enhetsId, lakareId));
+    assertEquals(1, response.getSjukfallLista().getSjukfall().size());
+  }
 
-    @Test
-    void testListSickLeavesForCareForInCorrectDoctorReturnsZeroRows() {
-        lakareId.setExtension("other-doctor");
-        when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(or(isNull(), anyString()), anyList(), anyInt()))
-            .thenReturn(buildSjukfallCertificates());
+  @Test
+  void testListSickLeavesForCareForInCorrectDoctorReturnsZeroRows() {
+    lakareId.setExtension("other-doctor");
+    when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(
+            or(isNull(), anyString()), anyList(), anyInt()))
+        .thenReturn(buildSjukfallCertificates());
 
-        ListSickLeavesForCareResponseType response = testee.listSickLeavesForCare("", buildParams(100, enhetsId, lakareId));
-        assertEquals(0, response.getSjukfallLista().getSjukfall().size());
-    }
+    ListSickLeavesForCareResponseType response =
+        testee.listSickLeavesForCare("", buildParams(100, enhetsId, lakareId));
+    assertEquals(0, response.getSjukfallLista().getSjukfall().size());
+  }
 
-    @Test
-    void testListSickLeavesForCareReturns0WhenTooLargeMinSjukskrivningslangd() {
+  @Test
+  void testListSickLeavesForCareReturns0WhenTooLargeMinSjukskrivningslangd() {
 
-        when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(or(isNull(), anyString()), anyList(), anyInt()))
-            .thenReturn(buildSjukfallCertificates());
+    when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(
+            or(isNull(), anyString()), anyList(), anyInt()))
+        .thenReturn(buildSjukfallCertificates());
 
-        ListSickLeavesForCareResponseType response = testee.listSickLeavesForCare("", buildParams(100, enhetsId, null, 100, 200));
-        assertEquals(0, response.getSjukfallLista().getSjukfall().size());
-    }
+    ListSickLeavesForCareResponseType response =
+        testee.listSickLeavesForCare("", buildParams(100, enhetsId, null, 100, 200));
+    assertEquals(0, response.getSjukfallLista().getSjukfall().size());
+  }
 
-    @Test
-    void testListSickLeavesForCareReturns0WhenTooShortMaxSjukskrivningslangd() {
+  @Test
+  void testListSickLeavesForCareReturns0WhenTooShortMaxSjukskrivningslangd() {
 
-        when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(or(isNull(), anyString()), anyList(), anyInt()))
-            .thenReturn(buildSjukfallCertificates());
+    when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(
+            or(isNull(), anyString()), anyList(), anyInt()))
+        .thenReturn(buildSjukfallCertificates());
 
-        ListSickLeavesForCareResponseType response = testee.listSickLeavesForCare("", buildParams(100, enhetsId, null, 1, 2));
-        assertEquals(0, response.getSjukfallLista().getSjukfall().size());
-    }
+    ListSickLeavesForCareResponseType response =
+        testee.listSickLeavesForCare("", buildParams(100, enhetsId, null, 1, 2));
+    assertEquals(0, response.getSjukfallLista().getSjukfall().size());
+  }
 
-    @Test
-    void testListSickLeavesForCareWhenZeroSjukfallCertsAreReturnedFromDao() {
+  @Test
+  void testListSickLeavesForCareWhenZeroSjukfallCertsAreReturnedFromDao() {
 
-        when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(or(isNull(), anyString()), anyList(), anyInt()))
-            .thenReturn(new ArrayList<>());
+    when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(
+            or(isNull(), anyString()), anyList(), anyInt()))
+        .thenReturn(new ArrayList<>());
 
-        ListSickLeavesForCareResponseType response = testee.listSickLeavesForCare("", buildParams(100, enhetsId, null));
-        assertEquals(0, response.getSjukfallLista().getSjukfall().size());
-    }
+    ListSickLeavesForCareResponseType response =
+        testee.listSickLeavesForCare("", buildParams(100, enhetsId, null));
+    assertEquals(0, response.getSjukfallLista().getSjukfall().size());
+  }
 
-    @Test
-    void testListSickLeavesForCareWithNullEnhetsIdReturnsError() {
-        final var params = buildParams(100, null, null);
-        assertThrows(IllegalArgumentException.class, () ->
-            testee.listSickLeavesForCare("", params));
-    }
+  @Test
+  void testListSickLeavesForCareWithNullEnhetsIdReturnsError() {
+    final var params = buildParams(100, null, null);
+    assertThrows(IllegalArgumentException.class, () -> testee.listSickLeavesForCare("", params));
+  }
 
-    @Test
-    void testListSickLeavesForCareWithEmptyEnhetsIdReturnsError() {
-        enhetsId.setExtension("");
-        final var params = buildParams(100, enhetsId, null);
-        assertThrows(IllegalArgumentException.class, () ->
-            testee.listSickLeavesForCare("", params));
-    }
+  @Test
+  void testListSickLeavesForCareWithEmptyEnhetsIdReturnsError() {
+    enhetsId.setExtension("");
+    final var params = buildParams(100, enhetsId, null);
+    assertThrows(IllegalArgumentException.class, () -> testee.listSickLeavesForCare("", params));
+  }
 
-    @Test
-    void testListSickLeavesForCareWithNegativeGlappReturnsError() {
-        final var params = buildParams(-1, enhetsId, null);
-        assertThrows(IllegalArgumentException.class, () ->
-            testee.listSickLeavesForCare("", params));
-    }
+  @Test
+  void testListSickLeavesForCareWithNegativeGlappReturnsError() {
+    final var params = buildParams(-1, enhetsId, null);
+    assertThrows(IllegalArgumentException.class, () -> testee.listSickLeavesForCare("", params));
+  }
 
-    private List<SjukfallCertificate> buildSjukfallCertificates() {
-        return testHelper.intygsList();
-    }
+  private List<SjukfallCertificate> buildSjukfallCertificates() {
+    return testHelper.intygsList();
+  }
 
-    private ListSickLeavesForCareType buildParams(int maxDagarMellanIntyg, HsaId careUnitId, HsaId doctorId) {
-        ListSickLeavesForCareType params = new ListSickLeavesForCareType();
-        params.setEnhetsId(careUnitId);
-        params.setMaxDagarMellanIntyg(maxDagarMellanIntyg);
-        params.getPersonalId().add(doctorId);
-        return params;
-    }
+  private ListSickLeavesForCareType buildParams(
+      int maxDagarMellanIntyg, HsaId careUnitId, HsaId doctorId) {
+    ListSickLeavesForCareType params = new ListSickLeavesForCareType();
+    params.setEnhetsId(careUnitId);
+    params.setMaxDagarMellanIntyg(maxDagarMellanIntyg);
+    params.getPersonalId().add(doctorId);
+    return params;
+  }
 
-    private ListSickLeavesForCareType buildParams(int maxDagarMellanIntyg, HsaId careUnitId, HsaId doctorId, int minSjukskrivningslangd,
-        int maxSjukskrivningslangd) {
-        ListSickLeavesForCareType params = new ListSickLeavesForCareType();
-        params.setEnhetsId(careUnitId);
-        params.setMaxDagarMellanIntyg(maxDagarMellanIntyg);
-        params.getPersonalId().add(doctorId);
-        params.setMinstaSjukskrivningslangd(minSjukskrivningslangd);
-        params.setMaxSjukskrivningslangd(maxSjukskrivningslangd);
-        return params;
-    }
-
+  private ListSickLeavesForCareType buildParams(
+      int maxDagarMellanIntyg,
+      HsaId careUnitId,
+      HsaId doctorId,
+      int minSjukskrivningslangd,
+      int maxSjukskrivningslangd) {
+    ListSickLeavesForCareType params = new ListSickLeavesForCareType();
+    params.setEnhetsId(careUnitId);
+    params.setMaxDagarMellanIntyg(maxDagarMellanIntyg);
+    params.getPersonalId().add(doctorId);
+    params.setMinstaSjukskrivningslangd(minSjukskrivningslangd);
+    params.setMaxSjukskrivningslangd(maxSjukskrivningslangd);
+    return params;
+  }
 }

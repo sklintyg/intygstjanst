@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -28,10 +28,10 @@ import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listsickleavesfo
 import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listsickleavesforperson.v1.ListSickLeavesForPersonType;
 import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listsickleavesforperson.v1.ResultCodeEnum;
 import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listsickleavesforperson.v1.ResultType;
+import se.inera.intyg.intygstjanst.application.sickleave.converter.SjukfallCertificateIntygsDataConverter;
+import se.inera.intyg.intygstjanst.infrastructure.csintegration.aggregator.ValidSickLeaveAggregator;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.SjukfallCertificateDao;
-import se.inera.intyg.intygstjanst.infrastructure.csintegration.aggregator.ValidSickLeaveAggregator;
-import se.inera.intyg.intygstjanst.application.sickleave.converter.SjukfallCertificateIntygsDataConverter;
 import se.inera.intyg.schemas.contract.Personnummer;
 import se.riv.clinicalprocess.healthcond.rehabilitation.v1.IntygsLista;
 
@@ -39,67 +39,73 @@ import se.riv.clinicalprocess.healthcond.rehabilitation.v1.IntygsLista;
  * @author Magnus Ekstrand on 2018-10-23.
  */
 @Service
-public class ListSickLeavesForPersonResponderImpl implements ListSickLeavesForPersonResponderInterface {
+public class ListSickLeavesForPersonResponderImpl
+    implements ListSickLeavesForPersonResponderInterface {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ListSickLeavesForPersonResponderImpl.class);
+  private static final Logger LOGGER =
+      LoggerFactory.getLogger(ListSickLeavesForPersonResponderImpl.class);
 
-    @Autowired
-    private ValidSickLeaveAggregator validSickLeaveAggregator;
+  @Autowired private ValidSickLeaveAggregator validSickLeaveAggregator;
 
-    @Autowired
-    private SjukfallCertificateDao sjukfallCertificateDao;
+  @Autowired private SjukfallCertificateDao sjukfallCertificateDao;
 
-    @Override
+  @Override
+  public ListSickLeavesForPersonResponseType listSickLeavesForPerson(
+      String logicalAddress, ListSickLeavesForPersonType parameters) {
 
-    public ListSickLeavesForPersonResponseType listSickLeavesForPerson(
-        String logicalAddress, ListSickLeavesForPersonType parameters) {
+    ListSickLeavesForPersonResponseType response = new ListSickLeavesForPersonResponseType();
 
-        ListSickLeavesForPersonResponseType response = new ListSickLeavesForPersonResponseType();
+    try {
+      Personnummer personnummer = parsePersonnummer(parameters);
 
-        try {
-            Personnummer personnummer = parsePersonnummer(parameters);
+      List<SjukfallCertificate> activeSjukfallCertificateForPerson =
+          getSjukfallCertificate(personnummer);
 
-            List<SjukfallCertificate> activeSjukfallCertificateForPerson = getSjukfallCertificate(personnummer);
+      IntygsLista intygsLista = new IntygsLista();
+      intygsLista
+          .getIntygsData()
+          .addAll(
+              new SjukfallCertificateIntygsDataConverter()
+                  .buildIntygsData(activeSjukfallCertificateForPerson));
 
-            IntygsLista intygsLista = new IntygsLista();
-            intygsLista.getIntygsData()
-                .addAll(new SjukfallCertificateIntygsDataConverter().buildIntygsData(
-                    activeSjukfallCertificateForPerson));
+      response.setIntygsLista(intygsLista);
+      response.setResult(createResultType(ResultCodeEnum.OK, null));
 
-            response.setIntygsLista(intygsLista);
-            response.setResult(createResultType(ResultCodeEnum.OK, null));
-
-        } catch (Exception e) {
-            LOGGER.error("Could not get active sick leaves for a person.", e);
-            response.setResult(createResultType(ResultCodeEnum.ERROR, e.getMessage()));
-        }
-
-        return response;
+    } catch (Exception e) {
+      LOGGER.error("Could not get active sick leaves for a person.", e);
+      response.setResult(createResultType(ResultCodeEnum.ERROR, e.getMessage()));
     }
 
-    /**
-     * Retrieves list of SjukfallCertificate for the patient and making sure that no test certificates are included.
-     */
-    private List<SjukfallCertificate> getSjukfallCertificate(Personnummer personnummer) {
-        final var sjukfallCertificate = sjukfallCertificateDao.findSjukfallCertificateForPerson(personnummer.getPersonnummerWithDash())
+    return response;
+  }
+
+  /**
+   * Retrieves list of SjukfallCertificate for the patient and making sure that no test certificates
+   * are included.
+   */
+  private List<SjukfallCertificate> getSjukfallCertificate(Personnummer personnummer) {
+    final var sjukfallCertificate =
+        sjukfallCertificateDao
+            .findSjukfallCertificateForPerson(personnummer.getPersonnummerWithDash())
             .stream()
             .toList();
 
-        return validSickLeaveAggregator.get(sjukfallCertificate);
-    }
+    return validSickLeaveAggregator.get(sjukfallCertificate);
+  }
 
-    private ResultType createResultType(ResultCodeEnum resultCode, String message) {
-        ResultType result = new ResultType();
-        result.setResultCode(resultCode);
-        result.setResultMessage(message);
-        return result;
-    }
+  private ResultType createResultType(ResultCodeEnum resultCode, String message) {
+    ResultType result = new ResultType();
+    result.setResultCode(resultCode);
+    result.setResultMessage(message);
+    return result;
+  }
 
-    private Personnummer parsePersonnummer(ListSickLeavesForPersonType parameters) {
-        String personnummer = parameters.getPersonId() != null && parameters.getPersonId().getExtension() != null
+  private Personnummer parsePersonnummer(ListSickLeavesForPersonType parameters) {
+    String personnummer =
+        parameters.getPersonId() != null && parameters.getPersonId().getExtension() != null
             ? parameters.getPersonId().getExtension().trim()
             : null;
-        return Personnummer.createPersonnummer(personnummer)
-            .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer"));
-    }
+    return Personnummer.createPersonnummer(personnummer)
+        .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer"));
+  }
 }

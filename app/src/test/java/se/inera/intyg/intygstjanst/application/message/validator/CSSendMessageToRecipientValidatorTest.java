@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package se.inera.intyg.intygstjanst.application.message.validator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -50,340 +49,344 @@ import se.riv.clinicalprocess.healthcond.certificate.types.v3.IntygId;
 @ExtendWith(MockitoExtension.class)
 class CSSendMessageToRecipientValidatorTest {
 
-    @Mock
-    private CSIntegrationService csIntegrationService;
-    @Mock
-    private SendMessageToRecipientValidator sendMessageToRecipientValidator;
+  @Mock private CSIntegrationService csIntegrationService;
+  @Mock private SendMessageToRecipientValidator sendMessageToRecipientValidator;
 
-    @InjectMocks
-    private CSSendMessageToRecipientValidator csSendMessageToRecipientValidator;
+  @InjectMocks private CSSendMessageToRecipientValidator csSendMessageToRecipientValidator;
 
-    private static final String PATIENT_ID = "191212121212";
-    private static final String CERTIFICATE_ID = "certificateId";
-    private static final String OTHER_PATIENT_ID = "191212121213";
+  private static final String PATIENT_ID = "191212121212";
+  private static final String CERTIFICATE_ID = "certificateId";
+  private static final String OTHER_PATIENT_ID = "191212121213";
 
-    @Nested
-    class ValidateCertificateExists {
+  @Nested
+  class ValidateCertificateExists {
 
-        SendMessageToRecipientType message;
-        List<String> validationErrors;
+    SendMessageToRecipientType message;
+    List<String> validationErrors;
 
-        @BeforeEach
-        void setup() {
-            validationErrors = new ArrayList<>();
-            message = createMessage(PATIENT_ID);
-        }
-
-        @Test
-        void shouldNotReturnValidationErrorWhenCertificateExists() {
-            final var personId = PersonId.builder().id(PATIENT_ID).build();
-            final var patient = Patient.builder().personId(personId).build();
-            final var certificateMetadata = CertificateMetadata.builder()
-                .patient(patient)
-                .sent(true)
-                .testCertificate(false)
-                .status(CertificateStatus.SIGNED)
-                .build();
-
-            when(csIntegrationService.certificateExists(CERTIFICATE_ID)).thenReturn(true);
-            when(csIntegrationService.getCertificateMetadata(CERTIFICATE_ID)).thenReturn(certificateMetadata);
-
-            csSendMessageToRecipientValidator.validate(message, validationErrors);
-            assertTrue(validationErrors.isEmpty());
-        }
-
-        @Test
-        void shouldReturnValidationErrorWhenCertificateDoesNotExists() {
-            when(csIntegrationService.certificateExists(CERTIFICATE_ID)).thenReturn(false);
-
-            csSendMessageToRecipientValidator.validate(message, validationErrors);
-            assertEquals(1, validationErrors.size());
-            assertTrue(validationErrors.contains("Certificate does not exist."));
-        }
-
-        @Test
-        void shouldThrowIllegalStateIfCallFailureForCertificateExists() {
-            when(csIntegrationService.certificateExists(CERTIFICATE_ID)).thenThrow(IllegalStateException.class);
-
-            assertThrows(IllegalStateException.class,
-                () -> csSendMessageToRecipientValidator.validate(message, validationErrors));
-
-        }
-
-        @Test
-        void shouldThrowIllegalStateIfCallFailureForCertificateMetadata() {
-            when(csIntegrationService.certificateExists(CERTIFICATE_ID)).thenReturn(true);
-            when(csIntegrationService.getCertificateMetadata(CERTIFICATE_ID)).thenThrow(IllegalStateException.class);
-
-            assertThrows(IllegalStateException.class,
-                () -> csSendMessageToRecipientValidator.validate(message, validationErrors));
-
-        }
-
-        @Test
-        void shouldNotTryToFetchMetadataIfCertificateDoesNotExist() {
-            when(csIntegrationService.certificateExists(CERTIFICATE_ID)).thenReturn(false);
-
-            csSendMessageToRecipientValidator.validate(message, validationErrors);
-            verifyNoMoreInteractions(csIntegrationService);
-        }
-    }
-
-
-    @Nested
-    class ValidatePatientId {
-
-        CertificateMetadataBuilder certificateMetadataBuilder;
-        List<String> validationErrors;
-
-        @BeforeEach
-        void setup() {
-            certificateMetadataBuilder = CertificateMetadata.builder()
-                .sent(true)
-                .testCertificate(false)
-                .status(CertificateStatus.SIGNED);
-
-            validationErrors = new ArrayList<>();
-            when(csIntegrationService.certificateExists(CERTIFICATE_ID)).thenReturn(true);
-        }
-
-        @Test
-        void shouldNotReturnValidationErrorWhenPatientIdsMatch() {
-            final var message = createMessage(PATIENT_ID);
-            final var personId = PersonId.builder().id(PATIENT_ID).build();
-            final var patient = Patient.builder().personId(personId).build();
-            final var certificateMetadata = certificateMetadataBuilder
-                .patient(patient)
-                .build();
-
-            when(csIntegrationService.getCertificateMetadata(CERTIFICATE_ID)).thenReturn(certificateMetadata);
-
-            csSendMessageToRecipientValidator.validate(message, validationErrors);
-            assertTrue(validationErrors.isEmpty());
-        }
-
-        @Test
-        void shouldReturnValidationErrorWhenPatientIdsDoNotMatch() {
-            final var message = createMessage(OTHER_PATIENT_ID);
-            final var personId = PersonId.builder().id(PATIENT_ID).build();
-            final var patient = Patient.builder().personId(personId).build();
-            final var certificateMetadata = certificateMetadataBuilder
-                .patient(patient)
-                .build();
-
-            when(csIntegrationService.getCertificateMetadata(CERTIFICATE_ID)).thenReturn(certificateMetadata);
-
-            csSendMessageToRecipientValidator.validate(message, validationErrors);
-            assertEquals(1, validationErrors.size());
-            assertTrue(validationErrors.contains("PatientId from message does not match PatientId from certificate."));
-        }
-
-        @Test
-        void shouldReturnValidationErrorWhenPatientIdsFromCertificateIsMissing() {
-            final var message = createMessage(OTHER_PATIENT_ID);
-            final var personId = PersonId.builder().id(null).build();
-            final var patient = Patient.builder().personId(personId).build();
-            final var certificateMetadata = certificateMetadataBuilder
-                .patient(patient)
-                .build();
-
-            when(csIntegrationService.getCertificateMetadata(CERTIFICATE_ID)).thenReturn(certificateMetadata);
-
-            csSendMessageToRecipientValidator.validate(message, validationErrors);
-            assertEquals(1, validationErrors.size());
-            assertTrue(validationErrors.contains("PatientId from message does not match PatientId from certificate."));
-        }
-
-        @Test
-        void shouldReturnValidationErrorWhenPatientIdsFromMessageIsMissing() {
-            final var message = createMessage(null);
-            final var personId = PersonId.builder().id(PATIENT_ID).build();
-            final var patient = Patient.builder().personId(personId).build();
-            final var certificateMetadata = certificateMetadataBuilder
-                .patient(patient)
-                .build();
-
-            when(csIntegrationService.getCertificateMetadata(CERTIFICATE_ID)).thenReturn(certificateMetadata);
-
-            csSendMessageToRecipientValidator.validate(message, validationErrors);
-            assertEquals(1, validationErrors.size());
-            assertTrue(validationErrors.contains("PatientId from message does not match PatientId from certificate."));
-        }
-    }
-
-    @Nested
-    class ValidateRevoked {
-
-        CertificateMetadataBuilder certificateMetadataBuilder;
-        SendMessageToRecipientType message;
-        List<String> validationErrors;
-
-        @BeforeEach
-        void setup() {
-            final var personId = PersonId.builder().id(PATIENT_ID).build();
-            final var patient = Patient.builder().personId(personId).build();
-            certificateMetadataBuilder = CertificateMetadata.builder()
-                .patient(patient)
-                .sent(true)
-                .testCertificate(false);
-
-            message = createMessage(PATIENT_ID);
-            validationErrors = new ArrayList<>();
-            when(csIntegrationService.certificateExists(CERTIFICATE_ID)).thenReturn(true);
-        }
-
-        @Test
-        void shouldNotReturnValidationErrorWhenCertificateNotRevoked() {
-            final var certificateMetadata = certificateMetadataBuilder
-                .status(CertificateStatus.SIGNED)
-                .build();
-
-            when(csIntegrationService.getCertificateMetadata(CERTIFICATE_ID)).thenReturn(certificateMetadata);
-
-            csSendMessageToRecipientValidator.validate(message, validationErrors);
-            assertTrue(validationErrors.isEmpty());
-        }
-
-        @Test
-        void shouldReturnValidationErrorWhenCertificateRevoked() {
-            final var certificateMetadata = certificateMetadataBuilder
-                .status(CertificateStatus.REVOKED)
-                .build();
-
-            when(csIntegrationService.getCertificateMetadata(CERTIFICATE_ID)).thenReturn(certificateMetadata);
-
-            csSendMessageToRecipientValidator.validate(message, validationErrors);
-            assertEquals(1, validationErrors.size());
-            assertTrue(validationErrors.contains("Certificate is revoked. Messages cannot be sent for revoked certificates."));
-        }
-    }
-
-
-    @Nested
-    class ValidateSend {
-
-        CertificateMetadataBuilder certificateMetadataBuilder;
-        SendMessageToRecipientType message;
-        List<String> validationErrors;
-
-        @BeforeEach
-        void setup() {
-            final var personId = PersonId.builder().id(PATIENT_ID).build();
-            final var patient = Patient.builder().personId(personId).build();
-            certificateMetadataBuilder = CertificateMetadata.builder()
-                .patient(patient)
-                .status(CertificateStatus.SIGNED)
-                .testCertificate(false);
-
-            message = createMessage(PATIENT_ID);
-            validationErrors = new ArrayList<>();
-            when(csIntegrationService.certificateExists(CERTIFICATE_ID)).thenReturn(true);
-        }
-
-        @Test
-        void shouldNotReturnValidationErrorWhenSent() {
-            final var certificateMetadata = certificateMetadataBuilder
-                .sent(true)
-                .build();
-
-            when(csIntegrationService.getCertificateMetadata(CERTIFICATE_ID)).thenReturn(certificateMetadata);
-
-            csSendMessageToRecipientValidator.validate(message, validationErrors);
-            assertTrue(validationErrors.isEmpty());
-        }
-
-        @Test
-        void shouldReturnValidationErrorWhenNotSent() {
-            final var certificateMetadata = certificateMetadataBuilder
-                .sent(false)
-                .build();
-
-            when(csIntegrationService.getCertificateMetadata(CERTIFICATE_ID)).thenReturn(certificateMetadata);
-
-            csSendMessageToRecipientValidator.validate(message, validationErrors);
-            assertEquals(1, validationErrors.size());
-            assertTrue(validationErrors.contains("Certificate has not been sent to recipient."));
-        }
-    }
-
-    @Nested
-    class TestCertificate {
-
-        CertificateMetadataBuilder certificateMetadataBuilder;
-        SendMessageToRecipientType message;
-        List<String> validationErrors;
-
-        @BeforeEach
-        void setup() {
-            final var personId = PersonId.builder().id(PATIENT_ID).build();
-            final var patient = Patient.builder().personId(personId).build();
-            certificateMetadataBuilder = CertificateMetadata.builder()
-                .patient(patient)
-                .status(CertificateStatus.SIGNED)
-                .sent(true);
-
-            message = createMessage(PATIENT_ID);
-            validationErrors = new ArrayList<>();
-            when(csIntegrationService.certificateExists(CERTIFICATE_ID)).thenReturn(true);
-        }
-
-        @Test
-        void shouldNotReturnFalseIfNotTestCertificate() {
-            final var certificateMetadata = certificateMetadataBuilder
-                .testCertificate(false)
-                .build();
-
-            when(csIntegrationService.getCertificateMetadata(CERTIFICATE_ID)).thenReturn(certificateMetadata);
-            assertFalse(csSendMessageToRecipientValidator.validate(message, validationErrors));
-        }
-
-        @Test
-        void shouldNotReturnTrueIfNotTestCertificate() {
-            final var certificateMetadata = certificateMetadataBuilder
-                .testCertificate(true)
-                .build();
-
-            when(csIntegrationService.getCertificateMetadata(CERTIFICATE_ID)).thenReturn(certificateMetadata);
-            assertTrue(csSendMessageToRecipientValidator.validate(message, validationErrors));
-        }
+    @BeforeEach
+    void setup() {
+      validationErrors = new ArrayList<>();
+      message = createMessage(PATIENT_ID);
     }
 
     @Test
-    void shouldAckumulateValidationErrorsIfMultiple() {
-        final var validationErrors = new ArrayList<String>();
-        final var message = createMessage(OTHER_PATIENT_ID);
-        final var personId = PersonId.builder().id(PATIENT_ID).build();
-        final var patient = Patient.builder().personId(personId).build();
-        final var certificateMetadata = CertificateMetadata.builder()
+    void shouldNotReturnValidationErrorWhenCertificateExists() {
+      final var personId = PersonId.builder().id(PATIENT_ID).build();
+      final var patient = Patient.builder().personId(personId).build();
+      final var certificateMetadata =
+          CertificateMetadata.builder()
+              .patient(patient)
+              .sent(true)
+              .testCertificate(false)
+              .status(CertificateStatus.SIGNED)
+              .build();
+
+      when(csIntegrationService.certificateExists(CERTIFICATE_ID)).thenReturn(true);
+      when(csIntegrationService.getCertificateMetadata(CERTIFICATE_ID))
+          .thenReturn(certificateMetadata);
+
+      csSendMessageToRecipientValidator.validate(message, validationErrors);
+      assertTrue(validationErrors.isEmpty());
+    }
+
+    @Test
+    void shouldReturnValidationErrorWhenCertificateDoesNotExists() {
+      when(csIntegrationService.certificateExists(CERTIFICATE_ID)).thenReturn(false);
+
+      csSendMessageToRecipientValidator.validate(message, validationErrors);
+      assertEquals(1, validationErrors.size());
+      assertTrue(validationErrors.contains("Certificate does not exist."));
+    }
+
+    @Test
+    void shouldThrowIllegalStateIfCallFailureForCertificateExists() {
+      when(csIntegrationService.certificateExists(CERTIFICATE_ID))
+          .thenThrow(IllegalStateException.class);
+
+      assertThrows(
+          IllegalStateException.class,
+          () -> csSendMessageToRecipientValidator.validate(message, validationErrors));
+    }
+
+    @Test
+    void shouldThrowIllegalStateIfCallFailureForCertificateMetadata() {
+      when(csIntegrationService.certificateExists(CERTIFICATE_ID)).thenReturn(true);
+      when(csIntegrationService.getCertificateMetadata(CERTIFICATE_ID))
+          .thenThrow(IllegalStateException.class);
+
+      assertThrows(
+          IllegalStateException.class,
+          () -> csSendMessageToRecipientValidator.validate(message, validationErrors));
+    }
+
+    @Test
+    void shouldNotTryToFetchMetadataIfCertificateDoesNotExist() {
+      when(csIntegrationService.certificateExists(CERTIFICATE_ID)).thenReturn(false);
+
+      csSendMessageToRecipientValidator.validate(message, validationErrors);
+      verifyNoMoreInteractions(csIntegrationService);
+    }
+  }
+
+  @Nested
+  class ValidatePatientId {
+
+    CertificateMetadataBuilder certificateMetadataBuilder;
+    List<String> validationErrors;
+
+    @BeforeEach
+    void setup() {
+      certificateMetadataBuilder =
+          CertificateMetadata.builder()
+              .sent(true)
+              .testCertificate(false)
+              .status(CertificateStatus.SIGNED);
+
+      validationErrors = new ArrayList<>();
+      when(csIntegrationService.certificateExists(CERTIFICATE_ID)).thenReturn(true);
+    }
+
+    @Test
+    void shouldNotReturnValidationErrorWhenPatientIdsMatch() {
+      final var message = createMessage(PATIENT_ID);
+      final var personId = PersonId.builder().id(PATIENT_ID).build();
+      final var patient = Patient.builder().personId(personId).build();
+      final var certificateMetadata = certificateMetadataBuilder.patient(patient).build();
+
+      when(csIntegrationService.getCertificateMetadata(CERTIFICATE_ID))
+          .thenReturn(certificateMetadata);
+
+      csSendMessageToRecipientValidator.validate(message, validationErrors);
+      assertTrue(validationErrors.isEmpty());
+    }
+
+    @Test
+    void shouldReturnValidationErrorWhenPatientIdsDoNotMatch() {
+      final var message = createMessage(OTHER_PATIENT_ID);
+      final var personId = PersonId.builder().id(PATIENT_ID).build();
+      final var patient = Patient.builder().personId(personId).build();
+      final var certificateMetadata = certificateMetadataBuilder.patient(patient).build();
+
+      when(csIntegrationService.getCertificateMetadata(CERTIFICATE_ID))
+          .thenReturn(certificateMetadata);
+
+      csSendMessageToRecipientValidator.validate(message, validationErrors);
+      assertEquals(1, validationErrors.size());
+      assertTrue(
+          validationErrors.contains(
+              "PatientId from message does not match PatientId from certificate."));
+    }
+
+    @Test
+    void shouldReturnValidationErrorWhenPatientIdsFromCertificateIsMissing() {
+      final var message = createMessage(OTHER_PATIENT_ID);
+      final var personId = PersonId.builder().id(null).build();
+      final var patient = Patient.builder().personId(personId).build();
+      final var certificateMetadata = certificateMetadataBuilder.patient(patient).build();
+
+      when(csIntegrationService.getCertificateMetadata(CERTIFICATE_ID))
+          .thenReturn(certificateMetadata);
+
+      csSendMessageToRecipientValidator.validate(message, validationErrors);
+      assertEquals(1, validationErrors.size());
+      assertTrue(
+          validationErrors.contains(
+              "PatientId from message does not match PatientId from certificate."));
+    }
+
+    @Test
+    void shouldReturnValidationErrorWhenPatientIdsFromMessageIsMissing() {
+      final var message = createMessage(null);
+      final var personId = PersonId.builder().id(PATIENT_ID).build();
+      final var patient = Patient.builder().personId(personId).build();
+      final var certificateMetadata = certificateMetadataBuilder.patient(patient).build();
+
+      when(csIntegrationService.getCertificateMetadata(CERTIFICATE_ID))
+          .thenReturn(certificateMetadata);
+
+      csSendMessageToRecipientValidator.validate(message, validationErrors);
+      assertEquals(1, validationErrors.size());
+      assertTrue(
+          validationErrors.contains(
+              "PatientId from message does not match PatientId from certificate."));
+    }
+  }
+
+  @Nested
+  class ValidateRevoked {
+
+    CertificateMetadataBuilder certificateMetadataBuilder;
+    SendMessageToRecipientType message;
+    List<String> validationErrors;
+
+    @BeforeEach
+    void setup() {
+      final var personId = PersonId.builder().id(PATIENT_ID).build();
+      final var patient = Patient.builder().personId(personId).build();
+      certificateMetadataBuilder =
+          CertificateMetadata.builder().patient(patient).sent(true).testCertificate(false);
+
+      message = createMessage(PATIENT_ID);
+      validationErrors = new ArrayList<>();
+      when(csIntegrationService.certificateExists(CERTIFICATE_ID)).thenReturn(true);
+    }
+
+    @Test
+    void shouldNotReturnValidationErrorWhenCertificateNotRevoked() {
+      final var certificateMetadata =
+          certificateMetadataBuilder.status(CertificateStatus.SIGNED).build();
+
+      when(csIntegrationService.getCertificateMetadata(CERTIFICATE_ID))
+          .thenReturn(certificateMetadata);
+
+      csSendMessageToRecipientValidator.validate(message, validationErrors);
+      assertTrue(validationErrors.isEmpty());
+    }
+
+    @Test
+    void shouldReturnValidationErrorWhenCertificateRevoked() {
+      final var certificateMetadata =
+          certificateMetadataBuilder.status(CertificateStatus.REVOKED).build();
+
+      when(csIntegrationService.getCertificateMetadata(CERTIFICATE_ID))
+          .thenReturn(certificateMetadata);
+
+      csSendMessageToRecipientValidator.validate(message, validationErrors);
+      assertEquals(1, validationErrors.size());
+      assertTrue(
+          validationErrors.contains(
+              "Certificate is revoked. Messages cannot be sent for revoked certificates."));
+    }
+  }
+
+  @Nested
+  class ValidateSend {
+
+    CertificateMetadataBuilder certificateMetadataBuilder;
+    SendMessageToRecipientType message;
+    List<String> validationErrors;
+
+    @BeforeEach
+    void setup() {
+      final var personId = PersonId.builder().id(PATIENT_ID).build();
+      final var patient = Patient.builder().personId(personId).build();
+      certificateMetadataBuilder =
+          CertificateMetadata.builder()
+              .patient(patient)
+              .status(CertificateStatus.SIGNED)
+              .testCertificate(false);
+
+      message = createMessage(PATIENT_ID);
+      validationErrors = new ArrayList<>();
+      when(csIntegrationService.certificateExists(CERTIFICATE_ID)).thenReturn(true);
+    }
+
+    @Test
+    void shouldNotReturnValidationErrorWhenSent() {
+      final var certificateMetadata = certificateMetadataBuilder.sent(true).build();
+
+      when(csIntegrationService.getCertificateMetadata(CERTIFICATE_ID))
+          .thenReturn(certificateMetadata);
+
+      csSendMessageToRecipientValidator.validate(message, validationErrors);
+      assertTrue(validationErrors.isEmpty());
+    }
+
+    @Test
+    void shouldReturnValidationErrorWhenNotSent() {
+      final var certificateMetadata = certificateMetadataBuilder.sent(false).build();
+
+      when(csIntegrationService.getCertificateMetadata(CERTIFICATE_ID))
+          .thenReturn(certificateMetadata);
+
+      csSendMessageToRecipientValidator.validate(message, validationErrors);
+      assertEquals(1, validationErrors.size());
+      assertTrue(validationErrors.contains("Certificate has not been sent to recipient."));
+    }
+  }
+
+  @Nested
+  class TestCertificate {
+
+    CertificateMetadataBuilder certificateMetadataBuilder;
+    SendMessageToRecipientType message;
+    List<String> validationErrors;
+
+    @BeforeEach
+    void setup() {
+      final var personId = PersonId.builder().id(PATIENT_ID).build();
+      final var patient = Patient.builder().personId(personId).build();
+      certificateMetadataBuilder =
+          CertificateMetadata.builder()
+              .patient(patient)
+              .status(CertificateStatus.SIGNED)
+              .sent(true);
+
+      message = createMessage(PATIENT_ID);
+      validationErrors = new ArrayList<>();
+      when(csIntegrationService.certificateExists(CERTIFICATE_ID)).thenReturn(true);
+    }
+
+    @Test
+    void shouldNotReturnFalseIfNotTestCertificate() {
+      final var certificateMetadata = certificateMetadataBuilder.testCertificate(false).build();
+
+      when(csIntegrationService.getCertificateMetadata(CERTIFICATE_ID))
+          .thenReturn(certificateMetadata);
+      assertFalse(csSendMessageToRecipientValidator.validate(message, validationErrors));
+    }
+
+    @Test
+    void shouldNotReturnTrueIfNotTestCertificate() {
+      final var certificateMetadata = certificateMetadataBuilder.testCertificate(true).build();
+
+      when(csIntegrationService.getCertificateMetadata(CERTIFICATE_ID))
+          .thenReturn(certificateMetadata);
+      assertTrue(csSendMessageToRecipientValidator.validate(message, validationErrors));
+    }
+  }
+
+  @Test
+  void shouldAckumulateValidationErrorsIfMultiple() {
+    final var validationErrors = new ArrayList<String>();
+    final var message = createMessage(OTHER_PATIENT_ID);
+    final var personId = PersonId.builder().id(PATIENT_ID).build();
+    final var patient = Patient.builder().personId(personId).build();
+    final var certificateMetadata =
+        CertificateMetadata.builder()
             .patient(patient)
             .testCertificate(true)
             .sent(false)
             .status(CertificateStatus.REVOKED)
             .build();
 
-        doAnswer(i -> {
-            final List<String> errors = i.getArgument(1);
-            errors.add("VALIDATION_ERROR_FROM_METHOD_CALL");
-            return null;
-        }).when(sendMessageToRecipientValidator).csValidate(any(SendMessageToRecipientType.class), anyList());
-        when(csIntegrationService.certificateExists(CERTIFICATE_ID)).thenReturn(true);
-        when(csIntegrationService.getCertificateMetadata(CERTIFICATE_ID)).thenReturn(certificateMetadata);
+    doAnswer(
+            i -> {
+              final List<String> errors = i.getArgument(1);
+              errors.add("VALIDATION_ERROR_FROM_METHOD_CALL");
+              return null;
+            })
+        .when(sendMessageToRecipientValidator)
+        .csValidate(any(SendMessageToRecipientType.class), anyList());
+    when(csIntegrationService.certificateExists(CERTIFICATE_ID)).thenReturn(true);
+    when(csIntegrationService.getCertificateMetadata(CERTIFICATE_ID))
+        .thenReturn(certificateMetadata);
 
-        csSendMessageToRecipientValidator.validate(message, validationErrors);
-        assertEquals(4, validationErrors.size());
-    }
+    csSendMessageToRecipientValidator.validate(message, validationErrors);
+    assertEquals(4, validationErrors.size());
+  }
 
-    private static SendMessageToRecipientType createMessage(String patientId) {
-        final var personId = new se.riv.clinicalprocess.healthcond.certificate.types.v3.PersonId();
-        personId.setExtension(patientId);
+  private static SendMessageToRecipientType createMessage(String patientId) {
+    final var personId = new se.riv.clinicalprocess.healthcond.certificate.types.v3.PersonId();
+    personId.setExtension(patientId);
 
-        final var certId = new IntygId();
-        certId.setExtension(CERTIFICATE_ID);
+    final var certId = new IntygId();
+    certId.setExtension(CERTIFICATE_ID);
 
-        final var message = new SendMessageToRecipientType();
-        message.setIntygsId(certId);
-        message.setPatientPersonId(personId);
-        return message;
-    }
-
+    final var message = new SendMessageToRecipientType();
+    message.setIntygsId(certId);
+    message.setPatientPersonId(personId);
+    return message;
+  }
 }

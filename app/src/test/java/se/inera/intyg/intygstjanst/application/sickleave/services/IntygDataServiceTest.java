@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package se.inera.intyg.intygstjanst.application.sickleave.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,127 +35,132 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import se.inera.intyg.intygstjanst.application.sickleave.services.IntygDataService;
+import se.inera.intyg.intygstjanst.application.sickleave.converter.IntygsDataConverter;
+import se.inera.intyg.intygstjanst.application.sickleave.converter.SjukfallCertificateIntygsDataConverter;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.SjukfallCertificate;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.SjukfallCertificateDao;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.SjukfallCertificateWorkCapacity;
-import se.inera.intyg.intygstjanst.application.sickleave.services.HsaService;
-import se.inera.intyg.intygstjanst.application.sickleave.converter.SjukfallCertificateIntygsDataConverter;
-import se.inera.intyg.intygstjanst.application.sickleave.converter.IntygsDataConverter;
 
 @ExtendWith(MockitoExtension.class)
 class IntygDataServiceTest {
 
-    private static final int MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED = 5;
-    private static final String UNIT_ID = "unitId";
-    private static final String CARE_GIVER_HSA_ID = "careGiverHsaId";
-    private final ArrayList<String> hsaIdList = new ArrayList<>();
-    @Mock
-    private HsaService hsaService;
-    @Mock
-    private SjukfallCertificateDao sjukfallCertificateDao;
-    @Mock
-    private IntygsDataConverter intygDataConverter;
-    private IntygDataService listActiveSickLeaveCertificateService;
-    private static final LocalDateTime CERT_SIGNING_DATETIME = LocalDateTime.parse("2016-02-01T15:00:00");
-    private static final String DOCTOR_HSA_ID = "doctor-1";
-    private static final String DOCTOR_NAME = "doctor-1-name";
-    private static final String AG1_14 = "ag1-14";
-    private static final String DOCTOR_ID = "caregiver-1";
-    private static final String CARE_UNIT_ID = "careunit-1";
-    private static final String CARE_UNIT_NAME = "careunit-1-name";
-    private static final String TOLVAN_TOLVANSSON = "Tolvan Tolvansson";
-    private static final String TOLVAN_TOLVANSSON_PNR = "19121212-1212";
+  private static final int MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED = 5;
+  private static final String UNIT_ID = "unitId";
+  private static final String CARE_GIVER_HSA_ID = "careGiverHsaId";
+  private final ArrayList<String> hsaIdList = new ArrayList<>();
+  @Mock private HsaService hsaService;
+  @Mock private SjukfallCertificateDao sjukfallCertificateDao;
+  @Mock private IntygsDataConverter intygDataConverter;
+  private IntygDataService listActiveSickLeaveCertificateService;
+  private static final LocalDateTime CERT_SIGNING_DATETIME =
+      LocalDateTime.parse("2016-02-01T15:00:00");
+  private static final String DOCTOR_HSA_ID = "doctor-1";
+  private static final String DOCTOR_NAME = "doctor-1-name";
+  private static final String AG1_14 = "ag1-14";
+  private static final String DOCTOR_ID = "caregiver-1";
+  private static final String CARE_UNIT_ID = "careunit-1";
+  private static final String CARE_UNIT_NAME = "careunit-1-name";
+  private static final String TOLVAN_TOLVANSSON = "Tolvan Tolvansson";
+  private static final String TOLVAN_TOLVANSSON_PNR = "19121212-1212";
 
-    @BeforeEach
-    void setUp() {
-        listActiveSickLeaveCertificateService = new IntygDataService(hsaService, sjukfallCertificateDao,
-            intygDataConverter);
-    }
+  @BeforeEach
+  void setUp() {
+    listActiveSickLeaveCertificateService =
+        new IntygDataService(hsaService, sjukfallCertificateDao, intygDataConverter);
+  }
 
-    @Test
-    void shouldReturnListOfIntygData() {
-        when(hsaService.getHsaIdsForCareUnitAndSubUnits(UNIT_ID)).thenReturn(hsaIdList);
-        when(hsaService.getHsaIdForVardgivare(UNIT_ID)).thenReturn(CARE_GIVER_HSA_ID);
-        when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(eq(CARE_GIVER_HSA_ID), eq(hsaIdList),
-            eq(MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED))).thenReturn(
-            List.of(buildSjukfallCertificate(false), buildSjukfallCertificate(false)));
+  @Test
+  void shouldReturnListOfIntygData() {
+    when(hsaService.getHsaIdsForCareUnitAndSubUnits(UNIT_ID)).thenReturn(hsaIdList);
+    when(hsaService.getHsaIdForVardgivare(UNIT_ID)).thenReturn(CARE_GIVER_HSA_ID);
+    when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(
+            eq(CARE_GIVER_HSA_ID), eq(hsaIdList), eq(MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED)))
+        .thenReturn(List.of(buildSjukfallCertificate(false), buildSjukfallCertificate(false)));
 
-        final var result = listActiveSickLeaveCertificateService.getIntygData(UNIT_ID, MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED);
-        assertEquals(2, result.size());
-    }
+    final var result =
+        listActiveSickLeaveCertificateService.getIntygData(
+            UNIT_ID, MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED);
+    assertEquals(2, result.size());
+  }
 
-    @Test
-    void shouldConvertToListOfIntygData() {
-        final var sjukfallCertificates = List.of(buildSjukfallCertificate(false), buildSjukfallCertificate(false));
-        final var intygsData = new ArrayList<>(
+  @Test
+  void shouldConvertToListOfIntygData() {
+    final var sjukfallCertificates =
+        List.of(buildSjukfallCertificate(false), buildSjukfallCertificate(false));
+    final var intygsData =
+        new ArrayList<>(
             new SjukfallCertificateIntygsDataConverter().buildIntygsData(sjukfallCertificates));
-        final var expectedIntygData = intygsData.stream().map(intygDataConverter::map).collect(Collectors.toList());
+    final var expectedIntygData =
+        intygsData.stream().map(intygDataConverter::map).collect(Collectors.toList());
 
-        when(hsaService.getHsaIdsForCareUnitAndSubUnits(UNIT_ID)).thenReturn(hsaIdList);
-        when(hsaService.getHsaIdForVardgivare(UNIT_ID)).thenReturn(CARE_GIVER_HSA_ID);
-        when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(eq(CARE_GIVER_HSA_ID), eq(hsaIdList),
-            eq(MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED))).thenReturn(
-            List.of(buildSjukfallCertificate(false), buildSjukfallCertificate(false)));
+    when(hsaService.getHsaIdsForCareUnitAndSubUnits(UNIT_ID)).thenReturn(hsaIdList);
+    when(hsaService.getHsaIdForVardgivare(UNIT_ID)).thenReturn(CARE_GIVER_HSA_ID);
+    when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(
+            eq(CARE_GIVER_HSA_ID), eq(hsaIdList), eq(MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED)))
+        .thenReturn(List.of(buildSjukfallCertificate(false), buildSjukfallCertificate(false)));
 
-        final var result = listActiveSickLeaveCertificateService.getIntygData(UNIT_ID, MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED);
-        assertIterableEquals(expectedIntygData, result);
-    }
+    final var result =
+        listActiveSickLeaveCertificateService.getIntygData(
+            UNIT_ID, MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED);
+    assertIterableEquals(expectedIntygData, result);
+  }
 
-    @Test
-    void shouldNotReturnIntygDataIfTestCertificate() {
-        when(hsaService.getHsaIdsForCareUnitAndSubUnits(UNIT_ID)).thenReturn(hsaIdList);
-        when(hsaService.getHsaIdForVardgivare(UNIT_ID)).thenReturn(CARE_GIVER_HSA_ID);
-        when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(eq(CARE_GIVER_HSA_ID), eq(hsaIdList),
-            eq(MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED))).thenReturn(
-            List.of(buildSjukfallCertificate(false), buildSjukfallCertificate(true)));
+  @Test
+  void shouldNotReturnIntygDataIfTestCertificate() {
+    when(hsaService.getHsaIdsForCareUnitAndSubUnits(UNIT_ID)).thenReturn(hsaIdList);
+    when(hsaService.getHsaIdForVardgivare(UNIT_ID)).thenReturn(CARE_GIVER_HSA_ID);
+    when(sjukfallCertificateDao.findActiveSjukfallCertificateForCareUnits(
+            eq(CARE_GIVER_HSA_ID), eq(hsaIdList), eq(MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED)))
+        .thenReturn(List.of(buildSjukfallCertificate(false), buildSjukfallCertificate(true)));
 
-        final var result = listActiveSickLeaveCertificateService.getIntygData(UNIT_ID, MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED);
-        assertEquals(1, result.size());
-    }
+    final var result =
+        listActiveSickLeaveCertificateService.getIntygData(
+            UNIT_ID, MAX_DAYS_SINCE_SICK_LEAVE_COMPLETED);
+    assertEquals(1, result.size());
+  }
 
-    private SjukfallCertificate buildSjukfallCertificate(boolean testCertificate) {
+  private SjukfallCertificate buildSjukfallCertificate(boolean testCertificate) {
 
-        SjukfallCertificate sc = new SjukfallCertificate(UUID.randomUUID().toString());
-        sc.setCareGiverId(DOCTOR_ID);
-        sc.setCareUnitId(CARE_UNIT_ID);
-        sc.setCareUnitName(CARE_UNIT_NAME);
-        sc.setSigningDateTime(CERT_SIGNING_DATETIME);
-        sc.setSjukfallCertificateWorkCapacity(defaultWorkCapacities());
-        sc.setCivicRegistrationNumber(TOLVAN_TOLVANSSON_PNR);
-        sc.setDiagnoseCode("M16");
-        sc.setPatientName(TOLVAN_TOLVANSSON);
-        sc.setSigningDoctorId(DOCTOR_HSA_ID);
-        sc.setSigningDoctorName(DOCTOR_NAME);
-        sc.setType(AG1_14);
-        sc.setDeleted(false);
-        sc.setEmployment("STUDERANDE,ARBETSSOKANDE");
-        sc.setBiDiagnoseCode1("J21");
-        sc.setBiDiagnoseCode2("J22");
-        sc.setTestCertificate(testCertificate);
-        return sc;
-    }
+    SjukfallCertificate sc = new SjukfallCertificate(UUID.randomUUID().toString());
+    sc.setCareGiverId(DOCTOR_ID);
+    sc.setCareUnitId(CARE_UNIT_ID);
+    sc.setCareUnitName(CARE_UNIT_NAME);
+    sc.setSigningDateTime(CERT_SIGNING_DATETIME);
+    sc.setSjukfallCertificateWorkCapacity(defaultWorkCapacities());
+    sc.setCivicRegistrationNumber(TOLVAN_TOLVANSSON_PNR);
+    sc.setDiagnoseCode("M16");
+    sc.setPatientName(TOLVAN_TOLVANSSON);
+    sc.setSigningDoctorId(DOCTOR_HSA_ID);
+    sc.setSigningDoctorName(DOCTOR_NAME);
+    sc.setType(AG1_14);
+    sc.setDeleted(false);
+    sc.setEmployment("STUDERANDE,ARBETSSOKANDE");
+    sc.setBiDiagnoseCode1("J21");
+    sc.setBiDiagnoseCode2("J22");
+    sc.setTestCertificate(testCertificate);
+    return sc;
+  }
 
-    private List<SjukfallCertificateWorkCapacity> defaultWorkCapacities() {
-        List<SjukfallCertificateWorkCapacity> workCapacities = new ArrayList<>();
-        SjukfallCertificateWorkCapacity wc = new SjukfallCertificateWorkCapacity();
+  private List<SjukfallCertificateWorkCapacity> defaultWorkCapacities() {
+    List<SjukfallCertificateWorkCapacity> workCapacities = new ArrayList<>();
+    SjukfallCertificateWorkCapacity wc = new SjukfallCertificateWorkCapacity();
 
-        wc.setCapacityPercentage(100);
-        wc.setFromDate(LocalDate.now().minusWeeks(1).format(DateTimeFormatter.ISO_DATE));
-        wc.setToDate(LocalDate.now().plusWeeks(1).format(DateTimeFormatter.ISO_DATE));
-        workCapacities.add(wc);
+    wc.setCapacityPercentage(100);
+    wc.setFromDate(LocalDate.now().minusWeeks(1).format(DateTimeFormatter.ISO_DATE));
+    wc.setToDate(LocalDate.now().plusWeeks(1).format(DateTimeFormatter.ISO_DATE));
+    workCapacities.add(wc);
 
-        SjukfallCertificateWorkCapacity wc2 = new SjukfallCertificateWorkCapacity();
-        wc2.setCapacityPercentage(75);
-        wc2.setFromDate(LocalDate.now().minusWeeks(3).format(DateTimeFormatter.ISO_DATE));
-        wc2.setToDate(LocalDate.now().minusWeeks(1).format(DateTimeFormatter.ISO_DATE));
-        workCapacities.add(wc2);
+    SjukfallCertificateWorkCapacity wc2 = new SjukfallCertificateWorkCapacity();
+    wc2.setCapacityPercentage(75);
+    wc2.setFromDate(LocalDate.now().minusWeeks(3).format(DateTimeFormatter.ISO_DATE));
+    wc2.setToDate(LocalDate.now().minusWeeks(1).format(DateTimeFormatter.ISO_DATE));
+    workCapacities.add(wc2);
 
-        SjukfallCertificateWorkCapacity wc3 = new SjukfallCertificateWorkCapacity();
-        wc3.setCapacityPercentage(50);
-        wc3.setFromDate(LocalDate.now().minusWeeks(4).format(DateTimeFormatter.ISO_DATE));
-        wc3.setToDate(LocalDate.now().minusWeeks(3).format(DateTimeFormatter.ISO_DATE));
-        workCapacities.add(wc3);
-        return workCapacities;
-    }
+    SjukfallCertificateWorkCapacity wc3 = new SjukfallCertificateWorkCapacity();
+    wc3.setCapacityPercentage(50);
+    wc3.setFromDate(LocalDate.now().minusWeeks(4).format(DateTimeFormatter.ISO_DATE));
+    wc3.setToDate(LocalDate.now().minusWeeks(3).format(DateTimeFormatter.ISO_DATE));
+    workCapacities.add(wc3);
+    return workCapacities;
+  }
 }

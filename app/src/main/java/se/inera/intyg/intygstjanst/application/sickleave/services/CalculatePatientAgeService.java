@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package se.inera.intyg.intygstjanst.application.sickleave.services;
 
 import java.time.LocalDate;
@@ -28,24 +27,28 @@ import se.inera.intyg.schemas.contract.Personnummer;
 @Service
 public class CalculatePatientAgeService {
 
-    private static final int SAMORDNINGSNUMMER_DAY_CONSTANT = 60;
+  private static final int SAMORDNINGSNUMMER_DAY_CONSTANT = 60;
 
-    public Integer get(String patientId) {
-        final var normalizedPnr = Personnummer.createPersonnummer(patientId).orElseThrow().getPersonnummer();
-        return getPatientAge(normalizedPnr);
-    }
+  public Integer get(String patientId) {
+    final var normalizedPnr =
+        Personnummer.createPersonnummer(patientId).orElseThrow().getPersonnummer();
+    return getPatientAge(normalizedPnr);
+  }
 
-    private int getPatientAge(String normalizedPnr) {
-        final var date = normalizedPnr.substring(0, 8);
-        final var birthDate = LocalDate.from(DateTimeFormatter.BASIC_ISO_DATE.parse(subtractDaysIfSamordningsNummer(date)));
-        return Period.between(birthDate, LocalDate.now()).getYears();
-    }
+  private int getPatientAge(String normalizedPnr) {
+    final var date = normalizedPnr.substring(0, 8);
+    final var birthDate =
+        LocalDate.from(
+            DateTimeFormatter.BASIC_ISO_DATE.parse(subtractDaysIfSamordningsNummer(date)));
+    return Period.between(birthDate, LocalDate.now()).getYears();
+  }
 
-    private String subtractDaysIfSamordningsNummer(String date) {
-        var day = Integer.parseInt(date.substring(6));
-        if (day > SAMORDNINGSNUMMER_DAY_CONSTANT) {
-            return date.replaceFirst("(?<=\\d{6})\\d{2}", String.format("%02d", day - SAMORDNINGSNUMMER_DAY_CONSTANT));
-        }
-        return date;
+  private String subtractDaysIfSamordningsNummer(String date) {
+    var day = Integer.parseInt(date.substring(6));
+    if (day > SAMORDNINGSNUMMER_DAY_CONSTANT) {
+      return date.replaceFirst(
+          "(?<=\\d{6})\\d{2}", String.format("%02d", day - SAMORDNINGSNUMMER_DAY_CONSTANT));
     }
+    return date;
+  }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -35,86 +35,94 @@ import se.inera.intyg.clinicalprocess.healthcond.certificate.listrelationsforcer
 import se.inera.intyg.clinicalprocess.healthcond.certificate.listrelationsforcertificate.v1.ListRelationsForCertificateType;
 import se.inera.intyg.common.support.common.enumerations.RelationKod;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
+import se.inera.intyg.intygstjanst.application.certificate.service.CertificateService;
+import se.inera.intyg.intygstjanst.application.certificate.service.RelationService;
+import se.inera.intyg.intygstjanst.application.exception.ServerException;
 import se.inera.intyg.intygstjanst.infrastructure.logging.MdcLogConstants;
 import se.inera.intyg.intygstjanst.infrastructure.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Relation;
-import se.inera.intyg.intygstjanst.application.exception.ServerException;
-import se.inera.intyg.intygstjanst.application.certificate.service.CertificateService;
-import se.inera.intyg.intygstjanst.application.certificate.service.RelationService;
 
-/**
- * Created by eriklupander on 2017-05-11.
- */
+/** Created by eriklupander on 2017-05-11. */
 @Service
 @SchemaValidation(type = SchemaValidation.SchemaValidationType.IN)
-public class ListRelationsForCertificateResponderImpl implements ListRelationsForCertificateResponderInterface {
+public class ListRelationsForCertificateResponderImpl
+    implements ListRelationsForCertificateResponderInterface {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ListRelationsForCertificateResponderImpl.class);
+  private static final Logger LOGGER =
+      LoggerFactory.getLogger(ListRelationsForCertificateResponderImpl.class);
 
-    @Autowired
-    private RelationService relationService;
+  @Autowired private RelationService relationService;
 
-    @Autowired
-    private CertificateService certificateService;
+  @Autowired private CertificateService certificateService;
 
-    @Override
-
-    @PerformanceLogging(eventAction = "list-certificate-relations", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED, isActive = false)
-    public ListRelationsForCertificateResponseType listRelationsForCertificate(String logicalAddress,
-        ListRelationsForCertificateType listRelationsForCertificateType) {
-        long start = System.currentTimeMillis();
-        ListRelationsForCertificateResponseType response = new ListRelationsForCertificateResponseType();
-        for (String intygsId : listRelationsForCertificateType.getIntygsId()) {
-            List<Relation> relationGraph = relationService.getRelationGraph(intygsId);
-            response.getIntygRelation().add(buildIntygRelation(intygsId, relationGraph));
-        }
-
-        LOGGER.info("Loading relations for {} intygsId took {} ms", listRelationsForCertificateType.getIntygsId().size(),
-            System.currentTimeMillis() - start);
-        return response;
+  @Override
+  @PerformanceLogging(
+      eventAction = "list-certificate-relations",
+      eventType = MdcLogConstants.EVENT_TYPE_ACCESSED,
+      isActive = false)
+  public ListRelationsForCertificateResponseType listRelationsForCertificate(
+      String logicalAddress, ListRelationsForCertificateType listRelationsForCertificateType) {
+    long start = System.currentTimeMillis();
+    ListRelationsForCertificateResponseType response =
+        new ListRelationsForCertificateResponseType();
+    for (String intygsId : listRelationsForCertificateType.getIntygsId()) {
+      List<Relation> relationGraph = relationService.getRelationGraph(intygsId);
+      response.getIntygRelation().add(buildIntygRelation(intygsId, relationGraph));
     }
 
-    private IntygRelations buildIntygRelation(String intygsId, List<Relation> relationGraph) {
-        IntygRelations intygRelations = new IntygRelations();
-        intygRelations.setIntygsId(buildIntygId(intygsId));
+    LOGGER.info(
+        "Loading relations for {} intygsId took {} ms",
+        listRelationsForCertificateType.getIntygsId().size(),
+        System.currentTimeMillis() - start);
+    return response;
+  }
 
-        for (Relation r : relationGraph) {
-            boolean makulerat;
-            try {
-                makulerat = certificateService.getCertificateForCare(r.getFromIntygsId()).isRevoked();
-            } catch (InvalidCertificateException e) {
-                LOGGER.error("Failed to get revoke status for certificate {}", r.getFromIntygsId());
-                throw new ServerException(MessageFormat.format("Failed to get revoke status for certificate {}", r.getFromIntygsId()));
-            }
-            intygRelations.getRelation().add(convertRelation(r, makulerat));
-        }
-        return intygRelations;
-    }
+  private IntygRelations buildIntygRelation(String intygsId, List<Relation> relationGraph) {
+    IntygRelations intygRelations = new IntygRelations();
+    intygRelations.setIntygsId(buildIntygId(intygsId));
 
-    private se.inera.intyg.clinicalprocess.healthcond.certificate.listrelationsforcertificate.v1.Relation convertRelation(
-        Relation r, boolean makulerat) {
-        se.inera.intyg.clinicalprocess.healthcond.certificate.listrelationsforcertificate.v1.Relation intygRelation =
-            new se.inera.intyg.clinicalprocess.healthcond.certificate.listrelationsforcertificate.v1.Relation();
-        intygRelation.setFranIntygsId(buildIntygId(r.getFromIntygsId()));
-        intygRelation.setTillIntygsId(buildIntygId(r.getToIntygsId()));
-        intygRelation.setSkapad(r.getCreated());
-        intygRelation.setTyp(buildTypAvRelation(r.getRelationKod()));
-        intygRelation.setFranIntygMakulerat(makulerat);
-        return intygRelation;
+    for (Relation r : relationGraph) {
+      boolean makulerat;
+      try {
+        makulerat = certificateService.getCertificateForCare(r.getFromIntygsId()).isRevoked();
+      } catch (InvalidCertificateException e) {
+        LOGGER.error("Failed to get revoke status for certificate {}", r.getFromIntygsId());
+        throw new ServerException(
+            MessageFormat.format(
+                "Failed to get revoke status for certificate {}", r.getFromIntygsId()));
+      }
+      intygRelations.getRelation().add(convertRelation(r, makulerat));
     }
+    return intygRelations;
+  }
 
-    private TypAvRelation buildTypAvRelation(String relationKod) {
-        TypAvRelation typAvRelation = new TypAvRelation();
-        typAvRelation.setCode(relationKod);
-        typAvRelation.setCodeSystem(KV_RELATION_CODE_SYSTEM);
-        typAvRelation.setDisplayName(RelationKod.fromValue(relationKod).getKlartext());
-        return typAvRelation;
-    }
+  private se.inera.intyg.clinicalprocess.healthcond.certificate.listrelationsforcertificate.v1
+          .Relation
+      convertRelation(Relation r, boolean makulerat) {
+    se.inera.intyg.clinicalprocess.healthcond.certificate.listrelationsforcertificate.v1.Relation
+        intygRelation =
+            new se.inera.intyg.clinicalprocess.healthcond.certificate.listrelationsforcertificate.v1
+                .Relation();
+    intygRelation.setFranIntygsId(buildIntygId(r.getFromIntygsId()));
+    intygRelation.setTillIntygsId(buildIntygId(r.getToIntygsId()));
+    intygRelation.setSkapad(r.getCreated());
+    intygRelation.setTyp(buildTypAvRelation(r.getRelationKod()));
+    intygRelation.setFranIntygMakulerat(makulerat);
+    return intygRelation;
+  }
 
-    private IntygId buildIntygId(String intygsId) {
-        IntygId intygId = new IntygId();
-        intygId.setRoot("");
-        intygId.setExtension(intygsId);
-        return intygId;
-    }
+  private TypAvRelation buildTypAvRelation(String relationKod) {
+    TypAvRelation typAvRelation = new TypAvRelation();
+    typAvRelation.setCode(relationKod);
+    typAvRelation.setCodeSystem(KV_RELATION_CODE_SYSTEM);
+    typAvRelation.setDisplayName(RelationKod.fromValue(relationKod).getKlartext());
+    return typAvRelation;
+  }
+
+  private IntygId buildIntygId(String intygsId) {
+    IntygId intygId = new IntygId();
+    intygId.setRoot("");
+    intygId.setExtension(intygsId);
+    return intygId;
+  }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -20,9 +20,12 @@ package se.inera.intyg.intygstjanst.infrastructure.persistence.exception;
 
 public class PersistenceException extends Exception {
 
-    private static final long serialVersionUID = -659903598786532595L;
+  private static final long serialVersionUID = -659903598786532595L;
 
-    public PersistenceException(String certificateId, String civicRegistrationNumberHash) {
-        super(String.format("Certificate '%s' does not exist for user '%s'.", certificateId, civicRegistrationNumberHash));
-    }
+  public PersistenceException(String certificateId, String civicRegistrationNumberHash) {
+    super(
+        String.format(
+            "Certificate '%s' does not exist for user '%s'.",
+            certificateId, civicRegistrationNumberHash));
+  }
 }

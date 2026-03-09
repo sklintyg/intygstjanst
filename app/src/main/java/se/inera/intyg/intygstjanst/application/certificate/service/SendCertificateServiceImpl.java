@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,58 +16,55 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package se.inera.intyg.intygstjanst.application.certificate.service;
 
 import org.springframework.stereotype.Service;
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
-import se.inera.intyg.intygstjanst.application.exception.RecipientUnknownException;
-import se.inera.intyg.intygstjanst.application.exception.TestCertificateException;
+import se.inera.intyg.intygstjanst.application.certificate.dto.SendCertificateRequestDTO;
 import se.inera.intyg.intygstjanst.application.certificate.service.CertificateService.SendStatus;
 import se.inera.intyg.intygstjanst.application.citizen.service.InternalNotificationService;
-import se.inera.intyg.intygstjanst.application.certificate.dto.SendCertificateRequestDTO;
+import se.inera.intyg.intygstjanst.application.exception.RecipientUnknownException;
+import se.inera.intyg.intygstjanst.application.exception.TestCertificateException;
 
 @Service
 public class SendCertificateServiceImpl implements SendCertificateService {
 
-    private final CertificateService certificateService;
-    private final StatisticsService statisticsService;
-    private final InternalNotificationService internalNotificationService;
+  private final CertificateService certificateService;
+  private final StatisticsService statisticsService;
+  private final InternalNotificationService internalNotificationService;
 
-    public SendCertificateServiceImpl(
-        CertificateService certificateService, StatisticsService statisticsService,
-        InternalNotificationService internalNotificationService) {
-        this.certificateService = certificateService;
-        this.statisticsService = statisticsService;
-        this.internalNotificationService = internalNotificationService;
+  public SendCertificateServiceImpl(
+      CertificateService certificateService,
+      StatisticsService statisticsService,
+      InternalNotificationService internalNotificationService) {
+    this.certificateService = certificateService;
+    this.statisticsService = statisticsService;
+    this.internalNotificationService = internalNotificationService;
+  }
+
+  @Override
+  public SendStatus send(SendCertificateRequestDTO request)
+      throws InvalidCertificateException,
+          TestCertificateException,
+          CertificateRevokedException,
+          RecipientUnknownException {
+
+    final var certificate = certificateService.getCertificateForCare(request.getCertificateId());
+    final var sendStatus =
+        certificateService.sendCertificate(
+            request.getPatientId(), request.getCertificateId(), request.getRecipientId());
+
+    if (sendStatus != CertificateService.SendStatus.ALREADY_SENT) {
+      statisticsService.sent(
+          certificate.getId(),
+          certificate.getType(),
+          certificate.getCareUnitId(),
+          request.getRecipientId());
+
+      internalNotificationService.notifyCareIfSentByCitizen(
+          certificate, request.getPatientId().getOriginalPnr(), request.getHsaId());
     }
-
-    @Override
-    public SendStatus send(SendCertificateRequestDTO request)
-        throws InvalidCertificateException, TestCertificateException, CertificateRevokedException, RecipientUnknownException {
-
-        final var certificate = certificateService.getCertificateForCare(request.getCertificateId());
-        final var sendStatus = certificateService.sendCertificate(
-            request.getPatientId(),
-            request.getCertificateId(),
-            request.getRecipientId()
-        );
-
-        if (sendStatus != CertificateService.SendStatus.ALREADY_SENT) {
-            statisticsService.sent(
-                certificate.getId(),
-                certificate.getType(),
-                certificate.getCareUnitId(),
-                request.getRecipientId()
-            );
-
-            internalNotificationService.notifyCareIfSentByCitizen(
-                certificate,
-                request.getPatientId().getOriginalPnr(),
-                request.getHsaId()
-            );
-        }
-        return sendStatus;
-    }
+    return sendStatus;
+  }
 }

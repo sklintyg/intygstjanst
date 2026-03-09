@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -35,13 +35,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.common.support.integration.module.exception.CertificateRevokedException;
 import se.inera.intyg.common.support.integration.module.exception.InvalidCertificateException;
-import se.inera.intyg.intygstjanst.infrastructure.logging.HashUtility;
+import se.inera.intyg.intygstjanst.application.certificate.dto.SendCertificateRequestDTO;
+import se.inera.intyg.intygstjanst.application.certificate.service.CertificateService.SendStatus;
+import se.inera.intyg.intygstjanst.application.certificate.service.SendCertificateService;
 import se.inera.intyg.intygstjanst.application.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.application.exception.ServerException;
 import se.inera.intyg.intygstjanst.application.exception.TestCertificateException;
-import se.inera.intyg.intygstjanst.application.certificate.service.CertificateService.SendStatus;
-import se.inera.intyg.intygstjanst.application.certificate.service.SendCertificateService;
-import se.inera.intyg.intygstjanst.application.certificate.dto.SendCertificateRequestDTO;
+import se.inera.intyg.intygstjanst.infrastructure.logging.HashUtility;
 import se.inera.intyg.schemas.contract.Personnummer;
 import se.riv.clinicalprocess.healthcond.certificate.sendCertificateToRecipient.v2.SendCertificateToRecipientResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.sendCertificateToRecipient.v2.SendCertificateToRecipientType;
@@ -55,175 +55,190 @@ import se.riv.clinicalprocess.healthcond.certificate.v3.HosPersonal;
 @ExtendWith(MockitoExtension.class)
 class SendCertificateToRecipientResponderImplTest {
 
-    private static final Personnummer PERSONNUMMER = Personnummer.createPersonnummer("19121212-1212").orElseThrow();
-    private static final String CERTIFICATE_ID = "Intygs-id-1234567890";
-    private static final String RECIPIENT_ID = "TRANSP";
+  private static final Personnummer PERSONNUMMER =
+      Personnummer.createPersonnummer("19121212-1212").orElseThrow();
+  private static final String CERTIFICATE_ID = "Intygs-id-1234567890";
+  private static final String RECIPIENT_ID = "TRANSP";
 
-    private static final String LOGICAL_ADDRESS = "Intygstjänsten";
-    private SendCertificateToRecipientType request;
-    @Mock
-    private SendCertificateService sendCertificateService;
-    @Mock
-    private HashUtility hashUtility;
-    @InjectMocks
-    private SendCertificateToRecipientResponderImpl responder;
+  private static final String LOGICAL_ADDRESS = "Intygstjänsten";
+  private SendCertificateToRecipientType request;
+  @Mock private SendCertificateService sendCertificateService;
+  @Mock private HashUtility hashUtility;
+  @InjectMocks private SendCertificateToRecipientResponderImpl responder;
 
-    @Test
-    void testSendCertificateToRecipient() throws Exception {
+  @Test
+  void testSendCertificateToRecipient() throws Exception {
 
-        SendCertificateToRecipientType sendCertificateToRecipient = createRequest();
-        sendCertificateToRecipient.getMottagare().setCode("FKASSA");
-        when(sendCertificateService.send(any())).thenReturn(SendStatus.OK);
+    SendCertificateToRecipientType sendCertificateToRecipient = createRequest();
+    sendCertificateToRecipient.getMottagare().setCode("FKASSA");
+    when(sendCertificateService.send(any())).thenReturn(SendStatus.OK);
 
-        SendCertificateToRecipientResponseType response = responder.sendCertificateToRecipient(LOGICAL_ADDRESS, sendCertificateToRecipient);
+    SendCertificateToRecipientResponseType response =
+        responder.sendCertificateToRecipient(LOGICAL_ADDRESS, sendCertificateToRecipient);
 
-        assertEquals(OK, response.getResult().getResultCode());
-    }
+    assertEquals(OK, response.getResult().getResultCode());
+  }
 
-    @Test
-    void testSendCertificateToRecipientAlreadySent() throws Exception {
+  @Test
+  void testSendCertificateToRecipientAlreadySent() throws Exception {
 
-        when(sendCertificateService.send(any())).thenReturn(SendStatus.ALREADY_SENT);
+    when(sendCertificateService.send(any())).thenReturn(SendStatus.ALREADY_SENT);
 
-        SendCertificateToRecipientType sendCertificateToRecipient = createRequest();
-        sendCertificateToRecipient.getMottagare().setCode("FKASSA");
-        SendCertificateToRecipientResponseType response = responder.sendCertificateToRecipient(LOGICAL_ADDRESS, sendCertificateToRecipient);
+    SendCertificateToRecipientType sendCertificateToRecipient = createRequest();
+    sendCertificateToRecipient.getMottagare().setCode("FKASSA");
+    SendCertificateToRecipientResponseType response =
+        responder.sendCertificateToRecipient(LOGICAL_ADDRESS, sendCertificateToRecipient);
 
-        assertEquals(INFO, response.getResult().getResultCode());
-        assertEquals("Certificate 'Intygs-id-1234567890' already sent to 'FKASSA'.", response.getResult().getResultText());
-    }
+    assertEquals(INFO, response.getResult().getResultCode());
+    assertEquals(
+        "Certificate 'Intygs-id-1234567890' already sent to 'FKASSA'.",
+        response.getResult().getResultText());
+  }
 
-    @Test
-    void testSendCertificateToRecipientInvalidCertificate() throws Exception {
-        final var pnr = hashUtility.hash(PERSONNUMMER.getPersonnummer());
-        when(sendCertificateService.send(any()))
-            .thenThrow(new InvalidCertificateException(CERTIFICATE_ID, pnr));
+  @Test
+  void testSendCertificateToRecipientInvalidCertificate() throws Exception {
+    final var pnr = hashUtility.hash(PERSONNUMMER.getPersonnummer());
+    when(sendCertificateService.send(any()))
+        .thenThrow(new InvalidCertificateException(CERTIFICATE_ID, pnr));
 
-        SendCertificateToRecipientResponseType response = responder.sendCertificateToRecipient(LOGICAL_ADDRESS, createRequest());
+    SendCertificateToRecipientResponseType response =
+        responder.sendCertificateToRecipient(LOGICAL_ADDRESS, createRequest());
 
-        assertEquals(ERROR, response.getResult().getResultCode());
-        assertEquals(ErrorIdType.APPLICATION_ERROR, response.getResult().getErrorId());
-        assertEquals("Unknown certificate ID: Intygs-id-1234567890", response.getResult().getResultText());
-    }
+    assertEquals(ERROR, response.getResult().getResultCode());
+    assertEquals(ErrorIdType.APPLICATION_ERROR, response.getResult().getErrorId());
+    assertEquals(
+        "Unknown certificate ID: Intygs-id-1234567890", response.getResult().getResultText());
+  }
 
-    @Test
-    void testSendCertificateToRecipientCertificateRevoked() throws Exception {
-        when(sendCertificateService.send(any()))
-            .thenThrow(new CertificateRevokedException(CERTIFICATE_ID));
+  @Test
+  void testSendCertificateToRecipientCertificateRevoked() throws Exception {
+    when(sendCertificateService.send(any()))
+        .thenThrow(new CertificateRevokedException(CERTIFICATE_ID));
 
-        SendCertificateToRecipientResponseType response = responder.sendCertificateToRecipient(LOGICAL_ADDRESS, createRequest());
+    SendCertificateToRecipientResponseType response =
+        responder.sendCertificateToRecipient(LOGICAL_ADDRESS, createRequest());
 
-        assertEquals(INFO, response.getResult().getResultCode());
-        assertEquals("Certificate 'Intygs-id-1234567890' has been revoked.", response.getResult().getResultText());
-    }
+    assertEquals(INFO, response.getResult().getResultCode());
+    assertEquals(
+        "Certificate 'Intygs-id-1234567890' has been revoked.",
+        response.getResult().getResultText());
+  }
 
-    @Test
-    void testSendCertificateToRecipientRecipientUnknown() throws Exception {
-        when(sendCertificateService.send(any()))
-            .thenThrow(new RecipientUnknownException(""));
+  @Test
+  void testSendCertificateToRecipientRecipientUnknown() throws Exception {
+    when(sendCertificateService.send(any())).thenThrow(new RecipientUnknownException(""));
 
-        SendCertificateToRecipientResponseType response = responder.sendCertificateToRecipient(LOGICAL_ADDRESS, createRequest());
+    SendCertificateToRecipientResponseType response =
+        responder.sendCertificateToRecipient(LOGICAL_ADDRESS, createRequest());
 
-        assertEquals(ERROR, response.getResult().getResultCode());
-        assertEquals(ErrorIdType.APPLICATION_ERROR, response.getResult().getErrorId());
-        assertEquals("Unknown recipient ID: TRANSP", response.getResult().getResultText());
-    }
+    assertEquals(ERROR, response.getResult().getResultCode());
+    assertEquals(ErrorIdType.APPLICATION_ERROR, response.getResult().getErrorId());
+    assertEquals("Unknown recipient ID: TRANSP", response.getResult().getResultText());
+  }
 
-    @Test
-    void testSendCertificateToRecipientServerException() throws Exception {
-        when(sendCertificateService.send(any()))
-            .thenThrow(new ServerException());
+  @Test
+  void testSendCertificateToRecipientServerException() throws Exception {
+    when(sendCertificateService.send(any())).thenThrow(new ServerException());
 
-        SendCertificateToRecipientResponseType response = responder.sendCertificateToRecipient(LOGICAL_ADDRESS, createRequest());
+    SendCertificateToRecipientResponseType response =
+        responder.sendCertificateToRecipient(LOGICAL_ADDRESS, createRequest());
 
-        assertEquals(ERROR, response.getResult().getResultCode());
-        assertEquals(ErrorIdType.TECHNICAL_ERROR, response.getResult().getErrorId());
-        assertEquals("Certificate 'Intygs-id-1234567890' couldn't be sent to recipient", response.getResult().getResultText());
-    }
+    assertEquals(ERROR, response.getResult().getResultCode());
+    assertEquals(ErrorIdType.TECHNICAL_ERROR, response.getResult().getErrorId());
+    assertEquals(
+        "Certificate 'Intygs-id-1234567890' couldn't be sent to recipient",
+        response.getResult().getResultText());
+  }
 
-    @Test
-    void testSendTestCertificateToRecipientTestCertificateException() throws Exception {
-        when(sendCertificateService.send(any()))
-            .thenThrow(new TestCertificateException(CERTIFICATE_ID));
+  @Test
+  void testSendTestCertificateToRecipientTestCertificateException() throws Exception {
+    when(sendCertificateService.send(any()))
+        .thenThrow(new TestCertificateException(CERTIFICATE_ID));
 
-        SendCertificateToRecipientResponseType response = responder.sendCertificateToRecipient(LOGICAL_ADDRESS, createRequest());
+    SendCertificateToRecipientResponseType response =
+        responder.sendCertificateToRecipient(LOGICAL_ADDRESS, createRequest());
 
-        assertEquals(ERROR, response.getResult().getResultCode());
-        assertEquals(ErrorIdType.VALIDATION_ERROR, response.getResult().getErrorId());
-        assertEquals("Certificate 'Intygs-id-1234567890' couldn't be sent to recipient because it is a test certificate",
-            response.getResult().getResultText());
-    }
+    assertEquals(ERROR, response.getResult().getResultCode());
+    assertEquals(ErrorIdType.VALIDATION_ERROR, response.getResult().getErrorId());
+    assertEquals(
+        "Certificate 'Intygs-id-1234567890' couldn't be sent to recipient because it is a test certificate",
+        response.getResult().getResultText());
+  }
 
-    void setup() {
-        request = createRequest();
-        request.getMottagare().setCode("FKASSA");
-    }
+  void setup() {
+    request = createRequest();
+    request.getMottagare().setCode("FKASSA");
+  }
 
-    @SneakyThrows
-    @Test
-    void shouldSendPatientId() {
-        setup();
-        final var captor = ArgumentCaptor.forClass(SendCertificateRequestDTO.class);
-        responder.sendCertificateToRecipient(LOGICAL_ADDRESS, request);
+  @SneakyThrows
+  @Test
+  void shouldSendPatientId() {
+    setup();
+    final var captor = ArgumentCaptor.forClass(SendCertificateRequestDTO.class);
+    responder.sendCertificateToRecipient(LOGICAL_ADDRESS, request);
 
-        verify(sendCertificateService).send(captor.capture());
+    verify(sendCertificateService).send(captor.capture());
 
-        assertEquals(request.getPatientPersonId().getExtension(),
-            captor.getValue().getPatientId().getOriginalPnr());
-    }
+    assertEquals(
+        request.getPatientPersonId().getExtension(),
+        captor.getValue().getPatientId().getOriginalPnr());
+  }
 
-    @SneakyThrows
-    @Test
-    void shouldSendCertificateId() {
-        setup();
-        final var captor = ArgumentCaptor.forClass(SendCertificateRequestDTO.class);
-        responder.sendCertificateToRecipient(LOGICAL_ADDRESS, request);
+  @SneakyThrows
+  @Test
+  void shouldSendCertificateId() {
+    setup();
+    final var captor = ArgumentCaptor.forClass(SendCertificateRequestDTO.class);
+    responder.sendCertificateToRecipient(LOGICAL_ADDRESS, request);
 
-        verify(sendCertificateService).send(captor.capture());
+    verify(sendCertificateService).send(captor.capture());
 
-        assertEquals(request.getIntygsId().getExtension(), captor.getValue().getCertificateId());
-    }
+    assertEquals(request.getIntygsId().getExtension(), captor.getValue().getCertificateId());
+  }
 
-    @SneakyThrows
-    @Test
-    void shouldSendRecipientId() {
-        setup();
-        final var captor = ArgumentCaptor.forClass(SendCertificateRequestDTO.class);
-        responder.sendCertificateToRecipient(LOGICAL_ADDRESS, request);
+  @SneakyThrows
+  @Test
+  void shouldSendRecipientId() {
+    setup();
+    final var captor = ArgumentCaptor.forClass(SendCertificateRequestDTO.class);
+    responder.sendCertificateToRecipient(LOGICAL_ADDRESS, request);
 
-        verify(sendCertificateService).send(captor.capture());
+    verify(sendCertificateService).send(captor.capture());
 
-        assertEquals(request.getMottagare().getCode(), captor.getValue().getRecipientId());
-    }
+    assertEquals(request.getMottagare().getCode(), captor.getValue().getRecipientId());
+  }
 
-    @SneakyThrows
-    @Test
-    void shouldSendHsaId() {
-        setup();
-        final var captor = ArgumentCaptor.forClass(SendCertificateRequestDTO.class);
-        responder.sendCertificateToRecipient(LOGICAL_ADDRESS, request);
+  @SneakyThrows
+  @Test
+  void shouldSendHsaId() {
+    setup();
+    final var captor = ArgumentCaptor.forClass(SendCertificateRequestDTO.class);
+    responder.sendCertificateToRecipient(LOGICAL_ADDRESS, request);
 
-        verify(sendCertificateService).send(captor.capture());
+    verify(sendCertificateService).send(captor.capture());
 
-        assertEquals(request.getSkickatAv().getHosPersonal().getPersonalId().getExtension(),
-            captor.getValue().getHsaId());
-    }
+    assertEquals(
+        request.getSkickatAv().getHosPersonal().getPersonalId().getExtension(),
+        captor.getValue().getHsaId());
+  }
 
-    private SendCertificateToRecipientType createRequest() {
+  private SendCertificateToRecipientType createRequest() {
 
-        SendCertificateToRecipientType sendCertificateToRecipient = new SendCertificateToRecipientType();
-        sendCertificateToRecipient.setPatientPersonId(new PersonId());
-        sendCertificateToRecipient.getPatientPersonId().setExtension(PERSONNUMMER.getPersonnummer());
-        sendCertificateToRecipient.setMottagare(new Part());
-        sendCertificateToRecipient.getMottagare().setCode(RECIPIENT_ID);
-        sendCertificateToRecipient.setIntygsId(new IntygId());
-        sendCertificateToRecipient.getIntygsId().setExtension(CERTIFICATE_ID);
-        SendCertificateToRecipientType.SkickatAv skickatAv = new SendCertificateToRecipientType.SkickatAv();
-        skickatAv.setPersonId(new PersonId());
-        skickatAv.setHosPersonal(new HosPersonal());
-        skickatAv.getHosPersonal().setPersonalId(new HsaId());
-        skickatAv.getHosPersonal().getPersonalId().setExtension("EXTENSION");
-        sendCertificateToRecipient.setSkickatAv(skickatAv);
-        return sendCertificateToRecipient;
-    }
+    SendCertificateToRecipientType sendCertificateToRecipient =
+        new SendCertificateToRecipientType();
+    sendCertificateToRecipient.setPatientPersonId(new PersonId());
+    sendCertificateToRecipient.getPatientPersonId().setExtension(PERSONNUMMER.getPersonnummer());
+    sendCertificateToRecipient.setMottagare(new Part());
+    sendCertificateToRecipient.getMottagare().setCode(RECIPIENT_ID);
+    sendCertificateToRecipient.setIntygsId(new IntygId());
+    sendCertificateToRecipient.getIntygsId().setExtension(CERTIFICATE_ID);
+    SendCertificateToRecipientType.SkickatAv skickatAv =
+        new SendCertificateToRecipientType.SkickatAv();
+    skickatAv.setPersonId(new PersonId());
+    skickatAv.setHosPersonal(new HosPersonal());
+    skickatAv.getHosPersonal().setPersonalId(new HsaId());
+    skickatAv.getHosPersonal().getPersonalId().setExtension("EXTENSION");
+    sendCertificateToRecipient.setSkickatAv(skickatAv);
+    return sendCertificateToRecipient;
+  }
 }

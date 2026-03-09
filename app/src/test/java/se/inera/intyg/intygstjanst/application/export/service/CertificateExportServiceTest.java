@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -36,94 +36,90 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import se.inera.intyg.intygstjanst.application.export.service.CertificateExportService;
+import se.inera.intyg.intygstjanst.application.export.dto.CertificateExportPageDTO;
 import se.inera.intyg.intygstjanst.infrastructure.csintegration.aggregator.EraseCertificatesAggregator;
 import se.inera.intyg.intygstjanst.infrastructure.csintegration.aggregator.ExportCertificateAggregator;
-import se.inera.intyg.intygstjanst.application.export.dto.CertificateExportPageDTO;
 
 @ExtendWith(MockitoExtension.class)
 class CertificateExportServiceTest {
 
-    @Mock
-    private ExportCertificateAggregator exportCertificateAggregator;
-    @Mock
-    private EraseCertificatesAggregator eraseCertificatesAggregator;
-    @Mock
-    private PathMatchingResourcePatternResolver resourceResolver;
+  @Mock private ExportCertificateAggregator exportCertificateAggregator;
+  @Mock private EraseCertificatesAggregator eraseCertificatesAggregator;
+  @Mock private PathMatchingResourcePatternResolver resourceResolver;
 
-    @InjectMocks
-    private CertificateExportService certificateExportService;
+  @InjectMocks private CertificateExportService certificateExportService;
 
-    private static final int PAGE = 0;
-    private static final int EXPORT_SIZE = 2;
+  private static final int PAGE = 0;
+  private static final int EXPORT_SIZE = 2;
 
-    private static final String CERTIFICATE_TYPE = "TEST_TYPE";
-    private static final String CERTIFICATE_VERSION = "TEST_VERSION";
-    private static final String CERTIFICATE_END_TAG = "</texter>";
-    private static final String CERTIFICATE_START_TAG = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
-    private static final String RESOURCES_LOCATION = "classpath:CertificateExportServiceTest/*";
-    private static final String CARE_PROVIDER_ID = "CARE_PROVIDER_ID";
+  private static final String CERTIFICATE_TYPE = "TEST_TYPE";
+  private static final String CERTIFICATE_VERSION = "TEST_VERSION";
+  private static final String CERTIFICATE_END_TAG = "</texter>";
+  private static final String CERTIFICATE_START_TAG = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
+  private static final String RESOURCES_LOCATION = "classpath:CertificateExportServiceTest/*";
+  private static final String CARE_PROVIDER_ID = "CARE_PROVIDER_ID";
 
-    @Nested
-    class GetCertificateTexts {
+  @Nested
+  class GetCertificateTexts {
 
-        @BeforeEach
-        void setUp() throws IOException {
-            when(resourceResolver.getResources(any(String.class))).thenReturn(getTestResources());
-        }
-
-        @Test
-        void shouldSelectActiveCertificateTextsOnly() {
-            final var certificateTexts = certificateExportService.getCertificateTexts();
-
-            assertEquals(1, certificateTexts.size());
-        }
-
-        @Test
-        void shouldSetProperAttributes() {
-            final var certificateTexts = certificateExportService.getCertificateTexts();
-
-            assertAll(
-                () -> assertEquals(CERTIFICATE_TYPE, certificateTexts.getFirst().getType()),
-                () -> assertEquals(CERTIFICATE_VERSION, certificateTexts.getFirst().getVersion())
-            );
-        }
-
-        @Test
-        void shouldIncludeEntireXmlFile() {
-            final var certificateTexts = certificateExportService.getCertificateTexts();
-
-            assertAll(
-                () -> assertTrue(certificateTexts.getFirst().getXml().startsWith(CERTIFICATE_START_TAG)),
-                () -> assertTrue(certificateTexts.getFirst().getXml().endsWith(CERTIFICATE_END_TAG))
-            );
-        }
+    @BeforeEach
+    void setUp() throws IOException {
+      when(resourceResolver.getResources(any(String.class))).thenReturn(getTestResources());
     }
 
-    @Nested
-    class EraseCertiticatesTests {
+    @Test
+    void shouldSelectActiveCertificateTextsOnly() {
+      final var certificateTexts = certificateExportService.getCertificateTexts();
 
-        @Test
-        void shallCallEraseCertificatesAggregator() {
-            certificateExportService.eraseCertificates(CARE_PROVIDER_ID);
-            verify(eraseCertificatesAggregator).eraseCertificates(CARE_PROVIDER_ID);
-        }
+      assertEquals(1, certificateTexts.size());
     }
 
-    @Nested
-    class GetCertificateExportPage {
+    @Test
+    void shouldSetProperAttributes() {
+      final var certificateTexts = certificateExportService.getCertificateTexts();
 
-        @Test
-        void shallReturnCertificateExportPageDTO() {
-            final var expectedExportPage = CertificateExportPageDTO.of(CARE_PROVIDER_ID, 1, 1, 1, new ArrayList<>());
-            when(exportCertificateAggregator.exportPage(CARE_PROVIDER_ID, PAGE, EXPORT_SIZE)).thenReturn(expectedExportPage);
-
-            final var actualExportPage = certificateExportService.getCertificateExportPage(CARE_PROVIDER_ID, PAGE, EXPORT_SIZE);
-            assertEquals(expectedExportPage, actualExportPage);
-        }
+      assertAll(
+          () -> assertEquals(CERTIFICATE_TYPE, certificateTexts.getFirst().getType()),
+          () -> assertEquals(CERTIFICATE_VERSION, certificateTexts.getFirst().getVersion()));
     }
 
-    private Resource[] getTestResources() throws IOException {
-        return new PathMatchingResourcePatternResolver().getResources(RESOURCES_LOCATION);
+    @Test
+    void shouldIncludeEntireXmlFile() {
+      final var certificateTexts = certificateExportService.getCertificateTexts();
+
+      assertAll(
+          () -> assertTrue(certificateTexts.getFirst().getXml().startsWith(CERTIFICATE_START_TAG)),
+          () -> assertTrue(certificateTexts.getFirst().getXml().endsWith(CERTIFICATE_END_TAG)));
     }
+  }
+
+  @Nested
+  class EraseCertiticatesTests {
+
+    @Test
+    void shallCallEraseCertificatesAggregator() {
+      certificateExportService.eraseCertificates(CARE_PROVIDER_ID);
+      verify(eraseCertificatesAggregator).eraseCertificates(CARE_PROVIDER_ID);
+    }
+  }
+
+  @Nested
+  class GetCertificateExportPage {
+
+    @Test
+    void shallReturnCertificateExportPageDTO() {
+      final var expectedExportPage =
+          CertificateExportPageDTO.of(CARE_PROVIDER_ID, 1, 1, 1, new ArrayList<>());
+      when(exportCertificateAggregator.exportPage(CARE_PROVIDER_ID, PAGE, EXPORT_SIZE))
+          .thenReturn(expectedExportPage);
+
+      final var actualExportPage =
+          certificateExportService.getCertificateExportPage(CARE_PROVIDER_ID, PAGE, EXPORT_SIZE);
+      assertEquals(expectedExportPage, actualExportPage);
+    }
+  }
+
+  private Resource[] getTestResources() throws IOException {
+    return new PathMatchingResourcePatternResolver().getResources(RESOURCES_LOCATION);
+  }
 }

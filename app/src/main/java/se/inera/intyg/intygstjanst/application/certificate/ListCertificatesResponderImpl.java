@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -27,11 +27,11 @@ import se.inera.ifv.insuranceprocess.healthreporting.listcertificatesresponder.v
 import se.inera.ifv.insuranceprocess.healthreporting.listcertificatesresponder.v1.ListCertificatesResponseType;
 import se.inera.intyg.common.schemas.insuranceprocess.healthreporting.converter.ModelConverter;
 import se.inera.intyg.common.schemas.insuranceprocess.healthreporting.utils.ResultOfCallUtil;
+import se.inera.intyg.intygstjanst.application.certificate.converter.ConverterUtil;
+import se.inera.intyg.intygstjanst.application.certificate.service.CertificateService;
 import se.inera.intyg.intygstjanst.infrastructure.logging.MdcLogConstants;
 import se.inera.intyg.intygstjanst.infrastructure.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Certificate;
-import se.inera.intyg.intygstjanst.application.certificate.converter.ConverterUtil;
-import se.inera.intyg.intygstjanst.application.certificate.service.CertificateService;
 import se.inera.intyg.schemas.contract.Personnummer;
 
 /**
@@ -40,35 +40,41 @@ import se.inera.intyg.schemas.contract.Personnummer;
 @Service
 public class ListCertificatesResponderImpl implements ListCertificatesResponderInterface {
 
-    @Autowired
-    private CertificateService certificateService;
+  @Autowired private CertificateService certificateService;
 
-    @Override
+  @Override
+  @PerformanceLogging(
+      eventAction = "list-certificates",
+      eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
+  public ListCertificatesResponseType listCertificates(
+      AttributedURIType logicalAddress, ListCertificatesRequestType parameters) {
 
-    @PerformanceLogging(eventAction = "list-certificates", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
-    public ListCertificatesResponseType listCertificates(AttributedURIType logicalAddress, ListCertificatesRequestType parameters) {
+    ListCertificatesResponseType response = new ListCertificatesResponseType();
 
-        ListCertificatesResponseType response = new ListCertificatesResponseType();
-
-        List<Certificate> certificates = certificateService.listCertificatesForCitizen(
+    List<Certificate> certificates =
+        certificateService.listCertificatesForCitizen(
             createPnr(parameters.getNationalIdentityNumber()),
             parameters.getCertificateType(),
             parameters.getFromDate(),
             parameters.getToDate());
 
-        for (Certificate certificate : certificates) {
-            if (parameters.getCertificateType().isEmpty() || !(certificate.isDeleted() || certificate.isRevoked())) {
-                response.getMeta().add(ModelConverter.toCertificateMetaType(ConverterUtil.toCertificateHolder(certificate)));
-            }
-        }
-        response.setResult(ResultOfCallUtil.okResult());
-
-        return response;
+    for (Certificate certificate : certificates) {
+      if (parameters.getCertificateType().isEmpty()
+          || !(certificate.isDeleted() || certificate.isRevoked())) {
+        response
+            .getMeta()
+            .add(
+                ModelConverter.toCertificateMetaType(
+                    ConverterUtil.toCertificateHolder(certificate)));
+      }
     }
+    response.setResult(ResultOfCallUtil.okResult());
 
-    private Personnummer createPnr(String personId) {
-        return Personnummer.createPersonnummer(personId)
-            .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer"));
-    }
+    return response;
+  }
 
+  private Personnummer createPnr(String personId) {
+    return Personnummer.createPersonnummer(personId)
+        .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer"));
+  }
 }

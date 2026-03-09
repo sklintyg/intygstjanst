@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -22,37 +22,37 @@ import static org.springframework.util.Assert.hasText;
 
 public class CertificateType {
 
-    private final String certificateTypeId;
+  private final String certificateTypeId;
 
-    public CertificateType(String certificateTypeId) {
-        hasText(certificateTypeId, "certificateTypeId must not be empty");
-        this.certificateTypeId = certificateTypeId;
-    }
+  public CertificateType(String certificateTypeId) {
+    hasText(certificateTypeId, "certificateTypeId must not be empty");
+    this.certificateTypeId = certificateTypeId;
+  }
 
-    public String getCertificateTypeId() {
-        return certificateTypeId;
-    }
+  public String getCertificateTypeId() {
+    return certificateTypeId;
+  }
 
-    @Override
-    public String toString() {
-        return certificateTypeId;
-    }
+  @Override
+  public String toString() {
+    return certificateTypeId;
+  }
 
-    @Override
-    public int hashCode() {
-        return certificateTypeId.hashCode();
-    }
+  @Override
+  public int hashCode() {
+    return certificateTypeId.hashCode();
+  }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        } else if (obj == null) {
-            return false;
-        } else if (!(obj instanceof CertificateType)) {
-            return false;
-        }
-        CertificateType other = (CertificateType) obj;
-        return certificateTypeId.equals(other.certificateTypeId);
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    } else if (obj == null) {
+      return false;
+    } else if (!(obj instanceof CertificateType)) {
+      return false;
     }
+    CertificateType other = (CertificateType) obj;
+    return certificateTypeId.equals(other.certificateTypeId);
+  }
 }

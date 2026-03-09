@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -20,31 +20,31 @@ package se.inera.intyg.intygstjanst.application.exception;
 
 public class SubsystemCallException extends ServerException {
 
-    private static final long serialVersionUID = -2881966259299346838L;
+  private static final long serialVersionUID = -2881966259299346838L;
 
-    private final String subsystemId;
+  private final String subsystemId;
 
-    public SubsystemCallException(String subsystemId) {
-        super("Call to subsystem '" + subsystemId + "' caused an exception");
-        this.subsystemId = subsystemId;
-    }
+  public SubsystemCallException(String subsystemId) {
+    super("Call to subsystem '" + subsystemId + "' caused an exception");
+    this.subsystemId = subsystemId;
+  }
 
-    public SubsystemCallException(String subsystemId, String message) {
-        super(message);
-        this.subsystemId = subsystemId;
-    }
+  public SubsystemCallException(String subsystemId, String message) {
+    super(message);
+    this.subsystemId = subsystemId;
+  }
 
-    public SubsystemCallException(String subsystemId, Throwable cause) {
-        super(cause);
-        this.subsystemId = subsystemId;
-    }
+  public SubsystemCallException(String subsystemId, Throwable cause) {
+    super(cause);
+    this.subsystemId = subsystemId;
+  }
 
-    public SubsystemCallException(String subsystemId, String message, Throwable cause) {
-        super(message, cause);
-        this.subsystemId = subsystemId;
-    }
+  public SubsystemCallException(String subsystemId, String message, Throwable cause) {
+    super(message, cause);
+    this.subsystemId = subsystemId;
+  }
 
-    public String getSubsystemId() {
-        return subsystemId;
-    }
+  public String getSubsystemId() {
+    return subsystemId;
+  }
 }

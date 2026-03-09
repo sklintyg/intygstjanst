@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -36,49 +36,58 @@ import se.inera.intyg.clinicalprocess.healthcond.certificate.listpossiblereceive
 @ExtendWith(MockitoExtension.class)
 class ListPossibleReceiversResponderImplTest {
 
-    private static final String LOGICAL_ADDRESS = "logical-address";
-    private static final String INTYG_TYP = "af00213";
+  private static final String LOGICAL_ADDRESS = "logical-address";
+  private static final String INTYG_TYP = "af00213";
 
-    @Mock
-    private RecipientService recipientService;
+  @Mock private RecipientService recipientService;
 
-    @InjectMocks
-    private ListPossibleReceiversResponderImpl testee;
+  @InjectMocks private ListPossibleReceiversResponderImpl testee;
 
-    @Test
-    void testListOk() {
-        CertificateType certificateType = new CertificateType(INTYG_TYP);
+  @Test
+  void testListOk() {
+    CertificateType certificateType = new CertificateType(INTYG_TYP);
 
-        when(recipientService.listRecipients(certificateType)).thenReturn(buildRecipients("AF", INTYG_TYP));
+    when(recipientService.listRecipients(certificateType))
+        .thenReturn(buildRecipients("AF", INTYG_TYP));
 
-        ListPossibleReceiversResponseType resp = testee.listPossibleReceivers(LOGICAL_ADDRESS, buildReq(INTYG_TYP));
+    ListPossibleReceiversResponseType resp =
+        testee.listPossibleReceivers(LOGICAL_ADDRESS, buildReq(INTYG_TYP));
 
-        assertEquals(1, resp.getReceiverList().size());
-        assertEquals("AF", resp.getReceiverList().getFirst().getReceiverId());
-        assertEquals("AF-name", resp.getReceiverList().getFirst().getReceiverName());
-        assertEquals("HUVUDMOTTAGARE", resp.getReceiverList().getFirst().getReceiverType().name());
-        assertEquals(CertificateReceiverTypeType.HUVUDMOTTAGARE, resp.getReceiverList().getFirst().getReceiverType());
-    }
+    assertEquals(1, resp.getReceiverList().size());
+    assertEquals("AF", resp.getReceiverList().getFirst().getReceiverId());
+    assertEquals("AF-name", resp.getReceiverList().getFirst().getReceiverName());
+    assertEquals("HUVUDMOTTAGARE", resp.getReceiverList().getFirst().getReceiverType().name());
+    assertEquals(
+        CertificateReceiverTypeType.HUVUDMOTTAGARE,
+        resp.getReceiverList().getFirst().getReceiverType());
+  }
 
-    @Test
-    void testMissingIntygsTypThrowsException() {
-        final var listPossibleReceiversType = buildReq(null);
-        assertThrows(IllegalArgumentException.class,
-            () -> testee.listPossibleReceivers(LOGICAL_ADDRESS, listPossibleReceiversType)
-        );
-    }
+  @Test
+  void testMissingIntygsTypThrowsException() {
+    final var listPossibleReceiversType = buildReq(null);
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> testee.listPossibleReceivers(LOGICAL_ADDRESS, listPossibleReceiversType));
+  }
 
-    private List<Recipient> buildRecipients(String recipientId, String certTypes) {
-        return List.of(new Recipient(LOGICAL_ADDRESS, recipientId + "-name", recipientId,
-            CertificateRecipientType.HUVUDMOTTAGARE.name(), certTypes, true, true));
-    }
+  private List<Recipient> buildRecipients(String recipientId, String certTypes) {
+    return List.of(
+        new Recipient(
+            LOGICAL_ADDRESS,
+            recipientId + "-name",
+            recipientId,
+            CertificateRecipientType.HUVUDMOTTAGARE.name(),
+            certTypes,
+            true,
+            true));
+  }
 
-    private ListPossibleReceiversType buildReq(String intygTyp) {
-        ListPossibleReceiversType req = new ListPossibleReceiversType();
+  private ListPossibleReceiversType buildReq(String intygTyp) {
+    ListPossibleReceiversType req = new ListPossibleReceiversType();
 
-        TypAvIntyg typAvIntyg = new TypAvIntyg();
-        typAvIntyg.setCode(intygTyp);
-        req.setIntygTyp(typAvIntyg);
-        return req;
-    }
+    TypAvIntyg typAvIntyg = new TypAvIntyg();
+    typAvIntyg.setCode(intygTyp);
+    req.setIntygTyp(typAvIntyg);
+    return req;
+  }
 }

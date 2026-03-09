@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -29,18 +29,20 @@ import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.ArendeRe
 @Service
 public class MessageService {
 
-    @Autowired
-    private ArendeRepository messageRepository;
+  @Autowired private ArendeRepository messageRepository;
 
-    public List<MessageFromIT> findMessagesByCertificateId(String certificateId) {
-        final var messages = messageRepository.findByIntygsId(certificateId);
-        return messages.stream()
-            .map(message -> convert(message))
-            .collect(Collectors.toList());
-    }
+  public List<MessageFromIT> findMessagesByCertificateId(String certificateId) {
+    final var messages = messageRepository.findByIntygsId(certificateId);
+    return messages.stream().map(message -> convert(message)).collect(Collectors.toList());
+  }
 
-    private MessageFromIT convert(Arende message) {
-        return MessageFromIT.create(message.getIntygsId(), message.getMeddelandeId(), message.getMeddelande(), message.getAmne(),
-            message.getLogiskAdressmottagare(), message.getTimestamp());
-    }
+  private MessageFromIT convert(Arende message) {
+    return MessageFromIT.create(
+        message.getIntygsId(),
+        message.getMeddelandeId(),
+        message.getMeddelande(),
+        message.getAmne(),
+        message.getLogiskAdressmottagare(),
+        message.getTimestamp());
+  }
 }

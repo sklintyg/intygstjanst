@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -32,75 +32,84 @@ import se.inera.clinicalprocess.healthcond.certificate.receiver.types.v1.Certifi
 import se.inera.clinicalprocess.healthcond.certificate.types.v3.IntygId;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.listapprovedreceivers.v1.ListApprovedReceiversResponseType;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.listapprovedreceivers.v1.ListApprovedReceiversType;
+import se.inera.intyg.intygstjanst.application.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.ApprovedReceiver;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.ApprovedReceiverDao;
-import se.inera.intyg.intygstjanst.application.exception.RecipientUnknownException;
 
 @ExtendWith(MockitoExtension.class)
 class ListApprovedReceiversResponderImplTest {
 
-    private static final String LOGICAL_ADDRESS = "logical-address";
-    private static final String INTYG_ID = "intyg-123";
-    private static final String INTYG_TYP = "af00213";
+  private static final String LOGICAL_ADDRESS = "logical-address";
+  private static final String INTYG_ID = "intyg-123";
+  private static final String INTYG_TYP = "af00213";
 
-    @Mock
-    private ApprovedReceiverDao approvedReceiverDao;
+  @Mock private ApprovedReceiverDao approvedReceiverDao;
 
-    @Mock
-    private RecipientService recipientService;
+  @Mock private RecipientService recipientService;
 
-    @InjectMocks
-    private ListApprovedReceiversResponderImpl testee;
+  @InjectMocks private ListApprovedReceiversResponderImpl testee;
 
-    @Test
-    void testListOk() throws RecipientUnknownException {
-        when(approvedReceiverDao.getApprovedReceiverIdsForCertificate(INTYG_ID)).thenReturn(List.of(buildApprovedReceiver("AF")));
-        when(recipientService.getRecipient("AF")).thenReturn(buildRecipient("AF", INTYG_TYP));
+  @Test
+  void testListOk() throws RecipientUnknownException {
+    when(approvedReceiverDao.getApprovedReceiverIdsForCertificate(INTYG_ID))
+        .thenReturn(List.of(buildApprovedReceiver("AF")));
+    when(recipientService.getRecipient("AF")).thenReturn(buildRecipient("AF", INTYG_TYP));
 
-        ListApprovedReceiversResponseType resp = testee.listApprovedReceivers(LOGICAL_ADDRESS, buildReq(INTYG_ID));
+    ListApprovedReceiversResponseType resp =
+        testee.listApprovedReceivers(LOGICAL_ADDRESS, buildReq(INTYG_ID));
 
-        assertEquals(1, resp.getReceiverList().size());
-        assertEquals("AF", resp.getReceiverList().getFirst().getReceiverId());
-        assertEquals("AF-name", resp.getReceiverList().getFirst().getReceiverName());
-        assertEquals("HUVUDMOTTAGARE", resp.getReceiverList().getFirst().getReceiverType().name());
-        assertEquals(CertificateReceiverTypeType.HUVUDMOTTAGARE, resp.getReceiverList().getFirst().getReceiverType());
+    assertEquals(1, resp.getReceiverList().size());
+    assertEquals("AF", resp.getReceiverList().getFirst().getReceiverId());
+    assertEquals("AF-name", resp.getReceiverList().getFirst().getReceiverName());
+    assertEquals("HUVUDMOTTAGARE", resp.getReceiverList().getFirst().getReceiverType().name());
+    assertEquals(
+        CertificateReceiverTypeType.HUVUDMOTTAGARE,
+        resp.getReceiverList().getFirst().getReceiverType());
+  }
+
+  private ApprovedReceiver buildApprovedReceiver(String mottagareId) {
+    ApprovedReceiver ar = new ApprovedReceiver();
+    ar.setReceiverId(mottagareId);
+    ar.setCertificateId(INTYG_ID);
+    ar.setApproved(true);
+    return ar;
+  }
+
+  @Test
+  void testReturnsEmptyWhenUnknownIntygTyp() {
+    ListApprovedReceiversResponseType resp =
+        testee.listApprovedReceivers(LOGICAL_ADDRESS, buildReq(INTYG_ID));
+    assertEquals(0, resp.getReceiverList().size());
+  }
+
+  @Test
+  void testFailsWithNullIntygId() {
+    final var listApprovedReceiversType = buildReq(null);
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> testee.listApprovedReceivers(LOGICAL_ADDRESS, listApprovedReceiversType));
+  }
+
+  private Recipient buildRecipient(String recipientId, String certTypes) {
+    return new Recipient(
+        LOGICAL_ADDRESS,
+        recipientId + "-name",
+        recipientId,
+        CertificateRecipientType.HUVUDMOTTAGARE.name(),
+        certTypes,
+        true,
+        true);
+  }
+
+  private ListApprovedReceiversType buildReq(String intygsId) {
+    ListApprovedReceiversType req = new ListApprovedReceiversType();
+    if (intygsId != null) {
+      IntygId intygId = new IntygId();
+      intygId.setExtension(intygsId);
+      req.setIntygsId(intygId);
+    } else {
+      req.setIntygsId(null);
     }
-
-    private ApprovedReceiver buildApprovedReceiver(String mottagareId) {
-        ApprovedReceiver ar = new ApprovedReceiver();
-        ar.setReceiverId(mottagareId);
-        ar.setCertificateId(INTYG_ID);
-        ar.setApproved(true);
-        return ar;
-    }
-
-    @Test
-    void testReturnsEmptyWhenUnknownIntygTyp() {
-        ListApprovedReceiversResponseType resp = testee.listApprovedReceivers(LOGICAL_ADDRESS, buildReq(INTYG_ID));
-        assertEquals(0, resp.getReceiverList().size());
-    }
-
-    @Test
-    void testFailsWithNullIntygId() {
-        final var listApprovedReceiversType = buildReq(null);
-        assertThrows(IllegalArgumentException.class, () ->
-            testee.listApprovedReceivers(LOGICAL_ADDRESS, listApprovedReceiversType));
-    }
-
-    private Recipient buildRecipient(String recipientId, String certTypes) {
-        return new Recipient(LOGICAL_ADDRESS, recipientId + "-name", recipientId, CertificateRecipientType.HUVUDMOTTAGARE.name(), certTypes,
-            true, true);
-    }
-
-    private ListApprovedReceiversType buildReq(String intygsId) {
-        ListApprovedReceiversType req = new ListApprovedReceiversType();
-        if (intygsId != null) {
-            IntygId intygId = new IntygId();
-            intygId.setExtension(intygsId);
-            req.setIntygsId(intygId);
-        } else {
-            req.setIntygsId(null);
-        }
-        return req;
-    }
+    return req;
+  }
 }

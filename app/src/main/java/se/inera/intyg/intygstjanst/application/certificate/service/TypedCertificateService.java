@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -35,161 +35,223 @@ import se.inera.intyg.common.luse.support.LuseEntryPoint;
 import se.inera.intyg.common.support.model.common.internal.Utlatande;
 import se.inera.intyg.common.support.modules.registry.IntygModuleRegistry;
 import se.inera.intyg.common.support.modules.support.api.ModuleApi;
+import se.inera.intyg.intygstjanst.application.certificate.converter.CertificateToDiagnosedCertificateConverter;
 import se.inera.intyg.intygstjanst.application.certificate.dto.DiagnosedCertificate;
 import se.inera.intyg.intygstjanst.application.certificate.dto.SickLeaveCertificate;
+import se.inera.intyg.intygstjanst.application.sickleave.converter.CertificateToSickLeaveCertificateConverter;
+import se.inera.intyg.intygstjanst.infrastructure.csintegration.GetSickLeaveCertificatesFromCS;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.CertificateDao;
-import se.inera.intyg.intygstjanst.infrastructure.csintegration.GetSickLeaveCertificatesFromCS;
-import se.inera.intyg.intygstjanst.application.certificate.converter.CertificateToDiagnosedCertificateConverter;
-import se.inera.intyg.intygstjanst.application.sickleave.converter.CertificateToSickLeaveCertificateConverter;
 import se.inera.intyg.schemas.contract.Personnummer;
 
 @Service
 @RequiredArgsConstructor
 public class TypedCertificateService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TypedCertificateService.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(TypedCertificateService.class);
 
-    private final CertificateDao certificateDao;
+  private final CertificateDao certificateDao;
 
-    private final IntygModuleRegistry moduleRegistry;
+  private final IntygModuleRegistry moduleRegistry;
 
-    private final CertificateToDiagnosedCertificateConverter certificateToDiagnosedCertificateConverter;
-    private final CertificateToSickLeaveCertificateConverter certificateToSickLeaveCertificateConverter;
-    private final GetSickLeaveCertificatesFromCS getSickLeaveCertificatesFromCS;
+  private final CertificateToDiagnosedCertificateConverter
+      certificateToDiagnosedCertificateConverter;
+  private final CertificateToSickLeaveCertificateConverter
+      certificateToSickLeaveCertificateConverter;
+  private final GetSickLeaveCertificatesFromCS getSickLeaveCertificatesFromCS;
 
-    public List<DiagnosedCertificate> listDiagnosedCertificatesForCareUnits(List<String> units, List<String> certificateTypeList,
-        LocalDate fromDate, LocalDate toDate, List<String> doctorIds) {
+  public List<DiagnosedCertificate> listDiagnosedCertificatesForCareUnits(
+      List<String> units,
+      List<String> certificateTypeList,
+      LocalDate fromDate,
+      LocalDate toDate,
+      List<String> doctorIds) {
 
-        LOGGER.debug("Getting diagnosed certificates of types ({}) for care units on units ({}})", certificateTypeList, units);
+    LOGGER.debug(
+        "Getting diagnosed certificates of types ({}) for care units on units ({}})",
+        certificateTypeList,
+        units);
 
-        return getDiagnosedCertificatesUsingMetaDataTable(units, certificateTypeList, fromDate, toDate, doctorIds);
-    }
+    return getDiagnosedCertificatesUsingMetaDataTable(
+        units, certificateTypeList, fromDate, toDate, doctorIds);
+  }
 
-    private List<DiagnosedCertificate> getDiagnosedCertificatesUsingMetaDataTable(List<String> units, List<String> certificateTypeList,
-        LocalDate fromDate, LocalDate toDate, List<String> doctorIds) {
-        final var certificates = certificateDao.findCertificatesUsingMetaDataTable(units, certificateTypeList, fromDate, toDate, doctorIds);
-        return transformListWithMetaDataToDiagnosedCertificates(certificates);
-    }
+  private List<DiagnosedCertificate> getDiagnosedCertificatesUsingMetaDataTable(
+      List<String> units,
+      List<String> certificateTypeList,
+      LocalDate fromDate,
+      LocalDate toDate,
+      List<String> doctorIds) {
+    final var certificates =
+        certificateDao.findCertificatesUsingMetaDataTable(
+            units, certificateTypeList, fromDate, toDate, doctorIds);
+    return transformListWithMetaDataToDiagnosedCertificates(certificates);
+  }
 
-    public List<String> listDoctorsForCareUnits(List<String> units, List<String> certificateTypeList, LocalDate fromDate,
-        LocalDate toDate) {
+  public List<String> listDoctorsForCareUnits(
+      List<String> units, List<String> certificateTypeList, LocalDate fromDate, LocalDate toDate) {
 
-        LOGGER.debug("Getting signing doctors for certificates of types ({}) for care units on units ({}})", certificateTypeList, units);
+    LOGGER.debug(
+        "Getting signing doctors for certificates of types ({}) for care units on units ({}})",
+        certificateTypeList,
+        units);
 
-        return certificateDao.findDoctorIds(units, certificateTypeList, fromDate, toDate);
-    }
+    return certificateDao.findDoctorIds(units, certificateTypeList, fromDate, toDate);
+  }
 
-    public List<DiagnosedCertificate> listDiagnosedCertificatesForPerson(Personnummer personId, List<String> certificateTypeList,
-        LocalDate fromDate, LocalDate toDate, List<String> units) {
+  public List<DiagnosedCertificate> listDiagnosedCertificatesForPerson(
+      Personnummer personId,
+      List<String> certificateTypeList,
+      LocalDate fromDate,
+      LocalDate toDate,
+      List<String> units) {
 
-        final var certificates = certificateDao.findCertificate(personId, certificateTypeList, fromDate, toDate, units);
+    final var certificates =
+        certificateDao.findCertificate(personId, certificateTypeList, fromDate, toDate, units);
 
-        LOGGER.debug("Getting diagnosed certificates of types ({}) for person on units ({}})", certificateTypeList, units);
+    LOGGER.debug(
+        "Getting diagnosed certificates of types ({}) for person on units ({}})",
+        certificateTypeList,
+        units);
 
-        return transformListToDiagnosedCertificates(certificates);
-    }
+    return transformListToDiagnosedCertificates(certificates);
+  }
 
-    public List<SickLeaveCertificate> listSickLeaveCertificatesForPerson(Personnummer personId, List<String> certificateTypeList,
-        LocalDate fromDate, LocalDate toDate, List<String> units, List<String> doctorIds) {
+  public List<SickLeaveCertificate> listSickLeaveCertificatesForPerson(
+      Personnummer personId,
+      List<String> certificateTypeList,
+      LocalDate fromDate,
+      LocalDate toDate,
+      List<String> units,
+      List<String> doctorIds) {
 
-        final var certificates = certificateDao.findCertificate(personId, certificateTypeList, fromDate, toDate, units).stream()
-            .filter(certificate ->
-                doctorIds == null || doctorIds.isEmpty() || doctorIds.contains(certificate.getCertificateMetaData().getDoctorId())
-            )
+    final var certificates =
+        certificateDao
+            .findCertificate(personId, certificateTypeList, fromDate, toDate, units)
+            .stream()
+            .filter(
+                certificate ->
+                    doctorIds == null
+                        || doctorIds.isEmpty()
+                        || doctorIds.contains(certificate.getCertificateMetaData().getDoctorId()))
             .toList();
 
-        LOGGER.debug("Getting sickleave certificates of types ({}) for person on units ({}})", certificateTypeList, units);
+    LOGGER.debug(
+        "Getting sickleave certificates of types ({}) for person on units ({}})",
+        certificateTypeList,
+        units);
 
-        final var sickLeaveCertificatesFromIT = transformListToSickLeaveCertificates(certificates);
-        final var sickLeaveCertificatesFromCS = getSickLeaveCertificatesFromCS.get(personId, certificateTypeList, fromDate, toDate, units,
-            doctorIds);
+    final var sickLeaveCertificatesFromIT = transformListToSickLeaveCertificates(certificates);
+    final var sickLeaveCertificatesFromCS =
+        getSickLeaveCertificatesFromCS.get(
+            personId, certificateTypeList, fromDate, toDate, units, doctorIds);
 
-        return Stream.concat(
-            sickLeaveCertificatesFromIT.stream(),
-            sickLeaveCertificatesFromCS.stream()
-        ).toList();
-    }
+    return Stream.concat(sickLeaveCertificatesFromIT.stream(), sickLeaveCertificatesFromCS.stream())
+        .toList();
+  }
 
-    private List<DiagnosedCertificate> transformListWithMetaDataToDiagnosedCertificates(List<Certificate> certificates) {
-        return certificates.stream()
-            .map(this::convertToDiagnosedCertificateFromCertificateWithMetaData)
-            .toList();
-    }
+  private List<DiagnosedCertificate> transformListWithMetaDataToDiagnosedCertificates(
+      List<Certificate> certificates) {
+    return certificates.stream()
+        .map(this::convertToDiagnosedCertificateFromCertificateWithMetaData)
+        .toList();
+  }
 
-    private DiagnosedCertificate convertToDiagnosedCertificateFromCertificateWithMetaData(Certificate certificate) {
-        final List<String> diagnosisList = Arrays.asList(
-            certificate.getCertificateMetaData()
+  private DiagnosedCertificate convertToDiagnosedCertificateFromCertificateWithMetaData(
+      Certificate certificate) {
+    final List<String> diagnosisList =
+        Arrays.asList(
+            certificate
+                .getCertificateMetaData()
                 .getDiagnoses()
                 .replaceAll("\\[|\\]", "")
-                .split("\\s*,\\s*")
-        );
-        return certificateToDiagnosedCertificateConverter.convert(certificate, diagnosisList);
+                .split("\\s*,\\s*"));
+    return certificateToDiagnosedCertificateConverter.convert(certificate, diagnosisList);
+  }
+
+  private List<DiagnosedCertificate> transformListToDiagnosedCertificates(
+      List<Certificate> certificates) {
+
+    return certificates.stream()
+        .filter(cert -> !cert.isRevoked())
+        .map(this::convertToDiagnosedCertificate)
+        .filter(Objects::nonNull)
+        .toList();
+  }
+
+  private DiagnosedCertificate convertToDiagnosedCertificate(Certificate certificate) {
+    try {
+      ModuleApi moduleApi =
+          moduleRegistry.getModuleApi(certificate.getType(), certificate.getTypeVersion());
+      Utlatande utlatande =
+          moduleApi.getUtlatandeFromXml(certificate.getOriginalCertificate().getDocument());
+
+      DiagnosedCertificate diagnosedCertificate;
+
+      switch (certificate.getType()) {
+        case LuseEntryPoint.MODULE_ID:
+          diagnosedCertificate =
+              certificateToDiagnosedCertificateConverter.convertLuse(certificate, utlatande);
+          break;
+        case LuaefsEntryPoint.MODULE_ID:
+          diagnosedCertificate =
+              certificateToDiagnosedCertificateConverter.convertLuaefs(certificate, utlatande);
+          break;
+        case LuaenaEntryPoint.MODULE_ID:
+          diagnosedCertificate =
+              certificateToDiagnosedCertificateConverter.convertLuaena(certificate, utlatande);
+          break;
+        default:
+          diagnosedCertificate = null;
+          LOGGER.info(
+              "Certificate of type {} could not be converted to DiagnosedCertificate!",
+              certificate.getType());
+          break;
+      }
+      return diagnosedCertificate;
+    } catch (Exception e) {
+      LOGGER.error("Error converting certificate to DiagnosedCertificate!", e);
+      return null;
     }
+  }
 
-    private List<DiagnosedCertificate> transformListToDiagnosedCertificates(List<Certificate> certificates) {
+  private List<SickLeaveCertificate> transformListToSickLeaveCertificates(
+      List<Certificate> certificates) {
+    return certificates.stream()
+        .filter(cert -> !cert.isRevoked())
+        .map(this::convertToSickLeaveCertificate)
+        .toList();
+  }
 
-        return certificates.stream().filter(cert -> !cert.isRevoked()).map(this::convertToDiagnosedCertificate)
-            .filter(Objects::nonNull).toList();
+  private SickLeaveCertificate convertToSickLeaveCertificate(Certificate certificate) {
+    try {
+      ModuleApi moduleApi =
+          moduleRegistry.getModuleApi(certificate.getType(), certificate.getTypeVersion());
+      Utlatande utlatande =
+          moduleApi.getUtlatandeFromXml(certificate.getOriginalCertificate().getDocument());
+
+      SickLeaveCertificate sickLeaveCertificate;
+
+      switch (certificate.getType()) {
+        case Ag7804EntryPoint.MODULE_ID:
+          sickLeaveCertificate =
+              certificateToSickLeaveCertificateConverter.convertAg7804(certificate, utlatande);
+          break;
+        case Ag114EntryPoint.MODULE_ID:
+          sickLeaveCertificate =
+              certificateToSickLeaveCertificateConverter.convertAg114(certificate, utlatande);
+          break;
+        default:
+          sickLeaveCertificate = null;
+          LOGGER.info(
+              "Certificate of type {} could not be converted to SickLeaveCertificate!",
+              certificate.getType());
+          break;
+      }
+      return sickLeaveCertificate;
+    } catch (Exception e) {
+      LOGGER.error("Error converting certificate to SickLeaveCertificate!", e);
+      return null;
     }
-
-    private DiagnosedCertificate convertToDiagnosedCertificate(Certificate certificate) {
-        try {
-            ModuleApi moduleApi = moduleRegistry.getModuleApi(certificate.getType(), certificate.getTypeVersion());
-            Utlatande utlatande = moduleApi.getUtlatandeFromXml(certificate.getOriginalCertificate().getDocument());
-
-            DiagnosedCertificate diagnosedCertificate;
-
-            switch (certificate.getType()) {
-                case LuseEntryPoint.MODULE_ID:
-                    diagnosedCertificate = certificateToDiagnosedCertificateConverter.convertLuse(certificate, utlatande);
-                    break;
-                case LuaefsEntryPoint.MODULE_ID:
-                    diagnosedCertificate = certificateToDiagnosedCertificateConverter.convertLuaefs(certificate, utlatande);
-                    break;
-                case LuaenaEntryPoint.MODULE_ID:
-                    diagnosedCertificate = certificateToDiagnosedCertificateConverter.convertLuaena(certificate, utlatande);
-                    break;
-                default:
-                    diagnosedCertificate = null;
-                    LOGGER.info("Certificate of type {} could not be converted to DiagnosedCertificate!", certificate.getType());
-                    break;
-            }
-            return diagnosedCertificate;
-        } catch (Exception e) {
-            LOGGER.error("Error converting certificate to DiagnosedCertificate!", e);
-            return null;
-        }
-    }
-
-    private List<SickLeaveCertificate> transformListToSickLeaveCertificates(List<Certificate> certificates) {
-        return certificates.stream().filter(cert -> !cert.isRevoked()).map(this::convertToSickLeaveCertificate)
-            .toList();
-    }
-
-    private SickLeaveCertificate convertToSickLeaveCertificate(Certificate certificate) {
-        try {
-            ModuleApi moduleApi = moduleRegistry.getModuleApi(certificate.getType(), certificate.getTypeVersion());
-            Utlatande utlatande = moduleApi.getUtlatandeFromXml(certificate.getOriginalCertificate().getDocument());
-
-            SickLeaveCertificate sickLeaveCertificate;
-
-            switch (certificate.getType()) {
-                case Ag7804EntryPoint.MODULE_ID:
-                    sickLeaveCertificate = certificateToSickLeaveCertificateConverter.convertAg7804(certificate, utlatande);
-                    break;
-                case Ag114EntryPoint.MODULE_ID:
-                    sickLeaveCertificate = certificateToSickLeaveCertificateConverter.convertAg114(certificate, utlatande);
-                    break;
-                default:
-                    sickLeaveCertificate = null;
-                    LOGGER.info("Certificate of type {} could not be converted to SickLeaveCertificate!", certificate.getType());
-                    break;
-            }
-            return sickLeaveCertificate;
-        } catch (Exception e) {
-            LOGGER.error("Error converting certificate to SickLeaveCertificate!", e);
-            return null;
-        }
-    }
+  }
 }

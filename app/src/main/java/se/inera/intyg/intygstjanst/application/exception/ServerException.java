@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -20,21 +20,21 @@ package se.inera.intyg.intygstjanst.application.exception;
 
 public class ServerException extends RuntimeException {
 
-    private static final long serialVersionUID = -582116076029565657L;
+  private static final long serialVersionUID = -582116076029565657L;
 
-    public ServerException() {
-        super();
-    }
+  public ServerException() {
+    super();
+  }
 
-    public ServerException(String message, Throwable cause) {
-        super(message, cause);
-    }
+  public ServerException(String message, Throwable cause) {
+    super(message, cause);
+  }
 
-    public ServerException(String message) {
-        super(message);
-    }
+  public ServerException(String message) {
+    super(message);
+  }
 
-    public ServerException(Throwable cause) {
-        super(cause);
-    }
+  public ServerException(Throwable cause) {
+    super(cause);
+  }
 }

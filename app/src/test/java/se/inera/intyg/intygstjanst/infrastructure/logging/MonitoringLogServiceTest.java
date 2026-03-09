@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -39,160 +39,171 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.LoggerFactory;
 import se.inera.intyg.intygstjanst.infrastructure.config.properties.AppProperties;
-import se.inera.intyg.intygstjanst.infrastructure.logging.HashUtility;
-import se.inera.intyg.intygstjanst.infrastructure.logging.MonitoringLogService;
 import se.inera.intyg.schemas.contract.Personnummer;
 
 @ExtendWith(MockitoExtension.class)
 class MonitoringLogServiceTest {
 
-    private static final String CERTIFICATE_ID = "CERTIFICATE_ID";
-    private static final String CERTIFICATE_TYPE = "CERTIFICATE_TYPE";
-    private static final String CARE_UNIT = "CARE_UNIT";
-    private static final String PART = "PART";
-    private static final String RECIPIENT = "RECIPIENT";
-    private static final String CITIZEN = "191212121212";
-    private static final String STATUS = "STATUS";
-    private static final String MESSAGE_ID = "MESSAGE_ID";
-    private static final String TOPIC = "TOPIC";
+  private static final String CERTIFICATE_ID = "CERTIFICATE_ID";
+  private static final String CERTIFICATE_TYPE = "CERTIFICATE_TYPE";
+  private static final String CARE_UNIT = "CARE_UNIT";
+  private static final String PART = "PART";
+  private static final String RECIPIENT = "RECIPIENT";
+  private static final String CITIZEN = "191212121212";
+  private static final String STATUS = "STATUS";
+  private static final String MESSAGE_ID = "MESSAGE_ID";
+  private static final String TOPIC = "TOPIC";
 
-    @Mock
-    private Appender<ILoggingEvent> mockAppender;
+  @Mock private Appender<ILoggingEvent> mockAppender;
 
-    @Spy
-    private HashUtility hashUtility = new HashUtility(
-        new AppProperties(null, null, null, null, null, null,
-            new AppProperties.Security("salt"), null));
+  @Spy
+  private HashUtility hashUtility =
+      new HashUtility(
+          new AppProperties(
+              null, null, null, null, null, null, new AppProperties.Security("salt"), null));
 
-    @Captor
-    private ArgumentCaptor<LoggingEvent> captorLoggingEvent;
+  @Captor private ArgumentCaptor<LoggingEvent> captorLoggingEvent;
 
-    @InjectMocks
-    private MonitoringLogService logService;
+  @InjectMocks private MonitoringLogService logService;
 
-    @BeforeEach
-    void setup() {
-        // no field injection needed — hashUtility initialized with salt directly
-        final Logger logger = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
-        logger.addAppender(mockAppender);
-    }
+  @BeforeEach
+  void setup() {
+    // no field injection needed — hashUtility initialized with salt directly
+    final Logger logger = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+    logger.addAppender(mockAppender);
+  }
 
-    @AfterEach
-    void teardown() {
-        final Logger logger = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
-        logger.detachAppender(mockAppender);
-    }
+  @AfterEach
+  void teardown() {
+    final Logger logger = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+    logger.detachAppender(mockAppender);
+  }
 
-    @Test
-    void shouldLogCertificateRegistered() {
-        logService.logCertificateRegistered(CERTIFICATE_ID, CERTIFICATE_TYPE, CARE_UNIT);
-        verifyLog(Level.INFO,
-            "CERTIFICATE_REGISTERED Certificate 'CERTIFICATE_ID' with type 'CERTIFICATE_TYPE', care unit 'CARE_UNIT' - registered");
-    }
+  @Test
+  void shouldLogCertificateRegistered() {
+    logService.logCertificateRegistered(CERTIFICATE_ID, CERTIFICATE_TYPE, CARE_UNIT);
+    verifyLog(
+        Level.INFO,
+        "CERTIFICATE_REGISTERED Certificate 'CERTIFICATE_ID' with type 'CERTIFICATE_TYPE', care unit 'CARE_UNIT' - registered");
+  }
 
-    @Test
-    void shouldLogCertificateRetrieved() {
-        logService.logCertificateRetrieved(CERTIFICATE_ID, CERTIFICATE_TYPE, CARE_UNIT, PART);
-        verifyLog(Level.INFO,
-            "CERTIFICATE_RETRIEVED Certificate 'CERTIFICATE_ID' with type 'CERTIFICATE_TYPE', care unit 'CARE_UNIT' - "
-                + "retrieved by part 'PART'");
-    }
+  @Test
+  void shouldLogCertificateRetrieved() {
+    logService.logCertificateRetrieved(CERTIFICATE_ID, CERTIFICATE_TYPE, CARE_UNIT, PART);
+    verifyLog(
+        Level.INFO,
+        "CERTIFICATE_RETRIEVED Certificate 'CERTIFICATE_ID' with type 'CERTIFICATE_TYPE', care unit 'CARE_UNIT' - "
+            + "retrieved by part 'PART'");
+  }
 
-    private void verifyLog(Level logLevel, String logMessage) {
-        verify(mockAppender).doAppend(captorLoggingEvent.capture());
-        final LoggingEvent loggingEvent = captorLoggingEvent.getValue();
+  private void verifyLog(Level logLevel, String logMessage) {
+    verify(mockAppender).doAppend(captorLoggingEvent.capture());
+    final LoggingEvent loggingEvent = captorLoggingEvent.getValue();
 
-        assertThat(loggingEvent.getLevel(), equalTo(logLevel));
-        assertThat(loggingEvent.getFormattedMessage(),
-            equalTo(logMessage));
-    }
+    assertThat(loggingEvent.getLevel(), equalTo(logLevel));
+    assertThat(loggingEvent.getFormattedMessage(), equalTo(logMessage));
+  }
 
-    @Test
-    void shouldLogCertificateSent() {
-        logService.logCertificateSent(CERTIFICATE_ID, CERTIFICATE_TYPE, CARE_UNIT, RECIPIENT);
-        verifyLog(Level.INFO,
-            "CERTIFICATE_SENT Certificate 'CERTIFICATE_ID' with type 'CERTIFICATE_TYPE', care unit 'CARE_UNIT' - sent to 'RECIPIENT'");
-    }
+  @Test
+  void shouldLogCertificateSent() {
+    logService.logCertificateSent(CERTIFICATE_ID, CERTIFICATE_TYPE, CARE_UNIT, RECIPIENT);
+    verifyLog(
+        Level.INFO,
+        "CERTIFICATE_SENT Certificate 'CERTIFICATE_ID' with type 'CERTIFICATE_TYPE', care unit 'CARE_UNIT' - sent to 'RECIPIENT'");
+  }
 
-    @Test
-    void shouldLogCertificateRevoked() {
-        logService.logCertificateRevoked(CERTIFICATE_ID, CERTIFICATE_TYPE, CARE_UNIT);
-        verifyLog(Level.INFO,
-            "CERTIFICATE_REVOKED Certificate 'CERTIFICATE_ID' with type 'CERTIFICATE_TYPE', care unit 'CARE_UNIT' - revoked");
-    }
+  @Test
+  void shouldLogCertificateRevoked() {
+    logService.logCertificateRevoked(CERTIFICATE_ID, CERTIFICATE_TYPE, CARE_UNIT);
+    verifyLog(
+        Level.INFO,
+        "CERTIFICATE_REVOKED Certificate 'CERTIFICATE_ID' with type 'CERTIFICATE_TYPE', care unit 'CARE_UNIT' - revoked");
+  }
 
-    @Test
-    void shouldLogCertificateRevokeSent() {
-        logService.logCertificateRevokeSent(CERTIFICATE_ID, CERTIFICATE_TYPE, CARE_UNIT, RECIPIENT);
-        verifyLog(Level.INFO,
-            "CERTIFICATE_REVOKE_SENT Certificate 'CERTIFICATE_ID' with type 'CERTIFICATE_TYPE', care unit 'CARE_UNIT' - revoke sent to "
-                + "'RECIPIENT'");
-    }
+  @Test
+  void shouldLogCertificateRevokeSent() {
+    logService.logCertificateRevokeSent(CERTIFICATE_ID, CERTIFICATE_TYPE, CARE_UNIT, RECIPIENT);
+    verifyLog(
+        Level.INFO,
+        "CERTIFICATE_REVOKE_SENT Certificate 'CERTIFICATE_ID' with type 'CERTIFICATE_TYPE', care unit 'CARE_UNIT' - revoke sent to "
+            + "'RECIPIENT'");
+  }
 
-    @Test
-    void shouldLogCertificateListedByCitizen() {
-        final Personnummer citizenId = createPnr(CITIZEN);
-        logService.logCertificateListedByCitizen(citizenId);
-        verifyLog(Level.INFO,
-            "CERTIFICATE_LISTED_BY_CITIZEN Certificates for citizen '" + hashUtility.hash(citizenId.getPersonnummer())
-                + "' - listed by citizen");
-    }
+  @Test
+  void shouldLogCertificateListedByCitizen() {
+    final Personnummer citizenId = createPnr(CITIZEN);
+    logService.logCertificateListedByCitizen(citizenId);
+    verifyLog(
+        Level.INFO,
+        "CERTIFICATE_LISTED_BY_CITIZEN Certificates for citizen '"
+            + hashUtility.hash(citizenId.getPersonnummer())
+            + "' - listed by citizen");
+  }
 
-    @Test
-    void shouldLogCertificateListedByCare() {
-        final Personnummer citizenId = createPnr(CITIZEN);
-        logService.logCertificateListedByCare(citizenId);
-        verifyLog(Level.INFO,
-            "CERTIFICATE_LISTED_BY_CARE Certificates for citizen '" + hashUtility.hash(citizenId.getPersonnummer())
-                + "' - listed by care");
-    }
+  @Test
+  void shouldLogCertificateListedByCare() {
+    final Personnummer citizenId = createPnr(CITIZEN);
+    logService.logCertificateListedByCare(citizenId);
+    verifyLog(
+        Level.INFO,
+        "CERTIFICATE_LISTED_BY_CARE Certificates for citizen '"
+            + hashUtility.hash(citizenId.getPersonnummer())
+            + "' - listed by care");
+  }
 
-    @Test
-    void shouldLogCertificateStatusChanged() {
-        logService.logCertificateStatusChanged(CERTIFICATE_ID, STATUS);
-        verifyLog(Level.INFO, "CERTIFICATE_STATUS_CHANGED Certificate 'CERTIFICATE_ID' - changed to status 'STATUS'");
-    }
+  @Test
+  void shouldLogCertificateStatusChanged() {
+    logService.logCertificateStatusChanged(CERTIFICATE_ID, STATUS);
+    verifyLog(
+        Level.INFO,
+        "CERTIFICATE_STATUS_CHANGED Certificate 'CERTIFICATE_ID' - changed to status 'STATUS'");
+  }
 
-    @Test
-    void shouldLogStatisticsCreated() {
-        logService.logStatisticsCreated(CERTIFICATE_ID, CERTIFICATE_TYPE, CARE_UNIT);
-        verifyLog(Level.INFO,
-            "STATISTICS_CREATED Certificate 'CERTIFICATE_ID' with type 'CERTIFICATE_TYPE', care unit 'CARE_UNIT' - sent to statistics");
-    }
+  @Test
+  void shouldLogStatisticsCreated() {
+    logService.logStatisticsCreated(CERTIFICATE_ID, CERTIFICATE_TYPE, CARE_UNIT);
+    verifyLog(
+        Level.INFO,
+        "STATISTICS_CREATED Certificate 'CERTIFICATE_ID' with type 'CERTIFICATE_TYPE', care unit 'CARE_UNIT' - sent to statistics");
+  }
 
-    @Test
-    void shouldLogStatisticsSent() {
-        this.logService.logStatisticsSent(CERTIFICATE_ID, CERTIFICATE_TYPE, CARE_UNIT, RECIPIENT);
-        verifyLog(Level.INFO,
-            "STATISTICS_SENT Certificate 'CERTIFICATE_ID' with type 'CERTIFICATE_TYPE', care unit 'CARE_UNIT', sent to 'RECIPIENT' - "
-                + "sent to statistics");
-    }
+  @Test
+  void shouldLogStatisticsSent() {
+    this.logService.logStatisticsSent(CERTIFICATE_ID, CERTIFICATE_TYPE, CARE_UNIT, RECIPIENT);
+    verifyLog(
+        Level.INFO,
+        "STATISTICS_SENT Certificate 'CERTIFICATE_ID' with type 'CERTIFICATE_TYPE', care unit 'CARE_UNIT', sent to 'RECIPIENT' - "
+            + "sent to statistics");
+  }
 
-    @Test
-    void shouldLogStatisticsRevoked() {
-        logService.logStatisticsRevoked(CERTIFICATE_ID, CERTIFICATE_TYPE, CARE_UNIT);
-        verifyLog(Level.INFO,
-            "STATISTICS_REVOKED Certificate 'CERTIFICATE_ID' with type 'CERTIFICATE_TYPE', care unit 'CARE_UNIT' - revoke sent to "
-                + "statistics");
-    }
+  @Test
+  void shouldLogStatisticsRevoked() {
+    logService.logStatisticsRevoked(CERTIFICATE_ID, CERTIFICATE_TYPE, CARE_UNIT);
+    verifyLog(
+        Level.INFO,
+        "STATISTICS_REVOKED Certificate 'CERTIFICATE_ID' with type 'CERTIFICATE_TYPE', care unit 'CARE_UNIT' - revoke sent to "
+            + "statistics");
+  }
 
-    @Test
-    void shouldLogStatisticsMessageSent() {
-        logService.logStatisticsMessageSent(CERTIFICATE_ID, TOPIC);
-        verifyLog(Level.INFO, "STATISTICS_MESSAGE_SENT Message with topic 'TOPIC' for certificate 'CERTIFICATE_ID' - sent to statistics");
-    }
+  @Test
+  void shouldLogStatisticsMessageSent() {
+    logService.logStatisticsMessageSent(CERTIFICATE_ID, TOPIC);
+    verifyLog(
+        Level.INFO,
+        "STATISTICS_MESSAGE_SENT Message with topic 'TOPIC' for certificate 'CERTIFICATE_ID' - sent to statistics");
+  }
 
-    @Test
-    void shouldLogSendMessageToCareReceived() {
-        logService.logSendMessageToCareReceived(MESSAGE_ID, CARE_UNIT);
-        verifyLog(Level.INFO,
-            "SEND_MESSAGE_TO_CARE_RECEIVED Message with id 'MESSAGE_ID', care unit recipient 'CARE_UNIT' - was received and "
-                + "forwarded to its recipient.");
-    }
+  @Test
+  void shouldLogSendMessageToCareReceived() {
+    logService.logSendMessageToCareReceived(MESSAGE_ID, CARE_UNIT);
+    verifyLog(
+        Level.INFO,
+        "SEND_MESSAGE_TO_CARE_RECEIVED Message with id 'MESSAGE_ID', care unit recipient 'CARE_UNIT' - was received and "
+            + "forwarded to its recipient.");
+  }
 
-    private Personnummer createPnr(String pnr) {
-        return Personnummer.createPersonnummer(pnr)
-            .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer"));
-    }
-
+  private Personnummer createPnr(String pnr) {
+    return Personnummer.createPersonnummer(pnr)
+        .orElseThrow(() -> new IllegalArgumentException("Could not parse passed personnummer"));
+  }
 }

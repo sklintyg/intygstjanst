@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package se.inera.intyg.intygstjanst.infrastructure.csintegration;
 
 import static se.inera.intyg.intygstjanst.infrastructure.csintegration.util.PersonIdTypeEvaluator.getType;
@@ -26,26 +25,32 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.intygstjanst.application.certificate.dto.SickLeaveCertificate;
-import se.inera.intyg.intygstjanst.infrastructure.csintegration.dto.SickLeaveCertificatesRequestDTO;
 import se.inera.intyg.intygstjanst.application.sickleave.dto.PersonIdDTO;
+import se.inera.intyg.intygstjanst.infrastructure.csintegration.dto.SickLeaveCertificatesRequestDTO;
 import se.inera.intyg.schemas.contract.Personnummer;
 
 @Service
 @RequiredArgsConstructor
 public class GetSickLeaveCertificatesFromCS {
 
-    private final CSIntegrationService csIntegrationService;
+  private final CSIntegrationService csIntegrationService;
 
-    public List<SickLeaveCertificate> get(Personnummer personId, List<String> certificateTypeList, LocalDate fromDate, LocalDate toDate,
-        List<String> units, List<String> doctorIds) {
-        final var request = SickLeaveCertificatesRequestDTO.builder()
+  public List<SickLeaveCertificate> get(
+      Personnummer personId,
+      List<String> certificateTypeList,
+      LocalDate fromDate,
+      LocalDate toDate,
+      List<String> units,
+      List<String> doctorIds) {
+    final var request =
+        SickLeaveCertificatesRequestDTO.builder()
             .personId(
-                personId == null ? null :
-                    PersonIdDTO.builder()
+                personId == null
+                    ? null
+                    : PersonIdDTO.builder()
                         .id(personId.getOriginalPnr())
                         .type(getType(personId))
-                        .build()
-            )
+                        .build())
             .certificateTypes(certificateTypeList == null ? List.of() : certificateTypeList)
             .signedFrom(fromDate)
             .signedTo(toDate)
@@ -53,6 +58,6 @@ public class GetSickLeaveCertificatesFromCS {
             .issuedByStaffIds(doctorIds == null ? List.of() : doctorIds)
             .build();
 
-        return csIntegrationService.getSickLeaveCertificates(request);
-    }
+    return csIntegrationService.getSickLeaveCertificates(request);
+  }
 }

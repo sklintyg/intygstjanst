@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -31,52 +31,51 @@ import org.springframework.stereotype.Component;
 @Profile("it-fk-stub")
 public class SendMessageToCareStorage {
 
-    private Map<MessageKey, String> messages = new ConcurrentHashMap<>();
+  private Map<MessageKey, String> messages = new ConcurrentHashMap<>();
 
-    public int getCount() {
-        return messages.size();
+  public int getCount() {
+    return messages.size();
+  }
+
+  public void addMessage(
+      String certificateId, String messageId, String logicalAddress, String xmlBlob) {
+    messages.put(new MessageKey(certificateId, messageId, logicalAddress), xmlBlob);
+  }
+
+  public void clear() {
+    messages.clear();
+  }
+
+  public Map<MessageKey, String> getAllMessages() {
+    return messages;
+  }
+
+  public Set<MessageKey> getMessagesIdsForLogicalAddress(String logicalAddress) {
+    return messages.keySet().stream()
+        .filter(k -> k.logicalAddress.equals(logicalAddress))
+        .collect(Collectors.toSet());
+  }
+
+  public List<String> getMessagesForCertificateId(String certificateId) {
+    List<String> messagesList = new ArrayList<>();
+    for (MessageKey key : messages.keySet()) {
+      if (key.certificateId.equals(certificateId)) {
+        messagesList.add(messages.get(key));
+      }
     }
+    return messagesList;
+  }
 
-    public void addMessage(String certificateId, String messageId, String logicalAddress, String xmlBlob) {
-        messages.put(new MessageKey(certificateId, messageId, logicalAddress), xmlBlob);
+  public static final class MessageKey {
+
+    public final String certificateId;
+    public final String messageId;
+    public final String logicalAddress;
+
+    public MessageKey(String certificateId, String messageId, String logicalAddress) {
+      this.certificateId = certificateId;
+      this.messageId = messageId;
+      this.logicalAddress = logicalAddress;
     }
-
-    public void clear() {
-        messages.clear();
-    }
-
-    public Map<MessageKey, String> getAllMessages() {
-        return messages;
-    }
-
-    public Set<MessageKey> getMessagesIdsForLogicalAddress(String logicalAddress) {
-        return messages.keySet()
-            .stream().filter(k -> k.logicalAddress
-                .equals(logicalAddress))
-            .collect(Collectors.toSet());
-    }
-
-    public List<String> getMessagesForCertificateId(String certificateId) {
-        List<String> messagesList = new ArrayList<>();
-        for (MessageKey key : messages.keySet()) {
-            if (key.certificateId.equals(certificateId)) {
-                messagesList.add(messages.get(key));
-            }
-        }
-        return messagesList;
-    }
-
-    public static final class MessageKey {
-
-        public final String certificateId;
-        public final String messageId;
-        public final String logicalAddress;
-
-        public MessageKey(String certificateId, String messageId, String logicalAddress) {
-            this.certificateId = certificateId;
-            this.messageId = messageId;
-            this.logicalAddress = logicalAddress;
-        }
-    }
-
+  }
 }

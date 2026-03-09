@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package se.inera.intyg.intygstjanst.application.event.service;
 
 import jakarta.jms.Message;
@@ -32,60 +31,76 @@ import se.inera.intyg.intygstjanst.infrastructure.config.properties.AppPropertie
 @RequiredArgsConstructor
 public class CertificateEventRedeliveryService {
 
-    private static final int MAX_REDELIVERIES = 5;
-    private static final long ONE_MINUTE = 60000L;
-    private static final long FIVE_MINUTES = ONE_MINUTE * 5;
-    private static final long THIRTY_MINUTES = ONE_MINUTE * 30;
-    private static final long ONE_HOUR = ONE_MINUTE * 60;
+  private static final int MAX_REDELIVERIES = 5;
+  private static final long ONE_MINUTE = 60000L;
+  private static final long FIVE_MINUTES = ONE_MINUTE * 5;
+  private static final long THIRTY_MINUTES = ONE_MINUTE * 30;
+  private static final long ONE_HOUR = ONE_MINUTE * 60;
 
-    private static final String EVENT_TYPE = "eventType";
-    private static final String CERTIFICATE_ID = "certificateId";
-    private static final String MESSAGE_ID = "messageId";
-    private static final String REDELIVERIES = "redeliveries";
+  private static final String EVENT_TYPE = "eventType";
+  private static final String CERTIFICATE_ID = "certificateId";
+  private static final String MESSAGE_ID = "messageId";
+  private static final String REDELIVERIES = "redeliveries";
 
-    private final JmsTemplate jmsTemplate;
-    private final AppProperties appProperties;
+  private final JmsTemplate jmsTemplate;
+  private final AppProperties appProperties;
 
-    public void resend(Message message, String eventType, String certificateId, String messageId) {
+  public void resend(Message message, String eventType, String certificateId, String messageId) {
 
-        try {
-            int redeliveries = message.propertyExists(REDELIVERIES) ? message.getIntProperty(REDELIVERIES) + 1 : 1;
+    try {
+      int redeliveries =
+          message.propertyExists(REDELIVERIES) ? message.getIntProperty(REDELIVERIES) + 1 : 1;
 
-            if (redeliveries > MAX_REDELIVERIES) {
-                log.error("Certificate event handler failure after {} redeliveries for event type '{}', certificate '{}' and message '{}'.",
-                    MAX_REDELIVERIES, eventType, certificateId, messageId);
-                return;
-            }
+      if (redeliveries > MAX_REDELIVERIES) {
+        log.error(
+            "Certificate event handler failure after {} redeliveries for event type '{}', certificate '{}' and message '{}'.",
+            MAX_REDELIVERIES,
+            eventType,
+            certificateId,
+            messageId);
+        return;
+      }
 
-            final var redeliveryDelay = getRedeliveryDelay(redeliveries);
-            send(message, eventType, certificateId, messageId, redeliveries, redeliveryDelay);
+      final var redeliveryDelay = getRedeliveryDelay(redeliveries);
+      send(message, eventType, certificateId, messageId, redeliveries, redeliveryDelay);
 
-        } catch (Exception e) {
-            log.error("Failure creating redelivery for certificate event with event type '{}', certificate '{}' and message '{}'.",
-                eventType, certificateId, messageId);
-        }
+    } catch (Exception e) {
+      log.error(
+          "Failure creating redelivery for certificate event with event type '{}', certificate '{}' and message '{}'.",
+          eventType,
+          certificateId,
+          messageId);
     }
+  }
 
-    private void send(Message message, String eventType, String certificateId, String messageId, int redeliveries, Long redeliveryDelay) {
-        jmsTemplate.send(appProperties.jms().certificateEventQueue(), session -> {
-            final var textMessage = session.createTextMessage("");
-            textMessage.setStringProperty(EVENT_TYPE, eventType);
-            textMessage.setStringProperty(CERTIFICATE_ID, certificateId);
-            if (message.propertyExists(MESSAGE_ID)) {
-                textMessage.setStringProperty(MESSAGE_ID, messageId);
-            }
-            textMessage.setIntProperty(REDELIVERIES, redeliveries);
-            textMessage.setLongProperty(ScheduledMessage.AMQ_SCHEDULED_DELAY, redeliveryDelay);
-            return textMessage;
+  private void send(
+      Message message,
+      String eventType,
+      String certificateId,
+      String messageId,
+      int redeliveries,
+      Long redeliveryDelay) {
+    jmsTemplate.send(
+        appProperties.jms().certificateEventQueue(),
+        session -> {
+          final var textMessage = session.createTextMessage("");
+          textMessage.setStringProperty(EVENT_TYPE, eventType);
+          textMessage.setStringProperty(CERTIFICATE_ID, certificateId);
+          if (message.propertyExists(MESSAGE_ID)) {
+            textMessage.setStringProperty(MESSAGE_ID, messageId);
+          }
+          textMessage.setIntProperty(REDELIVERIES, redeliveries);
+          textMessage.setLongProperty(ScheduledMessage.AMQ_SCHEDULED_DELAY, redeliveryDelay);
+          return textMessage;
         });
-    }
+  }
 
-    private Long getRedeliveryDelay(int redeliveries) {
-        return switch (redeliveries) {
-            case 1 -> ONE_MINUTE;
-            case 2 -> FIVE_MINUTES;
-            case 3 -> THIRTY_MINUTES;
-            default -> ONE_HOUR;
-        };
-    }
+  private Long getRedeliveryDelay(int redeliveries) {
+    return switch (redeliveries) {
+      case 1 -> ONE_MINUTE;
+      case 2 -> FIVE_MINUTES;
+      case 3 -> THIRTY_MINUTES;
+      default -> ONE_HOUR;
+    };
+  }
 }

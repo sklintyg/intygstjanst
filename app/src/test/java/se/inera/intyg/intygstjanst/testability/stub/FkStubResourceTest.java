@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -43,98 +43,91 @@ import se.inera.intyg.common.support.stub.MedicalCertificatesStore;
 @ExtendWith(MockitoExtension.class)
 class FkStubResourceTest {
 
-    @Mock
-    MedicalCertificatesStore store;
+  @Mock MedicalCertificatesStore store;
 
-    @Mock
-    Map<String, Map<String, String>> map;
+  @Mock Map<String, Map<String, String>> map;
 
-    @Mock
-    Set<Map.Entry<String, Map<String, String>>> entrySet;
+  @Mock Set<Map.Entry<String, Map<String, String>>> entrySet;
 
-    @Mock
-    Iterator<Entry<String, Map<String, String>>> iterator;
+  @Mock Iterator<Entry<String, Map<String, String>>> iterator;
 
-    @InjectMocks
-    private FkStubResource stub = new FkStubResource();
+  @InjectMocks private FkStubResource stub = new FkStubResource();
 
-    @Mock
-    private Entry<String, Map<String, String>> value;
+  @Mock private Entry<String, Map<String, String>> value;
 
-    @Test
-    void testGetCount() {
-        when(store.getCount()).thenReturn(15);
-        assertEquals(15, stub.count());
-    }
+  @Test
+  void testGetCount() {
+    when(store.getCount()).thenReturn(15);
+    assertEquals(15, stub.count());
+  }
 
-    @SuppressWarnings("unchecked")
-    @Test
-    void testCertificates() {
-        when(store.getAll()).thenReturn(map);
-        when(map.entrySet()).thenReturn(entrySet);
-        when(entrySet.iterator()).thenReturn(iterator);
-        when(iterator.hasNext()).thenReturn(true, true, true, false);
-        when(iterator.next()).thenReturn(value);
-        when(value.getKey()).thenReturn("1", "2", "3");
+  @SuppressWarnings("unchecked")
+  @Test
+  void testCertificates() {
+    when(store.getAll()).thenReturn(map);
+    when(map.entrySet()).thenReturn(entrySet);
+    when(entrySet.iterator()).thenReturn(iterator);
+    when(iterator.hasNext()).thenReturn(true, true, true, false);
+    when(iterator.next()).thenReturn(value);
+    when(value.getKey()).thenReturn("1", "2", "3");
 
-        Map<String, String> v1 = newHashMap();
-        v1.put(PERSONNUMMER, "19121212-1111");
-        v1.put(MAKULERAD, MAKULERAD_NEJ);
-        v1.put(MEDDELANDE, "m1");
-        Map<String, String> v2 = newHashMap();
-        v2.put(PERSONNUMMER, "19121212-2222");
-        v2.put(MAKULERAD, MAKULERAD_NEJ);
-        v2.put(MEDDELANDE, "m2");
-        Map<String, String> v3 = newHashMap();
-        v3.put(PERSONNUMMER, "19121212-3333");
-        v3.put(MAKULERAD, MAKULERAD_JA);
-        v3.put(MEDDELANDE, "m3");
-        when(value.getValue()).thenReturn(v1, v1, v1, v2, v2, v2, v3, v3, v3);
+    Map<String, String> v1 = newHashMap();
+    v1.put(PERSONNUMMER, "19121212-1111");
+    v1.put(MAKULERAD, MAKULERAD_NEJ);
+    v1.put(MEDDELANDE, "m1");
+    Map<String, String> v2 = newHashMap();
+    v2.put(PERSONNUMMER, "19121212-2222");
+    v2.put(MAKULERAD, MAKULERAD_NEJ);
+    v2.put(MEDDELANDE, "m2");
+    Map<String, String> v3 = newHashMap();
+    v3.put(PERSONNUMMER, "19121212-3333");
+    v3.put(MAKULERAD, MAKULERAD_JA);
+    v3.put(MEDDELANDE, "m3");
+    when(value.getValue()).thenReturn(v1, v1, v1, v2, v2, v2, v3, v3, v3);
 
-        String v1Str = "<tr><td>1</td><td>19121212-1111</td><td>NEJ</td><td>m1</td></tr>";
-        String v2Str = "<tr><td>2</td><td>19121212-2222</td><td>NEJ</td><td>m2</td></tr>";
-        String v3Str = "<tr><td>3</td><td>19121212-3333</td><td>JA</td><td>m3</td></tr>";
+    String v1Str = "<tr><td>1</td><td>19121212-1111</td><td>NEJ</td><td>m1</td></tr>";
+    String v2Str = "<tr><td>2</td><td>19121212-2222</td><td>NEJ</td><td>m2</td></tr>";
+    String v3Str = "<tr><td>3</td><td>19121212-3333</td><td>JA</td><td>m3</td></tr>";
 
-        String result = stub.certificates();
+    String result = stub.certificates();
 
-        assertTrue(result.contains(v1Str));
-        assertTrue(result.contains(v2Str));
-        assertTrue(result.contains(v3Str));
-    }
+    assertTrue(result.contains(v1Str));
+    assertTrue(result.contains(v2Str));
+    assertTrue(result.contains(v3Str));
+  }
 
-    @Test
-    void testCertificatesJson() {
+  @Test
+  void testCertificatesJson() {
 
-        Map<String, String> v1 = newHashMap();
-        v1.put(PERSONNUMMER, "19121212-1111");
-        v1.put(MAKULERAD, MAKULERAD_NEJ);
-        Map<String, String> v2 = newHashMap();
-        v2.put(PERSONNUMMER, "19121212-2222");
-        v2.put(MAKULERAD, MAKULERAD_NEJ);
-        Map<String, String> v3 = newHashMap();
-        v3.put(PERSONNUMMER, "19121212-3333");
-        v3.put(MAKULERAD, MAKULERAD_JA);
-        Map<String, Map<String, String>> expected = newHashMap();
-        expected.put("1", v1);
-        expected.put("2", v2);
-        expected.put("3", v3);
-        when(store.getAll()).thenReturn(expected);
+    Map<String, String> v1 = newHashMap();
+    v1.put(PERSONNUMMER, "19121212-1111");
+    v1.put(MAKULERAD, MAKULERAD_NEJ);
+    Map<String, String> v2 = newHashMap();
+    v2.put(PERSONNUMMER, "19121212-2222");
+    v2.put(MAKULERAD, MAKULERAD_NEJ);
+    Map<String, String> v3 = newHashMap();
+    v3.put(PERSONNUMMER, "19121212-3333");
+    v3.put(MAKULERAD, MAKULERAD_JA);
+    Map<String, Map<String, String>> expected = newHashMap();
+    expected.put("1", v1);
+    expected.put("2", v2);
+    expected.put("3", v3);
+    when(store.getAll()).thenReturn(expected);
 
-        Map<String, Map<String, String>> result = stub.certificatesJson();
+    Map<String, Map<String, String>> result = stub.certificatesJson();
 
-        assertEquals(expected, result);
-    }
+    assertEquals(expected, result);
+  }
 
-    @Test
-    void testClear() {
-        stub.clear();
-        verify(store).clear();
-    }
+  @Test
+  void testClear() {
+    stub.clear();
+    verify(store).clear();
+  }
 
-    @Test
-    void testClearJson() {
-        stub.clearJson();
-        verify(store).clear();
-    }
-
+  @Test
+  void testClearJson() {
+    stub.clearJson();
+    verify(store).clear();
+  }
 }

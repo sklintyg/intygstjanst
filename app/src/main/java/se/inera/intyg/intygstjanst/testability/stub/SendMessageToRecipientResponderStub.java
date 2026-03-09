@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -37,65 +37,70 @@ import se.riv.clinicalprocess.healthcond.certificate.v3.ResultType;
 @Component
 @Profile("it-fk-stub")
 @SchemaValidation
-public class SendMessageToRecipientResponderStub implements SendMessageToRecipientResponderInterface {
+public class SendMessageToRecipientResponderStub
+    implements SendMessageToRecipientResponderInterface {
 
-    private Logger logger = LoggerFactory.getLogger(SendMessageToCareResponderStub.class);
+  private Logger logger = LoggerFactory.getLogger(SendMessageToCareResponderStub.class);
 
-    @Autowired
-    private SendMessageToCareStorage storage;
+  @Autowired private SendMessageToCareStorage storage;
 
-    @Override
-    public SendMessageToRecipientResponseType sendMessageToRecipient(String logicalAddress, SendMessageToRecipientType parameters) {
-        SendMessageToRecipientResponseType response = new SendMessageToRecipientResponseType();
-        ResultType resultType = new ResultType();
-        try {
-            storeMessage(parameters, logicalAddress);
-            logger.info("STUB Received question concerning certificate with id: " + parameters.getIntygsId().getExtension());
-            resultType.setResultCode(ResultCodeType.OK);
-        } catch (JAXBException e) {
-            resultType.setResultCode(ResultCodeType.ERROR);
-            resultType.setResultText("Error occurred when marshalling message to xml. " + e.getMessage());
-            response.setResult(resultType);
-            return response;
-        } catch (Exception e) {
-            logger.error("Error: {}", e);
-            throw e;
-        }
-        response.setResult(resultType);
-        return response;
+  @Override
+  public SendMessageToRecipientResponseType sendMessageToRecipient(
+      String logicalAddress, SendMessageToRecipientType parameters) {
+    SendMessageToRecipientResponseType response = new SendMessageToRecipientResponseType();
+    ResultType resultType = new ResultType();
+    try {
+      storeMessage(parameters, logicalAddress);
+      logger.info(
+          "STUB Received question concerning certificate with id: "
+              + parameters.getIntygsId().getExtension());
+      resultType.setResultCode(ResultCodeType.OK);
+    } catch (JAXBException e) {
+      resultType.setResultCode(ResultCodeType.ERROR);
+      resultType.setResultText("Error occurred when marshalling message to xml. " + e.getMessage());
+      response.setResult(resultType);
+      return response;
+    } catch (Exception e) {
+      logger.error("Error: {}", e);
+      throw e;
     }
+    response.setResult(resultType);
+    return response;
+  }
 
-    private String marshalCertificate(SendMessageToRecipientType parameters) throws JAXBException {
-        return ArendeConverter.convertToXmlString(parameters);
-    }
+  private String marshalCertificate(SendMessageToRecipientType parameters) throws JAXBException {
+    return ArendeConverter.convertToXmlString(parameters);
+  }
 
-    public void storeMessage(SendMessageToRecipientType sendMessageToCareType, String logicalAddress) throws JAXBException {
-        String certificateId = sendMessageToCareType.getIntygsId().getExtension();
-        String messageId = sendMessageToCareType.getMeddelandeId();
-        String xmlBlob = marshalCertificate(sendMessageToCareType);
-        storage.addMessage(certificateId, messageId, logicalAddress, xmlBlob);
-    }
+  public void storeMessage(SendMessageToRecipientType sendMessageToCareType, String logicalAddress)
+      throws JAXBException {
+    String certificateId = sendMessageToCareType.getIntygsId().getExtension();
+    String messageId = sendMessageToCareType.getMeddelandeId();
+    String xmlBlob = marshalCertificate(sendMessageToCareType);
+    storage.addMessage(certificateId, messageId, logicalAddress, xmlBlob);
+  }
 
-    public Map<SendMessageToCareStorage.MessageKey, String> getAllMessages() {
-        return storage.getAllMessages();
-    }
+  public Map<SendMessageToCareStorage.MessageKey, String> getAllMessages() {
+    return storage.getAllMessages();
+  }
 
-    public List<String> getMessagesForCertificateId(String intygsIdNo1) {
-        return storage.getMessagesForCertificateId(intygsIdNo1);
-    }
+  public List<String> getMessagesForCertificateId(String intygsIdNo1) {
+    return storage.getMessagesForCertificateId(intygsIdNo1);
+  }
 
-    // private static final Logger LOG = LoggerFactory.getLogger(SendMessageToRecipientResponderStub.class);
-    //
-    // @Override
-    // public SendMessageToRecipientResponseType sendMessageToRecipient(String logicalAddress,
-    // SendMessageToRecipientType parameters) {
-    // LOG.info("\n*********************************************************************************\n"
-    // + " SendMessageToRecipient to address '{}' recieved for intyg '{}' meddelandeId '{}'.\n"
-    // + "*********************************************************************************",
-    // logicalAddress, parameters.getIntygsId().getExtension(), parameters.getMeddelandeId());
-    // SendMessageToRecipientResponseType response = new SendMessageToRecipientResponseType();
-    // response.setResult(ResultTypeUtil.okResult());
-    // return response;
-    // }
+  // private static final Logger LOG =
+  // LoggerFactory.getLogger(SendMessageToRecipientResponderStub.class);
+  //
+  // @Override
+  // public SendMessageToRecipientResponseType sendMessageToRecipient(String logicalAddress,
+  // SendMessageToRecipientType parameters) {
+  // LOG.info("\n*********************************************************************************\n"
+  // + " SendMessageToRecipient to address '{}' recieved for intyg '{}' meddelandeId '{}'.\n"
+  // + "*********************************************************************************",
+  // logicalAddress, parameters.getIntygsId().getExtension(), parameters.getMeddelandeId());
+  // SendMessageToRecipientResponseType response = new SendMessageToRecipientResponseType();
+  // response.setResult(ResultTypeUtil.okResult());
+  // return response;
+  // }
 
 }

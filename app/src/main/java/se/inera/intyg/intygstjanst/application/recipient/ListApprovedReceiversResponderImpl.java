@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -31,57 +31,64 @@ import se.inera.clinicalprocess.healthcond.certificate.types.v3.IntygId;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.listapprovedreceivers.v1.ListApprovedReceiversResponderInterface;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.listapprovedreceivers.v1.ListApprovedReceiversResponseType;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.listapprovedreceivers.v1.ListApprovedReceiversType;
-import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.ApprovedReceiver;
-import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.ApprovedReceiverDao;
 import se.inera.intyg.intygstjanst.application.exception.RecipientUnknownException;
 import se.inera.intyg.intygstjanst.application.exception.ServerException;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.ApprovedReceiver;
+import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.ApprovedReceiverDao;
 
 @Service
 public class ListApprovedReceiversResponderImpl implements ListApprovedReceiversResponderInterface {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ListApprovedReceiversResponderImpl.class);
+  private static final Logger LOG =
+      LoggerFactory.getLogger(ListApprovedReceiversResponderImpl.class);
 
-    @Autowired
-    private ApprovedReceiverDao approvedReceiverDao;
+  @Autowired private ApprovedReceiverDao approvedReceiverDao;
 
-    @Autowired
-    private RecipientService recipientService;
+  @Autowired private RecipientService recipientService;
 
-    @Override
-    public ListApprovedReceiversResponseType listApprovedReceivers(String s, ListApprovedReceiversType listApprovedReceiversType) {
-        if (listApprovedReceiversType.getIntygsId() == null) {
-            throw new IllegalArgumentException("Request to ListApprovedReceivers is missing required parameter 'IntygId'");
-        }
-        IntygId intygsId = listApprovedReceiversType.getIntygsId();
-        if (intygsId == null || Strings.isNullOrEmpty(intygsId.getExtension())) {
-            throw new IllegalArgumentException("Request to ListApprovedReceivers is missing required parameter 'IntygId.extension'");
-        }
-
-        ListApprovedReceiversResponseType response = new ListApprovedReceiversResponseType();
-
-        // Get list of registered possible receivers.
-        List<ApprovedReceiver> receivers = approvedReceiverDao.getApprovedReceiverIdsForCertificate(intygsId.getExtension());
-        for (ApprovedReceiver receiver : receivers) {
-            try {
-                Recipient serviceRecipient = recipientService.getRecipient(receiver.getReceiverId());
-                CertificateReceiverRegistrationType registrationType = new CertificateReceiverRegistrationType();
-                registrationType.setReceiverId(receiver.getReceiverId());
-                registrationType.setReceiverName(serviceRecipient.getName());
-                registrationType.setReceiverType(toSchemaType(serviceRecipient.getRecipientType()));
-                registrationType.setTrusted(serviceRecipient.isTrusted());
-                registrationType.setApprovalStatus(receiver.isApproved() ? ApprovalStatusType.YES : ApprovalStatusType.NO);
-                response.getReceiverList().add(registrationType);
-
-            } catch (RecipientUnknownException e) {
-                LOG.error("RecipientUnknownException when building list of approved receivers for intyg-id '{}'",
-                    intygsId.getExtension());
-                throw new ServerException(e.getMessage());
-            }
-        }
-        return response;
+  @Override
+  public ListApprovedReceiversResponseType listApprovedReceivers(
+      String s, ListApprovedReceiversType listApprovedReceiversType) {
+    if (listApprovedReceiversType.getIntygsId() == null) {
+      throw new IllegalArgumentException(
+          "Request to ListApprovedReceivers is missing required parameter 'IntygId'");
+    }
+    IntygId intygsId = listApprovedReceiversType.getIntygsId();
+    if (intygsId == null || Strings.isNullOrEmpty(intygsId.getExtension())) {
+      throw new IllegalArgumentException(
+          "Request to ListApprovedReceivers is missing required parameter 'IntygId.extension'");
     }
 
-    private CertificateReceiverTypeType toSchemaType(CertificateRecipientType certificateRecipientType) {
-        return CertificateReceiverTypeType.valueOf(certificateRecipientType.name());
+    ListApprovedReceiversResponseType response = new ListApprovedReceiversResponseType();
+
+    // Get list of registered possible receivers.
+    List<ApprovedReceiver> receivers =
+        approvedReceiverDao.getApprovedReceiverIdsForCertificate(intygsId.getExtension());
+    for (ApprovedReceiver receiver : receivers) {
+      try {
+        Recipient serviceRecipient = recipientService.getRecipient(receiver.getReceiverId());
+        CertificateReceiverRegistrationType registrationType =
+            new CertificateReceiverRegistrationType();
+        registrationType.setReceiverId(receiver.getReceiverId());
+        registrationType.setReceiverName(serviceRecipient.getName());
+        registrationType.setReceiverType(toSchemaType(serviceRecipient.getRecipientType()));
+        registrationType.setTrusted(serviceRecipient.isTrusted());
+        registrationType.setApprovalStatus(
+            receiver.isApproved() ? ApprovalStatusType.YES : ApprovalStatusType.NO);
+        response.getReceiverList().add(registrationType);
+
+      } catch (RecipientUnknownException e) {
+        LOG.error(
+            "RecipientUnknownException when building list of approved receivers for intyg-id '{}'",
+            intygsId.getExtension());
+        throw new ServerException(e.getMessage());
+      }
     }
+    return response;
+  }
+
+  private CertificateReceiverTypeType toSchemaType(
+      CertificateRecipientType certificateRecipientType) {
+    return CertificateReceiverTypeType.valueOf(certificateRecipientType.name());
+  }
 }

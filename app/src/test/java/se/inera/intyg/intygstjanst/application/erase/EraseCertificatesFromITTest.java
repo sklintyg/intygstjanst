@@ -1,3 +1,21 @@
+/*
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
+ *
+ * This file is part of sklintyg (https://github.com/sklintyg).
+ *
+ * sklintyg is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * sklintyg is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package se.inera.intyg.intygstjanst.application.erase;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -10,7 +28,6 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
@@ -32,8 +49,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
-import org.mockito.Mock;
-import se.inera.intyg.intygstjanst.application.erase.EraseCertificatesFromIT;
 import se.inera.intyg.intygstjanst.infrastructure.config.properties.AppProperties;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.ApprovedReceiverDao;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.ArendeRepository;
@@ -45,190 +60,196 @@ import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Sjukfall
 @ExtendWith(MockitoExtension.class)
 class EraseCertificatesFromITTest {
 
-    @Mock
-    CertificateRepository certificateRepository;
-    @Mock
-    ArendeRepository arendeRepository;
-    @Mock
-    ApprovedReceiverDao approvedReceiverDao;
-    @Mock
-    RelationDao relationDao;
-    @Mock
-    SjukfallCertificateDao sjukfallCertificateDao;
-    @Mock
-    CertificateDao certificateDao;
-    @Mock
-    AppProperties appProperties;
-    @InjectMocks
-    EraseCertificatesFromIT eraseCertificatesFromIT;
-    @Captor
-    ArgumentCaptor<List<String>> certIdCaptor;
-    private static final String CARE_PROVIDER_ID = "CARE_PROVIDER_ID";
-    private static final int PAGE = 0;
-    private static final int ERASE_SIZE = 4;
-    private static final Pageable ERASE_PAGEABLE = PageRequest.of(PAGE, ERASE_SIZE, Sort.by(Direction.ASC, "signedDate", "id"));
-    private final List<List<String>> certIds = new ArrayList<>();
+  @Mock CertificateRepository certificateRepository;
+  @Mock ArendeRepository arendeRepository;
+  @Mock ApprovedReceiverDao approvedReceiverDao;
+  @Mock RelationDao relationDao;
+  @Mock SjukfallCertificateDao sjukfallCertificateDao;
+  @Mock CertificateDao certificateDao;
+  @Mock AppProperties appProperties;
+  @InjectMocks EraseCertificatesFromIT eraseCertificatesFromIT;
+  @Captor ArgumentCaptor<List<String>> certIdCaptor;
+  private static final String CARE_PROVIDER_ID = "CARE_PROVIDER_ID";
+  private static final int PAGE = 0;
+  private static final int ERASE_SIZE = 4;
+  private static final Pageable ERASE_PAGEABLE =
+      PageRequest.of(PAGE, ERASE_SIZE, Sort.by(Direction.ASC, "signedDate", "id"));
+  private final List<List<String>> certIds = new ArrayList<>();
 
-    @BeforeEach
-    void setUp() {
-        when(appProperties.erase()).thenReturn(new AppProperties.Erase(ERASE_SIZE));
-    }
+  @BeforeEach
+  void setUp() {
+    when(appProperties.erase()).thenReturn(new AppProperties.Erase(ERASE_SIZE));
+  }
 
-    @Nested
-    class EraseCertificates {
+  @Nested
+  class EraseCertificates {
 
-        @AfterEach
-        public void cleanup() {
-            certIds.clear();
-        }
-
-        @Test
-        public void shouldCallForNewCertificateIdsForEachBatch() {
-            setupPageMock(true);
-            setupEraseMocks(false);
-
-            eraseCertificatesFromIT.eraseCertificates(CARE_PROVIDER_ID);
-
-            verify(certificateRepository, times(3)).findCertificateIdsForCareProvider(CARE_PROVIDER_ID, ERASE_PAGEABLE);
-        }
-
-        @Test
-        public void shouldEraseApprovedReceiversInBatches() {
-            setupPageMock(true);
-            setupEraseMocks(false);
-
-            eraseCertificatesFromIT.eraseCertificates(CARE_PROVIDER_ID);
-
-            assertAll(
-                () -> verify(approvedReceiverDao, times(3)).eraseApprovedReceivers(certIdCaptor.capture(), eq(CARE_PROVIDER_ID)),
-                () -> assertIterableEquals(certIds.get(0), certIdCaptor.getAllValues().get(0)),
-                () -> assertIterableEquals(certIds.get(1), certIdCaptor.getAllValues().get(1)),
-                () -> assertIterableEquals(certIds.get(2), certIdCaptor.getAllValues().get(2))
-            );
-        }
-
-        @Test
-        public void shouldEraseRelationsInBatches() {
-            setupPageMock(true);
-            setupEraseMocks(false);
-
-            eraseCertificatesFromIT.eraseCertificates(CARE_PROVIDER_ID);
-
-            assertAll(
-                () -> verify(relationDao, times(3)).eraseCertificateRelations(certIdCaptor.capture(), eq(CARE_PROVIDER_ID)),
-                () -> assertIterableEquals(certIds.get(0), certIdCaptor.getAllValues().get(0)),
-                () -> assertIterableEquals(certIds.get(1), certIdCaptor.getAllValues().get(1)),
-                () -> assertIterableEquals(certIds.get(2), certIdCaptor.getAllValues().get(2))
-            );
-        }
-
-        @Test
-        public void shouldEraseArendenInBatches() {
-            setupPageMock(true);
-            setupEraseMocks(false);
-
-            eraseCertificatesFromIT.eraseCertificates(CARE_PROVIDER_ID);
-
-            assertAll(
-                () -> verify(arendeRepository, times(3)).eraseArendenByCertificateIds(certIdCaptor.capture()),
-                () -> assertIterableEquals(certIds.get(0), certIdCaptor.getAllValues().get(0)),
-                () -> assertIterableEquals(certIds.get(1), certIdCaptor.getAllValues().get(1)),
-                () -> assertIterableEquals(certIds.get(2), certIdCaptor.getAllValues().get(2))
-            );
-        }
-
-        @Test
-        public void shouldEraseSjukfallCertificatesInBatches() {
-            setupPageMock(true);
-            setupEraseMocks(false);
-
-            eraseCertificatesFromIT.eraseCertificates(CARE_PROVIDER_ID);
-
-            assertAll(
-                () -> verify(sjukfallCertificateDao, times(3)).eraseCertificates(certIdCaptor.capture(), eq(CARE_PROVIDER_ID)),
-                () -> assertIterableEquals(certIds.get(0), certIdCaptor.getAllValues().get(0)),
-                () -> assertIterableEquals(certIds.get(1), certIdCaptor.getAllValues().get(1)),
-                () -> assertIterableEquals(certIds.get(2), certIdCaptor.getAllValues().get(2))
-            );
-        }
-
-        @Test
-        public void shouldEraseCertificatesInBatches() {
-            setupPageMock(true);
-            setupEraseMocks(false);
-
-            eraseCertificatesFromIT.eraseCertificates(CARE_PROVIDER_ID);
-
-            assertAll(
-                () -> verify(certificateDao, times(3)).eraseCertificates(certIdCaptor.capture(), eq(CARE_PROVIDER_ID)),
-                () -> assertIterableEquals(certIds.get(0), certIdCaptor.getAllValues().get(0)),
-                () -> assertIterableEquals(certIds.get(1), certIdCaptor.getAllValues().get(1)),
-                () -> assertIterableEquals(certIds.get(2), certIdCaptor.getAllValues().get(2))
-            );
-        }
-
-        @Test
-        public void shouldRethrowAnyCaughtException() {
-            setupPageMock(true);
-            setupEraseMocks(true);
-
-            assertThrows(IllegalArgumentException.class, () -> eraseCertificatesFromIT
-                .eraseCertificates(CARE_PROVIDER_ID));
-
-            final var exception = assertThrows(IllegalArgumentException.class, () -> eraseCertificatesFromIT
-                .eraseCertificates(CARE_PROVIDER_ID));
-
-            assertEquals("TestException", exception.getMessage());
-        }
+    @AfterEach
+    public void cleanup() {
+      certIds.clear();
     }
 
     @Test
-    public void shouldNotMakeEraseCallsIfCareProviderWithoutCertificates() {
-        setupPageMock(false);
+    public void shouldCallForNewCertificateIdsForEachBatch() {
+      setupPageMock(true);
+      setupEraseMocks(false);
 
-        eraseCertificatesFromIT.eraseCertificates(CARE_PROVIDER_ID);
+      eraseCertificatesFromIT.eraseCertificates(CARE_PROVIDER_ID);
 
-        assertAll(
-            () -> verify(certificateRepository, times(1)).findCertificateIdsForCareProvider(CARE_PROVIDER_ID, ERASE_PAGEABLE),
-            () -> verifyNoInteractions(approvedReceiverDao),
-            () -> verifyNoInteractions(relationDao),
-            () -> verifyNoInteractions(arendeRepository),
-            () -> verifyNoInteractions(sjukfallCertificateDao),
-            () -> verifyNoMoreInteractions(certificateDao)
-        );
+      verify(certificateRepository, times(3))
+          .findCertificateIdsForCareProvider(CARE_PROVIDER_ID, ERASE_PAGEABLE);
     }
 
-    private void setupPageMock(boolean careProviderHasCertificates) {
-        if (careProviderHasCertificates) {
-            final var page1 = new PageImpl<>(getCertificateIds(4), ERASE_PAGEABLE, 10L);
-            final var page2 = new PageImpl<>(getCertificateIds(4), ERASE_PAGEABLE, 6L);
-            final var page3 = new PageImpl<>(getCertificateIds(2), ERASE_PAGEABLE, 2L);
-            doReturn(page1, page2, page3).when(certificateRepository)
-                .findCertificateIdsForCareProvider(any(String.class), any(Pageable.class));
-        } else {
-            final var emptyPage = new PageImpl<>(getCertificateIds(0), ERASE_PAGEABLE, 0L);
-            doReturn(emptyPage).when(certificateRepository).findCertificateIdsForCareProvider(any(String.class), any(Pageable.class));
-        }
+    @Test
+    public void shouldEraseApprovedReceiversInBatches() {
+      setupPageMock(true);
+      setupEraseMocks(false);
+
+      eraseCertificatesFromIT.eraseCertificates(CARE_PROVIDER_ID);
+
+      assertAll(
+          () ->
+              verify(approvedReceiverDao, times(3))
+                  .eraseApprovedReceivers(certIdCaptor.capture(), eq(CARE_PROVIDER_ID)),
+          () -> assertIterableEquals(certIds.get(0), certIdCaptor.getAllValues().get(0)),
+          () -> assertIterableEquals(certIds.get(1), certIdCaptor.getAllValues().get(1)),
+          () -> assertIterableEquals(certIds.get(2), certIdCaptor.getAllValues().get(2)));
     }
 
-    private void setupEraseMocks(boolean withException) {
-        doReturn(4, 4, 2).when(arendeRepository).eraseArendenByCertificateIds(any());
-        doReturn(4, 4, 2).when(sjukfallCertificateDao).eraseCertificates(any(), any(String.class));
+    @Test
+    public void shouldEraseRelationsInBatches() {
+      setupPageMock(true);
+      setupEraseMocks(false);
 
-        if (!withException) {
-            doReturn(4, 4, 2).when(certificateDao).eraseCertificates(any(), any(String.class));
-        } else {
-            when(certificateDao.eraseCertificates(any(), any(String.class))).thenReturn(4, 4)
-                .thenThrow(new IllegalArgumentException("TestException"));
-        }
+      eraseCertificatesFromIT.eraseCertificates(CARE_PROVIDER_ID);
+
+      assertAll(
+          () ->
+              verify(relationDao, times(3))
+                  .eraseCertificateRelations(certIdCaptor.capture(), eq(CARE_PROVIDER_ID)),
+          () -> assertIterableEquals(certIds.get(0), certIdCaptor.getAllValues().get(0)),
+          () -> assertIterableEquals(certIds.get(1), certIdCaptor.getAllValues().get(1)),
+          () -> assertIterableEquals(certIds.get(2), certIdCaptor.getAllValues().get(2)));
     }
 
-    private List<String> getCertificateIds(int count) {
-        final var certificateIds = new ArrayList<String>();
-        for (int i = 0; i < count; i++) {
-            certificateIds.add(UUID.randomUUID().toString());
-        }
-        certIds.add(certificateIds);
-        return certificateIds;
+    @Test
+    public void shouldEraseArendenInBatches() {
+      setupPageMock(true);
+      setupEraseMocks(false);
+
+      eraseCertificatesFromIT.eraseCertificates(CARE_PROVIDER_ID);
+
+      assertAll(
+          () ->
+              verify(arendeRepository, times(3))
+                  .eraseArendenByCertificateIds(certIdCaptor.capture()),
+          () -> assertIterableEquals(certIds.get(0), certIdCaptor.getAllValues().get(0)),
+          () -> assertIterableEquals(certIds.get(1), certIdCaptor.getAllValues().get(1)),
+          () -> assertIterableEquals(certIds.get(2), certIdCaptor.getAllValues().get(2)));
     }
+
+    @Test
+    public void shouldEraseSjukfallCertificatesInBatches() {
+      setupPageMock(true);
+      setupEraseMocks(false);
+
+      eraseCertificatesFromIT.eraseCertificates(CARE_PROVIDER_ID);
+
+      assertAll(
+          () ->
+              verify(sjukfallCertificateDao, times(3))
+                  .eraseCertificates(certIdCaptor.capture(), eq(CARE_PROVIDER_ID)),
+          () -> assertIterableEquals(certIds.get(0), certIdCaptor.getAllValues().get(0)),
+          () -> assertIterableEquals(certIds.get(1), certIdCaptor.getAllValues().get(1)),
+          () -> assertIterableEquals(certIds.get(2), certIdCaptor.getAllValues().get(2)));
+    }
+
+    @Test
+    public void shouldEraseCertificatesInBatches() {
+      setupPageMock(true);
+      setupEraseMocks(false);
+
+      eraseCertificatesFromIT.eraseCertificates(CARE_PROVIDER_ID);
+
+      assertAll(
+          () ->
+              verify(certificateDao, times(3))
+                  .eraseCertificates(certIdCaptor.capture(), eq(CARE_PROVIDER_ID)),
+          () -> assertIterableEquals(certIds.get(0), certIdCaptor.getAllValues().get(0)),
+          () -> assertIterableEquals(certIds.get(1), certIdCaptor.getAllValues().get(1)),
+          () -> assertIterableEquals(certIds.get(2), certIdCaptor.getAllValues().get(2)));
+    }
+
+    @Test
+    public void shouldRethrowAnyCaughtException() {
+      setupPageMock(true);
+      setupEraseMocks(true);
+
+      assertThrows(
+          IllegalArgumentException.class,
+          () -> eraseCertificatesFromIT.eraseCertificates(CARE_PROVIDER_ID));
+
+      final var exception =
+          assertThrows(
+              IllegalArgumentException.class,
+              () -> eraseCertificatesFromIT.eraseCertificates(CARE_PROVIDER_ID));
+
+      assertEquals("TestException", exception.getMessage());
+    }
+  }
+
+  @Test
+  public void shouldNotMakeEraseCallsIfCareProviderWithoutCertificates() {
+    setupPageMock(false);
+
+    eraseCertificatesFromIT.eraseCertificates(CARE_PROVIDER_ID);
+
+    assertAll(
+        () ->
+            verify(certificateRepository, times(1))
+                .findCertificateIdsForCareProvider(CARE_PROVIDER_ID, ERASE_PAGEABLE),
+        () -> verifyNoInteractions(approvedReceiverDao),
+        () -> verifyNoInteractions(relationDao),
+        () -> verifyNoInteractions(arendeRepository),
+        () -> verifyNoInteractions(sjukfallCertificateDao),
+        () -> verifyNoMoreInteractions(certificateDao));
+  }
+
+  private void setupPageMock(boolean careProviderHasCertificates) {
+    if (careProviderHasCertificates) {
+      final var page1 = new PageImpl<>(getCertificateIds(4), ERASE_PAGEABLE, 10L);
+      final var page2 = new PageImpl<>(getCertificateIds(4), ERASE_PAGEABLE, 6L);
+      final var page3 = new PageImpl<>(getCertificateIds(2), ERASE_PAGEABLE, 2L);
+      doReturn(page1, page2, page3)
+          .when(certificateRepository)
+          .findCertificateIdsForCareProvider(any(String.class), any(Pageable.class));
+    } else {
+      final var emptyPage = new PageImpl<>(getCertificateIds(0), ERASE_PAGEABLE, 0L);
+      doReturn(emptyPage)
+          .when(certificateRepository)
+          .findCertificateIdsForCareProvider(any(String.class), any(Pageable.class));
+    }
+  }
+
+  private void setupEraseMocks(boolean withException) {
+    doReturn(4, 4, 2).when(arendeRepository).eraseArendenByCertificateIds(any());
+    doReturn(4, 4, 2).when(sjukfallCertificateDao).eraseCertificates(any(), any(String.class));
+
+    if (!withException) {
+      doReturn(4, 4, 2).when(certificateDao).eraseCertificates(any(), any(String.class));
+    } else {
+      when(certificateDao.eraseCertificates(any(), any(String.class)))
+          .thenReturn(4, 4)
+          .thenThrow(new IllegalArgumentException("TestException"));
+    }
+  }
+
+  private List<String> getCertificateIds(int count) {
+    final var certificateIds = new ArrayList<String>();
+    for (int i = 0; i < count; i++) {
+      certificateIds.add(UUID.randomUUID().toString());
+    }
+    certIds.add(certificateIds);
+    return certificateIds;
+  }
 }

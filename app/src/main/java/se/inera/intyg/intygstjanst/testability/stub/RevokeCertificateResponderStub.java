@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -29,25 +29,27 @@ import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.Revoke
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateType;
 
 @SchemaValidation
-@WebServiceProvider(targetNamespace = "urn:riv:clinicalprocess:healthcond:certificate:RevokeCertificateResponder:1")
+@WebServiceProvider(
+    targetNamespace = "urn:riv:clinicalprocess:healthcond:certificate:RevokeCertificateResponder:1")
 public class RevokeCertificateResponderStub implements RevokeCertificateResponderInterface {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RevokeCertificateResponderStub.class);
+  private static final Logger LOGGER =
+      LoggerFactory.getLogger(RevokeCertificateResponderStub.class);
 
-    private final MedicalCertificatesStore store = new MedicalCertificatesStore();
+  private final MedicalCertificatesStore store = new MedicalCertificatesStore();
 
-    @Override
-    public RevokeCertificateResponseType revokeCertificate(String logicalAddress, RevokeCertificateType request) {
-        RevokeCertificateResponseType response = new RevokeCertificateResponseType();
+  @Override
+  public RevokeCertificateResponseType revokeCertificate(
+      String logicalAddress, RevokeCertificateType request) {
+    RevokeCertificateResponseType response = new RevokeCertificateResponseType();
 
-        String id = request.getIntygsId().getExtension();
-        String meddelande = request.getMeddelande();
+    String id = request.getIntygsId().getExtension();
+    String meddelande = request.getMeddelande();
 
-        LOGGER.info("STUB Received revocation concerning certificate with id: " + id);
-        store.makulera(id, meddelande);
+    LOGGER.info("STUB Received revocation concerning certificate with id: " + id);
+    store.makulera(id, meddelande);
 
-        response.setResult(ResultTypeUtil.okResult());
-        return response;
-    }
-
+    response.setResult(ResultTypeUtil.okResult());
+    return response;
+  }
 }

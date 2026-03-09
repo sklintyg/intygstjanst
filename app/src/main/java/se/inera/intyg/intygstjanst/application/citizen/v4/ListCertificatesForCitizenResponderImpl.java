@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -33,15 +33,15 @@ import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.common.support.modules.support.api.exception.ModuleException;
+import se.inera.intyg.intygstjanst.application.certificate.converter.ConverterUtil;
+import se.inera.intyg.intygstjanst.application.certificate.service.CertificateService;
+import se.inera.intyg.intygstjanst.application.certificate.service.IntygInfoService;
+import se.inera.intyg.intygstjanst.application.certificate.util.CertificateStateFilterUtil;
+import se.inera.intyg.intygstjanst.application.exception.ServerException;
 import se.inera.intyg.intygstjanst.infrastructure.logging.MdcLogConstants;
+import se.inera.intyg.intygstjanst.infrastructure.logging.MonitoringLogService;
 import se.inera.intyg.intygstjanst.infrastructure.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Certificate;
-import se.inera.intyg.intygstjanst.application.exception.ServerException;
-import se.inera.intyg.intygstjanst.application.certificate.converter.ConverterUtil;
-import se.inera.intyg.intygstjanst.application.certificate.util.CertificateStateFilterUtil;
-import se.inera.intyg.intygstjanst.application.certificate.service.CertificateService;
-import se.inera.intyg.intygstjanst.infrastructure.logging.MonitoringLogService;
-import se.inera.intyg.intygstjanst.application.certificate.service.IntygInfoService;
 import se.inera.intyg.schemas.contract.Personnummer;
 import se.riv.clinicalprocess.healthcond.certificate.listCertificatesForCitizen.v4.ListCertificatesForCitizenResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.listCertificatesForCitizen.v4.ListCertificatesForCitizenResponseType;
@@ -52,90 +52,110 @@ import se.riv.clinicalprocess.healthcond.certificate.v3.Intyg;
 
 @Service
 @SchemaValidation(type = SchemaValidation.SchemaValidationType.IN)
-public class ListCertificatesForCitizenResponderImpl implements ListCertificatesForCitizenResponderInterface {
+public class ListCertificatesForCitizenResponderImpl
+    implements ListCertificatesForCitizenResponderInterface {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ListCertificatesForCitizenResponderImpl.class);
+  private static final Logger LOGGER =
+      LoggerFactory.getLogger(ListCertificatesForCitizenResponderImpl.class);
 
-    @Autowired
-    private CertificateService certificateService;
+  @Autowired private CertificateService certificateService;
 
-    @Autowired
-    private MonitoringLogService monitoringLogService;
+  @Autowired private MonitoringLogService monitoringLogService;
 
-    @Autowired
-    private IntygModuleRegistryImpl moduleRegistry;
+  @Autowired private IntygModuleRegistryImpl moduleRegistry;
 
-    @Override
-    @PerformanceLogging(eventAction = "list-certificate", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
-    public ListCertificatesForCitizenResponseType listCertificatesForCitizen(String logicalAddress,
-        ListCertificatesForCitizenType parameters) {
-        LOGGER.debug("List certificates for citizen. arkiverade={}", parameters.isArkiverade());
-        ListCertificatesForCitizenResponseType response = new ListCertificatesForCitizenResponseType();
-        response.setIntygsLista(new ListaType());
-        response.getIntygsLista().getIntyg(); // initialize list for schema validation, if no certificates
+  @Override
+  @PerformanceLogging(
+      eventAction = "list-certificate",
+      eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
+  public ListCertificatesForCitizenResponseType listCertificatesForCitizen(
+      String logicalAddress, ListCertificatesForCitizenType parameters) {
+    LOGGER.debug("List certificates for citizen. arkiverade={}", parameters.isArkiverade());
+    ListCertificatesForCitizenResponseType response = new ListCertificatesForCitizenResponseType();
+    response.setIntygsLista(new ListaType());
+    response
+        .getIntygsLista()
+        .getIntyg(); // initialize list for schema validation, if no certificates
 
-        Optional<Personnummer> personnummer =
-            Personnummer.createPersonnummer(parameters.getPersonId().getExtension());
+    Optional<Personnummer> personnummer =
+        Personnummer.createPersonnummer(parameters.getPersonId().getExtension());
 
-        List<Certificate> certificates = certificateService.listCertificatesForCitizen(
+    List<Certificate> certificates =
+        certificateService.listCertificatesForCitizen(
             personnummer.orElse(null),
             toStringList(parameters.getIntygTyp()),
             parameters.getFromDatum(),
             parameters.getTomDatum());
 
-        final String partCode = parameters.getPart().getCode();
-        if (isInvalidPartForTestCertificates(certificates, partCode)) {
-            LOGGER.error("Failed to retrieve certificates because it is flagged as test certificate and part is set as: {} ", partCode);
-            throw new ServerException("Failed to retrieve certificates because it is flagged as test certificate and part is set as: "
-                + partCode);
-        }
-
-        response.getIntygsLista().getIntyg().addAll(certificates.stream()
-            .filter(c -> !IntygInfoService.EXCLUDED_CITIZEN_CERTIFICATES.contains(c.getType()))
-            .filter(c -> c.isDeleted() == parameters.isArkiverade())
-            .map(c -> convert(c, parameters.getPart().getCode()))
-            .toList());
-
-        monitoringLogService.logCertificateListedByCitizen(personnummer.orElse(null));
-
-        return response;
+    final String partCode = parameters.getPart().getCode();
+    if (isInvalidPartForTestCertificates(certificates, partCode)) {
+      LOGGER.error(
+          "Failed to retrieve certificates because it is flagged as test certificate and part is set as: {} ",
+          partCode);
+      throw new ServerException(
+          "Failed to retrieve certificates because it is flagged as test certificate and part is set as: "
+              + partCode);
     }
 
-    /**
-     * Validate if the certificate list includes test certificates and the part asking for the certificates is a receiver of certificates.
-     *
-     * @param certificates the certificates to validate.
-     * @param partCode the part code.
-     * @return true if the part isn't allowed to retrieve test certificates
-     */
-    private boolean isInvalidPartForTestCertificates(List<Certificate> certificates, String partCode) {
-        return certificates.stream().anyMatch(Certificate::isTestCertificate)
-            && !("HSVARD".equalsIgnoreCase(partCode) || "INVANA".equalsIgnoreCase(partCode));
+    response
+        .getIntygsLista()
+        .getIntyg()
+        .addAll(
+            certificates.stream()
+                .filter(c -> !IntygInfoService.EXCLUDED_CITIZEN_CERTIFICATES.contains(c.getType()))
+                .filter(c -> c.isDeleted() == parameters.isArkiverade())
+                .map(c -> convert(c, parameters.getPart().getCode()))
+                .toList());
+
+    monitoringLogService.logCertificateListedByCitizen(personnummer.orElse(null));
+
+    return response;
+  }
+
+  /**
+   * Validate if the certificate list includes test certificates and the part asking for the
+   * certificates is a receiver of certificates.
+   *
+   * @param certificates the certificates to validate.
+   * @param partCode the part code.
+   * @return true if the part isn't allowed to retrieve test certificates
+   */
+  private boolean isInvalidPartForTestCertificates(
+      List<Certificate> certificates, String partCode) {
+    return certificates.stream().anyMatch(Certificate::isTestCertificate)
+        && !("HSVARD".equalsIgnoreCase(partCode) || "INVANA".equalsIgnoreCase(partCode));
+  }
+
+  private List<String> toStringList(List<TypAvIntyg> intygTyp) {
+    if (intygTyp == null) {
+      return new ArrayList<>();
+    }
+    return intygTyp.stream().map(TypAvIntyg::getCode).collect(Collectors.toList());
+  }
+
+  private Intyg convert(Certificate certificate, String part) {
+    try {
+      CertificateHolder certificateHolder = ConverterUtil.toCertificateHolder(certificate);
+      ModuleApi moduleApi =
+          moduleRegistry.getModuleApi(
+              certificateHolder.getType(), certificateHolder.getTypeVersion());
+      // Unified handling of all certificate types, maintaining a simple module api
+      Intyg intyg =
+          moduleApi.getIntygFromUtlatande(
+              moduleApi.getUtlatandeFromXml(certificateHolder.getOriginalCertificate()));
+      intyg
+          .getStatus()
+          .addAll(
+              CertificateStateHolderConverter.toIntygsStatusType(
+                  certificateHolder.getCertificateStates().stream()
+                      .filter(ch -> CertificateStateFilterUtil.filter(ch, part))
+                      .collect(Collectors.toList())));
+      return intyg;
+
+    } catch (ModuleNotFoundException | ModuleException e) {
+      LOGGER.error(e.getMessage());
     }
 
-    private List<String> toStringList(List<TypAvIntyg> intygTyp) {
-        if (intygTyp == null) {
-            return new ArrayList<>();
-        }
-        return intygTyp.stream().map(TypAvIntyg::getCode).collect(Collectors.toList());
-    }
-
-    private Intyg convert(Certificate certificate, String part) {
-        try {
-            CertificateHolder certificateHolder = ConverterUtil.toCertificateHolder(certificate);
-            ModuleApi moduleApi = moduleRegistry.getModuleApi(certificateHolder.getType(), certificateHolder.getTypeVersion());
-            // Unified handling of all certificate types, maintaining a simple module api
-            Intyg intyg = moduleApi.getIntygFromUtlatande(moduleApi.getUtlatandeFromXml(certificateHolder.getOriginalCertificate()));
-            intyg.getStatus().addAll(CertificateStateHolderConverter.toIntygsStatusType(certificateHolder.getCertificateStates().stream()
-                .filter(ch -> CertificateStateFilterUtil.filter(ch, part))
-                .collect(Collectors.toList())));
-            return intyg;
-
-        } catch (ModuleNotFoundException | ModuleException e) {
-            LOGGER.error(e.getMessage());
-        }
-
-        return null;
-    }
-
+    return null;
+  }
 }

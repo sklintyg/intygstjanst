@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -36,59 +36,64 @@ import se.inera.intyg.clinicalprocess.healthcond.certificate.getcertificatetypei
 import se.inera.intyg.clinicalprocess.healthcond.certificate.getcertificatetypeinfo.v1.GetCertificateTypeInfoResponseType;
 import se.inera.intyg.clinicalprocess.healthcond.certificate.getcertificatetypeinfo.v1.GetCertificateTypeInfoType;
 import se.inera.intyg.common.lisjp.support.LisjpEntryPoint;
-import se.inera.intyg.intygstjanst.application.exception.ServerException;
 import se.inera.intyg.intygstjanst.application.certificate.service.CertificateService;
+import se.inera.intyg.intygstjanst.application.exception.ServerException;
 import se.inera.intyg.intygstjanst.application.recipient.CertificateTypeInfo;
 
 @ExtendWith(MockitoExtension.class)
 class GetCertificateTypeInfoResponderImplTest {
 
-    private static final String LOGICAL_ADDRESS = "logical-address";
-    private static final String DEFAULT_VERSION = "1.0";
-    @Mock
-    private CertificateService certificateService = mock(CertificateService.class);
+  private static final String LOGICAL_ADDRESS = "logical-address";
+  private static final String DEFAULT_VERSION = "1.0";
+  @Mock private CertificateService certificateService = mock(CertificateService.class);
 
-    @InjectMocks
-    private GetCertificateTypeInfoResponderInterface testee = new GetCertificateTypeInfoResponderImpl();
+  @InjectMocks
+  private GetCertificateTypeInfoResponderInterface testee =
+      new GetCertificateTypeInfoResponderImpl();
 
-    @Test
-    void testGetCertificateTypeSuccess() {
-        String intygsId = UUID.randomUUID().toString();
-        String intygsTyp = LisjpEntryPoint.MODULE_ID;
+  @Test
+  void testGetCertificateTypeSuccess() {
+    String intygsId = UUID.randomUUID().toString();
+    String intygsTyp = LisjpEntryPoint.MODULE_ID;
 
-        when(certificateService.getCertificateTypeInfo(anyString())).thenReturn(buildCertType(intygsTyp));
+    when(certificateService.getCertificateTypeInfo(anyString()))
+        .thenReturn(buildCertType(intygsTyp));
 
-        GetCertificateTypeInfoResponseType response = testee.getCertificateTypeInfo(LOGICAL_ADDRESS, buildReq(intygsId));
+    GetCertificateTypeInfoResponseType response =
+        testee.getCertificateTypeInfo(LOGICAL_ADDRESS, buildReq(intygsId));
 
-        assertEquals(intygsTyp, response.getTyp().getCode());
-        assertEquals(DEFAULT_VERSION, response.getTypVersion());
-        assertEquals(KV_INTYGSTYP_CODE_SYSTEM, response.getTyp().getCodeSystem());
-    }
+    assertEquals(intygsTyp, response.getTyp().getCode());
+    assertEquals(DEFAULT_VERSION, response.getTypVersion());
+    assertEquals(KV_INTYGSTYP_CODE_SYSTEM, response.getTyp().getCodeSystem());
+  }
 
-    @Test
-    void testGetCertificateTypeNotFound() {
-        String intygsId = UUID.randomUUID().toString();
-        when(certificateService.getCertificateTypeInfo(anyString())).thenReturn(null);
-        final var getCertificateTypeInfoType = buildReq(intygsId);
-        assertThrows(ServerException.class, () -> testee.getCertificateTypeInfo(LOGICAL_ADDRESS, getCertificateTypeInfoType));
-    }
+  @Test
+  void testGetCertificateTypeNotFound() {
+    String intygsId = UUID.randomUUID().toString();
+    when(certificateService.getCertificateTypeInfo(anyString())).thenReturn(null);
+    final var getCertificateTypeInfoType = buildReq(intygsId);
+    assertThrows(
+        ServerException.class,
+        () -> testee.getCertificateTypeInfo(LOGICAL_ADDRESS, getCertificateTypeInfoType));
+  }
 
-    @Test
-    void testGetCertificateTypeEmptyIntygsId() {
-        assertThrows(IllegalArgumentException.class, () -> testee.getCertificateTypeInfo(LOGICAL_ADDRESS, buildReq(" ")));
-    }
+  @Test
+  void testGetCertificateTypeEmptyIntygsId() {
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> testee.getCertificateTypeInfo(LOGICAL_ADDRESS, buildReq(" ")));
+  }
 
-    private GetCertificateTypeInfoType buildReq(String intygsId) {
-        GetCertificateTypeInfoType req = new GetCertificateTypeInfoType();
-        req.setIntygsId(intygsId);
-        return req;
-    }
+  private GetCertificateTypeInfoType buildReq(String intygsId) {
+    GetCertificateTypeInfoType req = new GetCertificateTypeInfoType();
+    req.setIntygsId(intygsId);
+    return req;
+  }
 
-    private CertificateTypeInfo buildCertType(String intygsTyp) {
-        TypAvIntyg typAvIntyg = new TypAvIntyg();
-        typAvIntyg.setCode(intygsTyp);
-        typAvIntyg.setCodeSystem(KV_INTYGSTYP_CODE_SYSTEM);
-        return new CertificateTypeInfo(typAvIntyg, DEFAULT_VERSION);
-    }
-
+  private CertificateTypeInfo buildCertType(String intygsTyp) {
+    TypAvIntyg typAvIntyg = new TypAvIntyg();
+    typAvIntyg.setCode(intygsTyp);
+    typAvIntyg.setCodeSystem(KV_INTYGSTYP_CODE_SYSTEM);
+    return new CertificateTypeInfo(typAvIntyg, DEFAULT_VERSION);
+  }
 }

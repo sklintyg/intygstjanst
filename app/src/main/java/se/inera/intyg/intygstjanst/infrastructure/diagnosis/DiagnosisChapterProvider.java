@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package se.inera.intyg.intygstjanst.infrastructure.diagnosis;
 
 import java.io.IOException;
@@ -34,21 +33,22 @@ import se.inera.intyg.intygstjanst.infrastructure.config.properties.AppPropertie
 @Component
 public class DiagnosisChapterProvider {
 
-    private final ResourceLoader resourceLoader;
-    private final AppProperties appProperties;
+  private final ResourceLoader resourceLoader;
+  private final AppProperties appProperties;
 
-    public DiagnosisChapterProvider(ResourceLoader resourceLoader, AppProperties appProperties) {
-        this.resourceLoader = resourceLoader;
-        this.appProperties = appProperties;
+  public DiagnosisChapterProvider(ResourceLoader resourceLoader, AppProperties appProperties) {
+    this.resourceLoader = resourceLoader;
+    this.appProperties = appProperties;
+  }
+
+  public List<DiagnosKapitel> getDiagnosisChapters() throws IOException {
+    Resource resource = resourceLoader.getResource(appProperties.diagnosis().chaptersFile());
+
+    List<DiagnosKapitel> list = new ArrayList<>();
+    try (LineIterator it =
+        IOUtils.lineIterator(resource.getInputStream(), StandardCharsets.UTF_8)) {
+      it.forEachRemaining(line -> list.add(new DiagnosKapitel(line)));
     }
-
-    public List<DiagnosKapitel> getDiagnosisChapters() throws IOException {
-        Resource resource = resourceLoader.getResource(appProperties.diagnosis().chaptersFile());
-
-        List<DiagnosKapitel> list = new ArrayList<>();
-        try (LineIterator it = IOUtils.lineIterator(resource.getInputStream(), StandardCharsets.UTF_8)) {
-            it.forEachRemaining(line -> list.add(new DiagnosKapitel(line)));
-        }
-        return list;
-    }
+    return list;
+  }
 }

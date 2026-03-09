@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -44,62 +44,62 @@ import se.inera.intyg.intygstjanst.infrastructure.security.interceptor.ApiBasePa
 @Profile({"dev", "testability-api"})
 public class FkStubResource {
 
-    private static final String[] KEYS = {PERSONNUMMER, MAKULERAD, MEDDELANDE};
+  private static final String[] KEYS = {PERSONNUMMER, MAKULERAD, MEDDELANDE};
 
-    @Autowired
-    private MedicalCertificatesStore fkMedicalCertificatesStore;
+  @Autowired private MedicalCertificatesStore fkMedicalCertificatesStore;
 
-    @GetMapping(path = "/count", produces = MediaType.TEXT_PLAIN_VALUE)
-    public int count() {
-        return fkMedicalCertificatesStore.getCount();
+  @GetMapping(path = "/count", produces = MediaType.TEXT_PLAIN_VALUE)
+  public int count() {
+    return fkMedicalCertificatesStore.getCount();
+  }
+
+  @GetMapping(path = "/certificates", produces = MediaType.TEXT_HTML_VALUE)
+  public String certificates() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("<!DOCTYPE html><html><head>");
+    sb.append(
+        "<link href='//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css' rel='stylesheet'>");
+    sb.append("</head><body><div class='container'>");
+    sb.append("<form method='POST' action='clear'><input type='submit' value='Clear'></form>");
+    sb.append("<table class='table table-striped'>");
+    sb.append("<thead><tr>");
+    sb.append("<td>Id</td>");
+    for (String key : KEYS) {
+      sb.append("<td>").append(key).append("</td>");
     }
-
-    @GetMapping(path = "/certificates", produces = MediaType.TEXT_HTML_VALUE)
-    public String certificates() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("<!DOCTYPE html><html><head>");
-        sb.append("<link href='//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css' rel='stylesheet'>");
-        sb.append("</head><body><div class='container'>");
-        sb.append("<form method='POST' action='clear'><input type='submit' value='Clear'></form>");
-        sb.append("<table class='table table-striped'>");
-        sb.append("<thead><tr>");
-        sb.append("<td>Id</td>");
-        for (String key : KEYS) {
-            sb.append("<td>").append(key).append("</td>");
-        }
-        sb.append("</tr></thead>");
-        for (Entry<String, Map<String, String>> e : fkMedicalCertificatesStore.getAll().entrySet()) {
-            sb.append("<tr>");
-            sb.append("<td>").append(e.getKey()).append("</td>");
-            for (String key : KEYS) {
-                sb.append("<td>").append(e.getValue().get(key)).append("</td>");
-            }
-            sb.append("</tr>");
-        }
-        sb.append("</table>");
-        sb.append("</div></body>");
-        return sb.toString();
+    sb.append("</tr></thead>");
+    for (Entry<String, Map<String, String>> e : fkMedicalCertificatesStore.getAll().entrySet()) {
+      sb.append("<tr>");
+      sb.append("<td>").append(e.getKey()).append("</td>");
+      for (String key : KEYS) {
+        sb.append("<td>").append(e.getValue().get(key)).append("</td>");
+      }
+      sb.append("</tr>");
     }
+    sb.append("</table>");
+    sb.append("</div></body>");
+    return sb.toString();
+  }
 
-    @GetMapping(path = "/certificates", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Map<String, String>> certificatesJson() {
-        return new HashMap<>(fkMedicalCertificatesStore.getAll());
-    }
+  @GetMapping(path = "/certificates", produces = MediaType.APPLICATION_JSON_VALUE)
+  public Map<String, Map<String, String>> certificatesJson() {
+    return new HashMap<>(fkMedicalCertificatesStore.getAll());
+  }
 
-    @PostMapping(path = "/clear", produces = MediaType.TEXT_HTML_VALUE)
-    public String clear() {
-        fkMedicalCertificatesStore.clear();
-        StringBuilder sb = new StringBuilder();
-        sb.append("<html><head>");
-        sb.append("<meta http-equiv='refresh' content='0;url=certificates'>");
-        sb.append("</head></html>");
-        return sb.toString();
-    }
+  @PostMapping(path = "/clear", produces = MediaType.TEXT_HTML_VALUE)
+  public String clear() {
+    fkMedicalCertificatesStore.clear();
+    StringBuilder sb = new StringBuilder();
+    sb.append("<html><head>");
+    sb.append("<meta http-equiv='refresh' content='0;url=certificates'>");
+    sb.append("</head></html>");
+    return sb.toString();
+  }
 
-    @PostMapping(path = "/clear", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, String> clearJson() {
-        fkMedicalCertificatesStore.clear();
-        Collections.singletonMap("result", "ok");
-        return Collections.singletonMap("result", "ok");
-    }
+  @PostMapping(path = "/clear", produces = MediaType.APPLICATION_JSON_VALUE)
+  public Map<String, String> clearJson() {
+    fkMedicalCertificatesStore.clear();
+    Collections.singletonMap("result", "ok");
+    return Collections.singletonMap("result", "ok");
+  }
 }

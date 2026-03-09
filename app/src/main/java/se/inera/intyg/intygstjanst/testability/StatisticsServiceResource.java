@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -38,29 +38,27 @@ import se.inera.intyg.intygstjanst.testability.service.Receiver;
 @Profile({"dev", "testability-api"})
 public class StatisticsServiceResource {
 
-    private static final Logger LOG = LoggerFactory.getLogger(StatisticsServiceResource.class);
+  private static final Logger LOG = LoggerFactory.getLogger(StatisticsServiceResource.class);
 
-    @Autowired
-    private Receiver receiver;
+  @Autowired private Receiver receiver;
 
-    @GetMapping()
-    public List<String> getAllMessages() {
-        LOG.debug("Fetching all messages");
-        return Lists.newArrayList(receiver.getMessages().values());
-    }
+  @GetMapping()
+  public List<String> getAllMessages() {
+    LOG.debug("Fetching all messages");
+    return Lists.newArrayList(receiver.getMessages().values());
+  }
 
-    @GetMapping(path = "/{id}/{action}", produces = MediaType.APPLICATION_XML_VALUE)
-    public String getMessage(@PathVariable("id") String id, @PathVariable("action") String action) {
-        LOG.debug("Fetching {}-message for id {}", action, id);
-        final String msg = receiver.getMessages().get(Receiver.generateKey(id, action));
-        LOG.debug("Message: {}", msg);
-        return msg;
-    }
+  @GetMapping(path = "/{id}/{action}", produces = MediaType.APPLICATION_XML_VALUE)
+  public String getMessage(@PathVariable("id") String id, @PathVariable("action") String action) {
+    LOG.debug("Fetching {}-message for id {}", action, id);
+    final String msg = receiver.getMessages().get(Receiver.generateKey(id, action));
+    LOG.debug("Message: {}", msg);
+    return msg;
+  }
 
-    @GetMapping("/purge")
-    public String purge() {
-        final int n = receiver.consume(msg -> {
-        });
-        return String.format("{ \"numPurged\": %d }", n);
-    }
+  @GetMapping("/purge")
+  public String purge() {
+    final int n = receiver.consume(msg -> {});
+    return String.format("{ \"numPurged\": %d }", n);
+  }
 }

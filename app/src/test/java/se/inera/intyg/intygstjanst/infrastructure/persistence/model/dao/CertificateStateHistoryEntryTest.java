@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -27,27 +27,29 @@ import java.util.Collection;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
-/**
- *
- */
+/** */
 class CertificateStateHistoryEntryTest {
 
-    @Test
-    void testOrdering() {
-        CertificateStateHistoryEntry e1 = new CertificateStateHistoryEntry(null, null, LocalDateTime.parse("2013-08-20T12:00:01"));
-        CertificateStateHistoryEntry e2 = new CertificateStateHistoryEntry(null, null, LocalDateTime.parse("2013-08-21T12:00:01"));
-        CertificateStateHistoryEntry e3 = new CertificateStateHistoryEntry(null, null, LocalDateTime.parse("2013-08-20T14:00:01"));
-        CertificateStateHistoryEntry e4 = new CertificateStateHistoryEntry(null, null, LocalDateTime.now());
-        e4.setTimestamp(null);
+  @Test
+  void testOrdering() {
+    CertificateStateHistoryEntry e1 =
+        new CertificateStateHistoryEntry(null, null, LocalDateTime.parse("2013-08-20T12:00:01"));
+    CertificateStateHistoryEntry e2 =
+        new CertificateStateHistoryEntry(null, null, LocalDateTime.parse("2013-08-21T12:00:01"));
+    CertificateStateHistoryEntry e3 =
+        new CertificateStateHistoryEntry(null, null, LocalDateTime.parse("2013-08-20T14:00:01"));
+    CertificateStateHistoryEntry e4 =
+        new CertificateStateHistoryEntry(null, null, LocalDateTime.now());
+    e4.setTimestamp(null);
 
-        Collection<CertificateStateHistoryEntry> c = Arrays.asList(e1, e2, e3, e4);
+    Collection<CertificateStateHistoryEntry> c = Arrays.asList(e1, e2, e3, e4);
 
-        List<CertificateStateHistoryEntry> r = CertificateStateHistoryEntry.BY_TIMESTAMP_DESC.sortedCopy(c);
+    List<CertificateStateHistoryEntry> r =
+        CertificateStateHistoryEntry.BY_TIMESTAMP_DESC.sortedCopy(c);
 
-        assertNull(r.get(0).getTimestamp());
-        assertEquals(LocalDateTime.parse("2013-08-21T12:00:01"), r.get(1).getTimestamp());
-        assertEquals(LocalDateTime.parse("2013-08-20T14:00:01"), r.get(2).getTimestamp());
-        assertEquals(LocalDateTime.parse("2013-08-20T12:00:01"), r.get(3).getTimestamp());
-    }
-
+    assertNull(r.get(0).getTimestamp());
+    assertEquals(LocalDateTime.parse("2013-08-21T12:00:01"), r.get(1).getTimestamp());
+    assertEquals(LocalDateTime.parse("2013-08-20T14:00:01"), r.get(2).getTimestamp());
+    assertEquals(LocalDateTime.parse("2013-08-20T12:00:01"), r.get(3).getTimestamp());
+  }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -27,16 +27,15 @@ import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Approved
 @Service
 public class ReceiverService {
 
-    @Autowired
-    private ApprovedReceiverDao approvedReceiverDao;
+  @Autowired private ApprovedReceiverDao approvedReceiverDao;
 
-    @Transactional
-    public void registerApprovedReceiver(ApprovedReceiver approvedReceiver) {
-        approvedReceiverDao.store(approvedReceiver);
-    }
+  @Transactional
+  public void registerApprovedReceiver(ApprovedReceiver approvedReceiver) {
+    approvedReceiverDao.store(approvedReceiver);
+  }
 
-    @Transactional
-    public void clearApprovedReceiversForCertificate(String intygsId) {
-        approvedReceiverDao.clearApprovedReceiversForCertificate(intygsId);
-    }
+  @Transactional
+  public void clearApprovedReceiversForCertificate(String intygsId) {
+    approvedReceiverDao.clearApprovedReceiversForCertificate(intygsId);
+  }
 }

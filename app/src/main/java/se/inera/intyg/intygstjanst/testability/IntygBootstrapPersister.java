@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -27,85 +27,94 @@ import org.springframework.transaction.annotation.Transactional;
 import se.inera.intyg.common.fk7263.support.Fk7263EntryPoint;
 import se.inera.intyg.common.lisjp.support.LisjpEntryPoint;
 import se.inera.intyg.common.support.model.common.internal.Utlatande;
+import se.inera.intyg.intygstjanst.application.sickleave.converter.CertificateToSjukfallCertificateConverter;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.CertificateMetaData;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.OriginalCertificate;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.SjukfallCertificate;
-import se.inera.intyg.intygstjanst.application.sickleave.converter.CertificateToSjukfallCertificateConverter;
 
 /**
- * Handles transactional persistence for bootstrap data.
- * Extracted from IntygBootstrapBean so that @Transactional works
- * via Spring's proxy mechanism (intra-class calls bypass the proxy).
+ * Handles transactional persistence for bootstrap data. Extracted from IntygBootstrapBean so
+ * that @Transactional works via Spring's proxy mechanism (intra-class calls bypass the proxy).
  */
 @Service
 public class IntygBootstrapPersister {
 
-    private static final Logger LOG = LoggerFactory.getLogger(IntygBootstrapPersister.class);
+  private static final Logger LOG = LoggerFactory.getLogger(IntygBootstrapPersister.class);
 
-    @PersistenceContext
-    private EntityManager entityManager;
+  @PersistenceContext private EntityManager entityManager;
 
-    private final CertificateToSjukfallCertificateConverter certificateToSjukfallCertificateConverter;
+  private final CertificateToSjukfallCertificateConverter certificateToSjukfallCertificateConverter;
 
-    public IntygBootstrapPersister(CertificateToSjukfallCertificateConverter converter) {
-        this.certificateToSjukfallCertificateConverter = converter;
+  public IntygBootstrapPersister(CertificateToSjukfallCertificateConverter converter) {
+    this.certificateToSjukfallCertificateConverter = converter;
+  }
+
+  @Transactional
+  public void persistCertificate(
+      Certificate certificate,
+      OriginalCertificate originalCertificate,
+      CertificateMetaData metaData,
+      Utlatande utlatande) {
+    if (entityManager.find(Certificate.class, certificate.getId()) != null) {
+      LOG.info(
+          "Bootstrapping of certificate '{}' skipped. Already in database.", certificate.getId());
+      return;
     }
+    entityManager.persist(metaData);
+    entityManager.persist(originalCertificate);
+    entityManager.persist(certificate);
 
-    @Transactional
-    public void persistCertificate(Certificate certificate, OriginalCertificate originalCertificate,
-        CertificateMetaData metaData, Utlatande utlatande) {
-        if (entityManager.find(Certificate.class, certificate.getId()) != null) {
-            LOG.info("Bootstrapping of certificate '{}' skipped. Already in database.", certificate.getId());
-            return;
-        }
-        entityManager.persist(metaData);
-        entityManager.persist(originalCertificate);
-        entityManager.persist(certificate);
-
-        if (isSjukfallsGrundandeIntyg(certificate.getType())) {
-            persistSjukfallIfConvertable(certificate, utlatande);
-        }
+    if (isSjukfallsGrundandeIntyg(certificate.getType())) {
+      persistSjukfallIfConvertable(certificate, utlatande);
     }
+  }
 
-    @Transactional
-    public void persistLocalCertificate(Certificate certificate, OriginalCertificate originalCertificate,
-        CertificateMetaData metaData) {
-        if (entityManager.find(Certificate.class, certificate.getId()) != null) {
-            LOG.info("Bootstrapping of certificate '{}' skipped. Already in database.", certificate.getId());
-            return;
-        }
-        entityManager.persist(metaData);
-        entityManager.persist(originalCertificate);
-        entityManager.persist(certificate);
+  @Transactional
+  public void persistLocalCertificate(
+      Certificate certificate,
+      OriginalCertificate originalCertificate,
+      CertificateMetaData metaData) {
+    if (entityManager.find(Certificate.class, certificate.getId()) != null) {
+      LOG.info(
+          "Bootstrapping of certificate '{}' skipped. Already in database.", certificate.getId());
+      return;
     }
+    entityManager.persist(metaData);
+    entityManager.persist(originalCertificate);
+    entityManager.persist(certificate);
+  }
 
-    @Transactional
-    public void persistSjukfall(Certificate certificate, Utlatande utlatande) {
-        persistSjukfallIfConvertable(certificate, utlatande);
-    }
+  @Transactional
+  public void persistSjukfall(Certificate certificate, Utlatande utlatande) {
+    persistSjukfallIfConvertable(certificate, utlatande);
+  }
 
-    private void persistSjukfallIfConvertable(Certificate certificate, Utlatande utlatande) {
-        if (certificateToSjukfallCertificateConverter.isConvertableFk7263(utlatande)) {
-            SjukfallCertificate sjukfallCert = certificateToSjukfallCertificateConverter.convertFk7263(certificate, utlatande);
-            if (entityManager.find(SjukfallCertificate.class, sjukfallCert.getId()) == null) {
-                entityManager.persist(sjukfallCert);
-            } else {
-                LOG.info("Bootstrapping of sjukfall '{}' skipped. Already in database.", sjukfallCert.getId());
-            }
-        }
-        if (certificateToSjukfallCertificateConverter.isConvertableLisjp(utlatande)) {
-            SjukfallCertificate sjukfallCert = certificateToSjukfallCertificateConverter.convertLisjp(certificate, utlatande);
-            if (entityManager.find(SjukfallCertificate.class, sjukfallCert.getId()) == null) {
-                entityManager.persist(sjukfallCert);
-            } else {
-                LOG.info("Bootstrapping of sjukfall '{}' skipped. Already in database.", sjukfallCert.getId());
-            }
-        }
+  private void persistSjukfallIfConvertable(Certificate certificate, Utlatande utlatande) {
+    if (certificateToSjukfallCertificateConverter.isConvertableFk7263(utlatande)) {
+      SjukfallCertificate sjukfallCert =
+          certificateToSjukfallCertificateConverter.convertFk7263(certificate, utlatande);
+      if (entityManager.find(SjukfallCertificate.class, sjukfallCert.getId()) == null) {
+        entityManager.persist(sjukfallCert);
+      } else {
+        LOG.info(
+            "Bootstrapping of sjukfall '{}' skipped. Already in database.", sjukfallCert.getId());
+      }
     }
+    if (certificateToSjukfallCertificateConverter.isConvertableLisjp(utlatande)) {
+      SjukfallCertificate sjukfallCert =
+          certificateToSjukfallCertificateConverter.convertLisjp(certificate, utlatande);
+      if (entityManager.find(SjukfallCertificate.class, sjukfallCert.getId()) == null) {
+        entityManager.persist(sjukfallCert);
+      } else {
+        LOG.info(
+            "Bootstrapping of sjukfall '{}' skipped. Already in database.", sjukfallCert.getId());
+      }
+    }
+  }
 
-    private boolean isSjukfallsGrundandeIntyg(String type) {
-        return Fk7263EntryPoint.MODULE_ID.equalsIgnoreCase(type)
-            || LisjpEntryPoint.MODULE_ID.equalsIgnoreCase(type);
-    }
+  private boolean isSjukfallsGrundandeIntyg(String type) {
+    return Fk7263EntryPoint.MODULE_ID.equalsIgnoreCase(type)
+        || LisjpEntryPoint.MODULE_ID.equalsIgnoreCase(type);
+  }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -27,46 +27,43 @@ import jakarta.persistence.Table;
 @Table(name = "REF_CERTIFICATE_TYPE")
 public class CertificateType {
 
-    @Column
-    @Id
-    private String id;
+  @Column @Id private String id;
 
-    @Column(name = "CODE")
-    private String code;
+  @Column(name = "CODE")
+  private String code;
 
-    @Column(name = "NAME")
-    private String name;
+  @Column(name = "NAME")
+  private String name;
 
-    public CertificateType() {
-    }
+  public CertificateType() {}
 
-    public CertificateType(String id, String code, String name) {
-        this.id = id;
-        this.code = code;
-        this.name = name;
-    }
+  public CertificateType(String id, String code, String name) {
+    this.id = id;
+    this.code = code;
+    this.name = name;
+  }
 
-    public String getId() {
-        return id;
-    }
+  public String getId() {
+    return id;
+  }
 
-    public void setId(String id) {
-        this.id = id;
-    }
+  public void setId(String id) {
+    this.id = id;
+  }
 
-    public String getCode() {
-        return code;
-    }
+  public String getCode() {
+    return code;
+  }
 
-    public void setCode(String code) {
-        this.code = code;
-    }
+  public void setCode(String code) {
+    this.code = code;
+  }
 
-    public String getName() {
-        return name;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 }

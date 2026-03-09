@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -34,30 +34,32 @@ import se.inera.intyg.intygstjanst.infrastructure.config.properties.AppPropertie
 @RequiredArgsConstructor
 public class TsBasItCxfConfig {
 
-    private final AppProperties appProperties;
+  private final AppProperties appProperties;
 
-    @Bean("tsBasRegisterCertificateVersion")
-    public String tsBasRegisterCertificateVersion() {
-        return appProperties.ntjp().tsBasRegisterCertificateVersion();
-    }
+  @Bean("tsBasRegisterCertificateVersion")
+  public String tsBasRegisterCertificateVersion() {
+    return appProperties.ntjp().tsBasRegisterCertificateVersion();
+  }
 
-    @Bean("tsBasRegisterCertificateV1Client")
-    public RegisterCertificateV1Client tsBasRegisterCertificateV1Client() {
-        return new RegisterCertificateV1Client(appProperties.ntjp().endpoints().registerCertificateV1());
-    }
+  @Bean("tsBasRegisterCertificateV1Client")
+  public RegisterCertificateV1Client tsBasRegisterCertificateV1Client() {
+    return new RegisterCertificateV1Client(
+        appProperties.ntjp().endpoints().registerCertificateV1());
+  }
 
-    @Bean("tsBasRegisterCertificateV3Client")
-    public RegisterCertificateV3Client tsBasRegisterCertificateV3Client() {
-        return new RegisterCertificateV3Client(appProperties.ntjp().endpoints().registerCertificateV3());
-    }
+  @Bean("tsBasRegisterCertificateV3Client")
+  public RegisterCertificateV3Client tsBasRegisterCertificateV3Client() {
+    return new RegisterCertificateV3Client(
+        appProperties.ntjp().endpoints().registerCertificateV3());
+  }
 
-    @Bean
-    public SendTSClientFactory sendTSClientFactory(
-        @Qualifier("tsBasRegisterCertificateV1Client") RegisterCertificateV1Client v1Client,
-        @Qualifier("tsBasRegisterCertificateV3Client") RegisterCertificateV3Client v3Client) {
-        final Map<String, SendTSClient> clientMap = new HashMap<>();
-        clientMap.put("v1", v1Client);
-        clientMap.put("v3", v3Client);
-        return new SendTSClientFactory(clientMap);
-    }
+  @Bean
+  public SendTSClientFactory sendTSClientFactory(
+      @Qualifier("tsBasRegisterCertificateV1Client") RegisterCertificateV1Client v1Client,
+      @Qualifier("tsBasRegisterCertificateV3Client") RegisterCertificateV3Client v3Client) {
+    final Map<String, SendTSClient> clientMap = new HashMap<>();
+    clientMap.put("v1", v1Client);
+    clientMap.put("v3", v3Client);
+    return new SendTSClientFactory(clientMap);
+  }
 }

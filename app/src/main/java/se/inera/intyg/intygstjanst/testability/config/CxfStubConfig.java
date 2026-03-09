@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -37,62 +37,75 @@ import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.S
 @RequiredArgsConstructor
 public class CxfStubConfig {
 
-    private static final String SCHEMA_CP_3_3 =
-        "classpath:/core_components/clinicalprocess_healthcond_certificate_3.3.xsd";
-    private static final String SCHEMA_CP_TYPES_3_2 =
-        "classpath:/core_components/clinicalprocess_healthcond_certificate_types_3.2.xsd";
-    private static final String SCHEMA_CP_3_2_EXT =
-        "classpath:/core_components/clinicalprocess_healthcond_certificate_3.2_ext.xsd";
-    private static final String SCHEMA_CP_3_4_EXT =
-        "classpath:/core_components/clinicalprocess_healthcond_certificate_3.4_ext.xsd";
-    private static final String SCHEMA_XMLDSIG =
-        "classpath:/core_components/xmldsig-core-schema_0.1.xsd";
-    private static final String SCHEMA_XMLDSIG_FILTER =
-        "classpath:/core_components/xmldsig-filter2.xsd";
+  private static final String SCHEMA_CP_3_3 =
+      "classpath:/core_components/clinicalprocess_healthcond_certificate_3.3.xsd";
+  private static final String SCHEMA_CP_TYPES_3_2 =
+      "classpath:/core_components/clinicalprocess_healthcond_certificate_types_3.2.xsd";
+  private static final String SCHEMA_CP_3_2_EXT =
+      "classpath:/core_components/clinicalprocess_healthcond_certificate_3.2_ext.xsd";
+  private static final String SCHEMA_CP_3_4_EXT =
+      "classpath:/core_components/clinicalprocess_healthcond_certificate_3.4_ext.xsd";
+  private static final String SCHEMA_XMLDSIG =
+      "classpath:/core_components/xmldsig-core-schema_0.1.xsd";
+  private static final String SCHEMA_XMLDSIG_FILTER =
+      "classpath:/core_components/xmldsig-filter2.xsd";
 
-    private final Bus bus;
+  private final Bus bus;
 
-    @Bean
-    public RevokeCertificateResponderStub revokeCertificateClientStub() {
-        return new RevokeCertificateResponderStub();
-    }
+  @Bean
+  public RevokeCertificateResponderStub revokeCertificateClientStub() {
+    return new RevokeCertificateResponderStub();
+  }
 
-    @Bean
-    public Endpoint sendMessageToCareStubEndpoint(
-        @Qualifier("sendMessageToCareResponderStub") SendMessageToCareResponderInterface implementor) {
-        final var endpoint = new EndpointImpl(bus, implementor);
-        endpoint.publish("/stubs/clinicalprocess/healthcond/certificate/SendMessageToCare/2/rivtabp21");
-        endpoint.setSchemaLocations(List.of(
-            SCHEMA_CP_3_3, SCHEMA_CP_TYPES_3_2, SCHEMA_CP_3_2_EXT, SCHEMA_CP_3_4_EXT,
-            SCHEMA_XMLDSIG, SCHEMA_XMLDSIG_FILTER,
-            "classpath:/interactions/SendMessageToCareInteraction/SendMessageToCareResponder_2.0.xsd"
-        ));
-        return endpoint;
-    }
+  @Bean
+  public Endpoint sendMessageToCareStubEndpoint(
+      @Qualifier("sendMessageToCareResponderStub") SendMessageToCareResponderInterface implementor) {
+    final var endpoint = new EndpointImpl(bus, implementor);
+    endpoint.publish("/stubs/clinicalprocess/healthcond/certificate/SendMessageToCare/2/rivtabp21");
+    endpoint.setSchemaLocations(
+        List.of(
+            SCHEMA_CP_3_3,
+            SCHEMA_CP_TYPES_3_2,
+            SCHEMA_CP_3_2_EXT,
+            SCHEMA_CP_3_4_EXT,
+            SCHEMA_XMLDSIG,
+            SCHEMA_XMLDSIG_FILTER,
+            "classpath:/interactions/SendMessageToCareInteraction/SendMessageToCareResponder_2.0.xsd"));
+    return endpoint;
+  }
 
-    @Bean
-    public Endpoint sendMessageToRecipientStubEndpoint(
-        @Qualifier("sendMessageToRecipientResponderStub") SendMessageToRecipientResponderInterface implementor) {
-        final var endpoint = new EndpointImpl(bus, implementor);
-        endpoint.publish("/stubs/clinicalprocess/healthcond/certificate/SendMessageToRecipient/2/rivtabp21");
-        endpoint.setSchemaLocations(List.of(
-            SCHEMA_CP_3_3, SCHEMA_CP_TYPES_3_2, SCHEMA_CP_3_2_EXT, SCHEMA_CP_3_4_EXT,
-            SCHEMA_XMLDSIG, SCHEMA_XMLDSIG_FILTER,
-            "classpath:/interactions/SendMessageToRecipientInteraction/SendMessageToRecipientResponder_2.1.xsd"
-        ));
-        return endpoint;
-    }
+  @Bean
+  public Endpoint sendMessageToRecipientStubEndpoint(
+      @Qualifier("sendMessageToRecipientResponderStub") SendMessageToRecipientResponderInterface implementor) {
+    final var endpoint = new EndpointImpl(bus, implementor);
+    endpoint.publish(
+        "/stubs/clinicalprocess/healthcond/certificate/SendMessageToRecipient/2/rivtabp21");
+    endpoint.setSchemaLocations(
+        List.of(
+            SCHEMA_CP_3_3,
+            SCHEMA_CP_TYPES_3_2,
+            SCHEMA_CP_3_2_EXT,
+            SCHEMA_CP_3_4_EXT,
+            SCHEMA_XMLDSIG,
+            SCHEMA_XMLDSIG_FILTER,
+            "classpath:/interactions/SendMessageToRecipientInteraction/SendMessageToRecipientResponder_2.1.xsd"));
+    return endpoint;
+  }
 
-    @Bean
-    public Endpoint revokeCertificateStubEndpoint(
-        @Qualifier("revokeCertificateClientStub") RevokeCertificateResponderInterface implementor) {
-        final var endpoint = new EndpointImpl(bus, implementor);
-        endpoint.publish("/stubs/clinicalprocess/healthcond/certificate/RevokeCertificate/2/rivtabp21");
-        endpoint.setSchemaLocations(List.of(
-            SCHEMA_CP_3_3, SCHEMA_CP_TYPES_3_2, SCHEMA_CP_3_2_EXT, SCHEMA_CP_3_4_EXT,
-            SCHEMA_XMLDSIG, SCHEMA_XMLDSIG_FILTER,
-            "classpath:/interactions/RevokeCertificateInteraction/RevokeCertificateResponder_2.1.xsd"
-        ));
-        return endpoint;
-    }
+  @Bean
+  public Endpoint revokeCertificateStubEndpoint(
+      @Qualifier("revokeCertificateClientStub") RevokeCertificateResponderInterface implementor) {
+    final var endpoint = new EndpointImpl(bus, implementor);
+    endpoint.publish("/stubs/clinicalprocess/healthcond/certificate/RevokeCertificate/2/rivtabp21");
+    endpoint.setSchemaLocations(
+        List.of(
+            SCHEMA_CP_3_3,
+            SCHEMA_CP_TYPES_3_2,
+            SCHEMA_CP_3_2_EXT,
+            SCHEMA_CP_3_4_EXT,
+            SCHEMA_XMLDSIG,
+            SCHEMA_XMLDSIG_FILTER,
+            "classpath:/interactions/RevokeCertificateInteraction/RevokeCertificateResponder_2.1.xsd"));
+    return endpoint;
+  }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -31,44 +31,45 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class PerformanceLoggingAdvice {
 
-    @Around("@annotation(performanceLogging)")
-    public Object logPerformance(ProceedingJoinPoint joinPoint, PerformanceLogging performanceLogging) throws Throwable {
-        if (performanceLogging.isActive()) {
-            final var start = LocalDateTime.now();
-            var success = true;
-            final var className = joinPoint.getSignature().getDeclaringTypeName();
-            final var methodName = joinPoint.getSignature().getName();
-            try {
-                return joinPoint.proceed();
-            } catch (final Throwable throwable) {
-                success = false;
-                log.error("FAILED TO CALL '%s - %s'".formatted(className, methodName), throwable);
-                throw throwable;
-            } finally {
-                final var end = LocalDateTime.now();
-                final var duration = Duration.between(start, end).toMillis();
-
-                try (final var mdcLogConstants =
-                    MdcCloseableMap.builder()
-                        .put(MdcLogConstants.EVENT_START, start.toString())
-                        .put(MdcLogConstants.EVENT_END, end.toString())
-                        .put(MdcLogConstants.EVENT_DURATION, Long.toString(duration))
-                        .put(MdcLogConstants.EVENT_ACTION, performanceLogging.eventAction())
-                        .put(MdcLogConstants.EVENT_TYPE, performanceLogging.eventType())
-                        .put(MdcLogConstants.EVENT_CATEGORY, performanceLogging.eventCategory())
-                        .put(MdcLogConstants.EVENT_CLASS, className)
-                        .put(MdcLogConstants.EVENT_METHOD, methodName)
-                        .put(MdcLogConstants.EVENT_OUTCOME, success ? "success" : "failure")
-                        .build()
-                ) {
-                    log.info(LogMarkers.PERFORMANCE, "Class: {} Method: {} Duration: {} ms",
-                        className,
-                        methodName,
-                        duration
-                    );
-                }
-            }
-        }
+  @Around("@annotation(performanceLogging)")
+  public Object logPerformance(ProceedingJoinPoint joinPoint, PerformanceLogging performanceLogging)
+      throws Throwable {
+    if (performanceLogging.isActive()) {
+      final var start = LocalDateTime.now();
+      var success = true;
+      final var className = joinPoint.getSignature().getDeclaringTypeName();
+      final var methodName = joinPoint.getSignature().getName();
+      try {
         return joinPoint.proceed();
+      } catch (final Throwable throwable) {
+        success = false;
+        log.error("FAILED TO CALL '%s - %s'".formatted(className, methodName), throwable);
+        throw throwable;
+      } finally {
+        final var end = LocalDateTime.now();
+        final var duration = Duration.between(start, end).toMillis();
+
+        try (final var mdcLogConstants =
+            MdcCloseableMap.builder()
+                .put(MdcLogConstants.EVENT_START, start.toString())
+                .put(MdcLogConstants.EVENT_END, end.toString())
+                .put(MdcLogConstants.EVENT_DURATION, Long.toString(duration))
+                .put(MdcLogConstants.EVENT_ACTION, performanceLogging.eventAction())
+                .put(MdcLogConstants.EVENT_TYPE, performanceLogging.eventType())
+                .put(MdcLogConstants.EVENT_CATEGORY, performanceLogging.eventCategory())
+                .put(MdcLogConstants.EVENT_CLASS, className)
+                .put(MdcLogConstants.EVENT_METHOD, methodName)
+                .put(MdcLogConstants.EVENT_OUTCOME, success ? "success" : "failure")
+                .build()) {
+          log.info(
+              LogMarkers.PERFORMANCE,
+              "Class: {} Method: {} Duration: {} ms",
+              className,
+              methodName,
+              duration);
+        }
+      }
     }
+    return joinPoint.proceed();
+  }
 }

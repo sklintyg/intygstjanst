@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -27,28 +27,30 @@ import se.inera.intyg.common.support.validate.CertificateValidationException;
 
 public class SendCertificateRequestValidator {
 
-    private SendType sendRequest = null;
-    private List<String> validationErrors = new ArrayList<>();
+  private SendType sendRequest = null;
+  private List<String> validationErrors = new ArrayList<>();
 
-    public SendCertificateRequestValidator(SendType sendRequest) {
-        this.sendRequest = sendRequest;
+  public SendCertificateRequestValidator(SendType sendRequest) {
+    this.sendRequest = sendRequest;
+  }
+
+  public void validateAndCorrect() throws CertificateValidationException {
+    // First, validate properties at Revoke request level
+    if (Strings.isNullOrEmpty(sendRequest.getVardReferensId())) {
+      validationErrors.add("No vardReferens found!");
+    }
+    if (sendRequest.getAvsantTidpunkt() == null) {
+      validationErrors.add("No avsantTidpunkt found!");
     }
 
-    public void validateAndCorrect() throws CertificateValidationException {
-        // First, validate properties at Revoke request level
-        if (Strings.isNullOrEmpty(sendRequest.getVardReferensId())) {
-            validationErrors.add("No vardReferens found!");
-        }
-        if (sendRequest.getAvsantTidpunkt() == null) {
-            validationErrors.add("No avsantTidpunkt found!");
-        }
+    // use commmon validators for common elements
+    new LakarutlatandeEnkelTypeValidator(sendRequest.getLakarutlatande(), validationErrors)
+        .validateAndCorrect();
+    new VardAdresseringsTypeValidator(sendRequest.getAdressVard(), validationErrors)
+        .validateAndCorrect();
 
-        // use commmon validators for common elements
-        new LakarutlatandeEnkelTypeValidator(sendRequest.getLakarutlatande(), validationErrors).validateAndCorrect();
-        new VardAdresseringsTypeValidator(sendRequest.getAdressVard(), validationErrors).validateAndCorrect();
-
-        if (!validationErrors.isEmpty()) {
-            throw new CertificateValidationException(validationErrors);
-        }
+    if (!validationErrors.isEmpty()) {
+      throw new CertificateValidationException(validationErrors);
     }
+  }
 }

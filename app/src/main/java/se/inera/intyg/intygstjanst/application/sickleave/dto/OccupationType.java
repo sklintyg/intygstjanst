@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,32 +16,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package se.inera.intyg.intygstjanst.application.sickleave.dto;
 
 public enum OccupationType {
+  NUVARANDE_ARBETE("Nuvarande arbete"),
+  ARBETSSOKANDE("Arbetssökande"),
+  FORALDRALEDIG("Föräldraledighet"),
+  STUDIER("Studier");
 
-    NUVARANDE_ARBETE("Nuvarande arbete"),
-    ARBETSSOKANDE("Arbetssökande"),
-    FORALDRALEDIG("Föräldraledighet"),
-    STUDIER("Studier");
+  private final String name;
 
-    private final String name;
+  OccupationType(String name) {
+    this.name = name;
+  }
 
-    OccupationType(String name) {
-        this.name = name;
+  public String getName() {
+    return name;
+  }
+
+  public static OccupationType fromId(String id) {
+    for (final var type : values()) {
+      if (type.toString().equals(id)) {
+        return type;
+      }
     }
-
-    public String getName() {
-        return name;
-    }
-
-    public static OccupationType fromId(String id) {
-        for (final var type : values()) {
-            if (type.toString().equals(id)) {
-                return type;
-            }
-        }
-        return null;
-    }
+    return null;
+  }
 }

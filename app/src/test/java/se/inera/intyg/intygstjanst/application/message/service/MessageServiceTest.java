@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -29,91 +29,88 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import se.inera.intyg.intygstjanst.application.message.service.MessageService;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Arende;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.ArendeRepository;
 
 @ExtendWith(MockitoExtension.class)
 class MessageServiceTest {
 
-    @Mock
-    private ArendeRepository messageRepository;
+  @Mock private ArendeRepository messageRepository;
 
-    @InjectMocks
-    private MessageService messageServiceImpl;
+  @InjectMocks private MessageService messageServiceImpl;
 
-    @Test
-    void testFindMessagesForCertificateIdFoundOne() {
-        final var certificateId = "certificateId";
-        final var messageId = "messageId";
-        final var messageContent = "messageContent";
-        final var subject = "subject";
-        final var logicalAddress = "logicalAddress";
-        final var timestamp = LocalDateTime.now();
+  @Test
+  void testFindMessagesForCertificateIdFoundOne() {
+    final var certificateId = "certificateId";
+    final var messageId = "messageId";
+    final var messageContent = "messageContent";
+    final var subject = "subject";
+    final var logicalAddress = "logicalAddress";
+    final var timestamp = LocalDateTime.now();
 
-        final var messages = new ArrayList<Arende>();
-        final var message = new Arende();
-        message.setIntygsId(certificateId);
-        message.setMeddelandeId(messageId);
-        message.setMeddelande(messageContent);
-        message.setAmne(subject);
-        message.setLogiskAdressmottagare(logicalAddress);
-        message.setTimeStamp(timestamp);
-        messages.add(message);
+    final var messages = new ArrayList<Arende>();
+    final var message = new Arende();
+    message.setIntygsId(certificateId);
+    message.setMeddelandeId(messageId);
+    message.setMeddelande(messageContent);
+    message.setAmne(subject);
+    message.setLogiskAdressmottagare(logicalAddress);
+    message.setTimeStamp(timestamp);
+    messages.add(message);
 
-        doReturn(messages).when(messageRepository).findByIntygsId(certificateId);
+    doReturn(messages).when(messageRepository).findByIntygsId(certificateId);
 
-        final var actualMessages = messageServiceImpl.findMessagesByCertificateId(certificateId);
+    final var actualMessages = messageServiceImpl.findMessagesByCertificateId(certificateId);
 
-        assertNotNull(actualMessages);
-        assertEquals(messages.size(), actualMessages.size());
-        assertEquals(certificateId, actualMessages.getFirst().getCertificateId());
-        assertEquals(messageId, actualMessages.getFirst().getMessageId());
-        assertEquals(messageContent, actualMessages.getFirst().getMessageContent());
-        assertEquals(subject, actualMessages.getFirst().getSubject());
-        assertEquals(logicalAddress, actualMessages.getFirst().getLogicalAddress());
-        assertEquals(timestamp, actualMessages.getFirst().getTimestamp());
+    assertNotNull(actualMessages);
+    assertEquals(messages.size(), actualMessages.size());
+    assertEquals(certificateId, actualMessages.getFirst().getCertificateId());
+    assertEquals(messageId, actualMessages.getFirst().getMessageId());
+    assertEquals(messageContent, actualMessages.getFirst().getMessageContent());
+    assertEquals(subject, actualMessages.getFirst().getSubject());
+    assertEquals(logicalAddress, actualMessages.getFirst().getLogicalAddress());
+    assertEquals(timestamp, actualMessages.getFirst().getTimestamp());
+  }
+
+  @Test
+  void testFindMessagesForCertificateIdFoundNone() {
+    final var certificateId = "certificateId";
+    final var messages = new ArrayList<Arende>();
+
+    doReturn(messages).when(messageRepository).findByIntygsId(certificateId);
+
+    final var actualMessages = messageServiceImpl.findMessagesByCertificateId(certificateId);
+
+    assertNotNull(actualMessages);
+    assertEquals(messages.size(), actualMessages.size());
+  }
+
+  @Test
+  void testFindMessagesForCertificateIdFoundMany() {
+    final var certificateId = "certificateId";
+    final var messageId = "messageId";
+    final var messageContent = "messageContent";
+    final var subject = "subject";
+    final var logicalAddress = "logicalAddress";
+    final var timestamp = LocalDateTime.now();
+
+    final var messages = new ArrayList<Arende>();
+    for (var i = 0; i < 5; i++) {
+      final var message = new Arende();
+      message.setIntygsId(certificateId);
+      message.setMeddelandeId(messageId);
+      message.setMeddelande(messageContent);
+      message.setAmne(subject);
+      message.setLogiskAdressmottagare(logicalAddress);
+      message.setTimeStamp(timestamp);
+      messages.add(message);
     }
 
-    @Test
-    void testFindMessagesForCertificateIdFoundNone() {
-        final var certificateId = "certificateId";
-        final var messages = new ArrayList<Arende>();
+    doReturn(messages).when(messageRepository).findByIntygsId(certificateId);
 
-        doReturn(messages).when(messageRepository).findByIntygsId(certificateId);
+    final var actualMessages = messageServiceImpl.findMessagesByCertificateId(certificateId);
 
-        final var actualMessages = messageServiceImpl.findMessagesByCertificateId(certificateId);
-
-        assertNotNull(actualMessages);
-        assertEquals(messages.size(), actualMessages.size());
-    }
-
-    @Test
-    void testFindMessagesForCertificateIdFoundMany() {
-        final var certificateId = "certificateId";
-        final var messageId = "messageId";
-        final var messageContent = "messageContent";
-        final var subject = "subject";
-        final var logicalAddress = "logicalAddress";
-        final var timestamp = LocalDateTime.now();
-
-        final var messages = new ArrayList<Arende>();
-        for (var i = 0; i < 5; i++) {
-            final var message = new Arende();
-            message.setIntygsId(certificateId);
-            message.setMeddelandeId(messageId);
-            message.setMeddelande(messageContent);
-            message.setAmne(subject);
-            message.setLogiskAdressmottagare(logicalAddress);
-            message.setTimeStamp(timestamp);
-            messages.add(message);
-        }
-
-        doReturn(messages).when(messageRepository).findByIntygsId(certificateId);
-
-        final var actualMessages = messageServiceImpl.findMessagesByCertificateId(certificateId);
-
-        assertNotNull(actualMessages);
-        assertEquals(messages.size(), actualMessages.size());
-    }
+    assertNotNull(actualMessages);
+    assertEquals(messages.size(), actualMessages.size());
+  }
 }

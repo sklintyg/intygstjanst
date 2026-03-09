@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package se.inera.intyg.intygstjanst.application.event.validator;
 
 import lombok.extern.slf4j.Slf4j;
@@ -26,22 +25,22 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class CertificateEventValidator {
 
-    private static final String MESSAGE_SENT = "message-sent";
+  private static final String MESSAGE_SENT = "message-sent";
 
-    public boolean validate(String eventType, String certificateId, String messageId) {
-        if (eventType == null || eventType.isBlank()) {
-            log.warn("Missing required parameter 'eventType'.");
-            return false;
-        }
-        if (certificateId == null || certificateId.isBlank()) {
-            log.warn("Missing required parameter 'certificateId'.");
-            return false;
-        }
-        if (eventType.equals(MESSAGE_SENT) && (messageId == null || messageId.isBlank())) {
-            log.warn("Missing required parameter 'messageId'.");
-            return false;
-        }
-
-        return true;
+  public boolean validate(String eventType, String certificateId, String messageId) {
+    if (eventType == null || eventType.isBlank()) {
+      log.warn("Missing required parameter 'eventType'.");
+      return false;
     }
+    if (certificateId == null || certificateId.isBlank()) {
+      log.warn("Missing required parameter 'certificateId'.");
+      return false;
+    }
+    if (eventType.equals(MESSAGE_SENT) && (messageId == null || messageId.isBlank())) {
+      log.warn("Missing required parameter 'messageId'.");
+      return false;
+    }
+
+    return true;
+  }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -33,48 +33,50 @@ import se.inera.intyg.intygstjanst.infrastructure.csintegration.dto.ExportCertif
 @NoArgsConstructor
 public class CertificateExportPageDTO {
 
-    private String careProviderId;
-    private int count;
-    private long total;
-    private long totalRevoked;
-    private List<CertificateXmlDTO> certificateXmls;
+  private String careProviderId;
+  private int count;
+  private long total;
+  private long totalRevoked;
+  private List<CertificateXmlDTO> certificateXmls;
 
-    public static CertificateExportPageDTO of(String careProviderId, int count, long total, long totalRevoked,
-        List<CertificateXmlDTO> certificateXmls) {
-        return new CertificateExportPageDTO(careProviderId, count, total, totalRevoked, certificateXmls);
+  public static CertificateExportPageDTO of(
+      String careProviderId,
+      int count,
+      long total,
+      long totalRevoked,
+      List<CertificateXmlDTO> certificateXmls) {
+    return new CertificateExportPageDTO(
+        careProviderId, count, total, totalRevoked, certificateXmls);
+  }
+
+  public void updateCertificateXmls(List<ExportCertificateInternalResponseDTO> exports) {
+    if (exports == null || exports.isEmpty()) {
+      return;
     }
 
-    public void updateCertificateXmls(List<ExportCertificateInternalResponseDTO> exports) {
-        if (exports == null || exports.isEmpty()) {
-            return;
-        }
+    final var certificateXmlDTOS = exports.stream().map(buildCertificateXmlDTO()).toList();
 
-        final var certificateXmlDTOS = exports.stream()
-            .map(buildCertificateXmlDTO())
-            .toList();
+    this.certificateXmls =
+        Stream.concat(certificateXmlDTOS.stream(), this.certificateXmls.stream()).toList();
+    this.count = certificateXmlDTOS.size();
+  }
 
-        this.certificateXmls = Stream.concat(certificateXmlDTOS.stream(), this.certificateXmls.stream()).toList();
-        this.count = certificateXmlDTOS.size();
-    }
+  private Function<ExportCertificateInternalResponseDTO, CertificateXmlDTO>
+      buildCertificateXmlDTO() {
+    return export ->
+        CertificateXmlDTO.of(
+            export.getCertificateId(), export.isRevoked(), decodeXml(export.getXml()));
+  }
 
-    private Function<ExportCertificateInternalResponseDTO, CertificateXmlDTO> buildCertificateXmlDTO() {
-        return export ->
-            CertificateXmlDTO.of(
-                export.getCertificateId(),
-                export.isRevoked(),
-                decodeXml(export.getXml())
-            );
-    }
+  private String decodeXml(String xmlBase64Encoded) {
+    return new String(Base64.getDecoder().decode(xmlBase64Encoded), StandardCharsets.UTF_8);
+  }
 
-    private String decodeXml(String xmlBase64Encoded) {
-        return new String(Base64.getDecoder().decode(xmlBase64Encoded), StandardCharsets.UTF_8);
-    }
+  public void updateTotal(long totalCertificates) {
+    this.total += totalCertificates;
+  }
 
-    public void updateTotal(long totalCertificates) {
-        this.total += totalCertificates;
-    }
-
-    public void updateRevoked(long totalRevokedCertificates) {
-        this.totalRevoked += totalRevokedCertificates;
-    }
+  public void updateRevoked(long totalRevokedCertificates) {
+    this.totalRevoked += totalRevokedCertificates;
+  }
 }

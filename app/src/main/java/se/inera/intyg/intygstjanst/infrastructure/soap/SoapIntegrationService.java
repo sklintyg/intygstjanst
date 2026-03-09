@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package se.inera.intyg.intygstjanst.infrastructure.soap;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,54 +44,64 @@ import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.S
 @Service
 public class SoapIntegrationService {
 
+  @Autowired private IntygModuleRegistry moduleRegistry;
 
-    @Autowired
-    private IntygModuleRegistry moduleRegistry;
+  @Autowired
+  @Qualifier("revokeCertificateClient") private RevokeCertificateResponderInterface revokeCertificateResponder;
 
-    @Autowired
-    @Qualifier("revokeCertificateClient")
-    private RevokeCertificateResponderInterface revokeCertificateResponder;
+  @Autowired
+  @Qualifier("revokeMedicalCertificateClient") private RevokeMedicalCertificateResponderInterface revokeMedicalCertificateResponder;
 
-    @Autowired
-    @Qualifier("revokeMedicalCertificateClient")
-    private RevokeMedicalCertificateResponderInterface revokeMedicalCertificateResponder;
+  @Autowired
+  @Qualifier("sendMessageToRecipientClient") private SendMessageToRecipientResponderInterface sendMessageToRecipientResponder;
 
-    @Autowired
-    @Qualifier("sendMessageToRecipientClient")
-    private SendMessageToRecipientResponderInterface sendMessageToRecipientResponder;
+  @Autowired
+  @Qualifier("sendMessageToCareClient") private SendMessageToCareResponderInterface sendMessageToCareResponder;
 
-    @Autowired
-    @Qualifier("sendMessageToCareClient")
-    private SendMessageToCareResponderInterface sendMessageToCareResponder;
+  @PerformanceLogging(
+      eventAction = "send-certificate-to-recipient",
+      eventType = MdcLogConstants.EVENT_TYPE_CHANGE)
+  public void sendCertificateToRecipient(
+      Certificate certificate, String logicalAddress, String recipientId)
+      throws ModuleNotFoundException, ModuleException {
+    moduleRegistry
+        .getModuleApi(certificate.getType(), certificate.getTypeVersion())
+        .sendCertificateToRecipient(
+            certificate.getOriginalCertificate().getDocument(), logicalAddress, recipientId);
+  }
 
-    @PerformanceLogging(eventAction = "send-certificate-to-recipient", eventType = MdcLogConstants.EVENT_TYPE_CHANGE)
-    public void sendCertificateToRecipient(Certificate certificate, String logicalAddress, String recipientId)
-        throws ModuleNotFoundException, ModuleException {
-        moduleRegistry.getModuleApi(certificate.getType(), certificate.getTypeVersion())
-            .sendCertificateToRecipient(certificate.getOriginalCertificate().getDocument(), logicalAddress, recipientId);
-    }
+  @PerformanceLogging(
+      eventAction = "revoke-certificate-notify-recipient",
+      eventType = MdcLogConstants.EVENT_TYPE_CHANGE)
+  public RevokeCertificateResponseType revokeCertificate(
+      String logicalAddress, RevokeCertificateType revokeCertificateType) {
+    return revokeCertificateResponder.revokeCertificate(logicalAddress, revokeCertificateType);
+  }
 
-    @PerformanceLogging(eventAction = "revoke-certificate-notify-recipient", eventType = MdcLogConstants.EVENT_TYPE_CHANGE)
-    public RevokeCertificateResponseType revokeCertificate(String logicalAddress, RevokeCertificateType revokeCertificateType) {
-        return revokeCertificateResponder.revokeCertificate(logicalAddress, revokeCertificateType);
-    }
+  @PerformanceLogging(
+      eventAction = "revoke-medical-certificate-notify-recipient",
+      eventType = MdcLogConstants.EVENT_TYPE_CHANGE)
+  public RevokeMedicalCertificateResponseType revokeMedicalCertificate(
+      AttributedURIType logicalAddress,
+      RevokeMedicalCertificateRequestType revokeMedicalCertificateRequestType) {
+    return revokeMedicalCertificateResponder.revokeMedicalCertificate(
+        logicalAddress, revokeMedicalCertificateRequestType);
+  }
 
-    @PerformanceLogging(eventAction = "revoke-medical-certificate-notify-recipient", eventType = MdcLogConstants.EVENT_TYPE_CHANGE)
-    public RevokeMedicalCertificateResponseType revokeMedicalCertificate(AttributedURIType logicalAddress,
-        RevokeMedicalCertificateRequestType revokeMedicalCertificateRequestType) {
-        return revokeMedicalCertificateResponder.revokeMedicalCertificate(logicalAddress, revokeMedicalCertificateRequestType);
-    }
+  @PerformanceLogging(
+      eventAction = "send-message-to-recipient",
+      eventType = MdcLogConstants.EVENT_TYPE_CHANGE)
+  public SendMessageToRecipientResponseType sendMessageToRecipient(
+      String logicalAddress, SendMessageToRecipientType sendMessageToRecipientType) {
+    return sendMessageToRecipientResponder.sendMessageToRecipient(
+        logicalAddress, sendMessageToRecipientType);
+  }
 
-    @PerformanceLogging(eventAction = "send-message-to-recipient", eventType = MdcLogConstants.EVENT_TYPE_CHANGE)
-    public SendMessageToRecipientResponseType sendMessageToRecipient(String logicalAddress,
-        SendMessageToRecipientType sendMessageToRecipientType) {
-        return sendMessageToRecipientResponder.sendMessageToRecipient(logicalAddress, sendMessageToRecipientType);
-    }
-
-    @PerformanceLogging(eventAction = "send-message-to-care", eventType = MdcLogConstants.EVENT_TYPE_CHANGE)
-    public SendMessageToCareResponseType sendMessageToCare(String logicalAddress,
-        SendMessageToCareType sendMessageToCareType) {
-        return sendMessageToCareResponder.sendMessageToCare(logicalAddress, sendMessageToCareType);
-    }
-
+  @PerformanceLogging(
+      eventAction = "send-message-to-care",
+      eventType = MdcLogConstants.EVENT_TYPE_CHANGE)
+  public SendMessageToCareResponseType sendMessageToCare(
+      String logicalAddress, SendMessageToCareType sendMessageToCareType) {
+    return sendMessageToCareResponder.sendMessageToCare(logicalAddress, sendMessageToCareType);
+  }
 }

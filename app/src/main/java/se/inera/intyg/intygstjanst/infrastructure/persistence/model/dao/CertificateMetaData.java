@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -30,84 +30,87 @@ import jakarta.persistence.Table;
 @Table(name = "CERTIFICATE_METADATA")
 public class CertificateMetaData {
 
-    @Id
-    @Column(name = "CERTIFICATE_ID")
-    private String certificateId;
+  @Id
+  @Column(name = "CERTIFICATE_ID")
+  private String certificateId;
 
-    @Column(name = "DOCTOR_ID")
-    private String doctorId;
+  @Column(name = "DOCTOR_ID")
+  private String doctorId;
 
-    @Column(name = "DOCTOR_NAME")
-    private String doctorName;
+  @Column(name = "DOCTOR_NAME")
+  private String doctorName;
 
-    @Column(name = "IS_REVOKED")
-    private boolean isRevoked;
+  @Column(name = "IS_REVOKED")
+  private boolean isRevoked;
 
-    @Column(name = "DIAGNOSES")
-    private String diagnoses;
+  @Column(name = "DIAGNOSES")
+  private String diagnoses;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CERTIFICATE_ID")
-    private Certificate certificate;
+  @OneToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "CERTIFICATE_ID")
+  private Certificate certificate;
 
+  public CertificateMetaData() {}
 
-    public CertificateMetaData() {
-    }
+  public CertificateMetaData(
+      Certificate certificate,
+      String doctorId,
+      String doctorName,
+      boolean isRevoked,
+      String diagnoses) {
+    this.certificateId = certificate.getId();
+    this.doctorId = doctorId;
+    this.doctorName = doctorName;
+    this.isRevoked = isRevoked;
+    this.certificate = certificate;
+    this.diagnoses = diagnoses;
+  }
 
-    public CertificateMetaData(Certificate certificate, String doctorId, String doctorName, boolean isRevoked, String diagnoses) {
-        this.certificateId = certificate.getId();
-        this.doctorId = doctorId;
-        this.doctorName = doctorName;
-        this.isRevoked = isRevoked;
-        this.certificate = certificate;
-        this.diagnoses = diagnoses;
-    }
+  public String getCertificateId() {
+    return certificateId;
+  }
 
-    public String getCertificateId() {
-        return certificateId;
-    }
+  public void setCertificateId(String certificateId) {
+    this.certificateId = certificateId;
+  }
 
-    public void setCertificateId(String certificateId) {
-        this.certificateId = certificateId;
-    }
+  public String getDoctorId() {
+    return doctorId;
+  }
 
-    public String getDoctorId() {
-        return doctorId;
-    }
+  public void setDoctorId(String doctorId) {
+    this.doctorId = doctorId;
+  }
 
-    public void setDoctorId(String doctorId) {
-        this.doctorId = doctorId;
-    }
+  public String getDoctorName() {
+    return doctorName;
+  }
 
-    public String getDoctorName() {
-        return doctorName;
-    }
+  public void setDoctorName(String doctorName) {
+    this.doctorName = doctorName;
+  }
 
-    public void setDoctorName(String doctorName) {
-        this.doctorName = doctorName;
-    }
+  public boolean isRevoked() {
+    return isRevoked;
+  }
 
-    public boolean isRevoked() {
-        return isRevoked;
-    }
+  public void setRevoked(boolean revoked) {
+    isRevoked = revoked;
+  }
 
-    public void setRevoked(boolean revoked) {
-        isRevoked = revoked;
-    }
+  public Certificate getCertificate() {
+    return certificate;
+  }
 
-    public Certificate getCertificate() {
-        return certificate;
-    }
+  public void setCertificate(Certificate certificate) {
+    this.certificate = certificate;
+  }
 
-    public void setCertificate(Certificate certificate) {
-        this.certificate = certificate;
-    }
+  public String getDiagnoses() {
+    return diagnoses;
+  }
 
-    public String getDiagnoses() {
-        return diagnoses;
-    }
-
-    public void setDiagnoses(String diagnoses) {
-        this.diagnoses = diagnoses;
-    }
+  public void setDiagnoses(String diagnoses) {
+    this.diagnoses = diagnoses;
+  }
 }

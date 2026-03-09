@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package se.inera.intyg.intygstjanst.application.event.dto;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -31,14 +30,11 @@ import se.inera.intyg.intygstjanst.application.event.dto.RevokedInformationDTO.R
 @Builder
 public class RevokedInformationDTO {
 
-    String message;
-    String reason;
-    LocalDateTime revokedAt;
-    StaffDTO revokedBy;
+  String message;
+  String reason;
+  LocalDateTime revokedAt;
+  StaffDTO revokedBy;
 
-    @JsonPOJOBuilder(withPrefix = "")
-    public static class RevokedInformationDTOBuilder {
-
-    }
-
+  @JsonPOJOBuilder(withPrefix = "")
+  public static class RevokedInformationDTOBuilder {}
 }

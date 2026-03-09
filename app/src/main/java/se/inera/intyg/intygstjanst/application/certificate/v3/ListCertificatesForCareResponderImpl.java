@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -32,13 +32,13 @@ import se.inera.intyg.common.support.modules.registry.ModuleNotFoundException;
 import se.inera.intyg.common.support.modules.support.api.CertificateHolder;
 import se.inera.intyg.common.support.modules.support.api.ModuleApi;
 import se.inera.intyg.common.support.modules.support.api.exception.ModuleException;
+import se.inera.intyg.intygstjanst.application.certificate.converter.ConverterUtil;
+import se.inera.intyg.intygstjanst.application.certificate.service.CertificateService;
+import se.inera.intyg.intygstjanst.application.certificate.util.CertificateStateFilterUtil;
 import se.inera.intyg.intygstjanst.infrastructure.logging.MdcLogConstants;
+import se.inera.intyg.intygstjanst.infrastructure.logging.MonitoringLogService;
 import se.inera.intyg.intygstjanst.infrastructure.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Certificate;
-import se.inera.intyg.intygstjanst.application.certificate.converter.ConverterUtil;
-import se.inera.intyg.intygstjanst.application.certificate.util.CertificateStateFilterUtil;
-import se.inera.intyg.intygstjanst.application.certificate.service.CertificateService;
-import se.inera.intyg.intygstjanst.infrastructure.logging.MonitoringLogService;
 import se.inera.intyg.schemas.contract.Personnummer;
 import se.riv.clinicalprocess.healthcond.certificate.listcertificatesforcare.v3.ListCertificatesForCareResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.listcertificatesforcare.v3.ListCertificatesForCareResponseType;
@@ -49,68 +49,80 @@ import se.riv.clinicalprocess.healthcond.certificate.v3.Intyg;
 
 @Service
 @SchemaValidation
-public class ListCertificatesForCareResponderImpl implements ListCertificatesForCareResponderInterface {
+public class ListCertificatesForCareResponderImpl
+    implements ListCertificatesForCareResponderInterface {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ListCertificatesForCareResponderImpl.class);
+  private static final Logger LOGGER =
+      LoggerFactory.getLogger(ListCertificatesForCareResponderImpl.class);
 
-    private static final String HSVARD_PARTKOD = "HSVARD";
+  private static final String HSVARD_PARTKOD = "HSVARD";
 
-    @Autowired
-    private CertificateService certificateService;
+  @Autowired private CertificateService certificateService;
 
-    @Autowired
-    private MonitoringLogService monitoringLogService;
+  @Autowired private MonitoringLogService monitoringLogService;
 
-    @Autowired
-    private IntygModuleRegistryImpl moduleRegistry;
+  @Autowired private IntygModuleRegistryImpl moduleRegistry;
 
-    @Override
+  @Override
+  @PerformanceLogging(
+      eventAction = "list-certificate",
+      eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
+  public ListCertificatesForCareResponseType listCertificatesForCare(
+      String logicalAddress, ListCertificatesForCareType parameters) {
+    ListCertificatesForCareResponseType response = new ListCertificatesForCareResponseType();
+    response.setIntygsLista(new ListaType());
+    response.getIntygsLista().getIntyg();
 
-    @PerformanceLogging(eventAction = "list-certificate", eventType = MdcLogConstants.EVENT_TYPE_ACCESSED)
-    public ListCertificatesForCareResponseType listCertificatesForCare(String logicalAddress, ListCertificatesForCareType parameters) {
-        ListCertificatesForCareResponseType response = new ListCertificatesForCareResponseType();
-        response.setIntygsLista(new ListaType());
-        response.getIntygsLista().getIntyg();
+    final Optional<Personnummer> personnummer =
+        Personnummer.createPersonnummer(parameters.getPersonId().getExtension());
 
-        final Optional<Personnummer> personnummer =
-            Personnummer.createPersonnummer(parameters.getPersonId().getExtension());
+    List<Certificate> certificates =
+        certificateService.listCertificatesForCare(
+            personnummer.orElse(null),
+            parameters.getEnhetsId().stream()
+                .map(HsaId::getExtension)
+                .collect(Collectors.toList()));
 
-        List<Certificate> certificates = certificateService.listCertificatesForCare(personnummer.orElse(null),
-            parameters.getEnhetsId().stream().map(HsaId::getExtension).collect(Collectors.toList()));
-
-        for (Certificate certificate : certificates) {
-            // If the certificate is deleted by the care giver it is not returned.
-            // Note that both revoked and archived certificates are returned
-            if (!certificate.isDeletedByCareGiver()) {
-                Intyg intyg = convert(certificate);
-                if (intyg != null) {
-                    // Add all certificates that were successfully converted.
-                    // We are trying to provide callee with as much data as possible.
-                    response.getIntygsLista().getIntyg().add(intyg);
-                }
-            }
+    for (Certificate certificate : certificates) {
+      // If the certificate is deleted by the care giver it is not returned.
+      // Note that both revoked and archived certificates are returned
+      if (!certificate.isDeletedByCareGiver()) {
+        Intyg intyg = convert(certificate);
+        if (intyg != null) {
+          // Add all certificates that were successfully converted.
+          // We are trying to provide callee with as much data as possible.
+          response.getIntygsLista().getIntyg().add(intyg);
         }
-
-        monitoringLogService.logCertificateListedByCare(personnummer.orElse(null));
-        return response;
+      }
     }
 
-    private Intyg convert(Certificate certificate) {
-        try {
-            CertificateHolder certificateHolder = ConverterUtil.toCertificateHolder(certificate);
-            ModuleApi moduleApi = moduleRegistry.getModuleApi(certificateHolder.getType(), certificateHolder.getTypeVersion());
-            // Unified handling of all certificate types, maintaining a simple module api
-            Intyg intyg = moduleApi.getIntygFromUtlatande(moduleApi.getUtlatandeFromXml(certificateHolder.getOriginalCertificate()));
-            intyg.getStatus().addAll(CertificateStateHolderConverter.toIntygsStatusType(certificateHolder.getCertificateStates().stream()
-                .filter(ch -> CertificateStateFilterUtil.filter(ch, HSVARD_PARTKOD))
-                .collect(Collectors.toList())));
-            return intyg;
+    monitoringLogService.logCertificateListedByCare(personnummer.orElse(null));
+    return response;
+  }
 
-        } catch (ModuleNotFoundException | ModuleException e) {
-            LOGGER.error(e.getMessage());
-        }
+  private Intyg convert(Certificate certificate) {
+    try {
+      CertificateHolder certificateHolder = ConverterUtil.toCertificateHolder(certificate);
+      ModuleApi moduleApi =
+          moduleRegistry.getModuleApi(
+              certificateHolder.getType(), certificateHolder.getTypeVersion());
+      // Unified handling of all certificate types, maintaining a simple module api
+      Intyg intyg =
+          moduleApi.getIntygFromUtlatande(
+              moduleApi.getUtlatandeFromXml(certificateHolder.getOriginalCertificate()));
+      intyg
+          .getStatus()
+          .addAll(
+              CertificateStateHolderConverter.toIntygsStatusType(
+                  certificateHolder.getCertificateStates().stream()
+                      .filter(ch -> CertificateStateFilterUtil.filter(ch, HSVARD_PARTKOD))
+                      .collect(Collectors.toList())));
+      return intyg;
 
-        return null;
+    } catch (ModuleNotFoundException | ModuleException e) {
+      LOGGER.error(e.getMessage());
     }
 
+    return null;
+  }
 }

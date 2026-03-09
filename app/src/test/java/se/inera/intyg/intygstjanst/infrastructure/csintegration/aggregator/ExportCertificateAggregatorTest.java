@@ -1,3 +1,21 @@
+/*
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
+ *
+ * This file is part of sklintyg (https://github.com/sklintyg).
+ *
+ * sklintyg is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * sklintyg is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package se.inera.intyg.intygstjanst.infrastructure.csintegration.aggregator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -21,90 +39,93 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
+import se.inera.intyg.intygstjanst.application.export.dto.CertificateExportPageDTO;
+import se.inera.intyg.intygstjanst.infrastructure.csintegration.ExportCertificateFromCS;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Certificate;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.CertificateMetaData;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.CertificateRepository;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.OriginalCertificate;
-import se.inera.intyg.intygstjanst.infrastructure.csintegration.ExportCertificateFromCS;
-import se.inera.intyg.intygstjanst.application.export.dto.CertificateExportPageDTO;
 
 @ExtendWith(MockitoExtension.class)
 class ExportCertificateAggregatorTest {
 
-    @Mock
-    ExportCertificateFromCS exportCertificateFromCS;
-    @Mock
-    private CertificateRepository certificateRepository;
-    @InjectMocks
-    private ExportCertificateAggregator exportCertificateAggregator;
+  @Mock ExportCertificateFromCS exportCertificateFromCS;
+  @Mock private CertificateRepository certificateRepository;
+  @InjectMocks private ExportCertificateAggregator exportCertificateAggregator;
 
+  private static final String CARE_PROVIDER_ID = "CARE_PROVIDER_ID";
+  private static final int COLLECTED = 0;
+  private static final int EXPORT_SIZE = 2;
+  private static final String CERTIFICATE_START_TAG = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
 
-    private static final String CARE_PROVIDER_ID = "CARE_PROVIDER_ID";
-    private static final int COLLECTED = 0;
-    private static final int EXPORT_SIZE = 2;
-    private static final String CERTIFICATE_START_TAG = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
+  private static final Pageable EXPORT_PAGEABLE =
+      PageRequest.of(COLLECTED, EXPORT_SIZE, Sort.by(Direction.ASC, "signedDate", "id"));
 
-    private static final Pageable EXPORT_PAGEABLE = PageRequest.of(COLLECTED, EXPORT_SIZE, Sort.by(Direction.ASC, "signedDate", "id"));
+  @Test
+  void shallIncludeCertificatesFromCS() {
+    when(certificateRepository.findTotalRevokedForCareProvider(any(String.class))).thenReturn(1L);
+    when(certificateRepository.findCertificatesForCareProvider(
+            eq(CARE_PROVIDER_ID), any(Pageable.class)))
+        .thenReturn(getCertificatePage());
 
+    final var expectedResult =
+        CertificateExportPageDTO.of(CARE_PROVIDER_ID, EXPORT_SIZE, 3, 1, Collections.emptyList());
 
-    @Test
-    void shallIncludeCertificatesFromCS() {
-        when(certificateRepository.findTotalRevokedForCareProvider(any(String.class))).thenReturn(1L);
-        when(certificateRepository.findCertificatesForCareProvider(eq(CARE_PROVIDER_ID), any(Pageable.class)))
-            .thenReturn(getCertificatePage());
+    when(exportCertificateFromCS.addCertificatesFromCS(
+            any(CertificateExportPageDTO.class),
+            eq(CARE_PROVIDER_ID),
+            eq(COLLECTED),
+            eq(EXPORT_SIZE)))
+        .thenReturn(expectedResult);
 
-        final var expectedResult = CertificateExportPageDTO.of(
-            CARE_PROVIDER_ID,
-            EXPORT_SIZE,
-            3,
-            1,
-            Collections.emptyList()
-        );
+    final var result =
+        exportCertificateAggregator.exportPage(CARE_PROVIDER_ID, COLLECTED, EXPORT_SIZE);
+    assertEquals(expectedResult, result);
+  }
 
-        when(exportCertificateFromCS.addCertificatesFromCS(any(CertificateExportPageDTO.class), eq(CARE_PROVIDER_ID), eq(COLLECTED),
-            eq(EXPORT_SIZE))).thenReturn(expectedResult);
+  @Test
+  void shallNotIncludeCertificateXmlsIfAllCertificatesFromITIsCollected() {
+    final var argumentCaptor = ArgumentCaptor.forClass(CertificateExportPageDTO.class);
+    final var certificatePage = getCertificatePage();
 
-        final var result = exportCertificateAggregator.exportPage(CARE_PROVIDER_ID, COLLECTED, EXPORT_SIZE);
-        assertEquals(expectedResult, result);
-    }
-
-    @Test
-    void shallNotIncludeCertificateXmlsIfAllCertificatesFromITIsCollected() {
-        final var argumentCaptor = ArgumentCaptor.forClass(CertificateExportPageDTO.class);
-        final var certificatePage = getCertificatePage();
-
-        when(certificateRepository.findTotalRevokedForCareProvider(any(String.class))).thenReturn(1L);
-        when(certificateRepository.findCertificatesForCareProvider(eq(CARE_PROVIDER_ID), any(Pageable.class)))
-            .thenReturn(certificatePage);
-        when(exportCertificateFromCS.addCertificatesFromCS(argumentCaptor.capture(), eq(CARE_PROVIDER_ID),
-            eq(certificatePage.getNumberOfElements()), eq(EXPORT_SIZE))).thenReturn(
+    when(certificateRepository.findTotalRevokedForCareProvider(any(String.class))).thenReturn(1L);
+    when(certificateRepository.findCertificatesForCareProvider(
+            eq(CARE_PROVIDER_ID), any(Pageable.class)))
+        .thenReturn(certificatePage);
+    when(exportCertificateFromCS.addCertificatesFromCS(
+            argumentCaptor.capture(),
+            eq(CARE_PROVIDER_ID),
+            eq(certificatePage.getNumberOfElements()),
+            eq(EXPORT_SIZE)))
+        .thenReturn(
             CertificateExportPageDTO.of(CARE_PROVIDER_ID, 0, 3, 1, Collections.emptyList()));
 
-        exportCertificateAggregator.exportPage(CARE_PROVIDER_ID, certificatePage.getNumberOfElements(), EXPORT_SIZE);
+    exportCertificateAggregator.exportPage(
+        CARE_PROVIDER_ID, certificatePage.getNumberOfElements(), EXPORT_SIZE);
 
-        assertTrue(argumentCaptor.getValue().getCertificateXmls().isEmpty());
-    }
+    assertTrue(argumentCaptor.getValue().getCertificateXmls().isEmpty());
+  }
 
-    private Page<Certificate> getCertificatePage() {
-        final var certificates = new ArrayList<Certificate>();
-        certificates.add(getCertificate("1", false));
-        certificates.add(getCertificate("2", true));
-        certificates.add(getCertificate("3", false));
-        return new PageImpl<>(certificates, EXPORT_PAGEABLE, 3);
-    }
+  private Page<Certificate> getCertificatePage() {
+    final var certificates = new ArrayList<Certificate>();
+    certificates.add(getCertificate("1", false));
+    certificates.add(getCertificate("2", true));
+    certificates.add(getCertificate("3", false));
+    return new PageImpl<>(certificates, EXPORT_PAGEABLE, 3);
+  }
 
-    private Certificate getCertificate(String id, boolean isRevoked) {
-        final var certificateMetaData = new CertificateMetaData();
-        certificateMetaData.setRevoked(isRevoked);
+  private Certificate getCertificate(String id, boolean isRevoked) {
+    final var certificateMetaData = new CertificateMetaData();
+    certificateMetaData.setRevoked(isRevoked);
 
-        final var originalCertificate = new OriginalCertificate();
-        originalCertificate.setDocument(CERTIFICATE_START_TAG);
+    final var originalCertificate = new OriginalCertificate();
+    originalCertificate.setDocument(CERTIFICATE_START_TAG);
 
-        final var certificate = new Certificate(id);
-        certificate.setCertificateMetaData(certificateMetaData);
-        certificate.setOriginalCertificate(originalCertificate);
-        certificate.setCareGiverId(CARE_PROVIDER_ID);
-        certificate.setSignedDate(LocalDateTime.now());
-        return certificate;
-    }
+    final var certificate = new Certificate(id);
+    certificate.setCertificateMetaData(certificateMetaData);
+    certificate.setOriginalCertificate(originalCertificate);
+    certificate.setCareGiverId(CARE_PROVIDER_ID);
+    certificate.setSignedDate(LocalDateTime.now());
+    return certificate;
+  }
 }

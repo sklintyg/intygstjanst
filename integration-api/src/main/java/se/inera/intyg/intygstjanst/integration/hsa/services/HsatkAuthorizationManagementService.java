@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -26,14 +26,13 @@ import se.inera.intyg.intygstjanst.integration.hsa.model.Result;
 
 public interface HsatkAuthorizationManagementService {
 
-    List<CredentialInformation> getCredentialInformationForPerson(
-        String personalIdentityNumber, String personHsaId, String profile);
+  List<CredentialInformation> getCredentialInformationForPerson(
+      String personalIdentityNumber, String personHsaId, String profile);
 
-    HospCredentialsForPerson getHospCredentialsForPersonResponseType(String personalIdentityNumber);
+  HospCredentialsForPerson getHospCredentialsForPersonResponseType(String personalIdentityNumber);
 
-    LocalDateTime getHospLastUpdate();
+  LocalDateTime getHospLastUpdate();
 
-    Result handleHospCertificationPersonResponseType(
-        String certificationId, String operation, String personalIdentityNumber, String reason);
-
+  Result handleHospCertificationPersonResponseType(
+      String certificationId, String operation, String personalIdentityNumber, String reason);
 }

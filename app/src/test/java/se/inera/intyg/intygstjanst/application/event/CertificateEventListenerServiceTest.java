@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package se.inera.intyg.intygstjanst.application.event;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -34,7 +33,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.client.RestClientException;
-import se.inera.intyg.intygstjanst.application.event.CertificateEventListenerService;
 import se.inera.intyg.intygstjanst.application.event.service.CertificateEventService;
 import se.inera.intyg.intygstjanst.application.event.validator.CertificateEventValidator;
 import se.inera.intyg.intygstjanst.infrastructure.logging.MdcHelper;
@@ -42,91 +40,107 @@ import se.inera.intyg.intygstjanst.infrastructure.logging.MdcHelper;
 @ExtendWith(MockitoExtension.class)
 class CertificateEventListenerServiceTest {
 
-    @Mock
-    private MdcHelper mdcHelper;
-    @Mock
-    private CertificateEventService certificateEventStatisticsService;
-    @Mock
-    private CertificateEventValidator certificateEventMessageValidator;
+  @Mock private MdcHelper mdcHelper;
+  @Mock private CertificateEventService certificateEventStatisticsService;
+  @Mock private CertificateEventValidator certificateEventMessageValidator;
 
-    @InjectMocks
-    private CertificateEventListenerService certificateEventListenerService;
+  @InjectMocks private CertificateEventListenerService certificateEventListenerService;
 
-    private static final String CERTIFICATE_ID = "certificateId";
-    private static final String MESSAGE_ID = "messageId";
-    private static final String EVENT_TYPE = "eventType";
-    private static final String EVENT_SENT = "certificate-sent";
-    private static final String EVENT_SIGNED = "certificate-signed";
-    private static final String EVENT_MESSAGE_SENT = "message-sent";
+  private static final String CERTIFICATE_ID = "certificateId";
+  private static final String MESSAGE_ID = "messageId";
+  private static final String EVENT_TYPE = "eventType";
+  private static final String EVENT_SENT = "certificate-sent";
+  private static final String EVENT_SIGNED = "certificate-signed";
+  private static final String EVENT_MESSAGE_SENT = "message-sent";
 
-    @Test
-    void shouldExitIfInputPropertiesDoNotValidate() {
-        final var message = new ActiveMQTextMessage();
-        certificateEventListenerService.processMessage(message);
-        verifyNoInteractions(certificateEventStatisticsService);
-    }
+  @Test
+  void shouldExitIfInputPropertiesDoNotValidate() {
+    final var message = new ActiveMQTextMessage();
+    certificateEventListenerService.processMessage(message);
+    verifyNoInteractions(certificateEventStatisticsService);
+  }
 
-    @Test
-    void shouldThrowIllegalStateExceptionWhenFalseResponseFromService() throws JMSException {
-        final var message = new ActiveMQTextMessage();
-        message.setStringProperty(EVENT_TYPE, EVENT_SIGNED);
-        message.setStringProperty(CERTIFICATE_ID, CERTIFICATE_ID);
+  @Test
+  void shouldThrowIllegalStateExceptionWhenFalseResponseFromService() throws JMSException {
+    final var message = new ActiveMQTextMessage();
+    message.setStringProperty(EVENT_TYPE, EVENT_SIGNED);
+    message.setStringProperty(CERTIFICATE_ID, CERTIFICATE_ID);
 
-        when(certificateEventMessageValidator.validate(anyString(), anyString(), nullable(String.class))).thenReturn(true);
-        when(certificateEventStatisticsService.processEvent(anyString(), anyString(), nullable(String.class))).thenReturn(false);
+    when(certificateEventMessageValidator.validate(
+            anyString(), anyString(), nullable(String.class)))
+        .thenReturn(true);
+    when(certificateEventStatisticsService.processEvent(
+            anyString(), anyString(), nullable(String.class)))
+        .thenReturn(false);
 
-        assertThrows(IllegalStateException.class, () -> certificateEventListenerService.processMessage(message));
-    }
+    assertThrows(
+        IllegalStateException.class, () -> certificateEventListenerService.processMessage(message));
+  }
 
-    @Test
-    void shouldThrowRestClientExceptionWhenRestClientExceptionFromService() throws JMSException {
-        final var message = new ActiveMQTextMessage();
-        message.setStringProperty(EVENT_TYPE, EVENT_SIGNED);
-        message.setStringProperty(CERTIFICATE_ID, CERTIFICATE_ID);
+  @Test
+  void shouldThrowRestClientExceptionWhenRestClientExceptionFromService() throws JMSException {
+    final var message = new ActiveMQTextMessage();
+    message.setStringProperty(EVENT_TYPE, EVENT_SIGNED);
+    message.setStringProperty(CERTIFICATE_ID, CERTIFICATE_ID);
 
-        when(certificateEventMessageValidator.validate(anyString(), anyString(), nullable(String.class))).thenReturn(true);
-        when(certificateEventStatisticsService.processEvent(anyString(), anyString(), nullable(String.class)))
-            .thenThrow(RestClientException.class);
+    when(certificateEventMessageValidator.validate(
+            anyString(), anyString(), nullable(String.class)))
+        .thenReturn(true);
+    when(certificateEventStatisticsService.processEvent(
+            anyString(), anyString(), nullable(String.class)))
+        .thenThrow(RestClientException.class);
 
-        assertThrows(RestClientException.class, () -> certificateEventListenerService.processMessage(message));
-    }
+    assertThrows(
+        RestClientException.class, () -> certificateEventListenerService.processMessage(message));
+  }
 
-    @Test
-    void shouldThrowIllegalStateExceptionWhenIllegalStateExceptionFromService() throws JMSException {
-        final var message = new ActiveMQTextMessage();
-        message.setStringProperty(EVENT_TYPE, EVENT_SENT);
-        message.setStringProperty(CERTIFICATE_ID, CERTIFICATE_ID);
+  @Test
+  void shouldThrowIllegalStateExceptionWhenIllegalStateExceptionFromService() throws JMSException {
+    final var message = new ActiveMQTextMessage();
+    message.setStringProperty(EVENT_TYPE, EVENT_SENT);
+    message.setStringProperty(CERTIFICATE_ID, CERTIFICATE_ID);
 
-        when(certificateEventMessageValidator.validate(anyString(), anyString(), nullable(String.class))).thenReturn(true);
-        when(certificateEventStatisticsService.processEvent(anyString(), anyString(), nullable(String.class)))
-            .thenThrow(IllegalStateException.class);
+    when(certificateEventMessageValidator.validate(
+            anyString(), anyString(), nullable(String.class)))
+        .thenReturn(true);
+    when(certificateEventStatisticsService.processEvent(
+            anyString(), anyString(), nullable(String.class)))
+        .thenThrow(IllegalStateException.class);
 
-        assertThrows(IllegalStateException.class, () -> certificateEventListenerService.processMessage(message));
-    }
+    assertThrows(
+        IllegalStateException.class, () -> certificateEventListenerService.processMessage(message));
+  }
 
-    @Test
-    void shouldNotThrowExceptionIfIllegalArgumentExceptionFromService() throws JMSException {
-        final var message = new ActiveMQTextMessage();
-        message.setStringProperty(EVENT_TYPE, EVENT_SIGNED);
-        message.setStringProperty(CERTIFICATE_ID, CERTIFICATE_ID);
-        message.setStringProperty(MESSAGE_ID, MESSAGE_ID);
+  @Test
+  void shouldNotThrowExceptionIfIllegalArgumentExceptionFromService() throws JMSException {
+    final var message = new ActiveMQTextMessage();
+    message.setStringProperty(EVENT_TYPE, EVENT_SIGNED);
+    message.setStringProperty(CERTIFICATE_ID, CERTIFICATE_ID);
+    message.setStringProperty(MESSAGE_ID, MESSAGE_ID);
 
-        when(certificateEventMessageValidator.validate(anyString(), anyString(), nullable(String.class))).thenReturn(true);
-        when(certificateEventStatisticsService.processEvent(anyString(), anyString(), nullable(String.class)))
-            .thenThrow(IllegalArgumentException.class);
+    when(certificateEventMessageValidator.validate(
+            anyString(), anyString(), nullable(String.class)))
+        .thenReturn(true);
+    when(certificateEventStatisticsService.processEvent(
+            anyString(), anyString(), nullable(String.class)))
+        .thenThrow(IllegalArgumentException.class);
 
-        assertDoesNotThrow(() -> certificateEventListenerService.processMessage(message));
-    }
+    assertDoesNotThrow(() -> certificateEventListenerService.processMessage(message));
+  }
 
-    @Test
-    void shouldNotThrowExceptionIfSuccessfulMessageDelivery() throws JMSException {
-        final var message = new ActiveMQTextMessage();
-        message.setStringProperty(EVENT_TYPE, EVENT_MESSAGE_SENT);
-        message.setStringProperty(CERTIFICATE_ID, CERTIFICATE_ID);
+  @Test
+  void shouldNotThrowExceptionIfSuccessfulMessageDelivery() throws JMSException {
+    final var message = new ActiveMQTextMessage();
+    message.setStringProperty(EVENT_TYPE, EVENT_MESSAGE_SENT);
+    message.setStringProperty(CERTIFICATE_ID, CERTIFICATE_ID);
 
-        when(certificateEventMessageValidator.validate(anyString(), anyString(), nullable(String.class))).thenReturn(true);
-        when(certificateEventStatisticsService.processEvent(anyString(), anyString(), nullable(String.class))).thenReturn(true);
+    when(certificateEventMessageValidator.validate(
+            anyString(), anyString(), nullable(String.class)))
+        .thenReturn(true);
+    when(certificateEventStatisticsService.processEvent(
+            anyString(), anyString(), nullable(String.class)))
+        .thenReturn(true);
 
-        assertDoesNotThrow(() -> certificateEventListenerService.processMessage(message));
-    }
+    assertDoesNotThrow(() -> certificateEventListenerService.processMessage(message));
+  }
 }

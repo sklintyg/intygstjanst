@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -34,51 +34,48 @@ import se.inera.intyg.intygstjanst.integration.hsa.services.legacy.HsaOrganizati
 /**
  * Interfaces with {@link HsaOrganizationsService} from hsa-integration.
  *
- * Created by eriklupander on 2016-02-02.
+ * <p>Created by eriklupander on 2016-02-02.
  */
 @Service
 public class HsaService {
 
-    @Autowired
-    private HsaOrganizationsService hsaOrganizationsService;
+  @Autowired private HsaOrganizationsService hsaOrganizationsService;
 
-    @Autowired
-    private HsatkEmployeeService hsaEmployeeService;
+  @Autowired private HsatkEmployeeService hsaEmployeeService;
 
-    private static final String EMPLOYEE_NAME_CACHE = "employeeNameCache";
+  private static final String EMPLOYEE_NAME_CACHE = "employeeNameCache";
 
+  private static final Logger LOG = LoggerFactory.getLogger(HsaService.class);
 
-    private static final Logger LOG = LoggerFactory.getLogger(HsaService.class);
+  public List<String> getHsaIdForUnderenheter(String careUnitHsaId) {
+    return hsaOrganizationsService.getHsaIdForAktivaUnderenheter(careUnitHsaId);
+  }
 
-    public List<String> getHsaIdForUnderenheter(String careUnitHsaId) {
-        return hsaOrganizationsService.getHsaIdForAktivaUnderenheter(careUnitHsaId);
+  public String getHsaIdForVardgivare(String careUnitHsaId) {
+    return hsaOrganizationsService.getVardgivareOfVardenhet(careUnitHsaId);
+  }
+
+  public List<String> getHsaIdsForCareUnitAndSubUnits(String careUnitId) {
+    final var unitAndSubUnits = hsaOrganizationsService.getHsaIdForAktivaUnderenheter(careUnitId);
+    return Stream.concat(Stream.of(careUnitId), unitAndSubUnits.stream())
+        .collect(Collectors.toList());
+  }
+
+  @Cacheable(cacheNames = EMPLOYEE_NAME_CACHE, key = "#doctorId")
+  public String getHsaEmployeeName(String doctorId) {
+    try {
+      final var employee = hsaEmployeeService.getEmployee(null, doctorId, null);
+      if (employee == null || employee.isEmpty()) {
+        return doctorId;
+      }
+      return getName(employee);
+    } catch (WebServiceException e) {
+      LOG.error(e.getMessage());
+      throw new WebServiceException();
     }
+  }
 
-    public String getHsaIdForVardgivare(String careUnitHsaId) {
-        return hsaOrganizationsService.getVardgivareOfVardenhet(careUnitHsaId);
-    }
-
-    public List<String> getHsaIdsForCareUnitAndSubUnits(String careUnitId) {
-        final var unitAndSubUnits = hsaOrganizationsService.getHsaIdForAktivaUnderenheter(careUnitId);
-        return Stream.concat(Stream.of(careUnitId), unitAndSubUnits.stream())
-            .collect(Collectors.toList());
-    }
-
-    @Cacheable(cacheNames = EMPLOYEE_NAME_CACHE, key = "#doctorId")
-    public String getHsaEmployeeName(String doctorId) {
-        try {
-            final var employee = hsaEmployeeService.getEmployee(null, doctorId, null);
-            if (employee == null || employee.isEmpty()) {
-                return doctorId;
-            }
-            return getName(employee);
-        } catch (WebServiceException e) {
-            LOG.error(e.getMessage());
-            throw new WebServiceException();
-        }
-    }
-
-    private String getName(List<PersonInformation> employeeInfo) {
-        return employeeInfo.get(0).getGivenName() + " " + employeeInfo.get(0).getMiddleAndSurName();
-    }
+  private String getName(List<PersonInformation> employeeInfo) {
+    return employeeInfo.get(0).getGivenName() + " " + employeeInfo.get(0).getMiddleAndSurName();
+  }
 }

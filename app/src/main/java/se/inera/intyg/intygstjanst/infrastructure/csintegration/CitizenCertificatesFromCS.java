@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Inera AB (http://www.inera.se)
+ * Copyright (C) 2026 Inera AB (http://www.inera.se)
  *
  * This file is part of sklintyg (https://github.com/sklintyg).
  *
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package se.inera.intyg.intygstjanst.infrastructure.csintegration;
 
 import static se.inera.intyg.intygstjanst.infrastructure.csintegration.util.PersonIdTypeEvaluator.getType;
@@ -34,23 +33,23 @@ import se.inera.intyg.schemas.contract.Personnummer;
 @RequiredArgsConstructor
 public class CitizenCertificatesFromCS {
 
-    private final CSIntegrationService csIntegrationService;
-    private final CitizenCertificateConverterFromCS citizenCertificateConverterFromCS;
+  private final CSIntegrationService csIntegrationService;
+  private final CitizenCertificateConverterFromCS citizenCertificateConverterFromCS;
 
-    public List<CitizenCertificateDTO> get(Personnummer personId) {
+  public List<CitizenCertificateDTO> get(Personnummer personId) {
 
-        final var citizenCertificates = csIntegrationService.getCitizenCertificates(
+    final var citizenCertificates =
+        csIntegrationService.getCitizenCertificates(
             GetCitizenCertificatesRequest.builder()
                 .personId(
                     PersonIdDTO.builder()
                         .id(personId.getOriginalPnr())
                         .type(getType(personId))
                         .build())
-                .build()
-        );
+                .build());
 
-        return citizenCertificates.stream()
-            .map(citizenCertificateConverterFromCS::convert)
-            .collect(Collectors.toList());
-    }
+    return citizenCertificates.stream()
+        .map(citizenCertificateConverterFromCS::convert)
+        .collect(Collectors.toList());
+  }
 }
