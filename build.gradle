@@ -54,6 +54,7 @@ subprojects {
 
             licenseHeaderFile(rootProject.file('spotless.license.txt'), 'package ')
             removeUnusedImports()
+            forbidWildcardImports()
             googleJavaFormat(googleJavaFormatVersion)
             formatAnnotations()
         }
