@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package se.inera.intyg.intygstjanst.integration.intygproxyservice.hsa.services.employee;
 
 import static se.inera.intyg.intygstjanst.integration.intygproxyservice.hsa.constants.HsaIntygProxyServiceConstants.EMPLOYEE_CACHE_NAME;

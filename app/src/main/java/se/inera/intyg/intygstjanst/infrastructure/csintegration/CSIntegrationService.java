@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package se.inera.intyg.intygstjanst.infrastructure.csintegration;
 
 import static se.inera.intyg.intygstjanst.infrastructure.logging.MdcHelper.LOG_SESSION_ID_HEADER;

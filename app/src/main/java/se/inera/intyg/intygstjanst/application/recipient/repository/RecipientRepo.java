@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package se.inera.intyg.intygstjanst.application.recipient.repository;
 
 import static se.inera.intyg.intygstjanst.infrastructure.logging.MdcLogConstants.SPAN_ID_KEY;
