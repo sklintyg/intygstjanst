@@ -18,18 +18,29 @@
  */
 package se.inera.intyg.intygstjanst.infrastructure.security.interceptor;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.classic.spi.LoggingEvent;
+import ch.qos.logback.core.Appender;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.method.HandlerMethod;
 
 @ExtendWith(MockitoExtension.class)
@@ -46,6 +57,24 @@ class ApiBasePathEnforcingInterceptorTest {
 
   @Mock
   private HandlerMethod handlerMethod;
+
+  @Mock
+  private Appender<ILoggingEvent> mockAppender;
+
+  @Captor
+  private ArgumentCaptor<LoggingEvent> logCaptor;
+
+  @BeforeEach
+  void attachLogAppender() {
+    final Logger logger = (Logger) LoggerFactory.getLogger(ApiBasePathEnforcingInterceptor.class);
+    logger.addAppender(mockAppender);
+  }
+
+  @AfterEach
+  void detachLogAppender() {
+    final Logger logger = (Logger) LoggerFactory.getLogger(ApiBasePathEnforcingInterceptor.class);
+    logger.detachAppender(mockAppender);
+  }
 
   @ApiBasePath("/internalapi")
   static class SinglePathController {}
@@ -65,6 +94,7 @@ class ApiBasePathEnforcingInterceptorTest {
   @Test
   void shouldBlockAndSendNotFoundWhenControllerHasNoApiBasePathAnnotation() throws Exception {
     when(handlerMethod.getBeanType()).thenAnswer(inv -> UnannotatedController.class);
+    when(request.getServletPath()).thenReturn("/someapi");
 
     final var result = interceptor.preHandle(request, response, handlerMethod);
 
@@ -112,5 +142,27 @@ class ApiBasePathEnforcingInterceptorTest {
 
     assertFalse(result);
     verify(response).sendError(HttpServletResponse.SC_NOT_FOUND);
+  }
+
+  @Test
+  void shouldLogWarnWhenBlockingUnannotatedController() throws Exception {
+    when(handlerMethod.getBeanType()).thenAnswer(inv -> UnannotatedController.class);
+    when(request.getServletPath()).thenReturn("/someapi");
+
+    interceptor.preHandle(request, response, handlerMethod);
+
+    verify(mockAppender).doAppend(logCaptor.capture());
+    assertEquals(Level.WARN, logCaptor.getValue().getLevel());
+  }
+
+  @Test
+  void shouldLogWarnWhenBlockingPathMismatch() throws Exception {
+    when(handlerMethod.getBeanType()).thenAnswer(inv -> SinglePathController.class);
+    when(request.getServletPath()).thenReturn("/wrongpath");
+
+    interceptor.preHandle(request, response, handlerMethod);
+
+    verify(mockAppender).doAppend(logCaptor.capture());
+    assertEquals(Level.WARN, logCaptor.getValue().getLevel());
   }
 }
