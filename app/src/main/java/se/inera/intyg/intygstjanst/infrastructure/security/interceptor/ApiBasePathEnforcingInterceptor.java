@@ -46,7 +46,8 @@ public class ApiBasePathEnforcingInterceptor implements HandlerInterceptor {
 
     final var annotation = handlerMethod.getBeanType().getAnnotation(ApiBasePath.class);
     if (annotation == null) {
-      return true;
+      response.sendError(HttpServletResponse.SC_NOT_FOUND);
+      return false;
     }
 
     final var servletPath = request.getServletPath();

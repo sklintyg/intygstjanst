@@ -63,12 +63,13 @@ class ApiBasePathEnforcingInterceptorTest {
   }
 
   @Test
-  void shouldAllowWhenControllerHasNoApiBasePathAnnotation() throws Exception {
+  void shouldBlockAndSendNotFoundWhenControllerHasNoApiBasePathAnnotation() throws Exception {
     when(handlerMethod.getBeanType()).thenAnswer(inv -> UnannotatedController.class);
 
     final var result = interceptor.preHandle(request, response, handlerMethod);
 
-    assertTrue(result);
+    assertFalse(result);
+    verify(response).sendError(HttpServletResponse.SC_NOT_FOUND);
   }
 
   @Test
