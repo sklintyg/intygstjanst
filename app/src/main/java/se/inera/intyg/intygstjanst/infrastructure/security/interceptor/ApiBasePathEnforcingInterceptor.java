@@ -21,6 +21,7 @@ package se.inera.intyg.intygstjanst.infrastructure.security.interceptor;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Arrays;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -32,8 +33,9 @@ import org.springframework.web.servlet.HandlerInterceptor;
  * matches one of the declared values are allowed. All other requests receive a 404 response,
  * mirroring the old JAX-RS per-address server configuration.
  *
- * <p>Controllers without {@code @ApiBasePath} are not restricted.
+ * <p>Controllers without {@code @ApiBasePath} are blocked.
  */
+@Slf4j
 @Component
 public class ApiBasePathEnforcingInterceptor implements HandlerInterceptor {
 
@@ -44,17 +46,23 @@ public class ApiBasePathEnforcingInterceptor implements HandlerInterceptor {
       return true;
     }
 
-    final var annotation = handlerMethod.getBeanType().getAnnotation(ApiBasePath.class);
+    final var beanType = handlerMethod.getBeanType();
+    final var servletPath = request.getServletPath();
+    final var annotation = beanType.getAnnotation(ApiBasePath.class);
     if (annotation == null) {
-      return true;
+      log.warn("Blocked request to '{}' - '{}' has no @ApiBasePath annotation", servletPath,
+          beanType.getSimpleName());
+      response.sendError(HttpServletResponse.SC_NOT_FOUND);
+      return false;
     }
 
-    final var servletPath = request.getServletPath();
     final var allowed = Arrays.asList(annotation.value());
     if (allowed.contains(servletPath)) {
       return true;
     }
 
+    log.warn("Blocked request to '{}' - not in allowed paths {} for '{}'", servletPath, allowed,
+        beanType.getSimpleName());
     response.sendError(HttpServletResponse.SC_NOT_FOUND);
     return false;
   }
