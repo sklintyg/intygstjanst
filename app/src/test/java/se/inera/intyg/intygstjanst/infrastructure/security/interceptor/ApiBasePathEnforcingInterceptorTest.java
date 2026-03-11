@@ -46,23 +46,17 @@ import org.springframework.web.method.HandlerMethod;
 @ExtendWith(MockitoExtension.class)
 class ApiBasePathEnforcingInterceptorTest {
 
-  @InjectMocks
-  private ApiBasePathEnforcingInterceptor interceptor;
+  @InjectMocks private ApiBasePathEnforcingInterceptor interceptor;
 
-  @Mock
-  private HttpServletRequest request;
+  @Mock private HttpServletRequest request;
 
-  @Mock
-  private HttpServletResponse response;
+  @Mock private HttpServletResponse response;
 
-  @Mock
-  private HandlerMethod handlerMethod;
+  @Mock private HandlerMethod handlerMethod;
 
-  @Mock
-  private Appender<ILoggingEvent> mockAppender;
+  @Mock private Appender<ILoggingEvent> mockAppender;
 
-  @Captor
-  private ArgumentCaptor<LoggingEvent> logCaptor;
+  @Captor private ArgumentCaptor<LoggingEvent> logCaptor;
 
   @BeforeEach
   void attachLogAppender() {

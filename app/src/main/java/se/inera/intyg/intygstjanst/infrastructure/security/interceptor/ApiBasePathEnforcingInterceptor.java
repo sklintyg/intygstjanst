@@ -50,7 +50,9 @@ public class ApiBasePathEnforcingInterceptor implements HandlerInterceptor {
     final var servletPath = request.getServletPath();
     final var annotation = beanType.getAnnotation(ApiBasePath.class);
     if (annotation == null) {
-      log.warn("Blocked request to '{}' - '{}' has no @ApiBasePath annotation", servletPath,
+      log.warn(
+          "Blocked request to '{}' - '{}' has no @ApiBasePath annotation",
+          servletPath,
           beanType.getSimpleName());
       response.sendError(HttpServletResponse.SC_NOT_FOUND);
       return false;
@@ -61,7 +63,10 @@ public class ApiBasePathEnforcingInterceptor implements HandlerInterceptor {
       return true;
     }
 
-    log.warn("Blocked request to '{}' - not in allowed paths {} for '{}'", servletPath, allowed,
+    log.warn(
+        "Blocked request to '{}' - not in allowed paths {} for '{}'",
+        servletPath,
+        allowed,
         beanType.getSimpleName());
     response.sendError(HttpServletResponse.SC_NOT_FOUND);
     return false;
