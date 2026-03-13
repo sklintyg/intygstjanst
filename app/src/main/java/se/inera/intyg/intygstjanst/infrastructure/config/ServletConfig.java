@@ -94,7 +94,7 @@ public class ServletConfig {
       InternalApiFilter internalApiFilter) {
     final var registration = new FilterRegistrationBean<>(internalApiFilter);
     registration.addUrlPatterns("/internalapi/*");
-    registration.setOrder(Ordered.HIGHEST_PRECEDENCE + 1);
+    registration.setOrder(Ordered.HIGHEST_PRECEDENCE + 2);
     registration.setName("internalApiFilter");
     return registration;
   }
@@ -108,7 +108,7 @@ public class ServletConfig {
       MdcServletFilter mdcServletFilter) {
     final var registration = new FilterRegistrationBean<>(mdcServletFilter);
     registration.addUrlPatterns("/*");
-    registration.setOrder(2);
+    registration.setOrder(Ordered.HIGHEST_PRECEDENCE + 1);
     return registration;
   }
 }
