@@ -19,6 +19,7 @@
 package se.inera.intyg.intygstjanst.infrastructure.config;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.cxf.Bus;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -35,10 +36,12 @@ import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.S
 public class CxfClientConfig {
 
   private final AppProperties appProperties;
+  private final Bus cxfBus;
 
   @Bean("revokeMedicalCertificateClient")
   public RevokeMedicalCertificateResponderInterface revokeMedicalCertificateClient() {
     final var factory = new JaxWsProxyFactoryBean();
+    factory.setBus(cxfBus);
     factory.setServiceClass(RevokeMedicalCertificateResponderInterface.class);
     factory.setAddress(appProperties.ntjp().endpoints().revokeMedicalCertificateV1());
     return (RevokeMedicalCertificateResponderInterface) factory.create();
@@ -47,6 +50,7 @@ public class CxfClientConfig {
   @Bean("sendMedicalCertificateQuestionClient")
   public SendMedicalCertificateQuestionResponderInterface sendMedicalCertificateQuestionClient() {
     final var factory = new JaxWsProxyFactoryBean();
+    factory.setBus(cxfBus);
     factory.setServiceClass(SendMedicalCertificateQuestionResponderInterface.class);
     factory.setAddress(appProperties.ntjp().endpoints().sendMedicalCertificateQuestionV1());
     return (SendMedicalCertificateQuestionResponderInterface) factory.create();
@@ -55,6 +59,7 @@ public class CxfClientConfig {
   @Bean("sendMessageToCareClient")
   public SendMessageToCareResponderInterface sendMessageToCareClient() {
     final var factory = new JaxWsProxyFactoryBean();
+    factory.setBus(cxfBus);
     factory.setServiceClass(SendMessageToCareResponderInterface.class);
     factory.setAddress(appProperties.ntjp().endpoints().sendMessageToCareV2());
     return (SendMessageToCareResponderInterface) factory.create();
@@ -63,6 +68,7 @@ public class CxfClientConfig {
   @Bean("sendMessageToRecipientClient")
   public SendMessageToRecipientResponderInterface sendMessageToRecipientClient() {
     final var factory = new JaxWsProxyFactoryBean();
+    factory.setBus(cxfBus);
     factory.setServiceClass(SendMessageToRecipientResponderInterface.class);
     factory.setAddress(appProperties.ntjp().endpoints().sendMessageToRecipientV2());
     return (SendMessageToRecipientResponderInterface) factory.create();
@@ -71,6 +77,7 @@ public class CxfClientConfig {
   @Bean("revokeCertificateClient")
   public RevokeCertificateResponderInterface revokeCertificateClient() {
     final var factory = new JaxWsProxyFactoryBean();
+    factory.setBus(cxfBus);
     factory.setServiceClass(RevokeCertificateResponderInterface.class);
     factory.setAddress(appProperties.ntjp().endpoints().revokeCertificateV2());
     return (RevokeCertificateResponderInterface) factory.create();
@@ -79,6 +86,7 @@ public class CxfClientConfig {
   @Bean("registerCertificateClient")
   public RegisterCertificateResponderInterface registerCertificateClient() {
     final var factory = new JaxWsProxyFactoryBean();
+    factory.setBus(cxfBus);
     factory.setServiceClass(RegisterCertificateResponderInterface.class);
     factory.setAddress(appProperties.ntjp().endpoints().registerCertificateV3());
     return (RegisterCertificateResponderInterface) factory.create();
