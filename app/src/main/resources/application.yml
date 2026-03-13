@@ -99,9 +99,6 @@ spring:
     url: "jdbc:mysql://${db.server}:${db.port}/${db.name}?useSSL=false&serverTimezone=Europe/Stockholm&allowPublicKeyRetrieval=true"
     username: "${db.username}"
     password: "${db.password}"
-    hikari:
-      maximum-pool-size: 20
-      minimum-idle: 3
   jpa:
     hibernate:
       ddl-auto: none
