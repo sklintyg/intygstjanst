@@ -21,6 +21,7 @@ package se.inera.intyg.intygstjanst.application.message;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -55,6 +56,7 @@ class SendMessageToCareResponderImplTest {
 
   private static final String SEND_MESSAGE_TO_CARE_TEST_SENDMESSAGETOCARE_XML =
       "SendMessageToCareTest/sendmessagetocare.xml";
+  private static final String CERTIFICATE_ID = "intygsidextension";
   private static String ENHET_1_ID = "ENHET_1_ID";
   @Mock private SendMessageToCareValidator validator;
 
@@ -81,7 +83,7 @@ class SendMessageToCareResponderImplTest {
         .sendMessageToCare(any(String.class), any(SendMessageToCareType.class));
     verify(statisticsService, times(1)).messageSent(anyString(), anyString(), anyString());
     verify(sendMessageToCareService).processIncomingMessage((any(Arende.class)));
-    verify(logService).logSendMessageToCareReceived(anyString(), anyString());
+    verify(logService).logSendMessageToCareReceived(anyString(), anyString(), eq(CERTIFICATE_ID));
   }
 
   @Test
@@ -99,7 +101,7 @@ class SendMessageToCareResponderImplTest {
         .sendMessageToCare(any(String.class), any(SendMessageToCareType.class));
     verify(statisticsService, times(1)).messageSent(anyString(), anyString(), anyString());
     verify(sendMessageToCareService).processIncomingMessage((any(Arende.class)));
-    verify(logService).logSendMessageToCareReceived(anyString(), anyString());
+    verify(logService).logSendMessageToCareReceived(anyString(), anyString(), eq(CERTIFICATE_ID));
   }
 
   @Test
@@ -118,7 +120,8 @@ class SendMessageToCareResponderImplTest {
         .sendMessageToCare(any(String.class), any(SendMessageToCareType.class));
     verify(statisticsService, times(0)).messageSent(anyString(), anyString(), anyString());
     verify(sendMessageToCareService, never()).processIncomingMessage((any(Arende.class)));
-    verify(logService, never()).logSendMessageToCareReceived(anyString(), anyString());
+    verify(logService, never())
+        .logSendMessageToCareReceived(anyString(), anyString(), eq(CERTIFICATE_ID));
   }
 
   @Test
@@ -140,7 +143,8 @@ class SendMessageToCareResponderImplTest {
         .sendMessageToCare(any(String.class), any(SendMessageToCareType.class));
     verify(statisticsService, times(0)).messageSent(anyString(), anyString(), anyString());
     verify(sendMessageToCareService, never()).processIncomingMessage((any(Arende.class)));
-    verify(logService, never()).logSendMessageToCareReceived(anyString(), anyString());
+    verify(logService, never())
+        .logSendMessageToCareReceived(anyString(), anyString(), eq(CERTIFICATE_ID));
   }
 
   @Test
@@ -158,7 +162,7 @@ class SendMessageToCareResponderImplTest {
         .sendMessageToCare(any(String.class), any(SendMessageToCareType.class));
     verify(statisticsService, times(1)).messageSent(anyString(), anyString(), anyString());
     verify(sendMessageToCareService).processIncomingMessage((any(Arende.class)));
-    verify(logService).logSendMessageToCareReceived(anyString(), anyString());
+    verify(logService).logSendMessageToCareReceived(anyString(), anyString(), eq(CERTIFICATE_ID));
   }
 
   private SendMessageToCareType buildSendMessageToCareType() throws Exception {

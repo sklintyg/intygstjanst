@@ -59,6 +59,7 @@ class SendMessageToRecipientResponderImplTest {
 
   private static final String LOGICAL_ADDRESS = "123";
   private static final String LOGICAL_ADDRESS_RECIPIENT = "456";
+  private static final String CERTIFICATE_ID = "certificateId";
 
   @Mock private MonitoringLogService monitoringLog;
 
@@ -157,7 +158,9 @@ class SendMessageToRecipientResponderImplTest {
     SendMessageToRecipientType parameters = new SendMessageToRecipientType();
     parameters.setLogiskAdressMottagare(LOGICAL_ADDRESS_RECIPIENT);
     parameters.setAmne(new Amneskod());
-    parameters.setIntygsId(new IntygId());
+    final var certificateId = new IntygId();
+    certificateId.setExtension(CERTIFICATE_ID);
+    parameters.setIntygsId(certificateId);
     return parameters;
   }
 
@@ -184,7 +187,7 @@ class SendMessageToRecipientResponderImplTest {
     verify(validator).validate(any(SendMessageToRecipientType.class)); // always call validator
     verify(arendeService, arendeServiceInvocation).processIncomingMessage(any(Arende.class));
     verify(monitoringLog, monitoringLogInvocation)
-        .logSendMessageToRecipient(or(isNull(), anyString()), anyString());
+        .logSendMessageToRecipient(or(isNull(), anyString()), anyString(), eq(CERTIFICATE_ID));
     verify(soapIntegrationService, sendMessageToRecipient)
         .sendMessageToRecipient(
             eq(LOGICAL_ADDRESS_RECIPIENT), any(SendMessageToRecipientType.class));

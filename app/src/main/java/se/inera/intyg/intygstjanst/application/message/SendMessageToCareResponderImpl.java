@@ -83,7 +83,9 @@ public class SendMessageToCareResponderImpl implements SendMessageToCareResponde
 
     if (response.getResult().getResultCode() != ResultCodeType.ERROR) {
       logService.logSendMessageToCareReceived(
-          parameters.getMeddelandeId(), parameters.getLogiskAdressMottagare());
+          parameters.getMeddelandeId(),
+          parameters.getLogiskAdressMottagare(),
+          parameters.getIntygsId().getExtension());
       try {
         Arende arende = ArendeConverter.convertSendMessageToCare(parameters);
         statisticsService.messageSent(

@@ -207,7 +207,8 @@ public class MonitoringLogService {
     }
   }
 
-  public void logSendMessageToCareReceived(String certificateId, String careUnit) {
+  public void logSendMessageToCareReceived(
+      String messageId, String careUnit, String certificateId) {
     try (MdcCloseableMap mdc =
         MdcCloseableMap.builder()
             .put(
@@ -217,11 +218,11 @@ public class MonitoringLogService {
             .put(MdcLogConstants.EVENT_CERTIFICATE_ID, certificateId)
             .put(MdcLogConstants.EVENT_CERTIFICATE_CARE_UNIT_ID, careUnit)
             .build()) {
-      logEvent(MonitoringEvent.SEND_MESSAGE_TO_CARE_RECEIVED, certificateId, careUnit);
+      logEvent(MonitoringEvent.SEND_MESSAGE_TO_CARE_RECEIVED, messageId, careUnit);
     }
   }
 
-  public void logSendMessageToRecipient(String certificateId, String recipient) {
+  public void logSendMessageToRecipient(String messageId, String recipient, String certificateId) {
     try (MdcCloseableMap mdc =
         MdcCloseableMap.builder()
             .put(
@@ -231,7 +232,7 @@ public class MonitoringLogService {
             .put(MdcLogConstants.EVENT_CERTIFICATE_ID, certificateId)
             .put(MdcLogConstants.EVENT_RECIPIENT, recipient)
             .build()) {
-      logEvent(MonitoringEvent.SEND_MESSAGE_TO_RECIPIENT, certificateId, recipient);
+      logEvent(MonitoringEvent.SEND_MESSAGE_TO_RECIPIENT, messageId, recipient);
     }
   }
 

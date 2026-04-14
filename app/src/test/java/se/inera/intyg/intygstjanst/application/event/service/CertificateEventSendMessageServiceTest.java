@@ -67,6 +67,7 @@ import se.riv.clinicalprocess.healthcond.certificate.v3.ResultType;
 @ExtendWith(MockitoExtension.class)
 class CertificateEventSendMessageServiceTest {
 
+  private static final String CERTIFICATE_ID = "certificateId";
   @Mock private SendMessageToRecipientResponderInterface sendMessageToRecipientResponderInterface;
   @Mock private CSSendMessageToRecipientValidator csSendMessageToRecipientValidator;
   @Mock private MonitoringLogService monitoringLogService;
@@ -170,7 +171,8 @@ class CertificateEventSendMessageServiceTest {
     @Test
     void shouldMonitorLogIfResultCodeOk() {
       certificateEventSendMessageService.sendMessage(decodedXml);
-      verify(monitoringLogService).logSendMessageToRecipient(MESSAGE_ID, LOGICAL_ADDRESS);
+      verify(monitoringLogService)
+          .logSendMessageToRecipient(MESSAGE_ID, LOGICAL_ADDRESS, CERTIFICATE_ID);
     }
 
     @Test
@@ -201,7 +203,8 @@ class CertificateEventSendMessageServiceTest {
     @Test
     void shouldMonitorLogIfResultCodeInfo() {
       certificateEventSendMessageService.sendMessage(decodedXml);
-      verify(monitoringLogService).logSendMessageToRecipient(MESSAGE_ID, LOGICAL_ADDRESS);
+      verify(monitoringLogService)
+          .logSendMessageToRecipient(MESSAGE_ID, LOGICAL_ADDRESS, CERTIFICATE_ID);
     }
 
     @Test
