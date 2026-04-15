@@ -195,7 +195,7 @@ class MonitoringLogServiceTest {
 
   @Test
   void shouldLogSendMessageToCareReceived() {
-    logService.logSendMessageToCareReceived(MESSAGE_ID, CARE_UNIT);
+    logService.logSendMessageToCareReceived(MESSAGE_ID, CARE_UNIT, CERTIFICATE_ID);
     verifyLog(
         Level.INFO,
         "SEND_MESSAGE_TO_CARE_RECEIVED Message with id 'MESSAGE_ID', care unit recipient 'CARE_UNIT' - was received and "

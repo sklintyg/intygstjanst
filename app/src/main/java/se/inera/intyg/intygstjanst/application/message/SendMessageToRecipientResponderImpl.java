@@ -97,7 +97,9 @@ public class SendMessageToRecipientResponderImpl
 
       if (response.getResult().getResultCode() != ResultCodeType.ERROR) {
         monitoringLog.logSendMessageToRecipient(
-            parameters.getMeddelandeId(), parameters.getLogiskAdressMottagare());
+            parameters.getMeddelandeId(),
+            parameters.getLogiskAdressMottagare(),
+            parameters.getIntygsId().getExtension());
         try {
           // try saving message in db, but always return response from recipient
           arendeService.processIncomingMessage(

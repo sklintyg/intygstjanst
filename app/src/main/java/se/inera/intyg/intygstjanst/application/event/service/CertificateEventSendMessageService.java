@@ -118,12 +118,12 @@ public class CertificateEventSendMessageService {
 
     final var result = wsResponse.getResult().getResultCode();
     if (result == ResultCodeType.OK) {
-      monitoringLogService.logSendMessageToRecipient(messageId, recipient);
+      monitoringLogService.logSendMessageToRecipient(messageId, recipient, certificateId);
     }
 
     final var wsResponseMessage = wsResponse.getResult().getResultText();
     if (result == ResultCodeType.INFO) {
-      monitoringLogService.logSendMessageToRecipient(messageId, recipient);
+      monitoringLogService.logSendMessageToRecipient(messageId, recipient, certificateId);
       log.info(
           "Received INFO result sending messageId '{}' with topic '{}' for certificateId '{}' to recipient '{}'. "
               + "INFO-message '{}'",
