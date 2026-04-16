@@ -45,7 +45,6 @@ import se.inera.intyg.intygstjanst.application.intyginfo.dto.ItIntygInfo;
 import se.inera.intyg.intygstjanst.application.recipient.Recipient;
 import se.inera.intyg.intygstjanst.application.recipient.RecipientService;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Certificate;
-import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.CertificateRepository;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.CertificateStateHistoryEntry;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Relation;
 
@@ -61,19 +60,20 @@ public class IntygInfoService {
   private final RecipientService recipientService;
   private final IntygModuleRegistry moduleRegistry;
   private final RelationService relationService;
-  private final CertificateRepository certificateRepository;
+  private final PrivatePractitionerCertificateCountService
+      privatePractitionerCertificateCountService;
 
   public IntygInfoService(
       CertificateService certificateService,
       RecipientService recipientService,
       IntygModuleRegistry moduleRegistry,
       RelationService relationService,
-      CertificateRepository certificateRepository) {
+      PrivatePractitionerCertificateCountService privatePractitionerCertificateCountService) {
     this.certificateService = certificateService;
     this.recipientService = recipientService;
     this.moduleRegistry = moduleRegistry;
     this.relationService = relationService;
-    this.certificateRepository = certificateRepository;
+    this.privatePractitionerCertificateCountService = privatePractitionerCertificateCountService;
   }
 
   public Optional<ItIntygInfo> getIntygInfo(String id) {
@@ -149,7 +149,7 @@ public class IntygInfoService {
   }
 
   public Long getCertificateCount(String hsaId) {
-    return certificateRepository.getCertificateCountForCareProvider(hsaId);
+    return privatePractitionerCertificateCountService.count(hsaId);
   }
 
   private void addEvents(ItIntygInfo response, Certificate certificate) {

@@ -36,6 +36,8 @@ import se.inera.intyg.intygstjanst.infrastructure.csintegration.dto.CertificateE
 import se.inera.intyg.intygstjanst.infrastructure.csintegration.dto.ExportCertificateInternalResponseDTO;
 import se.inera.intyg.intygstjanst.infrastructure.csintegration.dto.ExportCertificatesRequestDTO;
 import se.inera.intyg.intygstjanst.infrastructure.csintegration.dto.ExportInternalResponseDTO;
+import se.inera.intyg.intygstjanst.infrastructure.csintegration.dto.GetCertificateCountForPrivatePractitionerRequest;
+import se.inera.intyg.intygstjanst.infrastructure.csintegration.dto.GetCertificateCountForPrivatePractitionerResponse;
 import se.inera.intyg.intygstjanst.infrastructure.csintegration.dto.GetCertificateMetadataResponse;
 import se.inera.intyg.intygstjanst.infrastructure.csintegration.dto.GetCertificateResponse;
 import se.inera.intyg.intygstjanst.infrastructure.csintegration.dto.GetCertificateXmlResponse;
@@ -81,6 +83,8 @@ public class CSIntegrationService {
   private static final String INTERNALAPI_PATIENT_SICKLEAVE = "/internalapi/patient/sickleave";
   private static final String INTERNALAPI_VALID_SICKLEAVE =
       "/internalapi/certificate/sickleave/valid";
+  private static final String INTERNALAPI_CERTIFICATE_ISSUED_BY =
+      "/internalapi/certificate/issuedBy";
 
   private final RestClient csRestClient;
 
@@ -356,5 +360,27 @@ public class CSIntegrationService {
     }
 
     return response.getCertificateIds();
+  }
+
+  public Long getCertificateCountForPrivatePractitioner(
+      GetCertificateCountForPrivatePractitionerRequest request) {
+    final var response =
+        csRestClient
+            .post()
+            .uri(INTERNALAPI_CERTIFICATE_ISSUED_BY)
+            .body(request)
+            .header(LOG_TRACE_ID_HEADER, MDC.get(TRACE_ID_KEY))
+            .header(LOG_SESSION_ID_HEADER, MDC.get(SESSION_ID_KEY))
+            .contentType(MediaType.APPLICATION_JSON)
+            .retrieve()
+            .body(GetCertificateCountForPrivatePractitionerResponse.class);
+
+    if (response == null) {
+      throw new IllegalStateException(
+          "Failed to get count of certificates for private practitioner %s"
+              .formatted(request.getHsaId()));
+    }
+
+    return response.getNumberOfCertificates();
   }
 }
