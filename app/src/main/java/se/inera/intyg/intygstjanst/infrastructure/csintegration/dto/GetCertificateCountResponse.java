@@ -22,15 +22,14 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import lombok.Builder;
 import lombok.Value;
-import se.inera.intyg.intygstjanst.infrastructure.csintegration.dto.GetCertificateCountForPrivatePractitionerResponse.GetCertificateCountForPrivatePractitionerResponseBuilder;
 
-@JsonDeserialize(builder = GetCertificateCountForPrivatePractitionerResponseBuilder.class)
+@JsonDeserialize(builder = GetCertificateCountResponse.GetCertificateCountResponseBuilder.class)
 @Value
 @Builder
-public class GetCertificateCountForPrivatePractitionerResponse {
+public class GetCertificateCountResponse {
 
   Long numberOfCertificates;
 
   @JsonPOJOBuilder(withPrefix = "")
-  public static class GetCertificateCountForPrivatePractitionerResponseBuilder {}
+  public static class GetCertificateCountResponseBuilder {}
 }

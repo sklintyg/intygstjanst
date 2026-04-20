@@ -27,23 +27,23 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.intygstjanst.infrastructure.csintegration.CSIntegrationService;
-import se.inera.intyg.intygstjanst.infrastructure.csintegration.dto.GetCertificateCountForPrivatePractitionerRequest;
+import se.inera.intyg.intygstjanst.infrastructure.csintegration.dto.GetCertificateCountRequest;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.CertificateRepository;
 
 @ExtendWith(MockitoExtension.class)
-class PrivatePractitionerCertificateCountServiceTest {
+class CertificateCountAggregatorServiceTest {
 
   private static final String HSA_ID = "careProvider";
-  private static final GetCertificateCountForPrivatePractitionerRequest CS_REQUEST =
-      GetCertificateCountForPrivatePractitionerRequest.builder().hsaId(HSA_ID).build();
+  private static final GetCertificateCountRequest CS_REQUEST =
+      GetCertificateCountRequest.builder().hsaId(HSA_ID).build();
   @Mock CertificateRepository certificateRepository;
   @Mock CSIntegrationService csIntegrationService;
-  @InjectMocks PrivatePractitionerCertificateCountService service;
+  @InjectMocks CertificateCountAggregatorService service;
 
   @Test
   void shouldReturnCountFromIt() {
     when(certificateRepository.getCertificateCountForCareProvider(HSA_ID)).thenReturn(1L);
-    when(csIntegrationService.getCertificateCountForPrivatePractitioner(CS_REQUEST)).thenReturn(0L);
+    when(csIntegrationService.getCertificateCount(CS_REQUEST)).thenReturn(0L);
 
     assertEquals(1L, service.count(HSA_ID));
   }
@@ -51,7 +51,7 @@ class PrivatePractitionerCertificateCountServiceTest {
   @Test
   void shouldReturnCountFromCs() {
     when(certificateRepository.getCertificateCountForCareProvider(HSA_ID)).thenReturn(0L);
-    when(csIntegrationService.getCertificateCountForPrivatePractitioner(CS_REQUEST)).thenReturn(1L);
+    when(csIntegrationService.getCertificateCount(CS_REQUEST)).thenReturn(1L);
 
     assertEquals(1L, service.count(HSA_ID));
   }
@@ -59,7 +59,7 @@ class PrivatePractitionerCertificateCountServiceTest {
   @Test
   void shouldReturnCountFromCSAndIt() {
     when(certificateRepository.getCertificateCountForCareProvider(HSA_ID)).thenReturn(1L);
-    when(csIntegrationService.getCertificateCountForPrivatePractitioner(CS_REQUEST)).thenReturn(1L);
+    when(csIntegrationService.getCertificateCount(CS_REQUEST)).thenReturn(1L);
 
     assertEquals(2L, service.count(HSA_ID));
   }

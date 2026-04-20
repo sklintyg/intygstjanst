@@ -21,12 +21,12 @@ package se.inera.intyg.intygstjanst.application.certificate.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.intygstjanst.infrastructure.csintegration.CSIntegrationService;
-import se.inera.intyg.intygstjanst.infrastructure.csintegration.dto.GetCertificateCountForPrivatePractitionerRequest;
+import se.inera.intyg.intygstjanst.infrastructure.csintegration.dto.GetCertificateCountRequest;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.CertificateRepository;
 
 @Service
 @RequiredArgsConstructor
-public class PrivatePractitionerCertificateCountService {
+public class CertificateCountAggregatorService {
 
   private final CertificateRepository certificateRepository;
   private final CSIntegrationService csIntegrationService;
@@ -34,8 +34,8 @@ public class PrivatePractitionerCertificateCountService {
   public Long count(String hsaId) {
     final var itCertificateCount = certificateRepository.getCertificateCountForCareProvider(hsaId);
     final var csCertificateCount =
-        csIntegrationService.getCertificateCountForPrivatePractitioner(
-            GetCertificateCountForPrivatePractitionerRequest.builder().hsaId(hsaId).build());
+        csIntegrationService.getCertificateCount(
+            GetCertificateCountRequest.builder().hsaId(hsaId).build());
 
     return Long.sum(itCertificateCount, csCertificateCount);
   }

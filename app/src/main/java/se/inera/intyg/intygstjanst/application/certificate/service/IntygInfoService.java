@@ -60,20 +60,19 @@ public class IntygInfoService {
   private final RecipientService recipientService;
   private final IntygModuleRegistry moduleRegistry;
   private final RelationService relationService;
-  private final PrivatePractitionerCertificateCountService
-      privatePractitionerCertificateCountService;
+  private final CertificateCountAggregatorService certificateCountAggregatorService;
 
   public IntygInfoService(
       CertificateService certificateService,
       RecipientService recipientService,
       IntygModuleRegistry moduleRegistry,
       RelationService relationService,
-      PrivatePractitionerCertificateCountService privatePractitionerCertificateCountService) {
+      CertificateCountAggregatorService certificateCountAggregatorService) {
     this.certificateService = certificateService;
     this.recipientService = recipientService;
     this.moduleRegistry = moduleRegistry;
     this.relationService = relationService;
-    this.privatePractitionerCertificateCountService = privatePractitionerCertificateCountService;
+    this.certificateCountAggregatorService = certificateCountAggregatorService;
   }
 
   public Optional<ItIntygInfo> getIntygInfo(String id) {
@@ -149,7 +148,7 @@ public class IntygInfoService {
   }
 
   public Long getCertificateCount(String hsaId) {
-    return privatePractitionerCertificateCountService.count(hsaId);
+    return certificateCountAggregatorService.count(hsaId);
   }
 
   private void addEvents(ItIntygInfo response, Certificate certificate) {

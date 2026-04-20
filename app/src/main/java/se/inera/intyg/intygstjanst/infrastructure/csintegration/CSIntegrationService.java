@@ -36,8 +36,8 @@ import se.inera.intyg.intygstjanst.infrastructure.csintegration.dto.CertificateE
 import se.inera.intyg.intygstjanst.infrastructure.csintegration.dto.ExportCertificateInternalResponseDTO;
 import se.inera.intyg.intygstjanst.infrastructure.csintegration.dto.ExportCertificatesRequestDTO;
 import se.inera.intyg.intygstjanst.infrastructure.csintegration.dto.ExportInternalResponseDTO;
-import se.inera.intyg.intygstjanst.infrastructure.csintegration.dto.GetCertificateCountForPrivatePractitionerRequest;
-import se.inera.intyg.intygstjanst.infrastructure.csintegration.dto.GetCertificateCountForPrivatePractitionerResponse;
+import se.inera.intyg.intygstjanst.infrastructure.csintegration.dto.GetCertificateCountRequest;
+import se.inera.intyg.intygstjanst.infrastructure.csintegration.dto.GetCertificateCountResponse;
 import se.inera.intyg.intygstjanst.infrastructure.csintegration.dto.GetCertificateMetadataResponse;
 import se.inera.intyg.intygstjanst.infrastructure.csintegration.dto.GetCertificateResponse;
 import se.inera.intyg.intygstjanst.infrastructure.csintegration.dto.GetCertificateXmlResponse;
@@ -362,8 +362,7 @@ public class CSIntegrationService {
     return response.getCertificateIds();
   }
 
-  public Long getCertificateCountForPrivatePractitioner(
-      GetCertificateCountForPrivatePractitionerRequest request) {
+  public Long getCertificateCount(GetCertificateCountRequest request) {
     final var response =
         csRestClient
             .post()
@@ -373,12 +372,11 @@ public class CSIntegrationService {
             .header(LOG_SESSION_ID_HEADER, MDC.get(SESSION_ID_KEY))
             .contentType(MediaType.APPLICATION_JSON)
             .retrieve()
-            .body(GetCertificateCountForPrivatePractitionerResponse.class);
+            .body(GetCertificateCountResponse.class);
 
     if (response == null) {
       throw new IllegalStateException(
-          "Failed to get count of certificates for private practitioner %s"
-              .formatted(request.getHsaId()));
+          "Failed to get count of certificates for %s".formatted(request.getHsaId()));
     }
 
     return response.getNumberOfCertificates();
