@@ -760,7 +760,7 @@ class CSIntegrationServiceTest {
   }
 
   @Nested
-  class GetCertificateCountForPrivatePractitionerTests {
+  class GetCertificateCountTests {
 
     private RequestBodyUriSpec requestBodyUriSpec;
     private ResponseSpec responseSpec;
@@ -788,7 +788,7 @@ class CSIntegrationServiceTest {
     }
 
     @Test
-    void shallReturnGetCertificateCountForPrivatePractitionerResponse() {
+    void shallReturnGetCertificateCountResponse() {
       final var expected = 1L;
 
       final var response =
