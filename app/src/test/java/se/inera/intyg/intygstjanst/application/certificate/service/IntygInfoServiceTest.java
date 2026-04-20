@@ -60,7 +60,6 @@ import se.inera.intyg.intygstjanst.application.intyginfo.dto.IntygInfoEventType;
 import se.inera.intyg.intygstjanst.application.intyginfo.dto.ItIntygInfo;
 import se.inera.intyg.intygstjanst.application.recipient.RecipientService;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Certificate;
-import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.CertificateRepository;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.CertificateStateHistoryEntry;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.OriginalCertificate;
 import se.inera.intyg.intygstjanst.infrastructure.persistence.model.dao.Relation;
@@ -74,7 +73,8 @@ class IntygInfoServiceTest {
   @Mock private RelationService relationService;
   @Mock private ModuleApi moduleApi;
   @Mock private ModuleEntryPoint moduleEntryPoint;
-  @Mock private CertificateRepository certificateRepository;
+
+  @Mock private CertificateCountAggregatorService certificateCountAggregatorService;
 
   @InjectMocks private IntygInfoService testee;
 
@@ -248,8 +248,7 @@ class IntygInfoServiceTest {
 
   @Test
   void shouldReturnResultFromDatabaseQuery() {
-    when(certificateRepository.getCertificateCountForCareProvider(HSA_ID))
-        .thenReturn(CERTIFICATE_COUNT);
+    when(certificateCountAggregatorService.count(HSA_ID)).thenReturn(CERTIFICATE_COUNT);
 
     final var response = testee.getCertificateCount(HSA_ID);
 

@@ -56,6 +56,8 @@ import se.inera.intyg.intygstjanst.infrastructure.csintegration.dto.CertificateE
 import se.inera.intyg.intygstjanst.infrastructure.csintegration.dto.ExportCertificateInternalResponseDTO;
 import se.inera.intyg.intygstjanst.infrastructure.csintegration.dto.ExportCertificatesRequestDTO;
 import se.inera.intyg.intygstjanst.infrastructure.csintegration.dto.ExportInternalResponseDTO;
+import se.inera.intyg.intygstjanst.infrastructure.csintegration.dto.GetCertificateCountRequest;
+import se.inera.intyg.intygstjanst.infrastructure.csintegration.dto.GetCertificateCountResponse;
 import se.inera.intyg.intygstjanst.infrastructure.csintegration.dto.GetCertificateMetadataResponse;
 import se.inera.intyg.intygstjanst.infrastructure.csintegration.dto.GetCertificateResponse;
 import se.inera.intyg.intygstjanst.infrastructure.csintegration.dto.GetCertificateXmlResponse;
@@ -754,6 +756,59 @@ class CSIntegrationServiceTest {
       final var request = GetValidSickLeaveCertificateIdsInternalRequest.builder().build();
       assertThrows(
           IllegalStateException.class, () -> csIntegrationService.getValidSickLeaveIds(request));
+    }
+  }
+
+  @Nested
+  class GetCertificateCountTests {
+
+    private RequestBodyUriSpec requestBodyUriSpec;
+    private ResponseSpec responseSpec;
+
+    @BeforeEach
+    void setUp() {
+      requestBodyUriSpec = mock(RestClient.RequestBodyUriSpec.class);
+      responseSpec = mock(RestClient.ResponseSpec.class);
+
+      MDC.put(TRACE_ID_KEY, "traceId");
+      MDC.put(SESSION_ID_KEY, "sessionId");
+
+      when(restClient.post()).thenReturn(requestBodyUriSpec);
+      when(requestBodyUriSpec.uri("/internalapi/certificate/issuedBy"))
+          .thenReturn(requestBodyUriSpec);
+      when(requestBodyUriSpec.header(LOG_TRACE_ID_HEADER, "traceId"))
+          .thenReturn(requestBodyUriSpec);
+      when(requestBodyUriSpec.header(LOG_SESSION_ID_HEADER, "sessionId"))
+          .thenReturn(requestBodyUriSpec);
+      when(requestBodyUriSpec.body(any(GetCertificateCountRequest.class)))
+          .thenReturn(requestBodyUriSpec);
+      when(requestBodyUriSpec.contentType(MediaType.APPLICATION_JSON))
+          .thenReturn(requestBodyUriSpec);
+      when(requestBodyUriSpec.retrieve()).thenReturn(responseSpec);
+    }
+
+    @Test
+    void shallReturnGetCertificateCountResponse() {
+      final var expected = 1L;
+
+      final var response =
+          GetCertificateCountResponse.builder().numberOfCertificates(expected).build();
+
+      doReturn(response).when(responseSpec).body(GetCertificateCountResponse.class);
+
+      final var actual =
+          csIntegrationService.getCertificateCount(GetCertificateCountRequest.builder().build());
+
+      assertEquals(expected, actual);
+    }
+
+    @Test
+    void shallThrowIfResponseIsNull() {
+      doReturn(null).when(responseSpec).body(GetCertificateCountResponse.class);
+
+      final var request = GetCertificateCountRequest.builder().build();
+      assertThrows(
+          IllegalStateException.class, () -> csIntegrationService.getCertificateCount(request));
     }
   }
 }
