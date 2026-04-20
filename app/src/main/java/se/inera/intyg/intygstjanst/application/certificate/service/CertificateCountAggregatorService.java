@@ -35,7 +35,7 @@ public class CertificateCountAggregatorService {
     final var itCertificateCount = certificateRepository.getCertificateCountForCareProvider(hsaId);
     final var csCertificateCount =
         csIntegrationService.getCertificateCount(
-            GetCertificateCountRequest.builder().hsaId(hsaId).build());
+            GetCertificateCountRequest.builder().issuedByHsaId(hsaId).build());
 
     return Long.sum(itCertificateCount, csCertificateCount);
   }

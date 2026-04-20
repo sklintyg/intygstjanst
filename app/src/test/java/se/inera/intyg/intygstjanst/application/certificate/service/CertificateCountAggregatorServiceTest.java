@@ -35,7 +35,7 @@ class CertificateCountAggregatorServiceTest {
 
   private static final String HSA_ID = "careProvider";
   private static final GetCertificateCountRequest CS_REQUEST =
-      GetCertificateCountRequest.builder().hsaId(HSA_ID).build();
+      GetCertificateCountRequest.builder().issuedByHsaId(HSA_ID).build();
   @Mock CertificateRepository certificateRepository;
   @Mock CSIntegrationService csIntegrationService;
   @InjectMocks CertificateCountAggregatorService service;

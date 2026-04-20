@@ -28,7 +28,7 @@ import lombok.Value;
 @Builder
 public class GetCertificateCountRequest {
 
-  String hsaId;
+  String issuedByHsaId;
 
   @JsonPOJOBuilder(withPrefix = "")
   public static class GetCertificateCountRequestBuilder {}

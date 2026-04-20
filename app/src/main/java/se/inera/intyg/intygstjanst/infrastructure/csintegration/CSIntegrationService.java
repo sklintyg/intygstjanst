@@ -376,7 +376,7 @@ public class CSIntegrationService {
 
     if (response == null) {
       throw new IllegalStateException(
-          "Failed to get count of certificates for %s".formatted(request.getHsaId()));
+          "Failed to get count of certificates for %s".formatted(request.getIssuedByHsaId()));
     }
 
     return response.getNumberOfCertificates();
