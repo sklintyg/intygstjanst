@@ -93,7 +93,8 @@ server:
 
 spring:
   autoconfigure:
-    exclude: org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration
+    exclude:
+      - org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration
 
   datasource:
     url: "jdbc:mysql://${db.server}:${db.port}/${db.name}?useSSL=false&serverTimezone=Europe/Stockholm&allowPublicKeyRetrieval=true"
@@ -111,17 +112,17 @@ spring:
   activemq:
     broker-url: "tcp://localhost:61616?jms.nonBlockingRedelivery=true&jms.redeliveryPolicy.maximumRedeliveries=3&jms.redeliveryPolicy.maximumRedeliveryDelay=6000&jms.redeliveryPolicy.initialRedeliveryDelay=4000&jms.redeliveryPolicy.useExponentialBackOff=true&jms.redeliveryPolicy.backOffMultiplier=2"
     pool:
-      enabled: true
-      max-connections: 8
+      enabled: false
 
   jms:
     listener:
       auto-startup: true
-      session-transacted: true
-      concurrency: 1
+      min-concurrency: 1
       max-concurrency: 10
     cache:
+      enabled: true
       consumers: true
+      session-cache-size: 10
     template:
       session-transacted: true
 
