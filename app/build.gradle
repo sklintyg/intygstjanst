@@ -14,13 +14,13 @@ dependencies {
 
     runtimeOnly project(':integration-intyg-proxy-service')
 
-    implementation 'org.apache.tomcat.embed:tomcat-embed-core'
-    implementation "org.messaginghub:pooled-jms"
     implementation "org.springframework.boot:spring-boot-starter-activemq"
     implementation "org.springframework.boot:spring-boot-starter-actuator"
+    implementation "org.springframework.boot:spring-boot-starter-aspectj"
     implementation "org.springframework.boot:spring-boot-starter-data-jpa"
+    implementation "org.springframework.boot:spring-boot-starter-liquibase"
     implementation "org.springframework.boot:spring-boot-starter-validation"
-    implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation "org.springframework.boot:spring-boot-starter-webmvc"
 
     implementation "se.inera.intyg.clinicalprocess.healthcond.certificate:intyg-clinicalprocess-healthcond-certificate-schemas:${intygClinicalprocessSchemasVersion}"
     implementation "se.inera.intyg.clinicalprocess.healthcond.rehabilitation:intyg-clinicalprocess-healthcond-rehabilitation-schemas:${intygHealthcondRehabilitationSchemasVersion}"
@@ -53,21 +53,16 @@ dependencies {
 
     implementation "se.inera.intyg.refdata:refdata:${refDataVersion}"
 
-    implementation "ch.qos.logback:logback-classic"
     implementation "codes.rafael.jaxb2_commons:jaxb2-basics"
     implementation "com.google.guava:guava"
     implementation "commons-io:commons-io"
-    implementation "io.prometheus:simpleclient_servlet"
-    implementation "jakarta.transaction:jakarta.transaction-api"
+    implementation "jakarta.persistence:jakarta.persistence-api"
+    implementation "jakarta.xml.ws:jakarta.xml.ws-api"
     implementation "org.antlr:ST4"
+    implementation "org.apache.commons:commons-lang3"
     implementation "org.apache.cxf:cxf-rt-features-logging"
     implementation "org.apache.cxf:cxf-rt-frontend-jaxws"
     implementation "org.apache.cxf:cxf-rt-transports-http"
-    implementation "org.aspectj:aspectjweaver"
-    implementation "org.slf4j:jul-to-slf4j"
-    implementation "org.springframework:spring-webmvc"
-    implementation "org.springframework.security:spring-security-web"
-    implementation "org.apache.commons:commons-lang3"
 
     annotationProcessor 'org.projectlombok:lombok'
 
@@ -78,32 +73,15 @@ dependencies {
 
     testAnnotationProcessor 'org.projectlombok:lombok'
 
-    testImplementation "org.mockito:mockito-core"
-    testImplementation "org.mockito:mockito-junit-jupiter"
-    testImplementation "org.springframework:spring-test"
+    testImplementation "org.springframework.boot:spring-boot-starter-data-jpa-test"
+    testImplementation "org.springframework.boot:spring-boot-starter-webmvc-test"
     testImplementation "org.xmlunit:xmlunit-legacy"
 
     testCompileOnly "jakarta.persistence:jakarta.persistence-api"
     testCompileOnly 'org.projectlombok:lombok'
 
-    testRuntimeOnly "se.riv.clinicalprocess.healthcond.certificate:clinicalprocess-healthcond-certificate-schemas:${rivtaClinicalprocessSchemasVersion}"
-
-    implementation "com.fasterxml.jackson.core:jackson-annotations"
-    implementation "com.google.guava:guava"
-    implementation "org.springframework.boot:spring-boot-starter-data-jpa"
-    implementation "jakarta.persistence:jakarta.persistence-api"
-    implementation "jakarta.xml.ws:jakarta.xml.ws-api"
-    implementation "org.springframework.boot:spring-boot-starter-liquibase"
-    implementation "se.inera.intyg.common:common-support:${commonVersion}"
-    implementation "se.inera.intyg.schemas:schemas-contract:${schemasContractVersion}"
-
-    annotationProcessor 'org.projectlombok:lombok'
-
-    testImplementation "org.junit.jupiter:junit-jupiter"
-    testImplementation "org.mockito:mockito-junit-jupiter"
-    testImplementation "org.springframework:spring-test"
-
     testRuntimeOnly "com.h2database:h2"
+    testRuntimeOnly "se.riv.clinicalprocess.healthcond.certificate:clinicalprocess-healthcond-certificate-schemas:${rivtaClinicalprocessSchemasVersion}"
 }
 
 bootRun {
