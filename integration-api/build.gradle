@@ -1,5 +1,5 @@
 dependencies {
-    implementation "tools.jackson.core:jackson-databind"
+    implementation "org.springframework.boot:spring-boot-starter-jackson"
     implementation "com.google.guava:guava"
     implementation 'jakarta.xml.ws:jakarta.xml.ws-api'
     implementation "se.inera.intyg.schemas:schemas-contract:${schemasContractVersion}"

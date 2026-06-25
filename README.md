@@ -2,14 +2,16 @@
 
 ## Tech Stack
 
-- **Java** 21
-- **Gradle** 8.14
-- **Spring Boot** (Web, Data JPA, Actuator, ActiveMQ, Data Redis)
+- **Java** 25
+- **Gradle** 9.6
+- **Spring Boot** 4.1 (modular starters: WebMVC, Data JPA, Actuator, ActiveMQ, Data Redis, Cache,
+  RestClient, Liquibase, AspectJ)
+- **Jackson** 3
 - **MySQL** (with Liquibase for database migrations)
 - **Redis** (caching)
 - **ActiveMQ** (messaging)
 - **Apache CXF** (SOAP/web services)
-- **JUnit 5** + **Mockito** (testing)
+- **JUnit 5** + **Mockito** (via Spring Boot test starters)
 
 ## Run Locally
 
