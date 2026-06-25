@@ -18,7 +18,6 @@
  */
 package se.inera.intyg.intygstjanst.infrastructure.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -26,16 +25,17 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import se.inera.intyg.intygstjanst.infrastructure.security.interceptor.ApiBasePathEnforcingInterceptor;
+import tools.jackson.databind.json.JsonMapper;
 
 @Configuration
 @RequiredArgsConstructor
 public class WebMvcConfig implements WebMvcConfigurer {
 
-  private final ObjectMapper objectMapper;
+  private final JsonMapper jsonMapper;
   private final ApiBasePathEnforcingInterceptor apiBasePathEnforcingInterceptor;
 
   @Override
@@ -45,9 +45,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
   @Override
   public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-    final var jackson = new MappingJackson2HttpMessageConverter();
-    jackson.setObjectMapper(objectMapper);
-    converters.add(jackson);
+    converters.add(new JacksonJsonHttpMessageConverter(jsonMapper));
 
     final var stringConverter = new StringHttpMessageConverter(StandardCharsets.UTF_8);
     stringConverter.setSupportedMediaTypes(

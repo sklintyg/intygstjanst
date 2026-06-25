@@ -18,11 +18,11 @@
  */
 package se.inera.intyg.intygstjanst.application.sickleave.dto;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import lombok.Builder;
 import lombok.Value;
 import se.inera.intyg.intygstjanst.application.sickleave.dto.PersonIdDTO.PersonIdDTOBuilder;
+import tools.jackson.databind.annotation.JsonDeserialize;
+import tools.jackson.databind.annotation.JsonPOJOBuilder;
 
 @JsonDeserialize(builder = PersonIdDTOBuilder.class)
 @Value

@@ -18,8 +18,6 @@
  */
 package se.inera.intyg.intygstjanst.testability.stub;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
 import java.util.Collections;
 import java.util.HashMap;
@@ -39,6 +37,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import se.inera.intyg.intygstjanst.infrastructure.security.interceptor.ApiBasePath;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
 @RestController
 @ApiBasePath("/api")
@@ -95,7 +95,7 @@ public class SendMessageToCareResponderStubRestApi {
         ImmutableMap.of("messages", storage.getMessagesIdsForLogicalAddress(address));
     try {
       return ResponseEntity.ok(new ObjectMapper().writeValueAsString(messageIds));
-    } catch (JsonProcessingException e) {
+    } catch (JacksonException e) {
       throw new RuntimeException(e);
     }
   }

@@ -18,8 +18,6 @@
  */
 package se.inera.intyg.intygstjanst.infrastructure.csintegration.dto;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import lombok.Builder;
 import lombok.Value;
 import se.inera.intyg.intygstjanst.application.event.dto.RevokedInformationDTO;
@@ -27,6 +25,8 @@ import se.inera.intyg.intygstjanst.application.event.dto.UnitDTO;
 import se.inera.intyg.intygstjanst.application.recipient.dto.RecipientDTO;
 import se.inera.intyg.intygstjanst.application.sickleave.dto.PersonIdDTO;
 import se.inera.intyg.intygstjanst.infrastructure.csintegration.dto.GetCertificateXmlResponse.GetCertificateXmlResponseBuilder;
+import tools.jackson.databind.annotation.JsonDeserialize;
+import tools.jackson.databind.annotation.JsonPOJOBuilder;
 
 @JsonDeserialize(builder = GetCertificateXmlResponseBuilder.class)
 @Value
