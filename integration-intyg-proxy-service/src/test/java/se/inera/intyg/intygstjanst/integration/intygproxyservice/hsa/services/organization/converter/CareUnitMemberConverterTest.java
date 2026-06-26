@@ -26,10 +26,14 @@ import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.intygstjanst.integration.hsa.model.Address;
 import se.inera.intyg.intygstjanst.integration.hsa.model.HealthCareUnitMember;
 import se.inera.intyg.intygstjanst.integration.hsa.model.legacy.AgandeForm;
 
+@ExtendWith(MockitoExtension.class)
 class CareUnitMemberConverterTest {
 
   private static final String ZIP_CODE = "ZIP_CODE";
@@ -38,7 +42,7 @@ class CareUnitMemberConverterTest {
   private static final String PARENT_ID = "PARENT_ID";
   private static final AgandeForm PARENT_AGANDE_FORM = AgandeForm.OFFENTLIG;
 
-  private final CareUnitMemberConverter converter = new CareUnitMemberConverter();
+  @InjectMocks private CareUnitMemberConverter converter;
 
   @Test
   void shouldConvertParentId() {

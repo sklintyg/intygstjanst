@@ -18,6 +18,7 @@
  */
 package se.inera.intyg.intygstjanst.integration.intygproxyservice.hsa.services.organization.converter;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -392,6 +393,7 @@ class CareUnitConverterTest {
       unit = new Unit();
       unitMembers = new HealthCareUnitMembers();
       setBasicProperties(unit);
+      unit.setAddress(new Address(ADDRESS, ZIP_CODE, CITY));
     }
 
     @Test
@@ -449,30 +451,36 @@ class CareUnitConverterTest {
     @Nested
     class AddressTest {
 
-      @BeforeEach
-      void init() {
-        unit.setAddress(new Address(ADDRESS, ZIP_CODE, CITY));
-      }
-
       @Test
-      void shouldUpdateAddress() {
+      void shouldUpdateAddressIfPostalAddressIsNotNull() {
 
         final var careUnit = converter.convert(unit, unitMembers);
         assertEquals(ADDRESS, careUnit.getPostadress());
       }
 
       @Test
-      void shouldUpdateCity() {
+      void shouldUpdateCityIfPostalAddressIsNotNull() {
 
         final var careUnit = converter.convert(unit, unitMembers);
         assertEquals(CITY, careUnit.getPostort());
       }
 
       @Test
-      void shouldUpdateZipCode() {
+      void shouldUpdateZipCodeIfPostalAddressIsNotNull() {
 
         final var careUnit = converter.convert(unit, unitMembers);
         assertEquals(ZIP_CODE, careUnit.getPostnummer());
+      }
+
+      @Test
+      void shouldNotUpdateAddressFieldsIfPostalAddressIsNull() {
+        setAddress(unit);
+
+        final var careUnit = converter.convert(unit, unitMembers);
+        assertAll(
+            () -> assertNull(careUnit.getPostadress()),
+            () -> assertNull(careUnit.getPostort()),
+            () -> assertNull(careUnit.getPostnummer()));
       }
     }
 
@@ -604,5 +612,9 @@ class CareUnitConverterTest {
   private void setEmailAndPhoneNumber(Unit unit, List<String> phoneNumber) {
     unit.setMail(UNIT_EMAIL);
     unit.setTelephoneNumber(phoneNumber);
+  }
+
+  private void setAddress(Unit unit) {
+    unit.setAddress(null);
   }
 }
