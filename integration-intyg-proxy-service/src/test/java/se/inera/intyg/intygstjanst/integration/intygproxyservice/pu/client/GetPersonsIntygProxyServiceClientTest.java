@@ -22,7 +22,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import static se.inera.intyg.intygstjanst.integration.intygproxyservice.pu.configuration.PURestClientConfig.LOG_SESSION_ID_HEADER;
 import static se.inera.intyg.intygstjanst.integration.intygproxyservice.pu.configuration.PURestClientConfig.LOG_TRACE_ID_HEADER;
 import static se.inera.intyg.intygstjanst.integration.intygproxyservice.pu.configuration.PURestClientConfig.SESSION_ID_KEY;

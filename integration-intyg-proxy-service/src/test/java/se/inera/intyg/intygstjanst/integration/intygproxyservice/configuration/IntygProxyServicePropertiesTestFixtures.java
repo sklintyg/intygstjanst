@@ -30,16 +30,12 @@ public final class IntygProxyServicePropertiesTestFixtures {
   public static IntygProxyServiceProperties withEndpoints(String endpoint) {
     final var hsa =
         new IntygProxyServiceProperties.Hsa(
-            endpoint,
-            endpoint,
-            endpoint,
-            endpoint,
-            endpoint,
-            endpoint,
-            endpoint,
-            endpoint,
+            endpoint, endpoint, endpoint, endpoint, endpoint, endpoint, endpoint, endpoint,
             endpoint);
     return new IntygProxyServiceProperties(
-        "http://localhost", hsa, new IntygProxyServiceProperties.Pu(endpoint, endpoint), DEFAULT_CACHE);
+        "http://localhost",
+        hsa,
+        new IntygProxyServiceProperties.Pu(endpoint, endpoint),
+        DEFAULT_CACHE);
   }
 }
