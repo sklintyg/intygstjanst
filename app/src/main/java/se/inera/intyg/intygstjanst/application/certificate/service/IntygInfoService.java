@@ -127,10 +127,9 @@ public class IntygInfoService {
 
         ModuleEntryPoint entryPoint = moduleRegistry.getModuleEntryPoint(certificate.getType());
 
-        if (!StringUtils.isEmpty(entryPoint.getDefaultRecipient())) {
-          if (response.getNumberOfRecipients() == 0) {
-            response.setNumberOfRecipients(1);
-          }
+        if (StringUtils.hasLength(entryPoint.getDefaultRecipient())
+            && response.getNumberOfRecipients() == 0) {
+          response.setNumberOfRecipients(1);
         }
 
       } catch (ModuleException | ModuleNotFoundException e) {

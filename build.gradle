@@ -1,6 +1,5 @@
 plugins {
     alias(libs.plugins.com.github.ben.manes.versions)
-    alias(libs.plugins.org.cyclonedx.bom)
     alias(libs.plugins.org.sonarqube)
     alias(libs.plugins.com.diffplug.spotless)
     alias(libs.plugins.org.springframework.boot)
@@ -35,7 +34,7 @@ allprojects {
         mavenLocal()
         maven { url = "https://nexus.drift.inera.se/repository/it-public/" }
         mavenCentral()
-    }
+    }   
 }
 
 subprojects {
