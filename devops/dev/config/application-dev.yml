@@ -48,3 +48,8 @@ spring:
   data:
     redis:
       password: redis
+  main:
+    banner-mode: console
+  output:
+    ansi:
+      enabled: always

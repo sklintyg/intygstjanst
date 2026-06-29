@@ -92,6 +92,8 @@ server:
     context-path: /inera-certificate
 
 spring:
+  application:
+    name: intygstjanst
   autoconfigure:
     exclude: org.springframework.boot.data.redis.autoconfigure.DataRedisRepositoriesAutoConfiguration
 
