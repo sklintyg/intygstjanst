@@ -34,7 +34,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -75,6 +74,7 @@ import se.inera.intyg.intygstjanst.integration.pu.model.Person;
 import se.inera.intyg.intygstjanst.integration.pu.model.PersonSvar;
 import se.inera.intyg.intygstjanst.integration.pu.services.PUService;
 import se.inera.intyg.schemas.contract.Personnummer;
+import tools.jackson.databind.ObjectMapper;
 
 @ExtendWith(MockitoExtension.class)
 class CertificateServiceTest {

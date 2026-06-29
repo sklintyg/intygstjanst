@@ -22,7 +22,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import static se.inera.intyg.intygstjanst.integration.intygproxyservice.pu.configuration.PURestClientConfig.LOG_SESSION_ID_HEADER;
 import static se.inera.intyg.intygstjanst.integration.intygproxyservice.pu.configuration.PURestClientConfig.LOG_TRACE_ID_HEADER;
 import static se.inera.intyg.intygstjanst.integration.intygproxyservice.pu.configuration.PURestClientConfig.SESSION_ID_KEY;
@@ -32,13 +31,12 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.MDC;
 import org.springframework.http.MediaType;
 import org.springframework.web.client.RestClient;
-import se.inera.intyg.intygstjanst.integration.intygproxyservice.configuration.IntygProxyServiceProperties;
+import se.inera.intyg.intygstjanst.integration.intygproxyservice.configuration.IntygProxyServicePropertiesTestFixtures;
 import se.inera.intyg.intygstjanst.integration.intygproxyservice.pu.dto.PersonResponseDTO;
 import se.inera.intyg.intygstjanst.integration.intygproxyservice.pu.dto.PersonsRequestDTO;
 import se.inera.intyg.intygstjanst.integration.intygproxyservice.pu.dto.PersonsResponseDTO;
@@ -56,18 +54,15 @@ class GetPersonsIntygProxyServiceClientTest {
   private final RestClient.RequestBodySpec requestBodySpec = mock(RestClient.RequestBodySpec.class);
   private final RestClient.ResponseSpec responseSpec = mock(RestClient.ResponseSpec.class);
 
-  @Mock private RestClient restClient;
+  @Mock private RestClient ipsRestClient;
 
-  @Mock private IntygProxyServiceProperties properties;
-
-  @Mock private IntygProxyServiceProperties.Pu puProperties;
-
-  @InjectMocks private GetPersonsIntygProxyServiceClient getPersonsIntygProxyServiceClient;
+  private GetPersonsIntygProxyServiceClient getPersonsIntygProxyServiceClient;
 
   @BeforeEach
   void setUp() {
-    when(properties.pu()).thenReturn(puProperties);
-    when(puProperties.personsEndpoint()).thenReturn(ENDPOINT);
+    getPersonsIntygProxyServiceClient =
+        new GetPersonsIntygProxyServiceClient(
+            ipsRestClient, IntygProxyServicePropertiesTestFixtures.withEndpoints(ENDPOINT));
     MDC.put(TRACE_ID_KEY, TRACE_ID);
     MDC.put(SESSION_ID_KEY, SESSION_ID);
   }
@@ -87,7 +82,7 @@ class GetPersonsIntygProxyServiceClientTest {
                         .build()))
             .build();
 
-    doReturn(requestBodyUriSpec).when(restClient).post();
+    doReturn(requestBodyUriSpec).when(ipsRestClient).post();
     doReturn(requestBodySpec).when(requestBodyUriSpec).uri(ENDPOINT);
     doReturn(requestBodySpec).when(requestBodySpec).body(request);
     doReturn(requestBodySpec).when(requestBodySpec).header(LOG_TRACE_ID_HEADER, TRACE_ID);
@@ -106,7 +101,7 @@ class GetPersonsIntygProxyServiceClientTest {
     final var request =
         PersonsRequestDTO.builder().personIds(List.of("personId")).queryCache(true).build();
 
-    doReturn(requestBodyUriSpec).when(restClient).post();
+    doReturn(requestBodyUriSpec).when(ipsRestClient).post();
     doReturn(requestBodySpec).when(requestBodyUriSpec).uri(ENDPOINT);
     doReturn(requestBodySpec).when(requestBodySpec).body(request);
     doReturn(requestBodySpec).when(requestBodySpec).header(LOG_TRACE_ID_HEADER, TRACE_ID);
@@ -126,7 +121,7 @@ class GetPersonsIntygProxyServiceClientTest {
     final var request =
         PersonsRequestDTO.builder().personIds(List.of("personId")).queryCache(true).build();
 
-    doReturn(requestBodyUriSpec).when(restClient).post();
+    doReturn(requestBodyUriSpec).when(ipsRestClient).post();
     doReturn(requestBodySpec).when(requestBodyUriSpec).uri(ENDPOINT);
     doReturn(requestBodySpec).when(requestBodySpec).body(request);
     doReturn(requestBodySpec).when(requestBodySpec).header(LOG_TRACE_ID_HEADER, TRACE_ID);

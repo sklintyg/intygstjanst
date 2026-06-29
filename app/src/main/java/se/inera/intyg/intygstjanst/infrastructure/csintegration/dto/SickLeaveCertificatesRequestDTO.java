@@ -18,14 +18,14 @@
  */
 package se.inera.intyg.intygstjanst.infrastructure.csintegration.dto;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.Builder;
 import lombok.Value;
 import se.inera.intyg.intygstjanst.application.sickleave.dto.PersonIdDTO;
 import se.inera.intyg.intygstjanst.infrastructure.csintegration.dto.SickLeaveCertificatesRequestDTO.SickLeaveCertificatesRequestDTOBuilder;
+import tools.jackson.databind.annotation.JsonDeserialize;
+import tools.jackson.databind.annotation.JsonPOJOBuilder;
 
 @JsonDeserialize(builder = SickLeaveCertificatesRequestDTOBuilder.class)
 @Value

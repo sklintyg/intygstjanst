@@ -1,21 +1,19 @@
 dependencies {
     implementation project(':integration-api')
 
-    implementation "ch.qos.logback:logback-classic"
-    implementation "com.fasterxml.jackson.core:jackson-databind"
+    implementation "org.springframework.boot:spring-boot-starter-jackson"
     implementation "com.google.guava:guava"
     implementation "jakarta.annotation:jakarta.annotation-api"
     implementation 'jakarta.xml.ws:jakarta.xml.ws-api'
+    implementation "org.springframework.boot:spring-boot-starter-cache"
     implementation "org.springframework.boot:spring-boot-starter-data-redis"
+    implementation "org.springframework.boot:spring-boot-starter-restclient"
     implementation "org.springframework.boot:spring-boot-starter-validation"
-    implementation "org.springframework:spring-web"
-    implementation "org.springframework:spring-context"
     implementation "se.inera.intyg.schemas:schemas-contract:${schemasContractVersion}"
 
     annotationProcessor 'org.projectlombok:lombok'
 
-    testImplementation "org.mockito:mockito-junit-jupiter"
-    testImplementation "org.springframework:spring-test"
+    testImplementation "org.springframework.boot:spring-boot-starter-restclient-test"
 
     testCompileOnly 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'

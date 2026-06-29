@@ -31,7 +31,9 @@ public class ITRestClientConfig {
   private final AppProperties appProperties;
 
   @Bean
-  public RestClient csRestClient() {
-    return RestClient.create(appProperties.integration().certificateService().baseUrl());
+  public RestClient csRestClient(RestClient.Builder restClientBuilder) {
+    return restClientBuilder
+        .baseUrl(appProperties.integration().certificateService().baseUrl())
+        .build();
   }
 }

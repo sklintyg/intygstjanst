@@ -18,24 +18,24 @@
  */
 package se.inera.intyg.intygstjanst.infrastructure.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.http.converter.autoconfigure.ServerHttpMessageConvertersCustomizer;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
-import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import se.inera.intyg.intygstjanst.infrastructure.security.interceptor.ApiBasePathEnforcingInterceptor;
+import tools.jackson.databind.json.JsonMapper;
 
 @Configuration
 @RequiredArgsConstructor
 public class WebMvcConfig implements WebMvcConfigurer {
 
-  private final ObjectMapper objectMapper;
   private final ApiBasePathEnforcingInterceptor apiBasePathEnforcingInterceptor;
 
   @Override
@@ -43,20 +43,22 @@ public class WebMvcConfig implements WebMvcConfigurer {
     registry.addInterceptor(apiBasePathEnforcingInterceptor);
   }
 
-  @Override
-  public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-    final var jackson = new MappingJackson2HttpMessageConverter();
-    jackson.setObjectMapper(objectMapper);
-    converters.add(jackson);
+  @Bean
+  ServerHttpMessageConvertersCustomizer serverHttpMessageConvertersCustomizer(
+      JsonMapper jsonMapper) {
+    return builder -> {
+      builder.disableDefaults();
+      builder.addCustomConverter(new JacksonJsonHttpMessageConverter(jsonMapper));
 
-    final var stringConverter = new StringHttpMessageConverter(StandardCharsets.UTF_8);
-    stringConverter.setSupportedMediaTypes(
-        List.of(
-            MediaType.TEXT_PLAIN,
-            MediaType.TEXT_HTML,
-            MediaType.APPLICATION_XML,
-            MediaType.TEXT_XML,
-            MediaType.ALL));
-    converters.add(stringConverter);
+      final var stringConverter = new StringHttpMessageConverter(StandardCharsets.UTF_8);
+      stringConverter.setSupportedMediaTypes(
+          List.of(
+              MediaType.TEXT_PLAIN,
+              MediaType.TEXT_HTML,
+              MediaType.APPLICATION_XML,
+              MediaType.TEXT_XML,
+              MediaType.ALL));
+      builder.addCustomConverter(stringConverter);
+    };
   }
 }

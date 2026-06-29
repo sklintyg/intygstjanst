@@ -452,7 +452,7 @@ public class CertificateService implements ModuleContainerApi {
         certificateId,
         certificateType,
         careUnit,
-        StringUtils.isEmpty(partId) ? GET_CERTIFICATE_NO_PART : partId);
+        StringUtils.hasLength(partId) ? partId : GET_CERTIFICATE_NO_PART);
   }
 
   private void assertPersonnummer(Personnummer civicRegistrationNumber) {

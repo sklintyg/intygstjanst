@@ -25,7 +25,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
@@ -46,9 +45,10 @@ import se.inera.intyg.intygstjanst.application.exception.ServerException;
 import se.inera.intyg.intygstjanst.application.recipient.Recipient;
 import se.inera.intyg.intygstjanst.infrastructure.config.properties.AppProperties;
 import se.inera.intyg.intygstjanst.infrastructure.logging.MdcHelper;
+import tools.jackson.databind.ObjectMapper;
 
 @ExtendWith(MockitoExtension.class)
-public class RecipientRepoTest {
+class RecipientRepoTest {
 
   @Mock private MdcHelper mdcHelper;
 
@@ -59,7 +59,7 @@ public class RecipientRepoTest {
   private List<Recipient> allRecipients;
 
   @BeforeEach
-  public void setup() throws IOException {
+  void setup() throws IOException {
     String recipientFile = "recipients.json";
 
     injectRecipientFile(recipientFile);
@@ -83,14 +83,14 @@ public class RecipientRepoTest {
   }
 
   @Test
-  public void testListRecipients() {
+  void testListRecipients() {
     assertEquals(5, repo.listRecipients().size());
     assertTrue(repo.listRecipients().containsAll(allRecipients));
     assertTrue(repo.listRecipients().stream().allMatch(Recipient::isTrusted));
   }
 
   @Test
-  public void testChangingToIncorrectFileKeepsPreviousRecipients() {
+  void testChangingToIncorrectFileKeepsPreviousRecipients() {
 
     try {
       injectRecipientFile("missing");
@@ -108,7 +108,7 @@ public class RecipientRepoTest {
   }
 
   @Test
-  public void testAddingRecipientToFile() throws IOException {
+  void testAddingRecipientToFile() throws IOException {
     assertEquals(
         5,
         repo.listRecipients().size(),
@@ -130,7 +130,7 @@ public class RecipientRepoTest {
   }
 
   @Test
-  public void testChangedRecipientInFile() throws IOException, RecipientUnknownException {
+  void testChangedRecipientInFile() throws IOException, RecipientUnknownException {
     assertEquals(
         5,
         repo.listRecipients().size(),
@@ -154,7 +154,7 @@ public class RecipientRepoTest {
   }
 
   @Test
-  public void testGetPrimaryRecipients() {
+  void testGetPrimaryRecipients() {
     List<Recipient> recipients = new ArrayList<>();
     recipients.add(repo.getRecipientFkassa());
     recipients.add(repo.getRecipientHsvard());
@@ -175,7 +175,7 @@ public class RecipientRepoTest {
   }
 
   @Test
-  public void testInitWithMissingPrimaryRecipients() throws IOException {
+  void testInitWithMissingPrimaryRecipients() throws IOException {
     repo.clear();
     injectRecipientFile("recipients_missing_primary.json");
 

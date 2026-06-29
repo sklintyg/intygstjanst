@@ -39,7 +39,7 @@ public class PURestClientConfig {
   private final IntygProxyServiceProperties properties;
 
   @Bean(name = "puIntygProxyServiceRestClient")
-  public RestClient ipsRestClient() {
-    return RestClient.create(properties.baseUrl());
+  public RestClient ipsRestClient(RestClient.Builder restClientBuilder) {
+    return restClientBuilder.baseUrl(properties.baseUrl()).build();
   }
 }

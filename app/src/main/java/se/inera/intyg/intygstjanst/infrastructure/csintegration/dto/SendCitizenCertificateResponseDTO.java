@@ -18,12 +18,12 @@
  */
 package se.inera.intyg.intygstjanst.infrastructure.csintegration.dto;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import lombok.Builder;
 import lombok.Value;
 import se.inera.intyg.common.support.facade.model.Certificate;
 import se.inera.intyg.intygstjanst.infrastructure.csintegration.dto.SendCitizenCertificateResponseDTO.SendCitizenCertificateResponseDTOBuilder;
+import tools.jackson.databind.annotation.JsonDeserialize;
+import tools.jackson.databind.annotation.JsonPOJOBuilder;
 
 @JsonDeserialize(builder = SendCitizenCertificateResponseDTOBuilder.class)
 @Value

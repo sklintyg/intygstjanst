@@ -92,8 +92,10 @@ server:
     context-path: /inera-certificate
 
 spring:
+  application:
+    name: intygstjanst
   autoconfigure:
-    exclude: org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration
+    exclude: org.springframework.boot.data.redis.autoconfigure.DataRedisRepositoriesAutoConfiguration
 
   datasource:
     url: "jdbc:mysql://${db.server}:${db.port}/${db.name}?useSSL=false&serverTimezone=Europe/Stockholm&allowPublicKeyRetrieval=true"

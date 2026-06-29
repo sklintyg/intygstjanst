@@ -18,12 +18,12 @@
  */
 package se.inera.intyg.intygstjanst.application.recipient.dto;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Value;
 import se.inera.intyg.intygstjanst.application.recipient.dto.RecipientDTO.RecipientDTOBuilder;
+import tools.jackson.databind.annotation.JsonDeserialize;
+import tools.jackson.databind.annotation.JsonPOJOBuilder;
 
 @JsonDeserialize(builder = RecipientDTOBuilder.class)
 @Value

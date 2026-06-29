@@ -21,7 +21,6 @@ package se.inera.intyg.intygstjanst.application.recipient.repository;
 import static se.inera.intyg.intygstjanst.infrastructure.logging.MdcLogConstants.SPAN_ID_KEY;
 import static se.inera.intyg.intygstjanst.infrastructure.logging.MdcLogConstants.TRACE_ID_KEY;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 import jakarta.annotation.PostConstruct;
@@ -46,6 +45,7 @@ import se.inera.intyg.intygstjanst.application.recipient.Recipient;
 import se.inera.intyg.intygstjanst.infrastructure.config.properties.AppProperties;
 import se.inera.intyg.intygstjanst.infrastructure.logging.MdcCloseableMap;
 import se.inera.intyg.intygstjanst.infrastructure.logging.MdcHelper;
+import tools.jackson.databind.ObjectMapper;
 
 @Repository
 @EnableScheduling
