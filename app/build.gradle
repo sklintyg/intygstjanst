@@ -61,7 +61,7 @@ dependencies {
 
     implementation "se.inera.intyg.refdata:refdata:${refDataVersion}"
 
-    implementation "codes.rafael.jaxb2_commons:jaxb2-basics"
+    implementation "codes.rafael.jaxb2_commons:jaxb2-basics-runtime"
     implementation "com.google.guava:guava"
     implementation "commons-io:commons-io"
     implementation "jakarta.xml.ws:jakarta.xml.ws-api"
