@@ -91,7 +91,7 @@ public class SendCertificateToRecipientResponderImpl
         LOGGER.info("Certificate '{}' sent to '{}'.", intygsId, mottagareId);
       }
 
-    } catch (InvalidCertificateException ex) {
+    } catch (InvalidCertificateException _) {
       // return ERROR if no such certificate does exist
       LOGGER.error(
           "Certificate '{}' does not exist for user '{}'.",
@@ -101,12 +101,12 @@ public class SendCertificateToRecipientResponderImpl
           ResultTypeUtil.errorResult(
               ErrorIdType.APPLICATION_ERROR,
               String.format("Unknown certificate ID: %s", intygsId)));
-    } catch (CertificateRevokedException ex) {
+    } catch (CertificateRevokedException _) {
       // return INFO if certificate is revoked
       LOGGER.info("Certificate '{}' has been revoked.", intygsId);
       response.setResult(
           ResultTypeUtil.infoResult(String.format("Certificate '%s' has been revoked.", intygsId)));
-    } catch (RecipientUnknownException ex) {
+    } catch (RecipientUnknownException _) {
       // return ERROR if recipient is unknwon
       LOGGER.error("Unknown recipient ID: {}", mottagareId);
       response.setResult(
@@ -123,7 +123,7 @@ public class SendCertificateToRecipientResponderImpl
           ResultTypeUtil.errorResult(
               ErrorIdType.TECHNICAL_ERROR,
               String.format("Certificate '%s' couldn't be sent to recipient", intygsId)));
-    } catch (TestCertificateException ex) {
+    } catch (TestCertificateException _) {
       LOGGER.error(
           "Certificate '{}' couldn't be sent to recipient because it is a test certificate",
           intygsId);

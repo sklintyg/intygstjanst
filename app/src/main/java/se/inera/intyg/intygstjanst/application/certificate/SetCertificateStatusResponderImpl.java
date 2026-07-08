@@ -87,7 +87,7 @@ public class SetCertificateStatusResponderImpl implements SetCertificateStatusRe
 
     } catch (RecipientUnknownException | InvalidCertificateException e) {
       response.setResult(ResultOfCallUtil.failResult(e.getMessage()));
-    } catch (TestCertificateException e) {
+    } catch (TestCertificateException _) {
       LOGGER.error(
           "Certificate '{}' couldn't be sent to recipient because it is a test certificate",
           request.getCertificateId());

@@ -112,7 +112,7 @@ public class SendMedicalCertificateResponderImpl
 
       return response;
 
-    } catch (InvalidCertificateException e) {
+    } catch (InvalidCertificateException _) {
       // return with ERROR response if certificate was not found
 
       LOGGER.info(
@@ -128,7 +128,7 @@ public class SendMedicalCertificateResponderImpl
 
       return response;
 
-    } catch (CertificateRevokedException e) {
+    } catch (CertificateRevokedException _) {
       // return with INFO response if certificate was revoked before
       LOGGER.info(
           String.format(
@@ -167,7 +167,7 @@ public class SendMedicalCertificateResponderImpl
       response.setResult(
           ResultOfCallUtil.applicationErrorResult("Certificate couldn't be sent to recipient"));
       return response;
-    } catch (TestCertificateException ex) {
+    } catch (TestCertificateException _) {
       LOGGER.error(
           "Certificate '{}' couldn't be sent to recipient because it is a test certificate",
           certId);

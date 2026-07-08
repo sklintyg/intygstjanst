@@ -91,7 +91,7 @@ public class RegisterApprovedReceiversResponderImpl
       // Make sure the receiverId is present in the recipients.json store.
       try {
         recipientService.getRecipient(receiverApprovalStatus.getReceiverId());
-      } catch (RecipientUnknownException e) {
+      } catch (RecipientUnknownException _) {
         resultType.setResultCode(ResultCodeType.ERROR);
         resultType.setResultText(
             "Request to registerApprovedReceiver contained unknown receiverId '"

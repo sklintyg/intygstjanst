@@ -64,7 +64,7 @@ public class CertificateEventRedeliveryService {
       final var redeliveryDelay = getRedeliveryDelay(redeliveries);
       send(message, eventType, certificateId, messageId, redeliveries, redeliveryDelay);
 
-    } catch (Exception e) {
+    } catch (Exception _) {
       log.error(
           "Failure creating redelivery for certificate event with event type '{}', certificate '{}' and message '{}'.",
           eventType,

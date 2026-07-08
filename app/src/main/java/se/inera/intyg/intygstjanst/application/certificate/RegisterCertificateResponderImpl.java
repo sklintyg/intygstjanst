@@ -130,11 +130,11 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
         String validationErrors = String.join(";", validationResponse.getValidationErrors());
         return makeValidationErrorResult(validationErrors);
       }
-    } catch (CertificateAlreadyExistsException e) {
+    } catch (CertificateAlreadyExistsException _) {
       return makeCertificateAlreadyExistsResult(registerCertificate);
-    } catch (ModuleNotFoundException e) {
+    } catch (ModuleNotFoundException _) {
       return makeInvalidCertificateVersionResult(registerCertificate);
-    } catch (InvalidCertificateException e) {
+    } catch (InvalidCertificateException _) {
       return makeInvalidCertificateResult(registerCertificate);
     } catch (JAXBException e) {
       LOGGER.error("JAXB error in Webservice: ", e);

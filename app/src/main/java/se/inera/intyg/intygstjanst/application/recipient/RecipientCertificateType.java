@@ -25,8 +25,8 @@ public class RecipientCertificateType extends CertificateType {
   private final String recipientId;
 
   public RecipientCertificateType(String recipientId, String certificateTypeId) {
-    super(certificateTypeId);
     hasText(recipientId, "recipientId must not be empty");
+    super(certificateTypeId);
     this.recipientId = recipientId;
   }
 

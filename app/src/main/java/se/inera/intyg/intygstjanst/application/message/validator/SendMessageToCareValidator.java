@@ -107,7 +107,7 @@ public class SendMessageToCareValidator {
   void validateSkickatAv(String code, List<String> validationErrors) {
     try {
       recipientService.getRecipient(code);
-    } catch (RecipientUnknownException | NullPointerException e) {
+    } catch (RecipientUnknownException | NullPointerException _) {
       validationErrors.add("SkickatAv part code " + code + " is not valid");
     }
   }
@@ -125,7 +125,7 @@ public class SendMessageToCareValidator {
   void validateMessageSubject(String subject, List<String> validationErrors) {
     try {
       Amneskod.valueOf(subject);
-    } catch (Exception e) {
+    } catch (Exception _) {
       validationErrors.add(ErrorCode.SUBJECT_NOT_SUPPORTED_ERROR.toString());
       validationErrors.add(
           " The supplied certificate subject is invalid. "
@@ -244,7 +244,7 @@ public class SendMessageToCareValidator {
   private boolean certificateExists(String certificateId) {
     try {
       return certificateService.getCertificateForCare(certificateId) != null;
-    } catch (InvalidCertificateException e) {
+    } catch (InvalidCertificateException _) {
       return false;
     }
   }

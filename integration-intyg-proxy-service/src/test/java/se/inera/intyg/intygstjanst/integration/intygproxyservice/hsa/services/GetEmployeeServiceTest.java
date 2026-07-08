@@ -28,7 +28,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import se.inera.intyg.intygstjanst.integration.hsa.exception.HsaServiceCallException;
 import se.inera.intyg.intygstjanst.integration.hsa.model.PersonInformation;
 import se.inera.intyg.intygstjanst.integration.intygproxyservice.hsa.client.employee.HsaIntygProxyServiceEmployeeClient;
 import se.inera.intyg.intygstjanst.integration.intygproxyservice.hsa.dto.employee.EmployeeDTO;
@@ -63,7 +62,7 @@ class GetEmployeeServiceTest {
   }
 
   @Test
-  void shouldReturnListOfPersonalInformation() throws HsaServiceCallException {
+  void shouldReturnListOfPersonalInformation() {
     final var request = GetEmployeeRequestDTO.builder().personId(PERSONAL_IDENTITY_NUMBER).build();
     final var expectedResult = List.of(new PersonInformation());
     when(employeeClient.getEmployee(request))

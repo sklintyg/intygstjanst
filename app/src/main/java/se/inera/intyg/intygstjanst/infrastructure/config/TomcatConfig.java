@@ -20,6 +20,7 @@ package se.inera.intyg.intygstjanst.infrastructure.config;
 
 import lombok.RequiredArgsConstructor;
 import org.apache.catalina.connector.Connector;
+import org.springframework.boot.tomcat.TomcatWebServerFactory;
 import org.springframework.boot.tomcat.servlet.TomcatServletWebServerFactory;
 import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.context.annotation.Bean;
@@ -48,7 +49,7 @@ public class TomcatConfig {
   public WebServerFactoryCustomizer<TomcatServletWebServerFactory>
       internalApiConnectorCustomizer() {
     return factory -> {
-      final var connector = new Connector(TomcatServletWebServerFactory.DEFAULT_PROTOCOL);
+      final var connector = new Connector(TomcatWebServerFactory.DEFAULT_PROTOCOL);
       connector.setPort(appProperties.server().internalPort());
       factory.addAdditionalConnectors(connector);
     };

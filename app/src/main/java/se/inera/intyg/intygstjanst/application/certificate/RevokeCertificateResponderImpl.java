@@ -88,7 +88,7 @@ public class RevokeCertificateResponderImpl implements RevokeCertificateResponde
           certificate.getId(), certificate.getType(), certificate.getCareUnitId());
 
       response.setResult(ResultTypeUtil.okResult());
-    } catch (InvalidCertificateException e) {
+    } catch (InvalidCertificateException _) {
       // Send APPLICATION_ERROR to trigger retransmission in the client. This is because this revoke
       // request
       // could arrive before the register request and we want to avoid race conditions.
@@ -100,7 +100,7 @@ public class RevokeCertificateResponderImpl implements RevokeCertificateResponde
           "Certificate '{}' does not exist for patient '{}'.",
           certificateId,
           getPersonnummerHash(personnummer));
-    } catch (CertificateRevokedException e) {
+    } catch (CertificateRevokedException _) {
       response.setResult(
           ResultTypeUtil.infoResult("Certificate " + certificateId + " is already revoked."));
       LOG.warn("Certificate '{}' already revoked.", certificateId);
@@ -134,7 +134,7 @@ public class RevokeCertificateResponderImpl implements RevokeCertificateResponde
                   final var logicalAdress =
                       recipientService.getRecipient(recipient).getLogicalAddress();
                   soapIntegrationService.revokeCertificate(logicalAdress, request);
-                } catch (RecipientUnknownException e) {
+                } catch (RecipientUnknownException _) {
                   LOG.warn("Could not find the logicalAddress to send revoke to {}", recipient);
                 }
               });
