@@ -85,7 +85,7 @@ public class ListRelationsForCertificateResponderImpl
       boolean makulerat;
       try {
         makulerat = certificateService.getCertificateForCare(r.getFromIntygsId()).isRevoked();
-      } catch (InvalidCertificateException e) {
+      } catch (InvalidCertificateException _) {
         LOGGER.error("Failed to get revoke status for certificate {}", r.getFromIntygsId());
         throw new ServerException(
             MessageFormat.format(

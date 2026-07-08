@@ -128,7 +128,7 @@ public class CertificateService implements ModuleContainerApi {
     Certificate certificate = null;
     try {
       certificate = getCertificateInternal(civicRegistrationNumber, certificateId);
-    } catch (PersistenceException e) {
+    } catch (PersistenceException _) {
       throw new InvalidCertificateException(
           certificateId, hashUtility.hash(civicRegistrationNumber.getPersonnummer()));
     }
@@ -154,7 +154,7 @@ public class CertificateService implements ModuleContainerApi {
     Certificate certificate = null;
     try {
       certificate = getCertificateInternal(null, certificateId);
-    } catch (PersistenceException e) {
+    } catch (PersistenceException _) {
       throw new InvalidCertificateException(certificateId, null);
     }
 
@@ -170,7 +170,7 @@ public class CertificateService implements ModuleContainerApi {
 
     try {
       cert = getCertificateForCare(certificateId);
-    } catch (InvalidCertificateException e) {
+    } catch (InvalidCertificateException _) {
       LOGGER.error("Certificate with id {} is invalid or does not exist", certificateId);
       return null;
     }
@@ -193,7 +193,7 @@ public class CertificateService implements ModuleContainerApi {
     Certificate certificate = null;
     try {
       certificate = getCertificateInternal(civicRegistrationNumber, certificateId);
-    } catch (PersistenceException e) {
+    } catch (PersistenceException _) {
       throw new InvalidCertificateException(
           certificateId,
           civicRegistrationNumber == null
@@ -246,7 +246,7 @@ public class CertificateService implements ModuleContainerApi {
       assertStateChangeSentIfTestCertificate(getCertificateForCare(certificateId), state);
 
       certificateDao.updateStatus(certificateId, civicRegistrationNumber, state, target, timestamp);
-    } catch (PersistenceException e) {
+    } catch (PersistenceException _) {
       throw new InvalidCertificateException(
           certificateId, hashUtility.hash(civicRegistrationNumber.getPersonnummer()));
     }
@@ -265,7 +265,7 @@ public class CertificateService implements ModuleContainerApi {
       assertStateChangeSentIfTestCertificate(getCertificateForCare(certificateId), state);
 
       certificateDao.updateStatus(certificateId, state, target, timestamp);
-    } catch (PersistenceException e) {
+    } catch (PersistenceException _) {
       throw new InvalidCertificateException(certificateId, null);
     }
   }
@@ -283,7 +283,7 @@ public class CertificateService implements ModuleContainerApi {
     Certificate certificate = null;
     try {
       certificate = getCertificateInternal(civicRegistrationNumber, certificateId);
-    } catch (PersistenceException e) {
+    } catch (PersistenceException _) {
       throw new InvalidCertificateException(
           certificateId,
           civicRegistrationNumber == null
@@ -381,7 +381,7 @@ public class CertificateService implements ModuleContainerApi {
     // ensure that certificate does not exist yet
     try {
       checkForExistingCertificate(certificate.getId(), certificate.getCivicRegistrationNumber());
-    } catch (PersistenceException e) {
+    } catch (PersistenceException _) {
       throw new InvalidCertificateException(
           certificate.getId(),
           certificate.getCivicRegistrationNumber() == null
@@ -428,7 +428,7 @@ public class CertificateService implements ModuleContainerApi {
     Certificate certificate = null;
     try {
       certificate = getCertificateInternal(personId, certificateId);
-    } catch (PersistenceException e) {
+    } catch (PersistenceException _) {
       throw new InvalidCertificateException(
           certificateId, personId == null ? null : hashUtility.hash(personId.getPersonnummer()));
     }

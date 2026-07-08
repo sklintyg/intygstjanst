@@ -95,7 +95,7 @@ public class GetCertificateResponderImpl implements GetCertificateResponderInter
             request.getPart().getCode());
         return response;
       }
-    } catch (InvalidCertificateException e) {
+    } catch (InvalidCertificateException _) {
       throw new ServerException(
           "Certificate with id " + certificateId + " is invalid or does not exist");
     }

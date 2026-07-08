@@ -66,7 +66,7 @@ public class SendMessageToRecipientValidator {
       SendMessageToRecipientType message, List<String> validationErrors) {
     try {
       return Amneskod.valueOf(message.getAmne().getCode());
-    } catch (Exception e) {
+    } catch (Exception _) {
       validationErrors.add("Invalid amneskod");
       return null;
     }

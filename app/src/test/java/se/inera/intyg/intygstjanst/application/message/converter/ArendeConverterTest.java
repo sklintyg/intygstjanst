@@ -140,7 +140,7 @@ class ArendeConverterTest {
       assertNotNull(jaxbMeddelande.getValue());
       assertEquals(intygsId, jaxbMeddelande.getValue().getIntygsId().getExtension());
       assertEquals(meddelande, jaxbMeddelande.getValue().getMeddelande());
-    } catch (JAXBException e) {
+    } catch (JAXBException _) {
       fail("should be valid message");
     }
   }

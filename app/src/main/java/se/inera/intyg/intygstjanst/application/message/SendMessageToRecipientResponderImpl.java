@@ -111,7 +111,7 @@ public class SendMessageToRecipientResponderImpl
         }
       }
 
-    } catch (InvalidCertificateException e) {
+    } catch (InvalidCertificateException _) {
       SendMessageToRecipientResponseType resp = new SendMessageToRecipientResponseType();
       resp.setResult(
           ResultTypeUtil.errorResult(ErrorIdType.APPLICATION_ERROR, "Intyg does not exist"));

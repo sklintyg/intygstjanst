@@ -95,7 +95,7 @@ class RecipientRepoTest {
     try {
       injectRecipientFile("missing");
       repo.update();
-    } catch (IOException e) {
+    } catch (IOException _) {
     }
     // Make sure the recipients loaded by init() still remain!
     assertEquals(

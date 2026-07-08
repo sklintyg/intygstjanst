@@ -23,3 +23,7 @@ activemq-data
 out
 
 .java-version
+# BEGIN ai-resources synced (auto-generated, do not edit) ###
+/.github/copilot-instructions.md
+/.github/skills/caveman/
+# END ai-resources synced ###

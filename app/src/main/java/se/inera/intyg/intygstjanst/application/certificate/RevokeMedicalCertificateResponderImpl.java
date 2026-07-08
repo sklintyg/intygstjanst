@@ -111,7 +111,7 @@ public class RevokeMedicalCertificateResponderImpl
       monitoringLogService.logCertificateRevoked(
           certificate.getId(), certificate.getType(), certificate.getCareUnitId());
 
-    } catch (InvalidCertificateException e) {
+    } catch (InvalidCertificateException _) {
       // return with ERROR response if certificate was not found
       LOGGER.info(
           "Tried to revoke certificate '"
@@ -124,7 +124,7 @@ public class RevokeMedicalCertificateResponderImpl
               "No certificate '" + certId + "' found to revoke for patient '" + pnrHash + "'."));
       return response;
 
-    } catch (CertificateRevokedException e) {
+    } catch (CertificateRevokedException _) {
       // return with INFO response if certificate was revoked before
       LOGGER.info(
           "Tried to revoke certificate '"

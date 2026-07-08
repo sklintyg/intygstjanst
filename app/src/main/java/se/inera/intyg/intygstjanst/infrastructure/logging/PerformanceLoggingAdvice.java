@@ -49,7 +49,7 @@ public class PerformanceLoggingAdvice {
         final var end = LocalDateTime.now();
         final var duration = Duration.between(start, end).toMillis();
 
-        try (final var mdcLogConstants =
+        try (final var _ =
             MdcCloseableMap.builder()
                 .put(MdcLogConstants.EVENT_START, start.toString())
                 .put(MdcLogConstants.EVENT_END, end.toString())

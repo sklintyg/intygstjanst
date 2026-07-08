@@ -74,7 +74,7 @@ public class CertificateHolderConverter {
     String personId = null;
     try {
       personId = intyg.getPatient().getPersonId().getExtension();
-    } catch (NullPointerException npe) {
+    } catch (NullPointerException _) {
       throw new RuntimeException("Could not get patient's personnummer from intyg");
     }
 

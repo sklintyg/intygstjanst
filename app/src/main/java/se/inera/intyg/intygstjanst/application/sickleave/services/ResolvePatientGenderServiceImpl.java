@@ -44,7 +44,7 @@ public class ResolvePatientGenderServiceImpl implements ResolvePatientGenderServ
               .matches(MALE_PATIENT_ID_REGEX)
           ? "Man"
           : "Kvinna";
-    } catch (Exception exception) {
+    } catch (Exception _) {
       return UKNOWN;
     }
   }

@@ -241,7 +241,7 @@ public class IntygBootstrapBean {
     try {
       PathMatchingResourcePatternResolver r = new PathMatchingResourcePatternResolver();
       return Arrays.asList(r.getResources(classpathResourcePath));
-    } catch (IOException e) {
+    } catch (IOException _) {
       return new ArrayList<>();
     }
   }

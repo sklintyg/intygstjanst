@@ -119,7 +119,7 @@ public class RecipientRepo {
 
   @Scheduled(cron = "${app.recipients.update-cron}")
   public void update() {
-    try (MdcCloseableMap mdc =
+    try (var _ =
         MdcCloseableMap.builder()
             .put(TRACE_ID_KEY, mdcHelper.traceId())
             .put(SPAN_ID_KEY, mdcHelper.spanId())
