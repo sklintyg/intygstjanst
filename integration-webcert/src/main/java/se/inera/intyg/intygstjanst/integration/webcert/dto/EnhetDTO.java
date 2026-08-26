@@ -16,19 +16,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package se.inera.intyg.intygstjanst.integration.webcert.configuration;
+package se.inera.intyg.intygstjanst.integration.webcert.dto;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Bean;
-import org.springframework.web.client.RestClient;
+import lombok.Builder;
+import lombok.Value;
+import se.inera.intyg.intygstjanst.integration.webcert.dto.EnhetDTO.EnhetDTOBuilder;
+import tools.jackson.databind.annotation.JsonDeserialize;
+import tools.jackson.databind.annotation.JsonPOJOBuilder;
 
-@RequiredArgsConstructor
-public class WebcertRestClientConfig {
+@JsonDeserialize(builder = EnhetDTOBuilder.class)
+@Value
+@Builder
+public class EnhetDTO {
 
-  private final WebcertProperties properties;
+  IdDTO unitId;
+  String unitName;
+  String address;
+  String postalCode;
+  String city;
+  String phoneNumber;
+  String email;
+  VardgivareDTO careProvider;
 
-  @Bean(name = "binaryCertificateWebcertRestClient")
-  public RestClient binaryCertificateWebcertRestClient(RestClient.Builder restClientBuilder) {
-    return restClientBuilder.baseUrl(properties.baseUrl()).build();
-  }
+  @JsonPOJOBuilder(withPrefix = "")
+  public static class EnhetDTOBuilder {}
 }

@@ -16,19 +16,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package se.inera.intyg.intygstjanst.integration.webcert.configuration;
+package se.inera.intyg.intygstjanst.integration.webcert.dto;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Bean;
-import org.springframework.web.client.RestClient;
+import lombok.Builder;
+import lombok.Value;
+import se.inera.intyg.intygstjanst.integration.webcert.dto.BinaryDataDTO.BinaryDataDTOBuilder;
+import tools.jackson.databind.annotation.JsonDeserialize;
+import tools.jackson.databind.annotation.JsonPOJOBuilder;
 
-@RequiredArgsConstructor
-public class WebcertRestClientConfig {
+/** Mirrors the SOAP {@code BinaryDataType} (contentType + base64 data). */
+@JsonDeserialize(builder = BinaryDataDTOBuilder.class)
+@Value
+@Builder
+public class BinaryDataDTO {
 
-  private final WebcertProperties properties;
+  String contentType;
+  byte[] data;
 
-  @Bean(name = "binaryCertificateWebcertRestClient")
-  public RestClient binaryCertificateWebcertRestClient(RestClient.Builder restClientBuilder) {
-    return restClientBuilder.baseUrl(properties.baseUrl()).build();
-  }
+  @JsonPOJOBuilder(withPrefix = "")
+  public static class BinaryDataDTOBuilder {}
 }

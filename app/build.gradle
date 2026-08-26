@@ -11,6 +11,7 @@ def applicationDir = "${rootProject.projectDir}/devops/dev"
 
 dependencies {
     implementation project(':integration-api')
+    implementation project(':integration-webcert')
 
     runtimeOnly project(':integration-intyg-proxy-service')
 

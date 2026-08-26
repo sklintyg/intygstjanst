@@ -18,6 +18,4 @@
  */
 package se.inera.intyg.intygstjanst.integration.webcert.service;
 
-public class GetBinaryCertificateService {
-
-}
+public class GetBinaryCertificateService {}

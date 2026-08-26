@@ -24,6 +24,5 @@ import org.springframework.validation.annotation.Validated;
 
 @Validated
 @ConfigurationProperties(prefix = "app.integration.webcert")
-public record WebcertProperties(@NotBlank String baseUrl, @NotBlank String binaryCertificateEndpoint) {
-
-}
+public record WebcertProperties(
+    @NotBlank String baseUrl, @NotBlank String binaryCertificateEndpoint) {}
