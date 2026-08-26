@@ -50,6 +50,8 @@ app:
         healthcare-unit-members-ttl-seconds: 60
         unit-ttl-seconds: 60
         healthcare-provider-ttl-seconds: 60
+    webcert:
+      binary-certificate-endpoint: /api/getBinaryCertificate
 
   diagnosis:
     chapters-file: classpath:/diagnoskoder/diagnoskapitel.txt
