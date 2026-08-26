@@ -18,12 +18,19 @@
  */
 package se.inera.intyg.intygstjanst.application.binarycertificate;
 
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.xml.ws.WebServiceContext;
 import org.apache.cxf.annotations.SchemaValidation;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.cxf.transport.http.AbstractHTTPDestination;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.intygstjanst.application.exception.ServerException;
 import se.inera.intyg.intygstjanst.infrastructure.logging.MdcLogConstants;
 import se.inera.intyg.intygstjanst.infrastructure.logging.PerformanceLogging;
+import se.inera.intyg.intygstjanst.integration.webcert.client.GetBinaryCertificateWebcertClient;
+import se.inera.intyg.intygstjanst.integration.webcert.dto.BinaryCertificateResponseDTO;
 import se.riv.clinicalprocess.healthcond.certificate.getBinaryCertificate.v1.GetBinaryCertificateResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.getBinaryCertificate.v1.GetBinaryCertificateResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.getBinaryCertificate.v1.GetBinaryCertificateType;
@@ -32,7 +39,20 @@ import se.riv.clinicalprocess.healthcond.certificate.getBinaryCertificate.v1.Get
 @SchemaValidation
 public class GetBinaryCertificateResponderImpl implements GetBinaryCertificateResponderInterface {
 
-  @Autowired private BinaryCertificateResponseConverter binaryCertificateResponseConverter;
+  private static final Logger LOGGER =
+      LoggerFactory.getLogger(GetBinaryCertificateResponderImpl.class);
+
+  private final BinaryCertificateResponseConverter binaryCertificateResponseConverter;
+  private final GetBinaryCertificateWebcertClient webcertClient;
+
+  @Resource private WebServiceContext wsContext;
+
+  public GetBinaryCertificateResponderImpl(
+      BinaryCertificateResponseConverter binaryCertificateResponseConverter,
+      GetBinaryCertificateWebcertClient webcertClient) {
+    this.binaryCertificateResponseConverter = binaryCertificateResponseConverter;
+    this.webcertClient = webcertClient;
+  }
 
   @Override
   @PerformanceLogging(
@@ -40,17 +60,41 @@ public class GetBinaryCertificateResponderImpl implements GetBinaryCertificateRe
       eventType = MdcLogConstants.EVENT_TYPE_ACCESSED,
       isActive = false)
   public GetBinaryCertificateResponseType getBinaryCertificate(
-      String logicalAddress, GetBinaryCertificateType getBinaryCertificateType) {
-    if (getBinaryCertificateType == null
-        || getBinaryCertificateType.getIntygsId() == null
-        || getBinaryCertificateType.getIntygsId().getExtension() == null
-        || getBinaryCertificateType.getIntygsId().getExtension().isEmpty()
-        || logicalAddress == null
-        || logicalAddress.isEmpty()) {
+      String logicalAddress, GetBinaryCertificateType getBinaryCertificateRequest) {
+    if (logicalAddress == null || logicalAddress.isEmpty()) {
+      throw new ServerException(
+          "Request to GetBinaryCertificate is missing required parameter 'logical-address' (should never happen)");
+    }
+    if (getBinaryCertificateRequest == null
+        || getBinaryCertificateRequest.getIntygsId() == null
+        || getBinaryCertificateRequest.getIntygsId().getExtension() == null
+        || getBinaryCertificateRequest.getIntygsId().getExtension().isEmpty()) {
       throw new ServerException(
           "Request to GetBinaryCertificate is missing required parameter 'intygs-id'");
     }
 
-    return null;
+    logIncomingRequest(getBinaryCertificateRequest);
+
+    BinaryCertificateResponseDTO binaryCertificateResponse = webcertClient.get(
+        getBinaryCertificateRequest.getIntygsId().getRoot());
+
+    return binaryCertificateResponseConverter.toResponse(binaryCertificateResponse);
+  }
+
+  private void logIncomingRequest(GetBinaryCertificateType getBinaryCertificateRequest) {
+    HttpServletRequest httpRequest = getCurrentHttpRequest();
+    String callingSystemHsaId =
+        httpRequest.getHeader(
+            "x-rivta-original-serviceconsumer-hsaid"); // TODO: check correct HTTP header name
+    LOGGER.info(
+        "Received request to GetBinaryCertificate with intygs-id: {} from HSA-ID {}",
+        getBinaryCertificateRequest.getIntygsId().getRoot()
+            + getBinaryCertificateRequest.getIntygsId().getExtension(),
+        callingSystemHsaId);
+  }
+
+  private HttpServletRequest getCurrentHttpRequest() {
+    return (HttpServletRequest)
+        wsContext.getMessageContext().get(AbstractHTTPDestination.HTTP_REQUEST);
   }
 }
