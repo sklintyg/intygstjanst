@@ -27,6 +27,11 @@ public class WebcertRestClientConfig {
 
   private final WebcertProperties properties;
 
+  public static final String LOG_TRACE_ID_HEADER = "x-trace-id";
+  public static final String LOG_SESSION_ID_HEADER = "x-session-id";
+  public static final String SESSION_ID_KEY = "session.id";
+  public static final String TRACE_ID_KEY = "trace.id";
+
   @Bean(name = "binaryCertificateWebcertRestClient")
   public RestClient binaryCertificateWebcertRestClient(RestClient.Builder restClientBuilder) {
     return restClientBuilder.baseUrl(properties.baseUrl()).build();

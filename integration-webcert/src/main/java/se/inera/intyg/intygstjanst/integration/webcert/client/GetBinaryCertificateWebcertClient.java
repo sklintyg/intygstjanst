@@ -18,11 +18,13 @@
  */
 package se.inera.intyg.intygstjanst.integration.webcert.client;
 
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.util.UriComponentsBuilder;
 import se.inera.intyg.intygstjanst.integration.webcert.configuration.WebcertProperties;
+import se.inera.intyg.intygstjanst.integration.webcert.configuration.WebcertRestClientConfig;
 import se.inera.intyg.intygstjanst.integration.webcert.dto.BinaryCertificateResponseDTO;
 
 @Service
@@ -38,12 +40,19 @@ public class GetBinaryCertificateWebcertClient {
     this.properties = properties;
   }
 
-  public BinaryCertificateResponseDTO get(String request) {
+  public BinaryCertificateResponseDTO get(String certificateId) {
+    final var url = UriComponentsBuilder.fromUriString(properties.baseUrl())
+        .path(properties.binaryCertificateEndpoint().formatted(certificateId))
+        .toUriString();
     return webcertRestClient
-        .post()
-        .uri(properties.binaryCertificateEndpoint())
-        .body(request)
-        .contentType(MediaType.APPLICATION_JSON)
+        .get()
+        .uri(url)
+        .header(
+            WebcertRestClientConfig.LOG_TRACE_ID_HEADER,
+            MDC.get(WebcertRestClientConfig.TRACE_ID_KEY))
+        .header(
+            WebcertRestClientConfig.LOG_SESSION_ID_HEADER,
+            MDC.get(WebcertRestClientConfig.SESSION_ID_KEY))
         .retrieve()
         .body(BinaryCertificateResponseDTO.class);
   }
