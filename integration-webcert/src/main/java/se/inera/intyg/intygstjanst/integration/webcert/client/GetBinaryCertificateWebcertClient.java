@@ -20,6 +20,7 @@ package se.inera.intyg.intygstjanst.integration.webcert.client;
 
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -41,9 +42,10 @@ public class GetBinaryCertificateWebcertClient {
   }
 
   public BinaryCertificateResponseDTO get(String certificateId) {
-    final var url = UriComponentsBuilder.fromUriString(properties.baseUrl())
-        .path(properties.binaryCertificateEndpoint().formatted(certificateId))
-        .toUriString();
+    final var url =
+        UriComponentsBuilder.fromUriString(properties.baseUrl())
+            .path(properties.binaryCertificateEndpoint().formatted(certificateId))
+            .toUriString();
     return webcertRestClient
         .get()
         .uri(url)
@@ -54,6 +56,14 @@ public class GetBinaryCertificateWebcertClient {
             WebcertRestClientConfig.LOG_SESSION_ID_HEADER,
             MDC.get(WebcertRestClientConfig.SESSION_ID_KEY))
         .retrieve()
+        .onStatus(
+            HttpStatusCode::isError,
+            (request, response) -> {
+              throw new WebcertClientException(
+                  "Call to webcert's binary certificate endpoint (%s) failed with HTTP status %s"
+                      .formatted(url, response.getStatusCode()),
+                  response.getStatusCode());
+            })
         .body(BinaryCertificateResponseDTO.class);
   }
 }

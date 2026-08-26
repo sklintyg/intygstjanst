@@ -30,6 +30,7 @@ import se.inera.intyg.intygstjanst.application.exception.ServerException;
 import se.inera.intyg.intygstjanst.infrastructure.logging.MdcLogConstants;
 import se.inera.intyg.intygstjanst.infrastructure.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.integration.webcert.client.GetBinaryCertificateWebcertClient;
+import se.inera.intyg.intygstjanst.integration.webcert.client.WebcertClientException;
 import se.inera.intyg.intygstjanst.integration.webcert.dto.BinaryCertificateResponseDTO;
 import se.riv.clinicalprocess.healthcond.certificate.getBinaryCertificate.v1.GetBinaryCertificateResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.getBinaryCertificate.v1.GetBinaryCertificateResponseType;
@@ -45,8 +46,7 @@ public class GetBinaryCertificateResponderImpl implements GetBinaryCertificateRe
   private final BinaryCertificateResponseConverter binaryCertificateResponseConverter;
   private final GetBinaryCertificateWebcertClient webcertClient;
 
-  @Resource
-  private WebServiceContext wsContext;
+  @Resource private WebServiceContext wsContext;
 
   public GetBinaryCertificateResponderImpl(
       BinaryCertificateResponseConverter binaryCertificateResponseConverter,
@@ -63,9 +63,9 @@ public class GetBinaryCertificateResponderImpl implements GetBinaryCertificateRe
   public GetBinaryCertificateResponseType getBinaryCertificate(
       String logicalAddress, GetBinaryCertificateType getBinaryCertificateRequest) {
     if (logicalAddress == null || logicalAddress.isEmpty()) {
-      LOGGER.error("logicalAddress is null or empty");
+      LOGGER.error("logicalAddress is null or empty (should not happen)");
       throw new ServerException(
-          "Request to GetBinaryCertificate is missing required parameter 'logical-address' (should never happen)");
+          "Request to GetBinaryCertificate is missing required parameter 'logical-address'");
     }
     if (getBinaryCertificateRequest == null
         || getBinaryCertificateRequest.getIntygsId() == null
@@ -80,10 +80,34 @@ public class GetBinaryCertificateResponderImpl implements GetBinaryCertificateRe
 
     logIncomingRequest(getBinaryCertificateRequest);
 
-    BinaryCertificateResponseDTO binaryCertificateResponse = webcertClient.get(
-        getBinaryCertificateRequest.getIntygsId().getRoot());
+    final BinaryCertificateResponseDTO binaryCertificateResponse =
+        callWebcert(getBinaryCertificateRequest.getIntygsId().getRoot());
 
     return binaryCertificateResponseConverter.toResponse(binaryCertificateResponse);
+  }
+
+  private BinaryCertificateResponseDTO callWebcert(String certificateId) {
+    try {
+      return webcertClient.get(certificateId);
+    } catch (WebcertClientException e) {
+      if (e.isClientError()) {
+        LOGGER.warn(
+            "Call to webcert's binary certificate endpoint for certificate '{}' failed with a "
+                + "client error ({}): {}",
+            certificateId,
+            e.getStatusCode(),
+            e.getMessage());
+      } else if (e.isServerError()) {
+        LOGGER.error(
+            "Call to webcert's binary certificate endpoint for certificate '{}' failed with a "
+                + "server error ({})",
+            certificateId,
+            e.getStatusCode(),
+            e);
+      }
+      throw new ServerException(
+          "Failed to retrieve binary certificate '" + certificateId + "' from webcert");
+    }
   }
 
   private void logIncomingRequest(GetBinaryCertificateType getBinaryCertificateRequest) {
