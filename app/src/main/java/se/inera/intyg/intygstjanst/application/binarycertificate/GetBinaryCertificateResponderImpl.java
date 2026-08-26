@@ -19,7 +19,9 @@
 package se.inera.intyg.intygstjanst.application.binarycertificate;
 
 import org.apache.cxf.annotations.SchemaValidation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import se.inera.intyg.intygstjanst.application.exception.ServerException;
 import se.inera.intyg.intygstjanst.infrastructure.logging.MdcLogConstants;
 import se.inera.intyg.intygstjanst.infrastructure.logging.PerformanceLogging;
 import se.riv.clinicalprocess.healthcond.certificate.getBinaryCertificate.v1.GetBinaryCertificateResponderInterface;
@@ -30,13 +32,25 @@ import se.riv.clinicalprocess.healthcond.certificate.getBinaryCertificate.v1.Get
 @SchemaValidation
 public class GetBinaryCertificateResponderImpl implements GetBinaryCertificateResponderInterface {
 
+  @Autowired private BinaryCertificateResponseConverter binaryCertificateResponseConverter;
+
   @Override
   @PerformanceLogging(
       eventAction = "retrieve-binary-certificate",
       eventType = MdcLogConstants.EVENT_TYPE_ACCESSED,
       isActive = false)
   public GetBinaryCertificateResponseType getBinaryCertificate(
-      String intygsId, GetBinaryCertificateType getBinaryCertificateType) {
+      String logicalAddress, GetBinaryCertificateType getBinaryCertificateType) {
+    if (getBinaryCertificateType == null
+        || getBinaryCertificateType.getIntygsId() == null
+        || getBinaryCertificateType.getIntygsId().getExtension() == null
+        || getBinaryCertificateType.getIntygsId().getExtension().isEmpty()
+        || logicalAddress == null
+        || logicalAddress.isEmpty()) {
+      throw new ServerException(
+          "Request to GetBinaryCertificate is missing required parameter 'intygs-id'");
+    }
+
     return null;
   }
 }
