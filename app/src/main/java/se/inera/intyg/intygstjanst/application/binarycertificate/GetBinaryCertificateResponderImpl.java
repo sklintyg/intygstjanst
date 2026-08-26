@@ -70,7 +70,9 @@ public class GetBinaryCertificateResponderImpl implements GetBinaryCertificateRe
     if (getBinaryCertificateRequest == null
         || getBinaryCertificateRequest.getIntygsId() == null
         || getBinaryCertificateRequest.getIntygsId().getExtension() == null
-        || getBinaryCertificateRequest.getIntygsId().getExtension().isEmpty()) {
+        || getBinaryCertificateRequest.getIntygsId().getExtension().isEmpty()
+        || getBinaryCertificateRequest.getIntygsId().getRoot() == null
+        || getBinaryCertificateRequest.getIntygsId().getRoot().isEmpty()) {
       LOGGER.info("intygs-id is null or empty");
       throw new ServerException(
           "Request to GetBinaryCertificate is missing required parameter 'intygs-id'");
