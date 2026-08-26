@@ -45,7 +45,8 @@ public class GetBinaryCertificateResponderImpl implements GetBinaryCertificateRe
   private final BinaryCertificateResponseConverter binaryCertificateResponseConverter;
   private final GetBinaryCertificateWebcertClient webcertClient;
 
-  @Resource private WebServiceContext wsContext;
+  @Resource
+  private WebServiceContext wsContext;
 
   public GetBinaryCertificateResponderImpl(
       BinaryCertificateResponseConverter binaryCertificateResponseConverter,
@@ -62,6 +63,7 @@ public class GetBinaryCertificateResponderImpl implements GetBinaryCertificateRe
   public GetBinaryCertificateResponseType getBinaryCertificate(
       String logicalAddress, GetBinaryCertificateType getBinaryCertificateRequest) {
     if (logicalAddress == null || logicalAddress.isEmpty()) {
+      LOGGER.error("logicalAddress is null or empty");
       throw new ServerException(
           "Request to GetBinaryCertificate is missing required parameter 'logical-address' (should never happen)");
     }
@@ -69,6 +71,7 @@ public class GetBinaryCertificateResponderImpl implements GetBinaryCertificateRe
         || getBinaryCertificateRequest.getIntygsId() == null
         || getBinaryCertificateRequest.getIntygsId().getExtension() == null
         || getBinaryCertificateRequest.getIntygsId().getExtension().isEmpty()) {
+      LOGGER.info("intygs-id is null or empty");
       throw new ServerException(
           "Request to GetBinaryCertificate is missing required parameter 'intygs-id'");
     }
