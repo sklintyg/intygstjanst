@@ -18,11 +18,7 @@
  */
 package se.inera.intyg.intygstjanst.application.binarycertificate;
 
-import jakarta.annotation.Resource;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.xml.ws.WebServiceContext;
 import org.apache.cxf.annotations.SchemaValidation;
-import org.apache.cxf.transport.http.AbstractHTTPDestination;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -45,8 +41,6 @@ public class GetBinaryCertificateResponderImpl implements GetBinaryCertificateRe
 
   private final BinaryCertificateResponseConverter binaryCertificateResponseConverter;
   private final GetBinaryCertificateWebcertClient webcertClient;
-
-  @Resource private WebServiceContext wsContext;
 
   public GetBinaryCertificateResponderImpl(
       BinaryCertificateResponseConverter binaryCertificateResponseConverter,
@@ -78,7 +72,7 @@ public class GetBinaryCertificateResponderImpl implements GetBinaryCertificateRe
           "Request to GetBinaryCertificate is missing required parameter 'intygs-id'");
     }
 
-    logIncomingRequest(getBinaryCertificateRequest);
+    logIncomingRequest(logicalAddress, getBinaryCertificateRequest);
 
     final BinaryCertificateResponseDTO binaryCertificateResponse =
         callWebcert(getBinaryCertificateRequest.getIntygsId().getRoot());
@@ -110,20 +104,12 @@ public class GetBinaryCertificateResponderImpl implements GetBinaryCertificateRe
     }
   }
 
-  private void logIncomingRequest(GetBinaryCertificateType getBinaryCertificateRequest) {
-    HttpServletRequest httpRequest = getCurrentHttpRequest();
-    String callingSystemHsaId =
-        httpRequest.getHeader(
-            "x-rivta-original-serviceconsumer-hsaid"); // TODO: check correct HTTP header name
+  private void logIncomingRequest(String hsaId,
+      GetBinaryCertificateType getBinaryCertificateRequest) {
     LOGGER.info(
         "Received request to GetBinaryCertificate with intygs-id: {} from HSA-ID {}",
         getBinaryCertificateRequest.getIntygsId().getRoot()
             + getBinaryCertificateRequest.getIntygsId().getExtension(),
-        callingSystemHsaId);
-  }
-
-  private HttpServletRequest getCurrentHttpRequest() {
-    return (HttpServletRequest)
-        wsContext.getMessageContext().get(AbstractHTTPDestination.HTTP_REQUEST);
+        hsaId);
   }
 }
