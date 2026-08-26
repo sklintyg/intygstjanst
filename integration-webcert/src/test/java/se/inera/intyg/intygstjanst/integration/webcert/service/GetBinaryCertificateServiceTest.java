@@ -18,4 +18,8 @@
  */
 package se.inera.intyg.intygstjanst.integration.webcert.service;
 
+
+import org.junit.jupiter.api.Disabled;
+
+@Disabled("for now")
 class GetBinaryCertificateServiceTest {}

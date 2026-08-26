@@ -18,9 +18,9 @@
  */
 package se.inera.intyg.intygstjanst.application.binarycertificate;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.cxf.annotations.SchemaValidation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.intygstjanst.application.exception.ServerException;
 import se.inera.intyg.intygstjanst.infrastructure.logging.MdcLogConstants;
@@ -32,22 +32,14 @@ import se.riv.clinicalprocess.healthcond.certificate.getBinaryCertificate.v1.Get
 import se.riv.clinicalprocess.healthcond.certificate.getBinaryCertificate.v1.GetBinaryCertificateResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.getBinaryCertificate.v1.GetBinaryCertificateType;
 
+@Slf4j
 @Service
 @SchemaValidation
+@RequiredArgsConstructor
 public class GetBinaryCertificateResponderImpl implements GetBinaryCertificateResponderInterface {
-
-  private static final Logger LOGGER =
-      LoggerFactory.getLogger(GetBinaryCertificateResponderImpl.class);
 
   private final BinaryCertificateResponseConverter binaryCertificateResponseConverter;
   private final GetBinaryCertificateWebcertClient webcertClient;
-
-  public GetBinaryCertificateResponderImpl(
-      BinaryCertificateResponseConverter binaryCertificateResponseConverter,
-      GetBinaryCertificateWebcertClient webcertClient) {
-    this.binaryCertificateResponseConverter = binaryCertificateResponseConverter;
-    this.webcertClient = webcertClient;
-  }
 
   @Override
   @PerformanceLogging(
@@ -57,7 +49,7 @@ public class GetBinaryCertificateResponderImpl implements GetBinaryCertificateRe
   public GetBinaryCertificateResponseType getBinaryCertificate(
       String logicalAddress, GetBinaryCertificateType getBinaryCertificateRequest) {
     if (logicalAddress == null || logicalAddress.isEmpty()) {
-      LOGGER.error("logicalAddress is null or empty (should not happen)");
+      log.error("logicalAddress is null or empty (should not happen)");
       throw new ServerException(
           "Request to GetBinaryCertificate is missing required parameter 'logical-address'");
     }
@@ -67,7 +59,7 @@ public class GetBinaryCertificateResponderImpl implements GetBinaryCertificateRe
         || getBinaryCertificateRequest.getIntygsId().getExtension().isEmpty()
         || getBinaryCertificateRequest.getIntygsId().getRoot() == null
         || getBinaryCertificateRequest.getIntygsId().getRoot().isEmpty()) {
-      LOGGER.info("intygs-id is null or empty");
+      log.info("intygs-id is null or empty");
       throw new ServerException(
           "Request to GetBinaryCertificate is missing required parameter 'intygs-id'");
     }
@@ -75,7 +67,7 @@ public class GetBinaryCertificateResponderImpl implements GetBinaryCertificateRe
     logIncomingRequest(logicalAddress, getBinaryCertificateRequest);
 
     final BinaryCertificateResponseDTO binaryCertificateResponse =
-        callWebcert(getBinaryCertificateRequest.getIntygsId().getRoot());
+        callWebcert(getBinaryCertificateRequest.getIntygsId().getExtension());
 
     return binaryCertificateResponseConverter.toResponse(binaryCertificateResponse);
   }
@@ -85,14 +77,14 @@ public class GetBinaryCertificateResponderImpl implements GetBinaryCertificateRe
       return webcertClient.get(certificateId);
     } catch (WebcertClientException e) {
       if (e.isClientError()) {
-        LOGGER.warn(
+        log.warn(
             "Call to webcert's binary certificate endpoint for certificate '{}' failed with a "
                 + "client error ({}): {}",
             certificateId,
             e.getStatusCode(),
             e.getMessage());
       } else if (e.isServerError()) {
-        LOGGER.error(
+        log.error(
             "Call to webcert's binary certificate endpoint for certificate '{}' failed with a "
                 + "server error ({})",
             certificateId,
@@ -104,12 +96,11 @@ public class GetBinaryCertificateResponderImpl implements GetBinaryCertificateRe
     }
   }
 
-  private void logIncomingRequest(String hsaId,
-      GetBinaryCertificateType getBinaryCertificateRequest) {
-    LOGGER.info(
-        "Received request to GetBinaryCertificate with intygs-id: {} from HSA-ID {}",
-        getBinaryCertificateRequest.getIntygsId().getRoot()
-            + getBinaryCertificateRequest.getIntygsId().getExtension(),
-        hsaId);
+  private void logIncomingRequest(String hsaId, GetBinaryCertificateType getBinaryCertificateRequest) {
+    log.info(
+        "Received GetBinaryCertificate request from HSA-ID {} for intygs-id: {} ",
+        hsaId,
+        getBinaryCertificateRequest.getIntygsId().getExtension());
   }
+
 }
