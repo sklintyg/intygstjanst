@@ -31,6 +31,7 @@ import se.inera.intyg.intygstjanst.integration.webcert.dto.BinaryCertificateResp
 import se.riv.clinicalprocess.healthcond.certificate.getBinaryCertificate.v1.GetBinaryCertificateResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.getBinaryCertificate.v1.GetBinaryCertificateResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.getBinaryCertificate.v1.GetBinaryCertificateType;
+import se.riv.clinicalprocess.healthcond.certificate.types.v3.IIType;
 
 @Slf4j
 @Service
@@ -48,6 +49,9 @@ public class GetBinaryCertificateResponderImpl implements GetBinaryCertificateRe
       isActive = false)
   public GetBinaryCertificateResponseType getBinaryCertificate(
       String logicalAddress, GetBinaryCertificateType getBinaryCertificateRequest) {
+
+    logIncomingRequest(logicalAddress, getBinaryCertificateRequest);
+
     if (logicalAddress == null || logicalAddress.isEmpty()) {
       log.error("logicalAddress is null or empty (should not happen)");
       throw new ServerException(
@@ -63,8 +67,6 @@ public class GetBinaryCertificateResponderImpl implements GetBinaryCertificateRe
       throw new ServerException(
           "Request to GetBinaryCertificate is missing required parameter 'intygs-id'");
     }
-
-    logIncomingRequest(logicalAddress, getBinaryCertificateRequest);
 
     final BinaryCertificateResponseDTO binaryCertificateResponse =
         callWebcert(getBinaryCertificateRequest.getIntygsId().getExtension());
@@ -96,11 +98,13 @@ public class GetBinaryCertificateResponderImpl implements GetBinaryCertificateRe
     }
   }
 
-  private void logIncomingRequest(String hsaId, GetBinaryCertificateType getBinaryCertificateRequest) {
-    log.info(
-        "Received GetBinaryCertificate request from HSA-ID {} for intygs-id: {} ",
-        hsaId,
-        getBinaryCertificateRequest.getIntygsId().getExtension());
+  private void logIncomingRequest(String hsaId, GetBinaryCertificateType request) {
+    final var certificateId =
+        java.util.Optional.ofNullable(request)
+            .map(GetBinaryCertificateType::getIntygsId)
+            .map(IIType::getExtension)
+            .orElse("<missing>");
+    log.info("Received GetBinaryCertificate request from HSA-ID '{}' for intygs-id: '{}'", hsaId, certificateId);
   }
 
 }
