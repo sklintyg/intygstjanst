@@ -18,22 +18,25 @@
  */
 package se.inera.intyg.intygstjanst.integration.webcert.dto;
 
-import java.time.LocalDateTime;
+import java.util.List;
 import lombok.Builder;
 import lombok.Value;
-import se.inera.intyg.intygstjanst.integration.webcert.dto.IntygsStatusDTO.IntygsStatusDTOBuilder;
+import se.inera.intyg.intygstjanst.integration.webcert.dto.BinaryCertificateStaff.BinaryCertificateStaffBuilder;
 import tools.jackson.databind.annotation.JsonDeserialize;
 import tools.jackson.databind.annotation.JsonPOJOBuilder;
 
-@JsonDeserialize(builder = IntygsStatusDTOBuilder.class)
+@JsonDeserialize(builder = BinaryCertificateStaffBuilder.class)
 @Value
 @Builder
-public class IntygsStatusDTO {
+public class BinaryCertificateStaff {
 
-  BinaryCertificateCode party;
-  BinaryCertificateCode status;
-  LocalDateTime timestamp;
+  String personId;
+  String fullName;
+  List<BinaryCertificateCode> titles;
+  List<String> specialities;
+  List<BinaryCertificateCode> licences;
+  BinaryCertificateUnit unit;
 
   @JsonPOJOBuilder(withPrefix = "")
-  public static class IntygsStatusDTOBuilder {}
+  public static class BinaryCertificateStaffBuilder {}
 }
