@@ -18,6 +18,7 @@
  */
 package se.inera.intyg.intygstjanst.integration.webcert.dto;
 
+import java.util.List;
 import lombok.Builder;
 import lombok.Value;
 import se.inera.intyg.intygstjanst.integration.webcert.dto.HosPersonalDTO.HosPersonalDTOBuilder;
@@ -29,10 +30,12 @@ import tools.jackson.databind.annotation.JsonPOJOBuilder;
 @Builder
 public class HosPersonalDTO {
 
-  IdDTO staffId;
+  String personId;
   String fullName;
-  String prescriberCode;
-  EnhetDTO unit;
+  List<BinaryCertificateCode> titles;
+  List<String> specialities;
+  List<BinaryCertificateCode> licences;
+  BinaryCertificateUnit unit;
 
   @JsonPOJOBuilder(withPrefix = "")
   public static class HosPersonalDTOBuilder {}

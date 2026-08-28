@@ -30,8 +30,8 @@ import tools.jackson.databind.annotation.JsonPOJOBuilder;
 @Builder
 public class IntygsStatusDTO {
 
-  CodeableConceptDTO party;
-  CodeableConceptDTO status;
+  BinaryCertificateCode party;
+  BinaryCertificateCode status;
   LocalDateTime timestamp;
 
   @JsonPOJOBuilder(withPrefix = "")

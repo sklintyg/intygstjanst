@@ -18,19 +18,19 @@
  */
 package se.inera.intyg.intygstjanst.application.binarycertificate;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
+import se.inera.intyg.common.support.facade.model.metadata.CertificateRelations;
+import se.inera.intyg.intygstjanst.integration.webcert.dto.BinaryCertificateCareProvider;
+import se.inera.intyg.intygstjanst.integration.webcert.dto.BinaryCertificateCode;
+import se.inera.intyg.intygstjanst.integration.webcert.dto.BinaryCertificateMetadataDTO;
 import se.inera.intyg.intygstjanst.integration.webcert.dto.BinaryCertificateResponseDTO;
-import se.inera.intyg.intygstjanst.integration.webcert.dto.BinaryDataDTO;
-import se.inera.intyg.intygstjanst.integration.webcert.dto.CodeableConceptDTO;
-import se.inera.intyg.intygstjanst.integration.webcert.dto.EnhetDTO;
+import se.inera.intyg.intygstjanst.integration.webcert.dto.BinaryCertificateUnit;
 import se.inera.intyg.intygstjanst.integration.webcert.dto.HosPersonalDTO;
-import se.inera.intyg.intygstjanst.integration.webcert.dto.IdDTO;
 import se.inera.intyg.intygstjanst.integration.webcert.dto.IntygsStatusDTO;
-import se.inera.intyg.intygstjanst.integration.webcert.dto.PatientDTO;
-import se.inera.intyg.intygstjanst.integration.webcert.dto.RelationDTO;
-import se.inera.intyg.intygstjanst.integration.webcert.dto.VardgivareDTO;
 import se.riv.clinicalprocess.healthcond.certificate.getBinaryCertificate.v1.BinartIntyg;
 import se.riv.clinicalprocess.healthcond.certificate.getBinaryCertificate.v1.BinaryDataType;
 import se.riv.clinicalprocess.healthcond.certificate.getBinaryCertificate.v1.GetBinaryCertificateResponseType;
@@ -67,62 +67,80 @@ public class BinaryCertificateResponseConverter {
 
   private BinartIntyg toBinartIntyg(BinaryCertificateResponseDTO dto) {
     final BinartIntyg binartIntyg = new BinartIntyg();
-    binartIntyg.setIntygsId(toIntygId(dto.getCertificateId()));
-    binartIntyg.setTyp(toTypAvIntyg(dto.getType()));
-    binartIntyg.setVersion(dto.getVersion());
-    binartIntyg.setSigneringstidpunkt(dto.getSigningTimestamp());
-    binartIntyg.setPatient(toPatient(dto.getPatient()));
-    binartIntyg.setSkapadAv(toHosPersonal(dto.getCreatedBy()));
-    binartIntyg.getRelation().addAll(toRelationList(dto.getRelations()));
-    binartIntyg.getStatus().addAll(toIntygsStatusList(dto.getStatuses()));
-    binartIntyg.setBinartSvar(toBinaryDataType(dto.getBinaryData()));
+    final var metadata = dto.getMetadata();
+    binartIntyg.setIntygsId(toIntygId(metadata.getCertificateId()));
+    binartIntyg.setTyp(toTypAvIntyg(metadata.getType()));
+    binartIntyg.setVersion(metadata.getVersion());
+    binartIntyg.setSigneringstidpunkt(metadata.getSignedAt());
+    binartIntyg.setPatient(toPatient(metadata.getPatient()));
+    binartIntyg.setSkapadAv(toHosPersonal(metadata.getIssuedBy()));
+    binartIntyg.getRelation().addAll(toRelationList(metadata.getRelations()));
+    binartIntyg.getStatus().addAll(addStatuses(metadata));
+    binartIntyg.setBinartSvar(toBinaryDataType(dto.getPdfData()));
     return binartIntyg;
   }
 
-  private IntygId toIntygId(IdDTO idDTO) {
-    if (idDTO == null) {
+  private List<IntygsStatus> addStatuses(BinaryCertificateMetadataDTO metadata) {
+    List<IntygsStatus> intygsStatuses = new ArrayList<>();
+    LocalDateTime signedAt = metadata.getSignedAt();
+    LocalDateTime sentAt = metadata.getSentAt();
+    LocalDateTime revokedAt = metadata.getRevokedAt();
+    IntygsStatus intygsStatusSigned = new IntygsStatus();
+    intygsStatusSigned.setTidpunkt(signedAt);
+    intygsStatuses.add(intygsStatusSigned);
+
+    if (metadata.getSentAt() != null) {
+      IntygsStatus intygsStatusSent = new IntygsStatus();
+      intygsStatusSent.setTidpunkt(sentAt);
+      intygsStatuses.add(intygsStatusSent);
+    }
+    if (metadata.getRevokedAt() != null) {
+      IntygsStatus intygsStatusRevoked = new IntygsStatus();
+      intygsStatusRevoked.setTidpunkt(revokedAt);
+      intygsStatuses.add(intygsStatusRevoked);
+    }
+
+    return intygsStatuses;
+  }
+
+  private IntygId toIntygId(String certificateId) {
+    if (certificateId == null) {
       return null;
     }
     final IntygId intygId = new IntygId();
-    intygId.setRoot(idDTO.getRoot());
-    intygId.setExtension(idDTO.getExtension());
+    intygId.setRoot(""); // enhets-hsa?
+    intygId.setExtension(certificateId);
     return intygId;
   }
 
-  private TypAvIntyg toTypAvIntyg(CodeableConceptDTO codeableConceptDTO) {
-    if (codeableConceptDTO == null) {
+  private TypAvIntyg toTypAvIntyg(BinaryCertificateCode binaryCertificateCode) {
+    if (binaryCertificateCode == null) {
       return null;
     }
     final TypAvIntyg typAvIntyg = new TypAvIntyg();
-    typAvIntyg.setCode(codeableConceptDTO.getCode());
-    typAvIntyg.setCodeSystem(codeableConceptDTO.getCodeSystem());
-    typAvIntyg.setDisplayName(codeableConceptDTO.getDisplayName());
+    typAvIntyg.setCode(binaryCertificateCode.getCode());
+    typAvIntyg.setCodeSystem(binaryCertificateCode.getCodeSystem());
+    typAvIntyg.setDisplayName(binaryCertificateCode.getDisplayName());
     return typAvIntyg;
   }
 
-  private Patient toPatient(PatientDTO patientDTO) {
+  private Patient toPatient(se.inera.intyg.common.support.facade.model.Patient patientDTO) {
     if (patientDTO == null) {
       return null;
     }
+
     final Patient patient = new Patient();
-    patient.setPersonId(toPersonId(patientDTO.getPersonId()));
+    PersonId personId = new PersonId();
+    personId.setRoot(patientDTO.getPersonId().getType());
+    personId.setExtension(patientDTO.getPersonId().getId());
+    patient.setPersonId(personId);
     patient.setFornamn(patientDTO.getFirstName());
     patient.setMellannamn(patientDTO.getMiddleName());
     patient.setEfternamn(patientDTO.getLastName());
-    patient.setPostadress(patientDTO.getAddress());
-    patient.setPostnummer(patientDTO.getPostalCode());
+    patient.setPostadress(patientDTO.getStreet());
+    patient.setPostnummer(patientDTO.getZipCode());
     patient.setPostort(patientDTO.getCity());
     return patient;
-  }
-
-  private PersonId toPersonId(IdDTO idDTO) {
-    if (idDTO == null) {
-      return null;
-    }
-    final PersonId personId = new PersonId();
-    personId.setRoot(idDTO.getRoot());
-    personId.setExtension(idDTO.getExtension());
-    return personId;
   }
 
   private HosPersonal toHosPersonal(HosPersonalDTO hosPersonalDTO) {
@@ -130,71 +148,67 @@ public class BinaryCertificateResponseConverter {
       return null;
     }
     final HosPersonal hosPersonal = new HosPersonal();
-    hosPersonal.setPersonalId(toHsaId(hosPersonalDTO.getStaffId()));
+    hosPersonal.setPersonalId(toHsaId(hosPersonalDTO.getPersonId()));
     hosPersonal.setFullstandigtNamn(hosPersonalDTO.getFullName());
-    hosPersonal.setForskrivarkod(hosPersonalDTO.getPrescriberCode());
+    hosPersonal.setForskrivarkod("0000000"); // TODO: correct?
     hosPersonal.setEnhet(toEnhet(hosPersonalDTO.getUnit()));
+    hosPersonal.getBefattning();
+    hosPersonal.getLegitimeratYrke();
+    hosPersonal.getSpecialistkompetens();
     return hosPersonal;
   }
 
-  private HsaId toHsaId(IdDTO idDTO) {
+  private HsaId toHsaId(String idDTO) {
     if (idDTO == null) {
       return null;
     }
     final HsaId hsaId = new HsaId();
-    hsaId.setRoot(idDTO.getRoot());
-    hsaId.setExtension(idDTO.getExtension());
+    // hsaId.setRoot(idDTO.getRoot());
+    hsaId.setExtension(idDTO);
     return hsaId;
   }
 
-  private Enhet toEnhet(EnhetDTO enhetDTO) {
-    if (enhetDTO == null) {
+  private Enhet toEnhet(BinaryCertificateUnit binaryCertificateUnit) {
+    if (binaryCertificateUnit == null) {
       return null;
     }
     final Enhet enhet = new Enhet();
-    enhet.setEnhetsId(toHsaId(enhetDTO.getUnitId()));
-    enhet.setEnhetsnamn(enhetDTO.getUnitName());
-    enhet.setPostadress(enhetDTO.getAddress());
-    enhet.setPostnummer(enhetDTO.getPostalCode());
-    enhet.setPostort(enhetDTO.getCity());
-    enhet.setTelefonnummer(enhetDTO.getPhoneNumber());
-    enhet.setEpost(enhetDTO.getEmail());
-    enhet.setVardgivare(toVardgivare(enhetDTO.getCareProvider()));
+    enhet.setEnhetsId(toHsaId(binaryCertificateUnit.getUnitId()));
+    enhet.setEnhetsnamn(binaryCertificateUnit.getUnitName());
+    enhet.setPostadress(binaryCertificateUnit.getAddress());
+    enhet.setPostnummer(binaryCertificateUnit.getZipCode());
+    enhet.setPostort(binaryCertificateUnit.getCity());
+    enhet.setTelefonnummer(binaryCertificateUnit.getPhoneNumber());
+    enhet.setEpost(binaryCertificateUnit.getEmail());
+    enhet.setVardgivare(toVardgivare(binaryCertificateUnit.getCareProvider()));
     return enhet;
   }
 
-  private Vardgivare toVardgivare(VardgivareDTO vardgivareDTO) {
-    if (vardgivareDTO == null) {
+  private Vardgivare toVardgivare(BinaryCertificateCareProvider binaryCertificateCareProvider) {
+    if (binaryCertificateCareProvider == null) {
       return null;
     }
     final Vardgivare vardgivare = new Vardgivare();
-    vardgivare.setVardgivareId(toHsaId(vardgivareDTO.getCareProviderId()));
-    vardgivare.setVardgivarnamn(vardgivareDTO.getCareProviderName());
+    vardgivare.setVardgivareId(toHsaId(binaryCertificateCareProvider.getUnitId()));
+    vardgivare.setVardgivarnamn(binaryCertificateCareProvider.getUnitName());
     return vardgivare;
   }
 
-  private List<Relation> toRelationList(List<RelationDTO> relationDTOs) {
-    return Optional.ofNullable(relationDTOs).orElseGet(List::of).stream()
-        .map(this::toRelation)
-        .toList();
-  }
+  private List<Relation> toRelationList(CertificateRelations relationDTOs) {
+    List<Relation> relations = new ArrayList<>();
 
-  private Relation toRelation(RelationDTO relationDTO) {
-    final Relation relation = new Relation();
-    relation.setTyp(toTypAvRelation(relationDTO.getType()));
-    relation.setIntygsId(toIntygId(relationDTO.getCertificateId()));
-    return relation;
-  }
-
-  private TypAvRelation toTypAvRelation(CodeableConceptDTO codeableConceptDTO) {
-    if (codeableConceptDTO == null) {
-      return null;
+    for (var relationDTO : relationDTOs.getChildren()) {
+      var relation = new Relation();
+      IntygId intygId = new IntygId();
+      intygId.setExtension(relationDTO.getCertificateId());
+      relation.setIntygsId(intygId);
+      TypAvRelation typAvRelation = new TypAvRelation();
+      typAvRelation.setCode(relationDTO.getType().name());
+      relation.setTyp(typAvRelation);
+      relations.add(relation);
     }
-    final TypAvRelation typAvRelation = new TypAvRelation();
-    typAvRelation.setCode(codeableConceptDTO.getCode());
-    typAvRelation.setCodeSystem(codeableConceptDTO.getCodeSystem());
-    typAvRelation.setDisplayName(codeableConceptDTO.getDisplayName());
-    return typAvRelation;
+
+    return relations;
   }
 
   private List<IntygsStatus> toIntygsStatusList(List<IntygsStatusDTO> intygsStatusDTOs) {
@@ -211,35 +225,35 @@ public class BinaryCertificateResponseConverter {
     return intygsStatus;
   }
 
-  private Part toPart(CodeableConceptDTO codeableConceptDTO) {
-    if (codeableConceptDTO == null) {
+  private Part toPart(BinaryCertificateCode binaryCertificateCode) {
+    if (binaryCertificateCode == null) {
       return null;
     }
     final Part part = new Part();
-    part.setCode(codeableConceptDTO.getCode());
-    part.setCodeSystem(codeableConceptDTO.getCodeSystem());
-    part.setDisplayName(codeableConceptDTO.getDisplayName());
+    part.setCode(binaryCertificateCode.getCode());
+    part.setCodeSystem(binaryCertificateCode.getCodeSystem());
+    part.setDisplayName(binaryCertificateCode.getDisplayName());
     return part;
   }
 
-  private Statuskod toStatuskod(CodeableConceptDTO codeableConceptDTO) {
-    if (codeableConceptDTO == null) {
+  private Statuskod toStatuskod(BinaryCertificateCode binaryCertificateCode) {
+    if (binaryCertificateCode == null) {
       return null;
     }
     final Statuskod statuskod = new Statuskod();
-    statuskod.setCode(codeableConceptDTO.getCode());
-    statuskod.setCodeSystem(codeableConceptDTO.getCodeSystem());
-    statuskod.setDisplayName(codeableConceptDTO.getDisplayName());
+    statuskod.setCode(binaryCertificateCode.getCode());
+    statuskod.setCodeSystem(binaryCertificateCode.getCodeSystem());
+    statuskod.setDisplayName(binaryCertificateCode.getDisplayName());
     return statuskod;
   }
 
-  private BinaryDataType toBinaryDataType(BinaryDataDTO binaryDataDTO) {
-    if (binaryDataDTO == null) {
+  private BinaryDataType toBinaryDataType(byte[] data) {
+    if (data == null) {
       return null;
     }
     final BinaryDataType binaryDataType = new BinaryDataType();
-    binaryDataType.setContentType(binaryDataDTO.getContentType());
-    binaryDataType.setData(binaryDataDTO.getData());
+    binaryDataType.setContentType("application/pdf");
+    binaryDataType.setData(data);
     return binaryDataType;
   }
 }

@@ -104,7 +104,9 @@ public class GetBinaryCertificateResponderImpl implements GetBinaryCertificateRe
             .map(GetBinaryCertificateType::getIntygsId)
             .map(IIType::getExtension)
             .orElse("<missing>");
-    log.info("Received GetBinaryCertificate request from HSA-ID '{}' for intygs-id: '{}'", hsaId, certificateId);
+    log.info(
+        "Received GetBinaryCertificate request from HSA-ID '{}' for intygs-id: '{}'",
+        hsaId,
+        certificateId);
   }
-
 }

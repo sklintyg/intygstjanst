@@ -18,8 +18,6 @@
  */
 package se.inera.intyg.intygstjanst.integration.webcert.dto;
 
-import java.time.LocalDateTime;
-import java.util.List;
 import lombok.Builder;
 import lombok.Value;
 import se.inera.intyg.intygstjanst.integration.webcert.dto.BinaryCertificateResponseDTO.BinaryCertificateResponseDTOBuilder;
@@ -37,15 +35,8 @@ import tools.jackson.databind.annotation.JsonPOJOBuilder;
 @Builder
 public class BinaryCertificateResponseDTO {
 
-  IdDTO certificateId;
-  CodeableConceptDTO type;
-  String version;
-  LocalDateTime signingTimestamp;
-  PatientDTO patient;
-  HosPersonalDTO createdBy;
-  List<RelationDTO> relations;
-  List<IntygsStatusDTO> statuses;
-  BinaryDataDTO binaryData;
+  BinaryCertificateMetadataDTO metadata;
+  byte[] pdfData;
 
   @JsonPOJOBuilder(withPrefix = "")
   public static class BinaryCertificateResponseDTOBuilder {}

@@ -20,23 +20,25 @@ package se.inera.intyg.intygstjanst.integration.webcert.dto;
 
 import lombok.Builder;
 import lombok.Value;
-import se.inera.intyg.intygstjanst.integration.webcert.dto.CodeableConceptDTO.CodeableConceptDTOBuilder;
+import se.inera.intyg.intygstjanst.integration.webcert.dto.BinaryCertificateUnit.BinaryCertificateUnitBuilder;
 import tools.jackson.databind.annotation.JsonDeserialize;
 import tools.jackson.databind.annotation.JsonPOJOBuilder;
 
-/**
- * Mirrors the SOAP {@code CVType} (code + codeSystem + displayName), used for e.g. typ, status and
- * relation type.
- */
-@JsonDeserialize(builder = CodeableConceptDTOBuilder.class)
+@JsonDeserialize(builder = BinaryCertificateUnitBuilder.class)
 @Value
 @Builder
-public class CodeableConceptDTO {
+public class BinaryCertificateUnit {
 
-  String code;
-  String codeSystem;
-  String displayName;
+  String unitId;
+  String unitName;
+  String address;
+  String zipCode;
+  String city;
+  String phoneNumber;
+  String workplaceCode;
+  BinaryCertificateCareProvider careProvider;
+  String email;
 
   @JsonPOJOBuilder(withPrefix = "")
-  public static class CodeableConceptDTOBuilder {}
+  public static class BinaryCertificateUnitBuilder {}
 }

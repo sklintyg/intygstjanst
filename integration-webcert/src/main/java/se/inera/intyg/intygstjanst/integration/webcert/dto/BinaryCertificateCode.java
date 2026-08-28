@@ -20,19 +20,23 @@ package se.inera.intyg.intygstjanst.integration.webcert.dto;
 
 import lombok.Builder;
 import lombok.Value;
-import se.inera.intyg.intygstjanst.integration.webcert.dto.BinaryDataDTO.BinaryDataDTOBuilder;
+import se.inera.intyg.intygstjanst.integration.webcert.dto.BinaryCertificateCode.BinaryCertificateCodeBuilder;
 import tools.jackson.databind.annotation.JsonDeserialize;
 import tools.jackson.databind.annotation.JsonPOJOBuilder;
 
-/** Mirrors the SOAP {@code BinaryDataType} (contentType + base64 data). */
-@JsonDeserialize(builder = BinaryDataDTOBuilder.class)
+/**
+ * Mirrors the SOAP {@code CVType} (code + codeSystem + displayName), used for e.g. typ, status and
+ * relation type.
+ */
+@JsonDeserialize(builder = BinaryCertificateCodeBuilder.class)
 @Value
 @Builder
-public class BinaryDataDTO {
+public class BinaryCertificateCode {
 
-  String contentType;
-  byte[] data;
+  String code;
+  String codeSystem;
+  String displayName;
 
   @JsonPOJOBuilder(withPrefix = "")
-  public static class BinaryDataDTOBuilder {}
+  public static class BinaryCertificateCodeBuilder {}
 }
