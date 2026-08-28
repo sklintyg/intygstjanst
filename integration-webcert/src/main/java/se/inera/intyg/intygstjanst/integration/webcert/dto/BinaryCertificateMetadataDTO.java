@@ -23,10 +23,11 @@ import lombok.Builder;
 import lombok.Value;
 import se.inera.intyg.common.support.facade.model.Patient;
 import se.inera.intyg.common.support.facade.model.metadata.CertificateRelations;
+import se.inera.intyg.intygstjanst.integration.webcert.dto.BinaryCertificateMetadataDTO.BinaryCertificateMetadataDTOBuilder;
 import tools.jackson.databind.annotation.JsonDeserialize;
 import tools.jackson.databind.annotation.JsonPOJOBuilder;
 
-@JsonDeserialize(builder = BinaryCertificateMetadataDTO.class)
+@JsonDeserialize(builder = BinaryCertificateMetadataDTOBuilder.class)
 @Value
 @Builder
 public class BinaryCertificateMetadataDTO {
@@ -42,5 +43,5 @@ public class BinaryCertificateMetadataDTO {
   CertificateRelations relations;
 
   @JsonPOJOBuilder(withPrefix = "")
-  public static class BinaryCertificateResponseDTOBuilder {}
+  public static class BinaryCertificateMetadataDTOBuilder {}
 }
