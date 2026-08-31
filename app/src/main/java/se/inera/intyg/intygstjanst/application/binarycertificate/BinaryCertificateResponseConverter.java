@@ -18,19 +18,24 @@
  */
 package se.inera.intyg.intygstjanst.application.binarycertificate;
 
+import static se.inera.intyg.common.support.Constants.KV_RELATION_CODE_SYSTEM;
 import static se.inera.intyg.intygstjanst.integration.webcert.dto.BinaryCertificatePersonIdType.PERSONAL_IDENTITY_NUMBER;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.function.Supplier;
 import org.springframework.stereotype.Component;
 import se.inera.intyg.common.support.Constants;
-import se.inera.intyg.common.support.facade.model.metadata.CertificateRelations;
+import se.inera.intyg.common.support.common.enumerations.RelationKod;
+import se.inera.intyg.common.support.facade.model.CertificateRelationType;
 import se.inera.intyg.common.support.model.CertificateState;
 import se.inera.intyg.intygstjanst.integration.webcert.dto.BinaryCertificateCareProvider;
 import se.inera.intyg.intygstjanst.integration.webcert.dto.BinaryCertificateCode;
 import se.inera.intyg.intygstjanst.integration.webcert.dto.BinaryCertificateMetadataDTO;
 import se.inera.intyg.intygstjanst.integration.webcert.dto.BinaryCertificatePatient;
+import se.inera.intyg.intygstjanst.integration.webcert.dto.BinaryCertificateRelation;
 import se.inera.intyg.intygstjanst.integration.webcert.dto.BinaryCertificateResponseDTO;
 import se.inera.intyg.intygstjanst.integration.webcert.dto.BinaryCertificateStaff;
 import se.inera.intyg.intygstjanst.integration.webcert.dto.BinaryCertificateUnit;
@@ -38,10 +43,14 @@ import se.riv.clinicalprocess.healthcond.certificate.getBinaryCertificate.v1.Bin
 import se.riv.clinicalprocess.healthcond.certificate.getBinaryCertificate.v1.BinaryDataType;
 import se.riv.clinicalprocess.healthcond.certificate.getBinaryCertificate.v1.GetBinaryCertificateResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.ArbetsplatsKod;
+import se.riv.clinicalprocess.healthcond.certificate.types.v3.Befattning;
+import se.riv.clinicalprocess.healthcond.certificate.types.v3.CVType;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.HsaId;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.IntygId;
+import se.riv.clinicalprocess.healthcond.certificate.types.v3.LegitimeratYrkeType;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.Part;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.PersonId;
+import se.riv.clinicalprocess.healthcond.certificate.types.v3.Specialistkompetens;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.Statuskod;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.TypAvIntyg;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.TypAvRelation;
@@ -54,6 +63,11 @@ import se.riv.clinicalprocess.healthcond.certificate.v3.Vardgivare;
 
 @Component
 public class BinaryCertificateResponseConverter {
+
+  private static final String PART_HSVARD = "HSVARD";
+  private static final String MIME_TYPE_APPLICATION_PDF = "application/pdf";
+  private static final String NOT_AVAILABLE = "N/A";
+  public static final String EMPTY_STRING = "";
 
   public GetBinaryCertificateResponseType toResponse(BinaryCertificateResponseDTO dto) {
     if (dto == null) {
@@ -74,47 +88,10 @@ public class BinaryCertificateResponseConverter {
     binartIntyg.setSigneringstidpunkt(metadata.getSignedAt());
     binartIntyg.setPatient(toPatient(metadata.getPatient()));
     binartIntyg.setSkapadAv(toHosPersonal(metadata.getIssuedBy()));
-    binartIntyg.getRelation().addAll(toRelationList(metadata.getRelations()));
-    binartIntyg.getStatus().addAll(addStatuses(metadata));
+    binartIntyg.getRelation().add(toRelation(metadata.getParentRelation()));
+    binartIntyg.getStatus().addAll(toStatuses(metadata));
     binartIntyg.setBinartSvar(toBinaryDataType(dto.getPdfData()));
     return binartIntyg;
-  }
-
-  private List<IntygsStatus> addStatuses(BinaryCertificateMetadataDTO metadata) {
-    final var intygStatuses = new ArrayList<IntygsStatus>();
-    final var signedAt = metadata.getSignedAt();
-    final var sentAt = metadata.getSentAt();
-    final var revokedAt = metadata.getRevokedAt();
-
-    intygStatuses.add(toIntygsStatus("HSVARD", CertificateState.RECEIVED, signedAt));
-
-    if (metadata.getSentAt() != null) {
-      intygStatuses.add(toIntygsStatus("TO BE FIXED", CertificateState.SENT, sentAt));
-    }
-    if (metadata.getRevokedAt() != null) {
-      intygStatuses.add(toIntygsStatus("HSVARD", CertificateState.CANCELLED, revokedAt));
-    }
-
-    return intygStatuses;
-  }
-
-  private IntygsStatus toIntygsStatus(String partCode, CertificateState state,
-      LocalDateTime timestamp) {
-    final var part = new Part();
-    part.setCode(partCode);
-    part.setCodeSystem(Constants.KV_PART_CODE_SYSTEM);
-    final var intygsStatus = new IntygsStatus();
-    intygsStatus.setPart(part);
-    intygsStatus.setStatus(getStatuskod(state));
-    intygsStatus.setTidpunkt(timestamp);
-    return intygsStatus;
-  }
-
-  private static Statuskod getStatuskod(CertificateState state) {
-    final var statusCode = new Statuskod();
-    statusCode.setCode(state.name());
-    statusCode.setCodeSystem(Constants.KV_STATUS_CODE_SYSTEM);
-    return statusCode;
   }
 
   private IntygId toIntygId(String certificateId, BinaryCertificateStaff staff) {
@@ -123,19 +100,12 @@ public class BinaryCertificateResponseConverter {
     }
     final var intygId = new IntygId();
     intygId.setExtension(certificateId);
-    intygId.setRoot(staff.getUnit().getUnitId()); //TODO Will this be coreect?
+    intygId.setRoot(staff.getUnit().getUnitId());
     return intygId;
   }
 
   private TypAvIntyg toTypAvIntyg(BinaryCertificateCode binaryCertificateCode) {
-    if (binaryCertificateCode == null) {
-      return null;
-    }
-    final var typAvIntyg = new TypAvIntyg();
-    typAvIntyg.setCode(binaryCertificateCode.getCode());
-    typAvIntyg.setCodeSystem(binaryCertificateCode.getCodeSystem());
-    typAvIntyg.setDisplayName(binaryCertificateCode.getDisplayName());
-    return typAvIntyg;
+    return binaryCertificateCode == null ? null : toCode(binaryCertificateCode, TypAvIntyg::new);
   }
 
   private Patient toPatient(BinaryCertificatePatient patientDTO) {
@@ -146,15 +116,16 @@ public class BinaryCertificateResponseConverter {
     final var personId = new PersonId();
     final var patient = new Patient();
     personId.setExtension(patientDTO.getPatientId());
-    personId.setRoot(patientDTO.getType() == PERSONAL_IDENTITY_NUMBER
-        ? Constants.PERSON_ID_OID
-        : Constants.SAMORDNING_ID_OID);
+    personId.setRoot(
+        patientDTO.getType() == PERSONAL_IDENTITY_NUMBER
+            ? Constants.PERSON_ID_OID
+            : Constants.SAMORDNING_ID_OID);
     patient.setPersonId(personId);
-    patient.setFornamn("");
-    patient.setEfternamn("");
-    patient.setPostadress("");
-    patient.setPostnummer("");
-    patient.setPostort("");
+    patient.setFornamn(EMPTY_STRING);
+    patient.setEfternamn(EMPTY_STRING);
+    patient.setPostadress(EMPTY_STRING);
+    patient.setPostnummer(EMPTY_STRING);
+    patient.setPostort(EMPTY_STRING);
     return patient;
   }
 
@@ -165,12 +136,60 @@ public class BinaryCertificateResponseConverter {
     final var hosPersonal = new HosPersonal();
     hosPersonal.setPersonalId(toHsaId(staff.getPersonId()));
     hosPersonal.setFullstandigtNamn(staff.getFullName());
-    hosPersonal.setForskrivarkod("0000000"); // TODO: correct?
+    hosPersonal.setForskrivarkod("0000000");
     hosPersonal.setEnhet(toEnhet(staff.getUnit()));
-    hosPersonal.getBefattning();
-    hosPersonal.getLegitimeratYrke();
-    hosPersonal.getSpecialistkompetens();
+    hosPersonal.getBefattning().addAll(toCodes(staff.getTitles(), Befattning::new));
+    hosPersonal.getLegitimeratYrke().addAll(toCodes(staff.getLicences(), LegitimeratYrkeType::new));
+    hosPersonal.getSpecialistkompetens().addAll(toSpecialities(staff.getSpecialities()));
     return hosPersonal;
+  }
+
+  private Relation toRelation(BinaryCertificateRelation parentRelation) {
+    if (parentRelation == null) {
+      return null;
+    }
+
+    final var relationKod = toRelationKod(parentRelation.getType());
+    final var intygId = new IntygId();
+    final var typAvRelation = new TypAvRelation();
+    final var relation = new Relation();
+    intygId.setExtension(parentRelation.getCertificateId());
+    intygId.setRoot(parentRelation.getIssuingUnitId());
+    typAvRelation.setCode(relationKod.value());
+    typAvRelation.setCodeSystem(KV_RELATION_CODE_SYSTEM);
+    typAvRelation.setDisplayName(relationKod.getKlartext());
+    relation.setIntygsId(intygId);
+    relation.setTyp(typAvRelation);
+    return relation;
+  }
+
+  private List<IntygsStatus> toStatuses(BinaryCertificateMetadataDTO metadata) {
+    final var intygStatuses = new ArrayList<IntygsStatus>();
+    final var signedAt = metadata.getSignedAt();
+    final var sentAt = metadata.getSentAt();
+    final var revokedAt = metadata.getRevokedAt();
+    final var recipientId = metadata.getRecipientId();
+
+    intygStatuses.add(toIntygsStatus(PART_HSVARD, CertificateState.RECEIVED, signedAt));
+
+    if (metadata.getSentAt() != null) {
+      intygStatuses.add(toIntygsStatus(recipientId, CertificateState.SENT, sentAt));
+    }
+    if (metadata.getRevokedAt() != null) {
+      intygStatuses.add(toIntygsStatus(PART_HSVARD, CertificateState.CANCELLED, revokedAt));
+    }
+
+    return intygStatuses;
+  }
+
+  private BinaryDataType toBinaryDataType(byte[] data) {
+    if (data == null) {
+      return null;
+    }
+    final var binaryDataType = new BinaryDataType();
+    binaryDataType.setContentType(MIME_TYPE_APPLICATION_PDF);
+    binaryDataType.setData(data);
+    return binaryDataType;
   }
 
   private HsaId toHsaId(String idDTO) {
@@ -213,30 +232,62 @@ public class BinaryCertificateResponseConverter {
     return vardgivare;
   }
 
-  private List<Relation> toRelationList(CertificateRelations relationDTOs) {
-    final var relations = new ArrayList<Relation>();
-
-    for (var relationDTO : relationDTOs.getChildren()) {
-      final var intygId = new IntygId();
-      final var typAvRelation = new TypAvRelation();
-      final var relation = new Relation();
-      intygId.setExtension(relationDTO.getCertificateId());
-      typAvRelation.setCode(relationDTO.getType().name());
-      relation.setIntygsId(intygId);
-      relation.setTyp(typAvRelation);
-      relations.add(relation);
+  private List<Specialistkompetens> toSpecialities(List<String> specialities) {
+    if (specialities == null) {
+      return Collections.emptyList();
     }
 
-    return relations;
+    return specialities.stream().map(this::toSpeciality).toList();
   }
 
-  private BinaryDataType toBinaryDataType(byte[] data) {
-    if (data == null) {
-      return null;
+  private Specialistkompetens toSpeciality(String spec) {
+    final var specialistkompetens = new Specialistkompetens();
+    specialistkompetens.setCode(NOT_AVAILABLE);
+    specialistkompetens.setDisplayName(spec);
+    return specialistkompetens;
+  }
+
+  private RelationKod toRelationKod(CertificateRelationType type) {
+    return switch (type) {
+      case REPLACED -> RelationKod.ERSATT;
+      case COPIED -> RelationKod.KOPIA;
+      case EXTENDED -> RelationKod.FRLANG;
+      case COMPLEMENTED -> RelationKod.KOMPLT;
+    };
+  }
+
+  private IntygsStatus toIntygsStatus(
+      String partCode, CertificateState state, LocalDateTime timestamp) {
+    final var intygsStatus = new IntygsStatus();
+    final var part = new Part();
+    part.setCode(partCode);
+    part.setCodeSystem(Constants.KV_PART_CODE_SYSTEM);
+    intygsStatus.setPart(part);
+    intygsStatus.setStatus(toStatuskod(state));
+    intygsStatus.setTidpunkt(timestamp);
+    return intygsStatus;
+  }
+
+  private static Statuskod toStatuskod(CertificateState state) {
+    final var statusCode = new Statuskod();
+    statusCode.setCode(state.name());
+    statusCode.setCodeSystem(Constants.KV_STATUS_CODE_SYSTEM);
+    return statusCode;
+  }
+
+  private <T extends CVType> List<T> toCodes(List<BinaryCertificateCode> codes,
+      Supplier<T> factory) {
+    if (codes == null) {
+      return Collections.emptyList();
     }
-    final var binaryDataType = new BinaryDataType();
-    binaryDataType.setContentType("application/pdf");
-    binaryDataType.setData(data);
-    return binaryDataType;
+    return codes.stream().map(code -> toCode(code, factory)).toList();
+  }
+
+  private <T extends CVType> T toCode(BinaryCertificateCode code, Supplier<T> factory) {
+    final var t = factory.get();
+    t.setCode(code.getCode());
+    t.setCodeSystem(code.getCodeSystem());
+    t.setDisplayName(code.getDisplayName());
+    return t;
   }
 }

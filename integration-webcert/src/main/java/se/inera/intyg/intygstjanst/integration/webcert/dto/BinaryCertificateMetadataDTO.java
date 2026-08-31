@@ -21,7 +21,6 @@ package se.inera.intyg.intygstjanst.integration.webcert.dto;
 import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Value;
-import se.inera.intyg.common.support.facade.model.metadata.CertificateRelations;
 import se.inera.intyg.intygstjanst.integration.webcert.dto.BinaryCertificateMetadataDTO.BinaryCertificateMetadataDTOBuilder;
 import tools.jackson.databind.annotation.JsonDeserialize;
 import tools.jackson.databind.annotation.JsonPOJOBuilder;
@@ -34,12 +33,13 @@ public class BinaryCertificateMetadataDTO {
   String certificateId;
   BinaryCertificateCode type;
   String version;
+  String recipientId;
   LocalDateTime signedAt;
   LocalDateTime revokedAt;
   LocalDateTime sentAt;
   BinaryCertificatePatient patient;
   BinaryCertificateStaff issuedBy;
-  CertificateRelations relations;
+  BinaryCertificateRelation parentRelation;
 
   @JsonPOJOBuilder(withPrefix = "")
   public static class BinaryCertificateMetadataDTOBuilder {}

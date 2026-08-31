@@ -20,18 +20,20 @@ package se.inera.intyg.intygstjanst.integration.webcert.dto;
 
 import lombok.Builder;
 import lombok.Value;
-import se.inera.intyg.intygstjanst.integration.webcert.dto.BinaryCertificatePatient.BinaryCertificatePatientBuilder;
+import se.inera.intyg.common.support.facade.model.CertificateRelationType;
+import se.inera.intyg.intygstjanst.integration.webcert.dto.BinaryCertificateRelation.BinaryCertificateRelationBuilder;
 import tools.jackson.databind.annotation.JsonDeserialize;
 import tools.jackson.databind.annotation.JsonPOJOBuilder;
 
-@JsonDeserialize(builder = BinaryCertificatePatientBuilder.class)
+@JsonDeserialize(builder = BinaryCertificateRelationBuilder.class)
 @Value
 @Builder
-public class BinaryCertificatePatient {
+public class BinaryCertificateRelation {
 
-  String patientId;
-  BinaryCertificatePersonIdType type;
+  String certificateId;
+  String issuingUnitId;
+  CertificateRelationType type;
 
   @JsonPOJOBuilder(withPrefix = "")
-  public static class BinaryCertificatePatientBuilder {}
+  public static class BinaryCertificateRelationBuilder {}
 }
