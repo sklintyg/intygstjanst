@@ -275,8 +275,8 @@ public class BinaryCertificateResponseConverter {
     return statusCode;
   }
 
-  private <T extends CVType> List<T> toCodes(List<BinaryCertificateCode> codes,
-      Supplier<T> factory) {
+  private <T extends CVType> List<T> toCodes(
+      List<BinaryCertificateCode> codes, Supplier<T> factory) {
     if (codes == null) {
       return Collections.emptyList();
     }
