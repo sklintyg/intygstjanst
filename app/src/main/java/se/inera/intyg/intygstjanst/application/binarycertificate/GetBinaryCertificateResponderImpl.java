@@ -71,7 +71,24 @@ public class GetBinaryCertificateResponderImpl implements GetBinaryCertificateRe
     final BinaryCertificateResponseDTO binaryCertificateResponse =
         callWebcert(getBinaryCertificateRequest.getIntygsId().getExtension());
 
+    checkPdfSize(getBinaryCertificateRequest, binaryCertificateResponse);
+
     return binaryCertificateResponseConverter.toResponse(binaryCertificateResponse);
+  }
+
+  private static void checkPdfSize(
+      final GetBinaryCertificateType getBinaryCertificateRequest,
+      final BinaryCertificateResponseDTO binaryCertificateResponse) {
+    if (binaryCertificateResponse.getPdfData().length > 1024 * 1024 * 5) { // 5 MiB
+      log.info(
+          "Binary certificate '{}' exceeds maximum allowed size of 5 MiB (actual size: {} bytes)",
+          getBinaryCertificateRequest.getIntygsId().getExtension(),
+          binaryCertificateResponse.getPdfData().length);
+      throw new ServerException(
+          "Binary certificate '"
+              + getBinaryCertificateRequest.getIntygsId().getExtension()
+              + "' exceeds maximum allowed size of 5 MiB");
+    }
   }
 
   private BinaryCertificateResponseDTO callWebcert(String certificateId) {

@@ -24,12 +24,6 @@ import se.inera.intyg.intygstjanst.integration.webcert.dto.BinaryCertificateResp
 import tools.jackson.databind.annotation.JsonDeserialize;
 import tools.jackson.databind.annotation.JsonPOJOBuilder;
 
-/**
- * Full representation of a certificate as returned by webcert's binary certificate endpoint.
- * Mirrors the SOAP {@code BinartIntyg} type, including the rendered document (binaryData), so that
- * it can be mapped directly onto {@code GetBinaryCertificateResponseType} without having to look up
- * any additional data locally.
- */
 @JsonDeserialize(builder = BinaryCertificateResponseDTOBuilder.class)
 @Value
 @Builder
