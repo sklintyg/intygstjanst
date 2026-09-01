@@ -16,7 +16,9 @@ rootProject.name = 'intygstjanst'
 include 'app'
 include 'integration-api'
 include 'integration-intyg-proxy-service'
+include 'integration-webcert'
 
 project(':app').projectDir = "$rootDir/app" as File
 project(':integration-api').projectDir = "$rootDir/integration-api" as File
 project(':integration-intyg-proxy-service').projectDir = "$rootDir/integration-intyg-proxy-service" as File
+project(':integration-webcert').projectDir = "$rootDir/integration-webcert" as File

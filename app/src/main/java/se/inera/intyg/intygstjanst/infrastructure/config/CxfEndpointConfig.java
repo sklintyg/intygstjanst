@@ -39,6 +39,7 @@ import se.inera.intyg.clinicalprocess.healthcond.certificate.registerapprovedrec
 import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listactivesickleavesforcareunit.v1.ListActiveSickLeavesForCareUnitResponderInterface;
 import se.inera.intyg.clinicalprocess.healthcond.rehabilitation.listsickleavesforperson.v1.ListSickLeavesForPersonResponderInterface;
 import se.inera.intyg.common.util.integration.interceptor.SoapFaultToSoapResponseTransformerInterceptor;
+import se.riv.clinicalprocess.healthcond.certificate.getBinaryCertificate.v1.GetBinaryCertificateResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.getCertificate.v2.GetCertificateResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.listcertificatesforcare.v3.ListCertificatesForCareResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.listsickleavesforcare.v1.ListSickLeavesForCareResponderInterface;
@@ -287,6 +288,14 @@ public class CxfEndpointConfig {
     // INTYG-2126.
     final var endpoint = new EndpointImpl(bus, implementor);
     endpoint.publish("/get-certificate-se/v2.0");
+    return endpoint;
+  }
+
+  @Bean
+  public Endpoint getBinaryCertificateV1Endpoint(
+      GetBinaryCertificateResponderInterface implementor) {
+    final var endpoint = new EndpointImpl(bus, implementor);
+    endpoint.publish("/get-binary-certificate/v1.0");
     return endpoint;
   }
 
