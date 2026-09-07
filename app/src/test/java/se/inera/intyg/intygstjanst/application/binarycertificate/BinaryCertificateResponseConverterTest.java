@@ -36,7 +36,7 @@ import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.common.support.Constants;
 import se.inera.intyg.common.support.facade.model.CertificateRelationType;
-import se.inera.intyg.common.support.model.CertificateState;
+import se.inera.intyg.common.support.model.StatusKod;
 import se.inera.intyg.intygstjanst.integration.webcert.dto.BinaryCertificateCareProvider;
 import se.inera.intyg.intygstjanst.integration.webcert.dto.BinaryCertificateCode;
 import se.inera.intyg.intygstjanst.integration.webcert.dto.BinaryCertificateMetadataDTO;
@@ -528,7 +528,7 @@ class BinaryCertificateResponseConverterTest {
       final var statuses = result.getBinartIntyg().getStatus();
       final var received =
           statuses.stream()
-              .filter(s -> CertificateState.RECEIVED.name().equals(s.getStatus().getCode()))
+              .filter(s -> s.getStatus().getCode().equals(StatusKod.RECEIV.name()))
               .findFirst();
       assertNotNull(received.orElse(null));
     }
@@ -538,7 +538,7 @@ class BinaryCertificateResponseConverterTest {
       final var result = converter.toResponse(baseDto());
       final var received =
           result.getBinartIntyg().getStatus().stream()
-              .filter(s -> CertificateState.RECEIVED.name().equals(s.getStatus().getCode()))
+              .filter(s -> s.getStatus().getCode().equals(StatusKod.RECEIV.name()))
               .findFirst()
               .orElseThrow();
       assertEquals(SIGNED_AT, received.getTidpunkt());
@@ -549,7 +549,7 @@ class BinaryCertificateResponseConverterTest {
       final var result = converter.toResponse(baseDto());
       final var hasSent =
           result.getBinartIntyg().getStatus().stream()
-              .anyMatch(s -> CertificateState.SENT.name().equals(s.getStatus().getCode()));
+              .anyMatch(s -> s.getStatus().getCode().equals(StatusKod.SENTTO.name()));
       assertFalse(hasSent);
     }
 
@@ -564,7 +564,7 @@ class BinaryCertificateResponseConverterTest {
       final var result = converter.toResponse(dto);
       final var sentStatus =
           result.getBinartIntyg().getStatus().stream()
-              .filter(s -> CertificateState.SENT.name().equals(s.getStatus().getCode()))
+              .filter(s -> s.getStatus().getCode().equals(StatusKod.SENTTO.name()))
               .findFirst()
               .orElse(null);
       assertNotNull(sentStatus);
@@ -576,7 +576,7 @@ class BinaryCertificateResponseConverterTest {
       final var result = converter.toResponse(baseDto());
       final var hasCancelled =
           result.getBinartIntyg().getStatus().stream()
-              .anyMatch(s -> CertificateState.CANCELLED.name().equals(s.getStatus().getCode()));
+              .anyMatch(s -> s.getStatus().getCode().equals(StatusKod.CANCEL.name()));
       assertFalse(hasCancelled);
     }
 
@@ -591,7 +591,7 @@ class BinaryCertificateResponseConverterTest {
       final var result = converter.toResponse(dto);
       final var cancelledStatus =
           result.getBinartIntyg().getStatus().stream()
-              .filter(s -> CertificateState.CANCELLED.name().equals(s.getStatus().getCode()))
+              .filter(s -> s.getStatus().getCode().equals(StatusKod.CANCEL.name()))
               .findFirst()
               .orElse(null);
       assertNotNull(cancelledStatus);

@@ -23,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.cxf.annotations.SchemaValidation;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.intygstjanst.application.exception.ServerException;
+import se.inera.intyg.intygstjanst.application.exception.SoapFaultFactory;
 import se.inera.intyg.intygstjanst.infrastructure.logging.MdcLogConstants;
 import se.inera.intyg.intygstjanst.infrastructure.logging.PerformanceLogging;
 import se.inera.intyg.intygstjanst.integration.webcert.client.GetBinaryCertificateWebcertClient;
@@ -64,7 +65,7 @@ public class GetBinaryCertificateResponderImpl implements GetBinaryCertificateRe
         || getBinaryCertificateRequest.getIntygsId().getRoot() == null
         || getBinaryCertificateRequest.getIntygsId().getRoot().isEmpty()) {
       log.info("intygs-id is null or empty");
-      throw new ServerException(
+      throw SoapFaultFactory.clientFault(
           "Request to GetBinaryCertificate is missing required parameter 'intygs-id'");
     }
 
@@ -102,6 +103,8 @@ public class GetBinaryCertificateResponderImpl implements GetBinaryCertificateRe
             certificateId,
             e.getStatusCode(),
             e.getMessage());
+        throw SoapFaultFactory.clientFault(
+            "Failed to retrieve binary certificate with id '" + certificateId + "'");
       } else if (e.isServerError()) {
         log.error(
             "Call to webcert's binary certificate endpoint for certificate '{}' failed with a "
@@ -111,7 +114,7 @@ public class GetBinaryCertificateResponderImpl implements GetBinaryCertificateRe
             e);
       }
       throw new ServerException(
-          "Failed to retrieve binary certificate '" + certificateId + "' from webcert");
+          "Failed to retrieve binary certificate with id '" + certificateId + "'");
     }
   }
 

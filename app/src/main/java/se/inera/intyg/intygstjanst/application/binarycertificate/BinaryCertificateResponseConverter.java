@@ -30,7 +30,7 @@ import org.springframework.stereotype.Component;
 import se.inera.intyg.common.support.Constants;
 import se.inera.intyg.common.support.common.enumerations.RelationKod;
 import se.inera.intyg.common.support.facade.model.CertificateRelationType;
-import se.inera.intyg.common.support.model.CertificateState;
+import se.inera.intyg.common.support.model.StatusKod;
 import se.inera.intyg.intygstjanst.integration.webcert.dto.BinaryCertificateCareProvider;
 import se.inera.intyg.intygstjanst.integration.webcert.dto.BinaryCertificateCode;
 import se.inera.intyg.intygstjanst.integration.webcert.dto.BinaryCertificateMetadataDTO;
@@ -170,13 +170,13 @@ public class BinaryCertificateResponseConverter {
     final var revokedAt = metadata.getRevokedAt();
     final var recipientId = metadata.getRecipientId();
 
-    intygStatuses.add(toIntygsStatus(PART_HSVARD, CertificateState.RECEIVED, signedAt));
+    intygStatuses.add(toIntygsStatus(PART_HSVARD, StatusKod.RECEIV, signedAt));
 
     if (metadata.getSentAt() != null) {
-      intygStatuses.add(toIntygsStatus(recipientId, CertificateState.SENT, sentAt));
+      intygStatuses.add(toIntygsStatus(recipientId, StatusKod.SENTTO, sentAt));
     }
     if (metadata.getRevokedAt() != null) {
-      intygStatuses.add(toIntygsStatus(PART_HSVARD, CertificateState.CANCELLED, revokedAt));
+      intygStatuses.add(toIntygsStatus(PART_HSVARD, StatusKod.CANCEL, revokedAt));
     }
 
     return intygStatuses;
@@ -256,21 +256,20 @@ public class BinaryCertificateResponseConverter {
     };
   }
 
-  private IntygsStatus toIntygsStatus(
-      String partCode, CertificateState state, LocalDateTime timestamp) {
+  private IntygsStatus toIntygsStatus(String partCode, StatusKod status, LocalDateTime timestamp) {
     final var intygsStatus = new IntygsStatus();
     final var part = new Part();
     part.setCode(partCode);
     part.setCodeSystem(Constants.KV_PART_CODE_SYSTEM);
     intygsStatus.setPart(part);
-    intygsStatus.setStatus(toStatuskod(state));
+    intygsStatus.setStatus(toStatuskod(status));
     intygsStatus.setTidpunkt(timestamp);
     return intygsStatus;
   }
 
-  private static Statuskod toStatuskod(CertificateState state) {
+  private static Statuskod toStatuskod(StatusKod status) {
     final var statusCode = new Statuskod();
-    statusCode.setCode(state.name());
+    statusCode.setCode(status.name());
     statusCode.setCodeSystem(Constants.KV_STATUS_CODE_SYSTEM);
     return statusCode;
   }
