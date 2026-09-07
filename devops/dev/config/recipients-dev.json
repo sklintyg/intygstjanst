@@ -80,7 +80,7 @@
   {
     "id": "SKV",
     "name": "Skatteverket",
-    "recipientType": "DIREKTMOTTAGARE",
+    "recipientType": "HUVUDMOTTAGARE",
     "logicalAddress": "Skatteverket",
     "certificateTypes" : [
       "db"
@@ -91,7 +91,7 @@
   {
     "id": "SOS",
     "name": "Socialstyrelsen",
-    "recipientType": "DIREKTMOTTAGARE",
+    "recipientType": "HUVUDMOTTAGARE",
     "logicalAddress": "SOS",
     "certificateTypes" : [
       "doi"
