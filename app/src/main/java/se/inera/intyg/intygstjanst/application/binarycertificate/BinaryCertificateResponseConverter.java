@@ -68,6 +68,7 @@ class BinaryCertificateResponseConverter {
   private static final String MIME_TYPE_APPLICATION_PDF = "application/pdf";
   private static final String NOT_AVAILABLE = "N/A";
   public static final String EMPTY_STRING = "";
+  private static final String DEFAULT_WOKRPLACE_CODE = "0000000";
 
   public GetBinaryCertificateResponseType toResponse(BinaryCertificateResponseDTO dto) {
     if (dto == null) {
@@ -208,7 +209,8 @@ class BinaryCertificateResponseConverter {
     }
     final var enhet = new Enhet();
     final var workplaceCode = new ArbetsplatsKod();
-    workplaceCode.setExtension(unit.getWorkplaceCode());
+    workplaceCode.setExtension(
+        unit.getWorkplaceCode() != null ? unit.getWorkplaceCode() : DEFAULT_WOKRPLACE_CODE);
     workplaceCode.setRoot(Constants.ARBETSPLATS_KOD_OID);
     enhet.setEnhetsId(toHsaId(unit.getUnitId()));
     enhet.setEnhetsnamn(unit.getUnitName());
