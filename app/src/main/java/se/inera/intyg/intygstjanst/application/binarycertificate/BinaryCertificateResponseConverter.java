@@ -62,7 +62,7 @@ import se.riv.clinicalprocess.healthcond.certificate.v3.Relation;
 import se.riv.clinicalprocess.healthcond.certificate.v3.Vardgivare;
 
 @Component
-public class BinaryCertificateResponseConverter {
+class BinaryCertificateResponseConverter {
 
   private static final String PART_HSVARD = "HSVARD";
   private static final String MIME_TYPE_APPLICATION_PDF = "application/pdf";

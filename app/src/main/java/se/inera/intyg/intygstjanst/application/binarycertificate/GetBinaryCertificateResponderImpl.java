@@ -18,16 +18,17 @@
  */
 package se.inera.intyg.intygstjanst.application.binarycertificate;
 
+import static se.inera.intyg.intygstjanst.application.binarycertificate.BinaryCertificateSizeValidator.validateSize;
+import static se.inera.intyg.intygstjanst.application.binarycertificate.GetBinaryCertificateRequestValidator.validateLogicalAddress;
+import static se.inera.intyg.intygstjanst.application.binarycertificate.GetBinaryCertificateRequestValidator.validateRequest;
+
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.cxf.annotations.SchemaValidation;
 import org.springframework.stereotype.Service;
-import se.inera.intyg.intygstjanst.application.exception.ServerException;
-import se.inera.intyg.intygstjanst.application.exception.SoapFaultFactory;
 import se.inera.intyg.intygstjanst.infrastructure.logging.MdcLogConstants;
 import se.inera.intyg.intygstjanst.infrastructure.logging.PerformanceLogging;
-import se.inera.intyg.intygstjanst.integration.webcert.client.GetBinaryCertificateWebcertClient;
-import se.inera.intyg.intygstjanst.integration.webcert.client.WebcertClientException;
 import se.inera.intyg.intygstjanst.integration.webcert.dto.BinaryCertificateResponseDTO;
 import se.riv.clinicalprocess.healthcond.certificate.getBinaryCertificate.v1.GetBinaryCertificateResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.getBinaryCertificate.v1.GetBinaryCertificateResponseType;
@@ -41,7 +42,7 @@ import se.riv.clinicalprocess.healthcond.certificate.types.v3.IIType;
 public class GetBinaryCertificateResponderImpl implements GetBinaryCertificateResponderInterface {
 
   private final BinaryCertificateResponseConverter binaryCertificateResponseConverter;
-  private final GetBinaryCertificateWebcertClient webcertClient;
+  private final GetBinaryCertificateWebcertGateway webcertClient;
 
   @Override
   @PerformanceLogging(
@@ -53,74 +54,22 @@ public class GetBinaryCertificateResponderImpl implements GetBinaryCertificateRe
 
     logIncomingRequest(logicalAddress, getBinaryCertificateRequest);
 
-    if (logicalAddress == null || logicalAddress.isEmpty()) {
-      log.error("logicalAddress is null or empty (should not happen)");
-      throw new ServerException(
-          "Request to GetBinaryCertificate is missing required parameter 'logical-address'");
-    }
-    if (getBinaryCertificateRequest == null
-        || getBinaryCertificateRequest.getIntygsId() == null
-        || getBinaryCertificateRequest.getIntygsId().getExtension() == null
-        || getBinaryCertificateRequest.getIntygsId().getExtension().isEmpty()
-        || getBinaryCertificateRequest.getIntygsId().getRoot() == null
-        || getBinaryCertificateRequest.getIntygsId().getRoot().isEmpty()) {
-      log.info("intygs-id is null or empty");
-      throw SoapFaultFactory.clientFault(
-          "Request to GetBinaryCertificate is missing required parameter 'intygs-id'");
-    }
+    validateLogicalAddress(logicalAddress);
+    validateRequest(getBinaryCertificateRequest);
+
+    final String certificateId = getBinaryCertificateRequest.getIntygsId().getExtension();
 
     final BinaryCertificateResponseDTO binaryCertificateResponse =
-        callWebcert(getBinaryCertificateRequest.getIntygsId().getExtension());
+        webcertClient.getBinaryCertificate(certificateId);
 
-    checkPdfSize(getBinaryCertificateRequest, binaryCertificateResponse);
+    validateSize(certificateId, binaryCertificateResponse);
 
     return binaryCertificateResponseConverter.toResponse(binaryCertificateResponse);
   }
 
-  private static void checkPdfSize(
-      final GetBinaryCertificateType getBinaryCertificateRequest,
-      final BinaryCertificateResponseDTO binaryCertificateResponse) {
-    if (binaryCertificateResponse.getPdfData().length > 1024 * 1024 * 5) { // 5 MiB
-      log.info(
-          "Binary certificate '{}' exceeds maximum allowed size of 5 MiB (actual size: {} bytes)",
-          getBinaryCertificateRequest.getIntygsId().getExtension(),
-          binaryCertificateResponse.getPdfData().length);
-      throw new ServerException(
-          "Binary certificate '"
-              + getBinaryCertificateRequest.getIntygsId().getExtension()
-              + "' exceeds maximum allowed size of 5 MiB");
-    }
-  }
-
-  private BinaryCertificateResponseDTO callWebcert(String certificateId) {
-    try {
-      return webcertClient.get(certificateId);
-    } catch (WebcertClientException e) {
-      if (e.isClientError()) {
-        log.warn(
-            "Call to webcert's binary certificate endpoint for certificate '{}' failed with a "
-                + "client error ({}): {}",
-            certificateId,
-            e.getStatusCode(),
-            e.getMessage());
-        throw SoapFaultFactory.clientFault(
-            "Failed to retrieve binary certificate with id '" + certificateId + "'");
-      } else if (e.isServerError()) {
-        log.error(
-            "Call to webcert's binary certificate endpoint for certificate '{}' failed with a "
-                + "server error ({})",
-            certificateId,
-            e.getStatusCode(),
-            e);
-      }
-      throw new ServerException(
-          "Failed to retrieve binary certificate with id '" + certificateId + "'");
-    }
-  }
-
   private void logIncomingRequest(String hsaId, GetBinaryCertificateType request) {
     final var certificateId =
-        java.util.Optional.ofNullable(request)
+        Optional.ofNullable(request)
             .map(GetBinaryCertificateType::getIntygsId)
             .map(IIType::getExtension)
             .orElse("<missing>");
