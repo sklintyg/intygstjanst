@@ -490,19 +490,17 @@ class BinaryCertificateResponseConverterTest {
 
     @Test
     void shallIncludeDefaultWorkplaceCode() {
-      final var dto = BinaryCertificateResponseDTO.builder()
-          .metadata(
-              baseMetadataBuilder()
-                  .issuedBy(
-                      BinaryCertificateStaff.builder()
-                          .unit(
-                              BinaryCertificateUnit.builder()
-                                  .build()
-                          )
-                          .build())
-                  .build())
-          .pdfData(PDF_DATA)
-          .build();
+      final var dto =
+          BinaryCertificateResponseDTO.builder()
+              .metadata(
+                  baseMetadataBuilder()
+                      .issuedBy(
+                          BinaryCertificateStaff.builder()
+                              .unit(BinaryCertificateUnit.builder().build())
+                              .build())
+                      .build())
+              .pdfData(PDF_DATA)
+              .build();
 
       final var result = converter.toResponse(dto);
       assertEquals(

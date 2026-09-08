@@ -59,6 +59,7 @@ public class IntegrationTestUtil {
     final var templateGroup = new STGroupFile(filePath);
     final var relation =
         testabilityConfigProvider.getRelationsId() != null
+                && testabilityConfigProvider.getRelationKod() != null
             ? getRelation(
                 testabilityConfigProvider.getRelationsId(),
                 templateGroup,
