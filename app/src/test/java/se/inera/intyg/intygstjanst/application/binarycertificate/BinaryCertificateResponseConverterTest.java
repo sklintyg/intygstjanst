@@ -489,6 +489,26 @@ class BinaryCertificateResponseConverterTest {
     }
 
     @Test
+    void shallIncludeDefaultWorkplaceCode() {
+      final var dto =
+          BinaryCertificateResponseDTO.builder()
+              .metadata(
+                  baseMetadataBuilder()
+                      .issuedBy(
+                          BinaryCertificateStaff.builder()
+                              .unit(BinaryCertificateUnit.builder().build())
+                              .build())
+                      .build())
+              .pdfData(PDF_DATA)
+              .build();
+
+      final var result = converter.toResponse(dto);
+      assertEquals(
+          "0000000",
+          result.getBinartIntyg().getSkapadAv().getEnhet().getArbetsplatskod().getExtension());
+    }
+
+    @Test
     void shallIncludeWorkplaceCodeRoot() {
       final var result = converter.toResponse(baseDto());
       assertEquals(
