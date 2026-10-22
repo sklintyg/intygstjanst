@@ -8,6 +8,16 @@ app:
 
   ntjp:
     base-url: "http://localhost:8080/inera-certificate/stubs"
+    # Three services go to intyg-mock-service (port 18888), where what intygstjanst sends can be
+    # seen, and SendMessageToCare goes to webcert (port 8020), so a message forwarded from
+    # intyg-mock-service reaches a care unit; the rest stay on the stubs above. webcert's address
+    # is its own published path, not the rivtabp21 one the three below end in: its CXF servlet is
+    # /services and the endpoint publishes /send-message-to-care/v2.0.
+    endpoints:
+      register-certificate-v3: "http://localhost:18888/services/clinicalprocess/healthcond/certificate/RegisterCertificate/3/rivtabp21"
+      revoke-certificate-v2: "http://localhost:18888/services/clinicalprocess/healthcond/certificate/RevokeCertificate/2/rivtabp21"
+      send-message-to-care-v2: "http://localhost:8020/services/send-message-to-care/v2.0"
+      send-message-to-recipient-v2: "http://localhost:18888/services/clinicalprocess/healthcond/certificate/SendMessageToRecipient/2/rivtabp21"
     tls:
       certificate-file: dummy
       certificate-password: dummy
